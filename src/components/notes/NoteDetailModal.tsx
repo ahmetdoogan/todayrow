@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react'; // useCallback'i ekledik
 import { Note, getNoteBacklinks } from '@/services/notes';
 import { X, Edit, Pin, FolderOpen, Tag, Calendar, Link } from 'lucide-react';
 import { useDateFormatter } from '@/utils/dateUtils';
@@ -27,8 +27,8 @@ export default function NoteDetailModal() {
   const t = useTranslations("noteDetailModal");
   const formatDate = useDateFormatter();
 
-  // loadBacklinks fonksiyonunu useEffect'ten önce tanımlayalım
-  const loadBacklinks = async () => {
+  // loadBacklinks fonksiyonunu useCallback ile sarmaladık
+  const loadBacklinks = useCallback(async () => {
     if (!viewingNote) return;
     
     setIsLoadingBacklinks(true);
@@ -40,7 +40,7 @@ export default function NoteDetailModal() {
     } finally {
       setIsLoadingBacklinks(false);
     }
-  };
+  }, [viewingNote]); // viewingNote dependency'sini ekledik
 
   useEffect(() => {
     if (viewingNote) {

@@ -90,7 +90,7 @@ const Sidebar: React.FC<SidebarProps> = ({
     onCollapse?.(isCollapsed);
   }, [isCollapsed, onCollapse]);
 
-const handleLogout = async () => {
+  const handleLogout = async () => {
     try {
       await signOut();
     } catch (error) {
@@ -124,60 +124,60 @@ const handleLogout = async () => {
   };
 
   useEffect(() => {
-  if (searchTimeout) clearTimeout(searchTimeout);
-  if (!searchValue.trim()) {
-    setSearchResults([]);
-    return;
-  }
+    if (searchTimeout) clearTimeout(searchTimeout);
+    if (!searchValue.trim()) {
+      setSearchResults([]);
+      return;
+    }
 
-  const timeout = setTimeout(() => {
-    const searchTerm = searchValue.toLowerCase();
-    const exactTitleMatches: any[] = [];
-    const contentMatches: any[] = [];
+    const timeout = setTimeout(() => {
+      const searchTerm = searchValue.toLowerCase();
+      const exactTitleMatches: any[] = [];
+      const contentMatches: any[] = [];
 
-    contents.forEach(content => {
-      const isExactTitleMatch = content.title.toLowerCase() === searchTerm;
-      const isTitleMatch = fuzzySearchInText(content.title, searchValue);
-      const isContentMatch = fuzzySearchInText(content.details || '', searchValue);
+      contents.forEach(content => {
+        const isExactTitleMatch = content.title.toLowerCase() === searchTerm;
+        const isTitleMatch = fuzzySearchInText(content.title, searchValue);
+        const isContentMatch = fuzzySearchInText(content.details || '', searchValue);
 
-      if (isExactTitleMatch) {
-        exactTitleMatches.push({ ...content, type: 'content' });
-      } else if (isTitleMatch || isContentMatch) {
-        contentMatches.push({ ...content, type: 'content' });
-      }
-    });
+        if (isExactTitleMatch) {
+          exactTitleMatches.push({ ...content, type: 'content' });
+        } else if (isTitleMatch || isContentMatch) {
+          contentMatches.push({ ...content, type: 'content' });
+        }
+      });
 
-    notes.forEach(note => {
-      const isExactTitleMatch = note.title.toLowerCase() === searchTerm;
-      const isTitleMatch = fuzzySearchInText(note.title, searchValue);
-      const isContentMatch = fuzzySearchInText(note.content || '', searchValue);
+      notes.forEach(note => {
+        const isExactTitleMatch = note.title.toLowerCase() === searchTerm;
+        const isTitleMatch = fuzzySearchInText(note.title, searchValue);
+        const isContentMatch = fuzzySearchInText(note.content || '', searchValue);
 
-      if (isExactTitleMatch) {
-        exactTitleMatches.push({ ...note, type: 'note', details: note.content });
-      } else if (isTitleMatch || isContentMatch) {
-        contentMatches.push({ ...note, type: 'note', details: note.content });
-      }
-    });
+        if (isExactTitleMatch) {
+          exactTitleMatches.push({ ...note, type: 'note', details: note.content });
+        } else if (isTitleMatch || isContentMatch) {
+          contentMatches.push({ ...note, type: 'note', details: note.content });
+        }
+      });
 
-    plans.forEach(plan => {
-      const isExactTitleMatch = plan.title.toLowerCase() === searchTerm;
-      const isTitleMatch = fuzzySearchInText(plan.title, searchValue);
-      const isDetailsMatch = fuzzySearchInText(plan.details || '', searchValue);
+      plans.forEach(plan => {
+        const isExactTitleMatch = plan.title.toLowerCase() === searchTerm;
+        const isTitleMatch = fuzzySearchInText(plan.title, searchValue);
+        const isDetailsMatch = fuzzySearchInText(plan.details || '', searchValue);
 
-      if (isExactTitleMatch) {
-        exactTitleMatches.push({ ...plan, type: 'plan' });
-      } else if (isTitleMatch || isDetailsMatch) {
-        contentMatches.push({ ...plan, type: 'plan' });
-      }
-    });
+        if (isExactTitleMatch) {
+          exactTitleMatches.push({ ...plan, type: 'plan' });
+        } else if (isTitleMatch || isDetailsMatch) {
+          contentMatches.push({ ...plan, type: 'plan' });
+        }
+      });
 
-    const allResults = [...exactTitleMatches, ...contentMatches].slice(0, 5);
-    setSearchResults(allResults);
-  }, 300);
+      const allResults = [...exactTitleMatches, ...contentMatches].slice(0, 5);
+      setSearchResults(allResults);
+    }, 300);
 
-  setSearchTimeout(timeout);
-  return () => clearTimeout(timeout);
-}, [searchValue, contents, notes, plans, setSearchResults, setSearchTimeout]);
+    setSearchTimeout(timeout);
+    return () => clearTimeout(timeout);
+  }, [searchValue, contents, notes, plans, setSearchResults, setSearchTimeout]); // searchTimeout'u dependency array'e ekledik
 
   const handleSearchResultClick = async (result: any) => {
     if (result.type === 'content') {
@@ -215,7 +215,7 @@ const handleLogout = async () => {
           z-40
         `}
       >
-<div className="flex flex-col h-full relative p-3">
+        <div className="flex flex-col h-full relative p-3">
           <button
             onClick={() => setIsCollapsed(!isCollapsed)}
             className="absolute -right-3 top-6 w-6 h-6 flex items-center justify-center rounded-full bg-white dark:bg-[#0D1117] border border-gray-200 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors z-50"

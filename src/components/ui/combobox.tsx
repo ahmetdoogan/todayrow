@@ -74,7 +74,7 @@ export function Combobox({
                 }}
               >
                 <Plus className="mr-2 h-4 w-4" />
-                "{searchTerm}" ekle
+                &quot;{searchTerm}&quot; ekle
               </Button>
             )}
           </CommandEmpty>
