@@ -1,5 +1,5 @@
 "use client";
-import Sidebar from '@/components/layout/sidebar';
+import Sidebar from '@/components/layout/Sidebar';
 import { useState, useEffect } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import ContentModal from '@/components/content/ContentModal';
