@@ -279,7 +279,8 @@ export function PlannerProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-  const fetchQuickPlans = async () => {
+  // fetchQuickPlans fonksiyonunu useCallback ile sarmaladık
+  const fetchQuickPlans = useCallback(async () => {
     if (!user) return;
     try {
       const fetchedQuickPlans = await plannerService.getAllQuickPlans(user.id);
@@ -288,13 +289,13 @@ export function PlannerProvider({ children }: { children: React.ReactNode }) {
       console.error('Hazır planlar alınırken hata:', error);
       toast.error(t('loadError'));
     }
-  };
+  }, [user, t]); // user ve t dependency'lerini ekledik
 
   useEffect(() => {
     if (user) {
       fetchQuickPlans();
     }
-  }, [user]);
+  }, [user, fetchQuickPlans]); // fetchQuickPlans'ı dependency array'e ekledik
 
   // *** Sürükle-bırak "Hazır Plan" fonksiyonu ***
   const handleQuickPlanDrop = async (quickPlan: QuickPlan, dropTime: string) => {

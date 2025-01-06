@@ -1,5 +1,5 @@
 "use client";
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback } from 'react'; // useCallback'i ekledik
 import {
   Note,
   getNotes,
@@ -40,7 +40,7 @@ export function NotesProvider({ children }: { children: React.ReactNode }) {
   const t = useTranslations('common.notes.notifications');
 
   // NOTLARI SUNUCUDAN ÇEK
-  const fetchNotes = async () => {
+  const fetchNotes = useCallback(async () => {
     try {
       const data = await getNotes();
       setNotes(data);
@@ -50,17 +50,17 @@ export function NotesProvider({ children }: { children: React.ReactNode }) {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [t]); // t dependency'sini ekledik
 
   useEffect(() => {
     fetchNotes();
-  }, []);
+  }, [fetchNotes]); // fetchNotes'u dependency array'e ekledik
 
   useEffect(() => {
     if (isEditingNote) {
       setViewingNote(null);
     }
-  }, [isEditingNote]);
+  }, [isEditingNote]); // isEditingNote değiştiğinde çalışır
 
   // PIN / UNPIN
   const handleTogglePin = async (id: number, isPinned: boolean) => {

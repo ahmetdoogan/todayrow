@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react'; // useMemo'yu buraya ekledik
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Clock } from 'lucide-react';
 import { usePlanner } from '@/context/PlannerContext';
@@ -23,9 +23,13 @@ export default function PlanForm() {
 
   const t = useTranslations('common');
 
-  const today = new Date();
-  const tomorrow = new Date(today);
-  tomorrow.setDate(tomorrow.getDate() + 1);
+  // today ve tomorrow değişkenlerini useMemo ile memoize ediyoruz
+  const today = useMemo(() => new Date(), []);
+  const tomorrow = useMemo(() => {
+    const t = new Date(today);
+    t.setDate(t.getDate() + 1);
+    return t;
+  }, [today]);
 
   function compareDate(d1: Date, d2: Date) {
     return (
@@ -149,7 +153,7 @@ export default function PlanForm() {
       });
       setSelectedDay(isToday ? 'today' : 'tomorrow');
     }
-  }, [selectedPlan, draggedPlan, isToday, isTomorrow]);
+  }, [selectedPlan, draggedPlan, isToday, isTomorrow, today]); // today artık sabit olduğu için useEffect gereksiz yere tetiklenmeyecek
 
   function validateTimes(start: string, end: string) {
     const [sh, sm] = start.split(':').map(Number);

@@ -2,6 +2,7 @@
 
 import React, { Suspense, useEffect, useState } from "react";
 import Link from "next/link";
+import Image from "next/image"; // Image bileşenini import ediyoruz
 import { motion } from "framer-motion";
 import { Sun, Moon } from "lucide-react";
 import dynamic from "next/dynamic";
@@ -175,9 +176,11 @@ export default function LandingPage() {
               onClick={handleGoogleSignIn}
               className="w-64 py-2.5 px-4 border border-slate-200 dark:border-slate-700 rounded-2xl flex items-center justify-center gap-2 text-slate-700 dark:text-slate-300 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors"
             >
-              <img
+              <Image
                 src="https://www.google.com/favicon.ico"
                 alt="Google"
+                width={20}
+                height={20}
                 className="w-5 h-5"
               />
               <span>{t('auth.continueWithGoogle')}</span>

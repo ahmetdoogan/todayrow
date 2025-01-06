@@ -5,6 +5,18 @@ const nextConfig = {
   i18n: {
     locales: ['tr', 'en'],
     defaultLocale: 'tr'
+  },
+  images: {
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'www.google.com'
+      },
+      {
+        protocol: 'https',
+        hostname: 'lh3.googleusercontent.com'
+      }
+    ]
   }
 };
 

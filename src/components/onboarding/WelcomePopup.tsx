@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
+import Image from "next/image"; // Image bileşenini import ediyoruz
 import {
   LayoutDashboard,
   PencilLine,
@@ -126,9 +127,11 @@ export default function WelcomePopup({ onClose }: WelcomePopupProps) {
               </div>
             </div>
             {avatarUrl && (
-              <img 
-                src={avatarUrl} 
-                alt="Profile" 
+              <Image
+                src={avatarUrl}
+                alt="Profile"
+                width={40}
+                height={40}
                 className="w-10 h-10 rounded-full"
               />
             )}

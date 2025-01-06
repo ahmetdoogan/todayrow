@@ -1,6 +1,7 @@
 "use client";
 import React from 'react';
 import { motion } from 'framer-motion';
+import Image from "next/image"; // Image bileşenini import ediyoruz
 import { User, MapPin, Globe, BookText, BadgeCheck, Linkedin } from 'lucide-react';
 import { useProfile } from '@/hooks/useProfile';
 import { toast } from 'react-toastify';
@@ -33,9 +34,11 @@ const ProfileSettings = () => {
         <div className="flex items-center gap-4">
           <div className="relative">
             {session?.user?.user_metadata?.avatar_url ? (
-              <img
+              <Image
                 src={session.user.user_metadata.avatar_url}
                 alt={t('photo.title')}
+                width={64}
+                height={64}
                 className="w-16 h-16 rounded-full object-cover border-2 border-slate-200 dark:border-slate-700"
               />
             ) : (

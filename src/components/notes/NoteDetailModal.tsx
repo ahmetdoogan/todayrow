@@ -1,8 +1,8 @@
 "use client";
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react'; // useCallback'i ekledik
 import { Note, getNoteBacklinks } from '@/services/notes';
 import { X, Edit, Pin, FolderOpen, Tag, Calendar, Link } from 'lucide-react';
-import { useDateFormatter } from '@/utils/dateUtils'; // Doğru import
+import { useDateFormatter } from '@/utils/dateUtils';
 import { motion } from 'framer-motion';
 import NoteContent from './NoteContent';
 import { useRouter } from 'next/navigation';
@@ -25,7 +25,22 @@ export default function NoteDetailModal() {
   const [isLoadingBacklinks, setIsLoadingBacklinks] = useState(false);
   const router = useRouter();
   const t = useTranslations("noteDetailModal");
-  const formatDate = useDateFormatter(); // formatDate fonksiyonunu kullan
+  const formatDate = useDateFormatter();
+
+  // loadBacklinks fonksiyonunu useCallback ile sarmaladık
+  const loadBacklinks = useCallback(async () => {
+    if (!viewingNote) return;
+    
+    setIsLoadingBacklinks(true);
+    try {
+      const links = await getNoteBacklinks(viewingNote.title);
+      setBacklinks(links);
+    } catch (error) {
+      console.error('Error loading backlinks:', error);
+    } finally {
+      setIsLoadingBacklinks(false);
+    }
+  }, [viewingNote]); // viewingNote dependency'sini ekledik
 
   useEffect(() => {
     if (viewingNote) {
@@ -69,21 +84,7 @@ export default function NoteDetailModal() {
       const scripts = document.querySelectorAll('script[src*="twitter"], script[src*="instagram"]');
       scripts.forEach(script => script.remove());
     };
-  }, [viewingNote]);
-
-  const loadBacklinks = async () => {
-    if (!viewingNote) return;
-    
-    setIsLoadingBacklinks(true);
-    try {
-      const links = await getNoteBacklinks(viewingNote.title);
-      setBacklinks(links);
-    } catch (error) {
-      console.error('Error loading backlinks:', error);
-    } finally {
-      setIsLoadingBacklinks(false);
-    }
-  };
+  }, [viewingNote, loadBacklinks]); // loadBacklinks'i dependency array'e ekledik
 
   const handleClose = () => {
     setViewingNote(null);

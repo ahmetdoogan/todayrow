@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
+import Image from 'next/image'; // Image bileşenini import ediyoruz
 import { usePathname, useRouter } from 'next/navigation';
 import { 
   Layout, 
@@ -89,7 +90,7 @@ const Sidebar: React.FC<SidebarProps> = ({
     onCollapse?.(isCollapsed);
   }, [isCollapsed, onCollapse]);
 
-const handleLogout = async () => {
+  const handleLogout = async () => {
     try {
       await signOut();
     } catch (error) {
@@ -176,7 +177,7 @@ const handleLogout = async () => {
 
     setSearchTimeout(timeout);
     return () => clearTimeout(timeout);
-  }, [searchValue, contents, notes, plans]);
+  }, [searchValue, contents, notes, plans, searchTimeout]); // searchTimeout'u dependency array'e ekledik
 
   const handleSearchResultClick = async (result: any) => {
     if (result.type === 'content') {
@@ -214,7 +215,7 @@ const handleLogout = async () => {
           z-40
         `}
       >
-<div className="flex flex-col h-full relative p-3">
+        <div className="flex flex-col h-full relative p-3">
           <button
             onClick={() => setIsCollapsed(!isCollapsed)}
             className="absolute -right-3 top-6 w-6 h-6 flex items-center justify-center rounded-full bg-white dark:bg-[#0D1117] border border-gray-200 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors z-50"
@@ -358,9 +359,11 @@ const handleLogout = async () => {
                   >
                     <div className="relative w-8 h-8 flex-shrink-0">
                       {user?.user_metadata?.avatar_url ? (
-                        <img
+                        <Image
                           src={user.user_metadata.avatar_url}
                           alt={user.user_metadata.name || 'Profile'}
+                          width={32}
+                          height={32}
                           className="w-full h-full rounded-full object-cover"
                         />
                       ) : (

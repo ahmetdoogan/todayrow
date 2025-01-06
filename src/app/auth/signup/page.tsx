@@ -1,6 +1,7 @@
 "use client";
 import React, { useState } from "react";
 import Link from "next/link";
+import Image from "next/image"; // Image bileşenini import ediyoruz
 import { Mail, Lock, Eye, EyeOff } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 import { toast } from "react-toastify";
@@ -127,7 +128,13 @@ export default function SignupPage() {
                 onClick={handleGoogleSignIn}
                 className="w-full py-3 px-4 border border-slate-200 dark:border-slate-700 rounded-2xl flex items-center justify-center gap-2 text-slate-700 dark:text-slate-300 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors"
               >
-                <img src="https://www.google.com/favicon.ico" alt="Google" className="w-5 h-5" />
+                <Image
+                  src="https://www.google.com/favicon.ico"
+                  alt="Google"
+                  width={20}
+                  height={20}
+                  className="w-5 h-5"
+                />
                 <span>{t('continueWithGoogle')}</span>
               </button>
 

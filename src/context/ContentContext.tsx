@@ -18,7 +18,7 @@ interface ContentContextType {
   selectedItems: number[];
   isSelectionMode: boolean;
   filteredContents: Content[];
-  modalStack: Content[];        // Yeni
+  modalStack: Content[];
   setContents: React.Dispatch<React.SetStateAction<Content[]>>;
   setSelectedContent: React.Dispatch<React.SetStateAction<Content | null>>;
   setSelectedDate: React.Dispatch<React.SetStateAction<Date | null>>;
@@ -33,10 +33,10 @@ interface ContentContextType {
   handleUpdate: (id: number, updatedData: ContentUpdateData) => Promise<Content | null>;
   handleAddContent: (newContent: Content) => void;
   formatDate: (dateString: string) => string;
-  findContentByTitle: (title: string) => Content | undefined;  // Yeni
-  pushToModalStack: (content: Content) => void;                // Yeni
-  popFromModalStack: () => void;                              // Yeni
-  clearModalStack: () => void;                                // Yeni
+  findContentByTitle: (title: string) => Content | undefined;
+  pushToModalStack: (content: Content) => void;
+  popFromModalStack: () => void;
+  clearModalStack: () => void;
   getActivePlatform: () => { platform: string; count: number };
   getMonthlyProgress: () => { target: number; completed: number };
   getUpcomingDeadlines: () => number;
@@ -52,7 +52,7 @@ interface ContentContextType {
 const ContentContext = createContext<ContentContextType | undefined>(undefined);
 
 export function ContentProvider({ children }: { children: React.ReactNode }) {
-const t = useTranslations('common');
+  const t = useTranslations('common');
   const locale = t('locales.dateFormat');
   const { user } = useAuth();
   const [contents, setContents] = useState<Content[]>([]);
@@ -64,7 +64,7 @@ const t = useTranslations('common');
   const [months, setMonths] = useState<string[]>([]);
   const [selectedItems, setSelectedItems] = useState<number[]>([]);
   const [isSelectionMode, setIsSelectionMode] = useState(false);
-  const [modalStack, setModalStack] = useState<Content[]>([]); // Yeni
+  const [modalStack, setModalStack] = useState<Content[]>([]);
 
   const findContentByTitle = (title: string) => {
     return contents.find(content => 
@@ -89,7 +89,8 @@ const t = useTranslations('common');
     setModalStack([]);
     setSelectedContent(null);
   };
-useEffect(() => {
+
+  useEffect(() => {
     const fetchContents = async () => {
       if (!user) {
         setContents([]);
@@ -117,7 +118,7 @@ useEffect(() => {
     };
 
     fetchContents();
-  }, [user]);
+  }, [user, t]);
 
   useEffect(() => {
     const uniqueMonths = Array.from(
@@ -142,7 +143,7 @@ useEffect(() => {
       await contentService.deleteContent(id, user.id);
       setContents((prev) => prev.filter((content) => content.id !== id));
       setSelectedContent(null);
-      clearModalStack(); // Yeni: Kart silindiğinde stack'i temizle
+      clearModalStack();
       toast.success(t('content.notifications.deleteSuccess'));
     } catch (error) {
       console.error("Silme işlemi sırasında bir hata oluştu:", error);
@@ -161,7 +162,7 @@ useEffect(() => {
         )
       );
       setSelectedContent(null);
-      clearModalStack(); // Yeni: İşlem tamamlandığında stack'i temizle
+      clearModalStack();
       toast.success(t('content.notifications.completeSuccess'));
     } catch (error) {
       console.error("Tamamlanma güncellenemedi:", error);
@@ -180,7 +181,7 @@ useEffect(() => {
         )
       );
       setSelectedContent(null);
-      clearModalStack(); // Yeni: İşlem tamamlandığında stack'i temizle
+      clearModalStack();
       toast.success(t('content.notifications.undoSuccess'));
     } catch (error) {
       console.error("Geri alma işlemi sırasında bir hata oluştu:", error);
@@ -249,7 +250,7 @@ useEffect(() => {
       .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
   }, [contents, hideCompleted, selectedMonth, selectedDate, searchQuery]);
 
-const getActivePlatform = () => {
+  const getActivePlatform = () => {
     const platformCounts = contents.reduce((acc, content) => {
       content.platforms.forEach(platform => {
         acc[platform] = (acc[platform] || 0) + 1;
@@ -370,7 +371,7 @@ const getActivePlatform = () => {
     selectedItems,
     isSelectionMode,
     filteredContents,
-    modalStack,             // Yeni
+    modalStack,
     setContents,
     setSelectedContent,
     setSelectedDate,
@@ -385,11 +386,11 @@ const getActivePlatform = () => {
     handleUpdate,
     handleAddContent,
     formatDate,
-    findContentByTitle,     // Yeni
-    pushToModalStack,       // Yeni
-    popFromModalStack,      // Yeni
-    clearModalStack,         // Yeni
-getActivePlatform,
+    findContentByTitle,
+    pushToModalStack,
+    popFromModalStack,
+    clearModalStack,
+    getActivePlatform,
     getMonthlyProgress,
     getUpcomingDeadlines,
     getWeeklyPlans,
