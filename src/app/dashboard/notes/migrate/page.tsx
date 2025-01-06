@@ -37,7 +37,7 @@ export default function MigrateSlugsPage() {
       {isLoading ? (
         <div className="space-y-4 text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900" />
-          <p className="text-lg">Notlar için slug'lar oluşturuluyor...</p>
+          <p className="text-lg">Notlar için slug&apos;lar oluşturuluyor...</p>
         </div>
       ) : (
         <div className="text-center space-y-4">

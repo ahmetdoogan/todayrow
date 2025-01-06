@@ -23,12 +23,11 @@ const PlannerLayout = () => {
             <PlanList />
           </div>
 
-           {/* Hazır Planlar */}
-- <div className="lg:col-span-3">
-+ <div className="hidden md:block md:col-span-3">
-   <QuickPlans />
- </div>
-
+          {/* Hazır Planlar */}
+          <div className="hidden md:block md:col-span-3">
+            <QuickPlans />
+          </div>
+        </div>
       </div>
 
       {/* Plan Modalı */}

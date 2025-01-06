@@ -159,7 +159,6 @@ export default function DashboardLayout({
     <NotesProvider>
       <PlannerProvider>
         <DashboardLayoutInner
-          children={children}
           isContentModalOpen={isContentModalOpen}
           setIsContentModalOpen={setIsContentModalOpen}
           isNoteModalOpen={isNoteModalOpen}
@@ -170,7 +169,9 @@ export default function DashboardLayout({
           setIsSidebarCollapsed={setIsSidebarCollapsed}
           showWelcome={showWelcome}
           setShowWelcome={setShowWelcome}
-        />
+        >
+          {children}
+        </DashboardLayoutInner>
       </PlannerProvider>
     </NotesProvider>
   );

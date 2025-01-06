@@ -5,6 +5,9 @@ const nextConfig = {
   i18n: {
     locales: ['tr', 'en'],
     defaultLocale: 'tr'
+  },
+  images: {
+    domains: ['www.google.com', 'lh3.googleusercontent.com']
   }
 };
 

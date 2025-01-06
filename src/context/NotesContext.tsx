@@ -54,13 +54,13 @@ export function NotesProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     fetchNotes();
-  }, []);
+  }, []); // Boş dependency array, sadece component mount olduğunda çalışır
 
   useEffect(() => {
     if (isEditingNote) {
       setViewingNote(null);
     }
-  }, [isEditingNote]);
+  }, [isEditingNote]); // isEditingNote değiştiğinde çalışır
 
   // PIN / UNPIN
   const handleTogglePin = async (id: number, isPinned: boolean) => {

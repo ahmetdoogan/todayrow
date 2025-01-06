@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
+import Image from 'next/image'; // Image bileşenini import ediyoruz
 import { usePathname, useRouter } from 'next/navigation';
 import { 
   Layout, 
@@ -123,60 +124,60 @@ const handleLogout = async () => {
   };
 
   useEffect(() => {
-    if (searchTimeout) clearTimeout(searchTimeout);
-    if (!searchValue.trim()) {
-      setSearchResults([]);
-      return;
-    }
+  if (searchTimeout) clearTimeout(searchTimeout);
+  if (!searchValue.trim()) {
+    setSearchResults([]);
+    return;
+  }
 
-    const timeout = setTimeout(() => {
-      const searchTerm = searchValue.toLowerCase();
-      const exactTitleMatches: any[] = [];
-      const contentMatches: any[] = [];
+  const timeout = setTimeout(() => {
+    const searchTerm = searchValue.toLowerCase();
+    const exactTitleMatches: any[] = [];
+    const contentMatches: any[] = [];
 
-      contents.forEach(content => {
-        const isExactTitleMatch = content.title.toLowerCase() === searchTerm;
-        const isTitleMatch = fuzzySearchInText(content.title, searchValue);
-        const isContentMatch = fuzzySearchInText(content.details || '', searchValue);
+    contents.forEach(content => {
+      const isExactTitleMatch = content.title.toLowerCase() === searchTerm;
+      const isTitleMatch = fuzzySearchInText(content.title, searchValue);
+      const isContentMatch = fuzzySearchInText(content.details || '', searchValue);
 
-        if (isExactTitleMatch) {
-          exactTitleMatches.push({ ...content, type: 'content' });
-        } else if (isTitleMatch || isContentMatch) {
-          contentMatches.push({ ...content, type: 'content' });
-        }
-      });
+      if (isExactTitleMatch) {
+        exactTitleMatches.push({ ...content, type: 'content' });
+      } else if (isTitleMatch || isContentMatch) {
+        contentMatches.push({ ...content, type: 'content' });
+      }
+    });
 
-      notes.forEach(note => {
-        const isExactTitleMatch = note.title.toLowerCase() === searchTerm;
-        const isTitleMatch = fuzzySearchInText(note.title, searchValue);
-        const isContentMatch = fuzzySearchInText(note.content || '', searchValue);
+    notes.forEach(note => {
+      const isExactTitleMatch = note.title.toLowerCase() === searchTerm;
+      const isTitleMatch = fuzzySearchInText(note.title, searchValue);
+      const isContentMatch = fuzzySearchInText(note.content || '', searchValue);
 
-        if (isExactTitleMatch) {
-          exactTitleMatches.push({ ...note, type: 'note', details: note.content });
-        } else if (isTitleMatch || isContentMatch) {
-          contentMatches.push({ ...note, type: 'note', details: note.content });
-        }
-      });
+      if (isExactTitleMatch) {
+        exactTitleMatches.push({ ...note, type: 'note', details: note.content });
+      } else if (isTitleMatch || isContentMatch) {
+        contentMatches.push({ ...note, type: 'note', details: note.content });
+      }
+    });
 
-      plans.forEach(plan => {
-        const isExactTitleMatch = plan.title.toLowerCase() === searchTerm;
-        const isTitleMatch = fuzzySearchInText(plan.title, searchValue);
-        const isDetailsMatch = fuzzySearchInText(plan.details || '', searchValue);
+    plans.forEach(plan => {
+      const isExactTitleMatch = plan.title.toLowerCase() === searchTerm;
+      const isTitleMatch = fuzzySearchInText(plan.title, searchValue);
+      const isDetailsMatch = fuzzySearchInText(plan.details || '', searchValue);
 
-        if (isExactTitleMatch) {
-          exactTitleMatches.push({ ...plan, type: 'plan' });
-        } else if (isTitleMatch || isDetailsMatch) {
-          contentMatches.push({ ...plan, type: 'plan' });
-        }
-      });
+      if (isExactTitleMatch) {
+        exactTitleMatches.push({ ...plan, type: 'plan' });
+      } else if (isTitleMatch || isDetailsMatch) {
+        contentMatches.push({ ...plan, type: 'plan' });
+      }
+    });
 
-      const allResults = [...exactTitleMatches, ...contentMatches].slice(0, 5);
-      setSearchResults(allResults);
-    }, 300);
+    const allResults = [...exactTitleMatches, ...contentMatches].slice(0, 5);
+    setSearchResults(allResults);
+  }, 300);
 
-    setSearchTimeout(timeout);
-    return () => clearTimeout(timeout);
-  }, [searchValue, contents, notes, plans]);
+  setSearchTimeout(timeout);
+  return () => clearTimeout(timeout);
+}, [searchValue, contents, notes, plans, setSearchResults, setSearchTimeout]);
 
   const handleSearchResultClick = async (result: any) => {
     if (result.type === 'content') {
@@ -358,9 +359,11 @@ const handleLogout = async () => {
                   >
                     <div className="relative w-8 h-8 flex-shrink-0">
                       {user?.user_metadata?.avatar_url ? (
-                        <img
+                        <Image
                           src={user.user_metadata.avatar_url}
                           alt={user.user_metadata.name || 'Profile'}
+                          width={32}
+                          height={32}
                           className="w-full h-full rounded-full object-cover"
                         />
                       ) : (
