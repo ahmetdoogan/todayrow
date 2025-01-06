@@ -177,7 +177,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 
     setSearchTimeout(timeout);
     return () => clearTimeout(timeout);
-  }, [searchValue, contents, notes, plans, setSearchResults, setSearchTimeout]); // searchTimeout'u dependency array'e ekledik
+  }, [searchValue, contents, notes, plans, searchTimeout]); // searchTimeout'u dependency array'e ekledik
 
   const handleSearchResultClick = async (result: any) => {
     if (result.type === 'content') {

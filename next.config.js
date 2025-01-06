@@ -7,7 +7,16 @@ const nextConfig = {
     defaultLocale: 'tr'
   },
   images: {
-    domains: ['www.google.com', 'lh3.googleusercontent.com']
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'www.google.com'
+      },
+      {
+        protocol: 'https',
+        hostname: 'lh3.googleusercontent.com'
+      }
+    ]
   }
 };
 
