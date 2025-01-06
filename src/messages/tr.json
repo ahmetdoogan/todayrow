@@ -1,0 +1,821 @@
+{
+  "common": {
+    "todayrow": "Todayrow",
+    "signIn": "Giriş Yap",
+    "signOut": "Çıkış Yap",
+    "register": "Kayıt Ol",
+    "settings": {
+      "title": "Ayarlar",
+      "sections": {
+        "appearance": {
+          "title": "Görünüm Ayarları",
+          "colorTheme": {
+            "title": "Renk Teması",
+            "description": "Klasik, Mavi, Yeşil veya özel renkler seçebilirsiniz"
+          },
+          "defaultView": {
+            "title": "Varsayılan Takvim",
+            "description": "Ay, hafta veya gün görünümünü varsayılan yapabilirsiniz"
+          }
+        },
+        "notifications": {
+          "title": "Bildirimler",
+          "email": {
+            "title": "E-posta Bildirimleri",
+            "description": "Auth sistemiyle birlikte aktif olacak"
+          }
+        },
+        "accountSecurity": {
+          "title": "Hesap ve Güvenlik",
+          "profile": {
+            "title": "Hesap Bilgileri",
+            "description": "Profil bilgilerinizi düzenleyin"
+          },
+          "security": {
+            "title": "Şifre & Güvenlik",
+            "description": "Auth sistemiyle birlikte aktif olacak"
+          }
+        },
+        "helpSupport": {
+          "title": "Yardım ve Destek",
+          "guide": {
+            "title": "Hoş Geldin Rehberi",
+            "description": "Başlangıç rehberini tekrar görüntüle"
+          }
+        }
+      },
+      "info": {
+        "active": "Aktif: Karanlık mod",
+        "coming": "Yakında: Yazı tipi ve renk teması seçenekleri",
+        "withAuth": "Auth sistemi ile aktif olacak: Bildirim ve güvenlik ayarları"
+      },
+      "theme": "Tema",
+      "language": "Dil",
+      "themes": {
+        "light": "Açık",
+        "dark": "Koyu",
+        "system": "Sistem"
+      },
+      "languages": {
+        "tr": "Türkçe",
+        "en": "English"
+      }
+    },
+    "profile": {
+      "title": "Profil",
+      "photo": {
+        "title": "Profil Fotoğrafı",
+        "upload": "Fotoğraf Yükle",
+        "remove": "Fotoğrafı Kaldır"
+      },
+      "fields": {
+        "title": {
+          "label": "Unvan",
+          "placeholder": "Örn: Product Designer"
+        },
+        "linkedin": {
+          "label": "LinkedIn",
+          "placeholder": "Örn: linkedin.com/in/kullaniciadi"
+        },
+        "location": {
+          "label": "Konum",
+          "placeholder": "Örn: İstanbul, Türkiye"
+        },
+        "website": {
+          "label": "Website",
+          "placeholder": "https://example.com"
+        },
+        "bio": {
+          "label": "Bio",
+          "placeholder": "Kendinizi kısaca tanıtın..."
+        }
+      },
+      "buttons": {
+        "save": "Değişiklikleri Kaydet",
+        "saving": "Kaydediliyor..."
+      },
+      "messages": {
+        "saveSuccess": "Profil başarıyla güncellendi",
+        "saveError": "Profil güncellenirken bir hata oluştu"
+      }
+    },
+    "save": "Kaydet",
+    "cancel": "İptal",
+    "error": "Hata",
+    "success": "Başarılı",
+    "loading": "Yükleniyor...",
+    "locales": {
+      "dateFormat": "tr-TR"
+    },
+    "calendar": {
+      "monthYear": "{month} {year}",
+      "time": "Saat",
+      "days": {
+        "monday": "Pazartesi",
+        "tuesday": "Salı",
+        "wednesday": "Çarşamba",
+        "thursday": "Perşembe",
+        "friday": "Cuma",
+        "saturday": "Cumartesi",
+        "sunday": "Pazar"
+      },
+      "daysShort": {
+        "mon": "Pzt",
+        "tue": "Sal",
+        "wed": "Çar",
+        "thu": "Per",
+        "fri": "Cum",
+        "sat": "Cmt",
+        "sun": "Paz"
+      },
+      "timeGrid": {
+        "hour": "{hour}:00"
+      },
+      "views": {
+        "day": {
+          "label": "Gün",
+          "shortLabel": "G"
+        },
+        "week": {
+          "label": "Hafta",
+          "shortLabel": "H"
+        },
+        "month": {
+          "label": "Ay",
+          "shortLabel": "A"
+        }
+      }
+    },
+    "navigation": {
+      "login": "Giriş",
+      "start": "Başla",
+      "privacyPolicy": "Gizlilik Politikası",
+      "termsOfService": "Kullanım Şartları",
+      "backToHome": "Ana Sayfaya Dön",
+      "backToLogin": "Giriş sayfasına dön"
+    },
+    "sidebar": {
+      "createPlan": "Plan Oluştur",
+      "newContent": "İçerik",
+      "newNote": "Not",
+      "search": {
+        "placeholder": "Ara...",
+        "resultTypes": {
+          "content": "İçerik",
+          "note": "Not",
+          "plan": "Plan"
+        }
+      },
+      "menu": {
+        "plans": "Planlar",
+        "contents": "İçerikler",
+        "notes": "Notlar",
+        "calendar": "Takvim",
+        "settings": "Ayarlar"
+      },
+      "logout": "Çıkış Yap"
+    },
+    "theme": {
+      "toggleLight": "Açık temaya geç",
+      "toggleDark": "Koyu temaya geç"
+    },
+    "dashboard": {
+      "multiSelect": "Çoklu Seç",
+      "cancelSelection": "Seçimi İptal Et",
+      "showCompleted": "Tamamlananları Göster",
+      "hideCompleted": "Tamamlananları Gizle",
+      "deleteButton": "Sil",
+      "completeButton": "Tamamla",
+      "deleteSelected": "Seçilenleri Sil",
+      "completeSelected": "Seçilenleri Tamamla",
+      "notifications": {
+        "deleteSuccess": "Seçili içerikler başarıyla silindi!",
+        "deleteError": "Silme işlemi sırasında bir hata oluştu.",
+        "completeSuccess": "Seçili içerikler başarıyla tamamlandı!",
+        "completeError": "Tamamlama işlemi sırasında bir hata oluştu."
+      },
+      "dashboardStats": {
+        "boxes": {
+          "contentStatus": {
+            "title": "İçerik Durumu",
+            "monthlyTarget": "aylık hedef",
+            "activePlatform": "En aktif platform",
+            "upcomingDeadline": "Yaklaşan Deadline"
+          },
+          "weeklyPlan": {
+            "title": "Haftalık Plan",
+            "thisWeek": "Bu hafta",
+            "nextWeek": "Gelecek hafta",
+            "emptyDays": "Boş günler",
+            "content": "içerik"
+          },
+          "statistics": {
+            "title": "İstatistikler",
+            "mostProductiveDay": "En üretken gün",
+            "preferredFormat": "Tercih edilen format",
+            "completionRate": "Tamamlama oranı"
+          }
+        }
+      }
+    },
+    "notes": {
+      "multiSelect": "Çoklu Seç",
+      "cancelSelection": "Seçimi İptal Et",
+      "deleteButton": "Sil",
+      "pinButton": "Sabitle",
+      "deleteSelected": "Seçilenleri Sil",
+      "pinSelected": "Seçilenleri Sabitle",
+      "deleteConfirmation": {
+        "title": "Silme Onayı",
+        "singleDelete": "Bu notu silmek istediğinize emin misiniz?",
+        "bulkDelete": "Seçili notları silmek istediğinize emin misiniz?",
+        "cancelButton": "İptal",
+        "confirmButton": "Sil"
+      },
+      "notifications": {
+        "deleteSuccess": "Seçili notlar başarıyla silindi!",
+        "deleteError": "Silme işlemi sırasında bir hata oluştu.",
+        "pinSuccess": "Seçili notlar başarıyla sabitlendi!",
+        "pinError": "Sabitleme işlemi sırasında bir hata oluştu.",
+        "loadError": "Notlar yüklenirken bir hata oluştu.",
+        "updateError": "Not güncellenirken bir hata oluştu.",
+        "createSuccess": "Not başarıyla oluşturuldu!",
+        "createError": "Not oluşturulurken bir hata oluştu.",
+        "updateSuccess": "Not başarıyla güncellendi!",
+        "unpinSuccess": "Not sabitlemesi kaldırıldı"
+      },
+      "preview": {
+        "button": "Önizle",
+        "hideButton": "Önizlemeyi Gizle",
+        "visibleText": "Önizleme burada görünecek"
+      },
+      "editNote": "Notu Düzenle",
+      "newNote": "Yeni Not",
+      "title": "Notlar",
+      "viewDetails": "Detayları Gör",
+      "enterTitle": "Lütfen bir başlık girin",
+      "saveError": "Not kaydedilirken bir hata oluştu",
+      "contentPlaceholder": "Notunuzu buraya yazın... (Markdown desteklenir)",
+      "folder": "Klasör",
+      "tags": "Etiketler",
+      "create": "Oluştur",
+      "titlePlaceholder": "Not başlığını girin",
+      "pinnedNotes": "Pinlenmiş Notlar",
+      "otherNotes": "Diğer Notlar",
+      "bold": "Kalın",
+      "italic": "İtalik",
+      "code": "Kod",
+      "heading": "Başlık",
+      "list": "Liste",
+      "quote": "Alıntı",
+      "divider": "Ayırıcı"
+    },
+    "planner": {
+      "dates": {
+        "today": "Bugün",
+        "tomorrow": "Yarın",
+        "yesterday": "Dün"
+      },
+      "notifications": {
+        "createSuccess": "Plan oluşturuldu",
+        "createError": "Plan oluşturulurken bir hata oluştu",
+        "updateSuccess": "Plan güncellendi",
+        "updateError": "Plan güncellenirken bir hata oluştu",
+        "deleteSuccess": "Plan silindi",
+        "deleteError": "Plan silinirken bir hata oluştu",
+        "completeSuccess": "Plan tamamlandı",
+        "completeError": "Plan tamamlanırken bir hata oluştu",
+        "undoSuccess": "Plan aktif hale getirildi",
+        "undoError": "Plan durumu değiştirilirken bir hata oluştu",
+        "loadError": "Planlar yüklenirken bir hata oluştu",
+        "bulkDeleteSuccess": "Seçili planlar silindi",
+        "bulkDeleteError": "Planlar silinirken bir hata oluştu",
+        "bulkCompleteSuccess": "Seçili planlar tamamlandı",
+        "bulkCompleteError": "Planlar tamamlanırken bir hata oluştu"
+      },
+      "multiSelect": "Çoklu Seç",
+      "cancelSelection": "Seçimi İptal Et",
+      "deleteButton": "Sil",
+      "completeButton": "Tamamla",
+      "deleteSelected": "Seçilenleri Sil",
+      "completeSelected": "Seçilenleri Tamamla",
+      "emptyStates": {
+        "yesterdayEmpty": "Dünkü planlara ait kayıt bulunmuyor",
+        "todayEmpty": "Bugüne ait plan bulunmuyor",
+        "tomorrowEmpty": "Yarına ait plan bulunmuyor"
+      },
+      "dragAndDrop": {
+        "dropHere": "Planı buraya bırakın",
+        "timeLabel": "Saat: {time}"
+      },
+      "actions": {
+        "createPlan": "Plan Oluştur",
+        "markAsIncomplete": "Tamamlanmadı İşaretle",
+        "markAsComplete": "Tamamlandı İşaretle",
+        "edit": "Düzenle",
+        "delete": "Sil"
+      }
+    },
+    "quickPlansSection": {
+      "title": "Hazır Planlar",
+      "description": "Planları sürükleyip bırakarak takviminize ekleyin",
+      "buttons": {
+        "edit": "Düzenle",
+        "done": "Bitti",
+        "add": "Yeni Plan Ekle"
+      },
+      "deleteModal": {
+        "title": "Planı Sil",
+        "message": "Bu hazır planı silmek istediğinize emin misiniz?",
+        "cancel": "İptal",
+        "confirm": "Sil"
+      },
+      "createModal": {
+        "title": "Yeni Hazır Plan",
+        "form": {
+          "title": "Başlık",
+          "titlePlaceholder": "Hazır plan başlığı",
+          "color": "Renk",
+          "colorNames": {
+            "blue": "Mavi",
+            "green": "Yeşil",
+            "purple": "Mor",
+            "orange": "Turuncu",
+            "pink": "Pembe"
+          }
+        },
+        "buttons": {
+          "cancel": "İptal",
+          "create": "Oluştur"
+        },
+        "error": "Hazır plan oluşturulurken bir hata oluştu"
+      },
+      "defaultPlans": {
+        "meeting": "Toplantı",
+        "work": "İş",
+        "bookReading": "Kitap Okuma",
+        "lunch": "Öğle Arası",
+        "networking": "Networking"
+      },
+      "hidePlan": "Planı Gizle",
+      "showPlan": "Planı Göster"
+    },
+    "contentModal": {
+      "addNewContent": "Yeni İçerik Ekle",
+      "platforms": "Platformlar",
+      "title": "Başlık",
+      "titlePlaceholder": "İçerik başlığını girin",
+      "urlOptional": "URL (Opsiyonel)",
+      "urlPlaceholder": "Örn: bestlifeturkey.com",
+      "previewLoading": "Önizleme yükleniyor...",
+      "type": "Tür",
+      "types": {
+        "GENERAL": "Genel",
+        "EXPERIENCE": "Tecrübe",
+        "EDUCATION": "Eğitim",
+        "INSPIRATION": "İlham",
+        "REVIEW_ANALYSIS": "Yorum/Analiz",
+        "INDUSTRY": "Sektörel",
+        "TECHNOLOGY": "Teknoloji",
+        "CAREER": "Kariyer",
+        "PERSONAL_DEVELOPMENT": "Kişisel Gelişim",
+        "TRENDING": "Gündem"
+      },
+      "format": "Format",
+      "formats": {
+        "TEXT": "Metin",
+        "VIDEO": "Video",
+        "PODCAST": "Podcast",
+        "CAROUSEL": "Carousel",
+        "REELS_SHORTS": "Reels/Shorts",
+        "STORIES": "Stories",
+        "POLL": "Anket",
+        "LIVE": "Canlı Yayın",
+        "INFOGRAPHIC": "İnfografik"
+      },
+      "date": "Tarih",
+      "time": "Zaman",
+      "timePlaceholder": "Örn: Sabah 10:00",
+      "tags": "Etiketler",
+      "tagsPlaceholder": "Etiketleri virgülle ayırın",
+      "description": "Açıklama",
+      "descriptionPlaceholder": "İçerik detaylarını girin",
+      "cancel": "Vazgeç",
+      "save": "Kaydet",
+      "errors": {
+        "loginRequired": "Oturum açmanız gerekiyor!",
+        "addError": "Ekleme sırasında bir hata oluştu, lütfen tekrar deneyin."
+      },
+      "notifications": {
+        "addSuccess": "İçerik başarıyla eklendi!"
+      }
+    },
+    "plannerForm": {
+      "title": "Plan Başlığı",
+      "titlePlaceholder": "Plan başlığını girin",
+      "startTime": "Başlangıç Saati",
+      "endTime": "Bitiş Saati",
+      "details": "Detaylar",
+      "detailsPlaceholder": "Plan detaylarını girin (opsiyonel)",
+      "today": "Bugün",
+      "tomorrow": "Yarın",
+      "newPlan": "Yeni Plan",
+      "editPlan": "Planı Düzenle",
+      "updatePlan": "Planı Güncelle",
+      "createPlan": "Plan Oluştur",
+      "submitError": "Plan kaydedilirken bir hata oluştu.",
+      "validationError": "Bitiş saati başlangıç saatinden sonra olmalı.",
+      "cancel": "İptal",
+      "save": "Kaydet",
+      "deletePlan": "Planı Sil",
+      "completePlan": "Planı Tamamla"
+    },
+    "tagInput": {
+      "folderPlaceholder": "Klasör yolu girin",
+      "inputPlaceholder": "Virgülle ayırarak veya Enter'a basarak etiket ekleyin",
+      "newTag": "Yeni etiket: {inputValue}",
+      "newFolder": "Yeni klasör: {inputValue}",
+      "usage": "kullanım"
+    },
+    "content": {
+      "status": {
+        "completed": "Tamamlandı",
+        "active": "Aktif"
+      },
+      "actions": {
+        "complete": "Tamamla",
+        "undo": "Geri Al"
+      },
+      "date": {
+        "noDate": "Tarih Belirtilmemiş"
+      },
+      "preview": {
+        "imageAlt": "Önizleme görseli"
+      },
+      "platforms": {
+        "LINKEDIN": "LinkedIn",
+        "TWITTER": "Twitter",
+        "INSTAGRAM": "Instagram",
+        "FACEBOOK": "Facebook",
+        "YOUTUBE": "YouTube",
+        "BLOG": "Blog",
+        "TIKTOK": "TikTok"
+      },
+      "detail": {
+        "title": "İçerik Detayları",
+        "editTitle": "İçeriği Düzenle",
+        "status": {
+          "completed": "Tamamlandı",
+          "active": "Aktif"
+        },
+        "fields": {
+          "platforms": "Platformlar",
+          "url": {
+            "label": "URL (Opsiyonel)",
+            "placeholder": "Örn: bestlifeturkey.com"
+          },
+          "type": {
+            "label": "Tür",
+            "options": {
+              "GENERAL": "Genel",
+              "EXPERIENCE": "Tecrübe",
+              "EDUCATION": "Eğitim",
+              "INSPIRATION": "İlham",
+              "REVIEW_ANALYSIS": "Yorum/Analiz",
+              "INDUSTRY": "Sektörel",
+              "TECHNOLOGY": "Teknoloji",
+              "CAREER": "Kariyer",
+              "PERSONAL_DEVELOPMENT": "Kişisel Gelişim",
+              "TRENDING": "Gündem"
+            }
+          },
+          "format": {
+            "label": "Format",
+            "options": {
+              "TEXT": "Metin",
+              "VIDEO": "Video",
+              "PODCAST": "Podcast",
+              "CAROUSEL": "Carousel",
+              "REELS_SHORTS": "Reels/Shorts",
+              "STORIES": "Stories",
+              "POLL": "Anket",
+              "LIVE": "Canlı Yayın",
+              "INFOGRAPHIC": "İnfografik"
+            }
+          },
+          "date": "Tarih",
+          "time": {
+            "label": "Zaman",
+            "placeholder": "Örn: Sabah 10:00"
+          },
+          "tags": {
+            "label": "Etiketler",
+            "placeholder": "Etiketleri virgülle ayırın"
+          },
+          "description": {
+            "label": "Açıklama",
+            "placeholder": "İçerik detaylarını girin..."
+          }
+        },
+        "buttons": {
+          "cancel": "Vazgeç",
+          "update": "Güncelle",
+          "edit": "Düzenle",
+          "delete": "Sil",
+          "complete": "Tamamla",
+          "undo": "Geri Al"
+        },
+        "messages": {
+          "updateError": "Güncelleme sırasında bir hata oluştu."
+        }
+      },
+      "references": {
+        "referencedContents": "Referans Verilen İçerikler",
+        "referencingContents": "Bu İçerikte Bahsedildi"
+      },
+      "stats": {
+        "status": {
+          "title": "İçerik Durumu",
+          "total": "toplam",
+          "active": "Aktif",
+          "completed": "Tamamlanan",
+          "thisMonth": "Bu Ay"
+        },
+        "category": {
+          "title": "Kategori Dağılımı",
+          "noContent": "Henüz içerik eklenmemiş"
+        },
+        "format": {
+          "title": "Format Dağılımı",
+          "noContent": "Henüz içerik eklenmemiş"
+        }
+      },
+      "notifications": {
+        "fetchError": "İçerikler alınırken bir hata oluştu.",
+        "deleteSuccess": "İçerik başarıyla silindi!",
+        "deleteError": "Silme işlemi sırasında bir hata oluştu.",
+        "completeSuccess": "Başarıyla tamamlandı!",
+        "completeError": "Bir hata oluştu.",
+        "undoSuccess": "İçerik geri alındı!",
+        "undoError": "Bir hata oluştu, lütfen tekrar deneyin.",
+        "updateSuccess": "İçerik başarıyla güncellendi!",
+        "updateError": "Güncelleme sırasında bir hata oluştu."
+      }
+    },
+    "editor": {
+      "placeholder": "İçeriğinizi buraya yazın...",
+      "toolbarHints": {
+        "bold": "Kalın",
+        "italic": "İtalik",
+        "list": "Liste",
+        "heading": "Başlık",
+        "link": "Bağlantı",
+        "tooltip": "İçerik bağlantısı eklemek için kullanın. Diğer içeriklere referans vermenizi sağlar."
+      }
+    },
+    "legal": {
+      "privacyPolicy": {
+        "title": "Gizlilik Politikası",
+        "lastUpdate": "Son güncelleme",
+        "sections": {
+          "dataCollection": {
+            "title": "1. Veri Toplama ve Kullanım",
+            "intro": "Todayrow olarak kullanıcılarımızın gizliliğini korumayı taahhüt ediyoruz. Bu politika, hizmetlerimizi kullanırken hangi verileri topladığımızı ve bunları nasıl kullandığımızı açıklar.",
+            "collectedInfo": {
+              "title": "1.1 Toplanan Bilgiler",
+              "items": {
+                "email": "Email adresi (kimlik doğrulama için)",
+                "google": "Google hesap bilgileri (Google ile giriş yapılması durumunda)",
+                "content": "Kullanıcının oluşturduğu içerikler (notlar, planlar ve paylaşımlar)"
+              }
+            },
+            "dataUsage": {
+              "title": "1.2 Verilerin Kullanımı",
+              "intro": "Toplanan veriler yalnızca aşağıdaki amaçlarla kullanılır:",
+              "items": {
+                "account": "Hesap yönetimi ve güvenliği",
+                "quality": "Hizmet kalitesini iyileştirme",
+                "support": "Kullanıcı desteği sağlama"
+              }
+            }
+          },
+          "security": {
+            "title": "2. Veri Güvenliği",
+            "content": "Tüm kullanıcı verileri Supabase altyapısında güvenli bir şekilde saklanır ve şifrelenir. Verilerinizin güvenliği bizim için önceliktir."
+          },
+          "thirdParty": {
+            "title": "3. Üçüncü Taraf Hizmetleri",
+            "intro": "Uygulamamız aşağıdaki üçüncü taraf hizmetlerini kullanmaktadır:",
+            "items": {
+              "google": "Google Kimlik Doğrulama (oturum açma için)",
+              "supabase": "Supabase (veri depolama ve kullanıcı yönetimi)"
+            }
+          },
+          "dataDeletion": {
+            "title": "4. Veri Silme ve Hesap Kapatma",
+            "content": "Kullanıcılar istedikleri zaman hesaplarını kapatabilir ve verilerinin silinmesini talep edebilirler. Bu durumda tüm kullanıcı verileri kalıcı olarak silinecektir."
+          },
+          "contact": {
+            "title": "5. İletişim",
+            "content": "Gizlilik politikamız hakkında sorularınız için support@todayrow.app adresinden bize ulaşabilirsiniz."
+          }
+        }
+      },
+      "termsOfService": {
+        "title": "Kullanım Şartları",
+        "lastUpdate": "Son güncelleme",
+        "sections": {
+          "serviceUsage": {
+            "title": "1. Hizmet Kullanımı",
+            "content": "Todayrow'u kullanarak bu şartları kabul etmiş olursunuz. Bu hizmet, kullanıcıların notlar oluşturmasına, içerik planlaması yapmasına ve paylaşımlarını yönetmesine olanak tanır.",
+            "accountSecurity": {
+              "title": "1.1 Hesap Güvenliği",
+              "content": "Kullanıcılar hesap güvenliklerinden kendileri sorumludur. Şüpheli bir aktivite fark edildiğinde derhal bildirilmelidir."
+            }
+          },
+          "userResponsibilities": {
+            "title": "2. Kullanıcı Sorumlulukları",
+            "intro": "Kullanıcılar aşağıdaki kurallara uymakla yükümlüdür:",
+            "items": {
+              "legal": "Yasalara uygun içerik oluşturma",
+              "copyright": "Başkalarının telif haklarına saygı gösterme",
+              "security": "Platformun güvenliğini tehlikeye atmama",
+              "privacy": "Diğer kullanıcıların gizliliğine saygı gösterme"
+            }
+          },
+          "contentRights": {
+            "title": "3. İçerik Hakları",
+            "content": "Kullanıcılar tarafından oluşturulan tüm içeriklerin hakları kendilerine aittir. Todayrow, hizmeti sağlamak için gerekli minimum erişim hakkını saklı tutar."
+          },
+          "serviceChanges": {
+            "title": "4. Hizmet Değişiklikleri",
+            "content": "Todayrow, hizmetlerinde önceden bildirimde bulunmaksızın değişiklik yapma hakkını saklı tutar. Önemli değişiklikler kullanıcılara bildirilecektir."
+          },
+          "pricing": {
+            "title": "5. Ücretlendirme",
+            "content": "Todayrow şu an ücretsiz bir hizmet sunmaktadır. İleride ücretli özellikler eklenebilir, bu durumda kullanıcılar önceden bilgilendirilecektir."
+          },
+          "accountCancellation": {
+            "title": "6. Hesap İptali",
+            "content": "Kullanıcılar istedikleri zaman hesaplarını kapatma hakkına sahiptir. Hizmet şartlarının ihlali durumunda Todayrow hesapları askıya alma veya kapatma hakkını saklı tutar."
+          },
+          "limitations": {
+            "title": "7. Sorumluluk Sınırları",
+            "content": "Todayrow, hizmetin kesintisiz ve hatasız olacağını garanti etmez. Veri kaybını önlemek için düzenli yedekleme yapılması önerilir."
+          },
+          "contact": {
+            "title": "8. İletişim",
+            "content": "Gizlilik politikası hakkında sorularınız için support@todayrow.app adresinden bize ulaşabilirsiniz."
+          }
+        }
+      },
+      "backToHome": "Ana Sayfaya Dön"
+    }
+  },
+  "welcome": {
+    "title": "Hoş geldin, {name}!",
+    "titleGeneric": "Hoş geldin!",
+    "subtitle": "TodayRow ile planlarını yönetmeye hemen başla.",
+    "tabs": {
+      "plan": {
+        "title": "Plan Yapma",
+        "description": "Günlük planlarınızı oluşturun ve yönetin",
+        "content": "Bugün ve yarınınıza odaklanabilir, 'Plan Ekle' butonundan günün saatlerine göre plan girişi yapabilirsiniz. Hazır planları sürükleyip bırakarak ya da doğrudan takvim üzerinde tıklayarak yeni planlar oluşturabilirsiniz."
+      },
+      "content": {
+        "title": "İçerik Yönetimi",
+        "description": "Sosyal medya paylaşımlarınızı planlayın",
+        "content": "LinkedIn paylaşımlarınızı önceden planlayın. İçeriklerinizi taslak olarak kaydedin, düzenleyin ve paylaşım zamanını belirleyin. Takvim görünümünde tüm paylaşımlarınızı bir arada görüntüleyin."
+      },
+      "notes": {
+        "title": "Notlar",
+        "description": "Fikirlerinizi ve görevlerinizi not alın",
+        "content": "Hızlıca notlar alın, klasörler oluşturun ve notlarınızı organize edin. Önemli notları pinleyin ve etiketler ekleyerek kategorize edin. İstediğiniz zaman arama yaparak notlarınıza hızlıca ulaşın."
+      },
+      "notifications": {
+        "title": "Bildirimler",
+        "description": "Önemli hatırlatmalardan haberdar olun",
+        "content": "Plan ve içerikleriniz için hatırlatmalar alın. E-posta bildirimleri ile önemli güncellemelerden haberdar olun. Bildirim tercihlerinizi özelleştirin ve kontrolü elinizde tutun."
+      },
+      "settings": {
+        "title": "Ayarlar",
+        "description": "Hesap ve uygulama ayarlarınızı yönetin",
+        "content": "Profil bilgilerinizi güncelleyin, tema tercihlerinizi belirleyin ve diğer ayarlarınızı yönetin. Dark/Light mod seçeneği ile gözünüzü yormayan bir deneyim yaşayın."
+      }
+    },
+    "buttons": {
+      "start": "Başlayalım"
+    }
+  },
+  "auth": {
+    "welcome": "Hoş Geldiniz",
+    "login": {
+      "title": "Giriş",
+      "subtitle": "Hesabınıza giriş yapın"
+    },
+    "signup": {
+      "title": "Kayıt Ol",
+      "subtitle": "Yeni hesap oluşturun",
+      "loading": "Kayıt yapılıyor...",
+      "success": "Kayıt başarılı! Lütfen email adresinizi onaylayın.",
+      "emailInUse": "Bu email adresi zaten kullanımda!",
+      "failed": "Kayıt başarısız. Lütfen tekrar deneyin."
+    },
+    "verify": {
+      "title": "Email Onayı Gerekli",
+      "description": "Lütfen email adresinize gönderilen onay mailini kontrol edin ve hesabınızı doğrulayın.",
+      "checkSpam": "Email gelmedi mi? Spam klasörünü kontrol etmeyi unutmayın."
+    },
+    "email": "E-posta",
+    "password": "Şifre",
+    "confirmPassword": "Şifre Tekrar",
+    "forgotPassword": "Şifremi Unuttum",
+    "noAccount": "Hesabınız yok mu?",
+    "hasAccount": "Zaten hesabınız var mı?",
+    "or": "ya da",
+    "continueWithGoogle": "Google ile devam et",
+    "continueWithEmail": "E-posta ile Devam Et",
+    "errors": {
+      "emailRequired": "E-posta zorunludur",
+      "passwordRequired": "Şifre zorunludur",
+      "invalidEmail": "Geçerli bir email adresi giriniz",
+      "passwordMatch": "Şifreler eşleşmiyor",
+      "loginFailed": "Giriş yaparken bir hata oluştu",
+      "googleLoginFailed": "Google ile giriş yaparken bir hata oluştu",
+      "passwordValidation": {
+        "title": "Şifreniz aşağıdaki gereksinimleri karşılamalıdır:",
+        "minLength": "En az 8 karakter",
+        "upperCase": "En az 1 büyük harf",
+        "lowerCase": "En az 1 küçük harf",
+        "number": "En az 1 sayı",
+        "special": "En az 1 özel karakter (!@#$%^&* vb.)",
+        "noMatch": "Şifreler eşleşmiyor!",
+        "requirements": "Şifre gereksinimleri karşılanmıyor!"
+      }
+    },
+    "notifications": {
+      "loginSuccess": "Başarıyla giriş yapıldı!",
+      "checkCredentials": "Giriş başarısız. Lütfen bilgilerinizi kontrol edin.",
+      "googleLoginFailed": "Google ile giriş başarısız."
+    },
+    "placeholders": {
+      "email": "E-posta adresiniz",
+      "password": "Şifreniz",
+      "confirmPassword": "Şifrenizi tekrar girin"
+    }
+  },
+  "settings": {
+    "title": "Ayarlar",
+    "theme": "Tema",
+    "language": "Dil",
+    "themes": {
+      "light": "Açık",
+      "dark": "Koyu",
+      "system": "Sistem"
+    },
+    "languages": {
+      "tr": "Türkçe",
+      "en": "English"
+    }
+  },
+  "landing": {
+    "title": "Bugünü kazan,",
+    "subtitle": "yarını şekillendir.",
+    "features": {
+      "ideas": "fikirlerin",
+      "contents": "içeriklerin",
+      "calendar": "takvimin",
+      "and": "ve",
+      "inOnePlace": "tek bir yerde."
+    }
+  },
+  "views": {
+    "day": {
+      "title": "{date}",
+      "empty": "Bu gün için içerik bulunmuyor",
+      "more": "+{count} daha"
+    },
+    "month": {
+      "title": "{month} {year}",
+      "empty": "Bu ay için içerik bulunmuyor",
+      "more": "+{count} daha"
+    }
+  },
+  "notesFilter": {
+    "folderPlaceholder": "Klasör",
+    "tagsPlaceholder": "Etiketler",
+    "clearFilters": "Filtreleri temizle",
+    "selectedTags": "{count} etiket"
+  },
+  "noteDetailModal": {
+    "contentTab": "İçerik",
+    "backlinksTab": "Referanslar",
+    "noBacklinksMessage": "Bu nota henüz referans veren başka not bulunmuyor.",
+    "editTooltip": "Düzenle",
+    "pinTooltip": "Sabitle",
+    "unpinTooltip": "Sabitlemeyi Kaldır",
+    "pinSuccess": "Not sabitlendi",
+    "pinError": "Pin işlemi sırasında hata oluştu",
+    "unpinSuccess": "Not sabitlemesi kaldırıldı"
+  }
+}

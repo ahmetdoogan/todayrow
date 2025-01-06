@@ -1,0 +1,359 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+  --card-bg: #ffffff;
+  --card-border: #E5E7EB;
+  --text-primary: #171717;
+  --text-secondary: #4B5563;
+  --modal-bg: #ffffff;
+}
+
+.dark {
+  --background: #0D1117;      /* GitHub Dark arka plan */
+  --foreground: #e5e7eb;
+  --card-bg: #161B22;         /* GitHub Dark kart arka planı */
+  --card-border: #30363D;     /* GitHub Dark border rengi */
+  --text-primary: #f3f4f6;
+  --text-secondary: #8B949E;  /* GitHub Dark ikincil metin */
+  --modal-bg: #161B22;        /* Kartlarla aynı ton */
+}
+
+body {
+  background: var(--background) !important;
+  color: var(--foreground) !important;
+}
+
+/* Toast Customization */
+.Toastify__toast {
+  @apply bg-white/95 dark:bg-slate-800/95 backdrop-blur-sm text-slate-700 dark:text-slate-200;
+  @apply rounded-2xl border border-slate-100/50 dark:border-slate-700/50;
+  @apply shadow-sm;
+  padding: 12px 16px;
+  min-height: 56px;
+}
+
+.Toastify__toast-icon {
+  @apply w-5 h-5 mr-3;
+}
+
+.Toastify__toast--success .Toastify__toast-icon > svg {
+  @apply text-emerald-500/90 dark:text-emerald-400/90;
+  width: 20px;
+  height: 20px;
+}
+
+.Toastify__toast--error .Toastify__toast-icon > svg {
+  @apply text-red-500/90 dark:text-red-400/90;
+  width: 20px;
+  height: 20px;
+}
+
+.Toastify__close-button {
+  @apply opacity-60 hover:opacity-100 transition-opacity;
+  @apply text-slate-400 dark:text-slate-500;
+  @apply self-center ml-2;
+  padding: 4px;
+}
+
+.Toastify__close-button > svg {
+  width: 14px;
+  height: 14px;
+}
+
+.Toastify__progress-bar {
+  @apply bg-emerald-500/20 dark:bg-emerald-400/20;
+  height: 3px;
+}
+
+.Toastify__progress-bar--animated {
+  @apply bg-gradient-to-r from-emerald-500 to-emerald-400 dark:from-emerald-400 dark:to-emerald-300;
+  background-size: 200% 100%;
+  animation: toast-progress 3s linear forwards;
+}
+
+@keyframes toast-progress {
+  0% {
+    background-position: 100% 0;
+  }
+  100% {
+    background-position: 0 0;
+  }
+}
+
+/* Remove default toast background */
+.Toastify__toast-theme--light,
+.Toastify__toast-theme--dark {
+  background: transparent !important;
+}
+
+
+.bg-white {
+  background-color: var(--card-bg);
+}
+
+.text-gray-700 {
+  color: var(--text-primary);
+}
+
+/* Modern kartlar için stil */
+.notion-card {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: 0.75rem;
+  transition: all 0.2s ease-in-out;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.notion-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
+.modal-content {
+  background: var(--modal-bg);
+  border-radius: 1rem;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  margin: 1.5rem;
+  overflow: hidden;
+  min-width: 320px;
+  max-width: 600px;
+  width: 100%;
+}
+
+.modal-content.detail-popup {
+  max-width: 28rem;
+  padding: 2rem;
+  overflow: visible;
+}
+
+.modal-content.detail-popup button:hover {
+  opacity: 1;
+}
+
+.modal-content.detail-popup .edit-hover:hover {
+  background-color: #f3f4f6;
+}
+
+.modal-content.detail-popup .delete-hover:hover {
+  background-color: #fee2e2;
+}
+
+.dark .modal-content.detail-popup .edit-hover:hover {
+  background-color: #1C2128;  /* GitHub Dark hover rengi */
+}
+
+.dark .modal-content.detail-popup .delete-hover:hover {
+  background-color: #991b1b;
+}
+
+/* Modern scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #ddd;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #ccc;
+}
+
+/* Dark mode scrollbar */
+.dark ::-webkit-scrollbar-track {
+  background: var(--background);
+}
+
+.dark ::-webkit-scrollbar-thumb {
+  background: var(--card-border);
+  border-radius: 4px;
+}
+
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: #3F4751;
+}
+
+/* Modern buton stili */
+.modern-button {
+  transition: all 0.2s ease;
+  background: linear-gradient(to right, #4F46E5, #6366F1);
+  box-shadow: 0 2px 8px rgba(99, 102, 241, 0.2);
+}
+
+.modern-button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+}
+
+/* Dark Mode Stilleri */
+.dark .modern-button {
+  background: linear-gradient(to right, #3b82f6, #2563eb);
+}
+
+.dark .modal-overlay {
+  background-color: rgba(0, 0, 0, 0.7);
+}
+
+.dark .modal-content {
+  background: var(--modal-bg);
+  color: var(--text-primary);
+}
+
+/* Input, Textarea ve Select Dark Mode Stilleri */
+.dark input,
+.dark textarea,
+.dark select {
+  background-color: #21262D;  /* GitHub Dark input bg */
+  color: var(--text-primary);
+  border-color: var(--card-border);
+}
+
+.dark input:focus,
+.dark textarea:focus,
+.dark select:focus {
+  border-color: #58a6ff;  /* GitHub Dark focus border */
+  outline: none;
+}
+
+/* Takvim Stilleri */
+div.react-calendar {
+  width: 100%;
+  padding: 16px;
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: 1rem;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+/* Light mode için takvim arka planı */
+.react-calendar {
+  background: white;
+}
+
+/* Dark mode için takvim arka planı */
+.dark .react-calendar {
+  background: var(--card-bg);
+}
+
+.react-calendar__month-view__days {
+  display: grid !important;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 2px;
+}
+
+.react-calendar__month-view__days__day {
+  text-align: center;
+  padding: 0.5em 0;
+}
+
+div.react-calendar__month-view__days button {
+  aspect-ratio: 1;
+  padding: 12px;
+  margin: 2px;
+  border-radius: 0.5rem;
+  font-weight: 500;
+}
+
+.react-calendar__month-view__days__day--weekend {
+  color: #ef4444;
+}
+
+.dark .react-calendar__month-view__days__day--weekend {
+  color: #f87171;
+}
+
+.react-calendar__navigation button:disabled {
+  background-color: transparent;
+}
+
+div.react-calendar__navigation button {
+  font-size: 1.1rem;
+  font-weight: 500;
+  padding: 12px;
+  margin-bottom: 8px;
+}
+
+div.react-calendar__month-view__days button {
+  padding: 8px;
+  background: none;
+}
+
+/* Mobil Menü Stilleri */
+.mobile-menu-container {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  z-index: 9999;
+  transition: all 0.3s ease;
+}
+
+.mobile-menu {
+  background: var(--background);
+  padding: 1rem;
+  border-radius: 0.5rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.mobile-menu h2 {
+  font-size: 1.25rem;
+  font-weight: bold;
+  margin-bottom: 1rem;
+}
+
+.mobile-menu ul {
+  list-style: none;
+  padding: 0;
+}
+
+.mobile-menu ul li {
+  padding: 0.5rem 0;
+  border-bottom: 1px solid var(--card-border);
+}
+
+.mobile-menu ul li:last-child {
+  border-bottom: none;
+}
+
+.mobile-menu ul li:hover {
+  background-color: var(--card-bg);
+}
+
+@media (min-width: 768px) {
+  .modal-content {
+    max-width: 28rem;
+  }
+}
+
+.welcome-modal {
+  margin: 0 !important;
+}
+
+.welcome-modal > * {
+  margin: 0 !important;
+}

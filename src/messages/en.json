@@ -1,0 +1,821 @@
+{
+  "common": {
+    "todayrow": "Todayrow",
+    "signIn": "Sign In",
+    "signOut": "Sign Out",
+    "register": "Register",
+    "settings": {
+      "title": "Settings",
+      "sections": {
+        "appearance": {
+          "title": "Appearance Settings",
+          "colorTheme": {
+            "title": "Color Theme",
+            "description": "Choose from Classic, Blue, Green, or custom colors"
+          },
+          "defaultView": {
+            "title": "Default Calendar",
+            "description": "Set month, week, or day view as default"
+          }
+        },
+        "notifications": {
+          "title": "Notifications",
+          "email": {
+            "title": "Email Notifications",
+            "description": "Will be active with the Auth system"
+          }
+        },
+        "accountSecurity": {
+          "title": "Account & Security",
+          "profile": {
+            "title": "Account Information",
+            "description": "Edit your profile information"
+          },
+          "security": {
+            "title": "Password & Security",
+            "description": "Will be active with the Auth system"
+          }
+        },
+        "helpSupport": {
+          "title": "Help & Support",
+          "guide": {
+            "title": "Welcome Guide",
+            "description": "View the getting started guide again"
+          }
+        }
+      },
+      "info": {
+        "active": "Active: Dark mode",
+        "coming": "Coming soon: Font and color theme options",
+        "withAuth": "Will be active with Auth system: Notifications and security settings"
+      },
+      "theme": "Theme",
+      "language": "Language",
+      "themes": {
+        "light": "Light",
+        "dark": "Dark",
+        "system": "System"
+      },
+      "languages": {
+        "tr": "Türkçe",
+        "en": "English"
+      }
+    },
+    "profile": {
+      "title": "Profile",
+      "photo": {
+        "title": "Profile Photo",
+        "upload": "Upload Photo",
+        "remove": "Remove Photo"
+      },
+      "fields": {
+        "title": {
+          "label": "Title",
+          "placeholder": "e.g., Product Designer"
+        },
+        "linkedin": {
+          "label": "LinkedIn",
+          "placeholder": "e.g., linkedin.com/in/username"
+        },
+        "location": {
+          "label": "Location",
+          "placeholder": "e.g., Istanbul, Turkey"
+        },
+        "website": {
+          "label": "Website",
+          "placeholder": "https://example.com"
+        },
+        "bio": {
+          "label": "Bio",
+          "placeholder": "Briefly introduce yourself..."
+        }
+      },
+      "buttons": {
+        "save": "Save Changes",
+        "saving": "Saving..."
+      },
+      "messages": {
+        "saveSuccess": "Profile updated successfully",
+        "saveError": "An error occurred while updating the profile"
+      }
+    },
+    "save": "Save",
+    "cancel": "Cancel",
+    "error": "Error",
+    "success": "Success",
+    "loading": "Loading...",
+    "locales": {
+      "dateFormat": "en-US"
+    },
+    "calendar": {
+      "monthYear": "{month} {year}",
+      "time": "Hour",
+      "days": {
+        "monday": "Monday",
+        "tuesday": "Tuesday",
+        "wednesday": "Wednesday",
+        "thursday": "Thursday",
+        "friday": "Friday",
+        "saturday": "Saturday",
+        "sunday": "Sunday"
+      },
+      "daysShort": {
+        "mon": "Mon",
+        "tue": "Tue",
+        "wed": "Wed",
+        "thu": "Thu",
+        "fri": "Fri",
+        "sat": "Sat",
+        "sun": "Sun"
+      },
+      "timeGrid": {
+        "hour": "{hour}:00"
+      },
+      "views": {
+        "day": {
+          "label": "Day",
+          "shortLabel": "D"
+        },
+        "week": {
+          "label": "Week",
+          "shortLabel": "W"
+        },
+        "month": {
+          "label": "Month",
+          "shortLabel": "M"
+        }
+      }
+    },
+    "navigation": {
+      "login": "Login",
+      "start": "Get Started",
+      "privacyPolicy": "Privacy Policy",
+      "termsOfService": "Terms of Service",
+      "backToHome": "Back to Home",
+      "backToLogin": "Back to login page"
+    },
+    "sidebar": {
+      "createPlan": "Create Plan",
+      "newContent": "Content",
+      "newNote": "Note",
+      "search": {
+        "placeholder": "Search...",
+        "resultTypes": {
+          "content": "Content",
+          "note": "Note",
+          "plan": "Plan"
+        }
+      },
+      "menu": {
+        "plans": "Plans",
+        "contents": "Contents",
+        "notes": "Notes",
+        "calendar": "Calendar",
+        "settings": "Settings"
+      },
+      "logout": "Sign Out"
+    },
+    "theme": {
+      "toggleLight": "Switch to light theme",
+      "toggleDark": "Switch to dark theme"
+    },
+    "dashboard": {
+      "multiSelect": "Multi Select",
+      "cancelSelection": "Cancel Selection",
+      "showCompleted": "Show Completed",
+      "hideCompleted": "Hide Completed",
+      "deleteButton": "Delete",
+      "completeButton": "Complete",
+      "deleteSelected": "Delete Selected",
+      "completeSelected": "Complete Selected",
+      "notifications": {
+        "deleteSuccess": "Selected items deleted successfully!",
+        "deleteError": "An error occurred during deletion.",
+        "completeSuccess": "Selected items completed successfully!",
+        "completeError": "An error occurred while completing items."
+      },
+      "dashboardStats": {
+        "boxes": {
+          "contentStatus": {
+            "title": "Content Status",
+            "monthlyTarget": "monthly target",
+            "activePlatform": "Most Active Platform",
+            "upcomingDeadline": "Upcoming Deadline"
+          },
+          "weeklyPlan": {
+            "title": "Weekly Plan",
+            "thisWeek": "This week",
+            "nextWeek": "Next week",
+            "emptyDays": "Empty days",
+            "content": "content"
+          },
+          "statistics": {
+            "title": "Statistics",
+            "mostProductiveDay": "Most productive day",
+            "preferredFormat": "Preferred format",
+            "completionRate": "Completion rate"
+          }
+        }
+      }
+    },
+    "notes": {
+      "multiSelect": "Multi Select",
+      "cancelSelection": "Cancel Selection",
+      "deleteButton": "Delete",
+      "pinButton": "Pin",
+      "deleteSelected": "Delete Selected",
+      "pinSelected": "Pin Selected",
+      "deleteConfirmation": {
+        "title": "Deletion Confirmation",
+        "singleDelete": "Are you sure you want to delete this note?",
+        "bulkDelete": "Are you sure you want to delete this note?",
+        "cancelButton": "Cancel",
+        "confirmButton": "Delete"
+      },
+      "notifications": {
+        "deleteSuccess": "Selected notes deleted successfully!",
+        "deleteError": "An error occurred during deletion.",
+        "pinSuccess": "Selected notes pinned successfully!",
+        "pinError": "An error occurred while pinning notes.",
+        "loadError": "An error occurred while loading notes.",
+        "updateError": "An error occurred while updating the note.",
+        "createSuccess": "Note created successfully!",
+        "createError": "An error occurred while creating the note.",
+        "updateSuccess": "Note updated successfully!",
+        "unpinSuccess": "Note unpinned"
+      },
+      "preview": {
+        "button": "Preview",
+        "hideButton": "Hide Preview",
+        "visibleText": "Preview will appear here"
+      },
+      "editNote": "Edit Note",
+      "newNote": "New Note",
+      "title": "Notes",
+      "viewDetails": "View Details",
+      "enterTitle": "Please enter a title",
+      "saveError": "An error occurred while saving the note",
+      "contentPlaceholder": "Write your note here... (Markdown supported)",
+      "folder": "Folder",
+      "tags": "Tags",
+      "create": "Create",
+      "titlePlaceholder": "Enter note title",
+      "pinnedNotes": "Pinned Notes",
+      "otherNotes": "Other Notes",
+      "bold": "Bold",
+      "italic": "Italic",
+      "code": "Code",
+      "heading": "Heading",
+      "list": "List",
+      "quote": "Quote",
+      "divider": "Divider"
+    },
+    "planner": {
+      "dates": {
+        "today": "Today",
+        "tomorrow": "Tomorrow",
+        "yesterday": "Yesterday"
+      },
+      "notifications": {
+        "createSuccess": "Plan created",
+        "createError": "An error occurred while creating the plan",
+        "updateSuccess": "Plan updated",
+        "updateError": "An error occurred while updating the plan",
+        "deleteSuccess": "Plan deleted",
+        "deleteError": "An error occurred while deleting the plan",
+        "completeSuccess": "Plan completed",
+        "completeError": "An error occurred while completing the plan",
+        "undoSuccess": "Plan marked as active",
+        "undoError": "An error occurred while changing plan status",
+        "loadError": "An error occurred while loading plans",
+        "bulkDeleteSuccess": "Selected plans deleted",
+        "bulkDeleteError": "An error occurred while deleting plans",
+        "bulkCompleteSuccess": "Selected plans completed",
+        "bulkCompleteError": "An error occurred while completing plans"
+      },
+      "multiSelect": "Multi Select",
+      "cancelSelection": "Cancel Selection",
+      "deleteButton": "Delete",
+      "completeButton": "Complete",
+      "deleteSelected": "Delete Selected",
+      "completeSelected": "Complete Selected",
+      "emptyStates": {
+        "yesterdayEmpty": "No plans recorded for yesterday",
+        "todayEmpty": "No plans for today",
+        "tomorrowEmpty": "No plans for tomorrow"
+      },
+      "dragAndDrop": {
+        "dropHere": "Drop plan here",
+        "timeLabel": "Time: {time}"
+      },
+      "actions": {
+        "createPlan": "Create Plan",
+        "markAsIncomplete": "Mark as Incomplete",
+        "markAsComplete": "Mark as Complete",
+        "edit": "Edit",
+        "delete": "Delete"
+      }
+    },
+    "quickPlansSection": {
+      "title": "Quick Plans",
+      "description": "Drag and drop plans to add them to your calendar",
+      "buttons": {
+        "edit": "Edit",
+        "done": "Done",
+        "add": "Add New Plan"
+      },
+      "deleteModal": {
+        "title": "Delete Plan",
+        "message": "Are you sure you want to delete this quick plan?",
+        "cancel": "Cancel",
+        "confirm": "Delete"
+      },
+      "createModal": {
+        "title": "New Quick Plan",
+        "form": {
+          "title": "Title",
+          "titlePlaceholder": "Quick plan title",
+          "color": "Color",
+          "colorNames": {
+            "blue": "Blue",
+            "green": "Green",
+            "purple": "Purple",
+            "orange": "Orange",
+            "pink": "Pink"
+          }
+        },
+        "buttons": {
+          "cancel": "Cancel",
+          "create": "Create"
+        },
+        "error": "An error occurred while creating quick plan"
+      },
+      "defaultPlans": {
+        "meeting": "Meeting",
+        "work": "Work",
+        "bookReading": "Book Reading",
+        "lunch": "Lunch",
+        "networking": "Networking"
+      },
+      "hidePlan": "Hide Plan",
+      "showPlan": "Show Plan"
+    },
+    "contentModal": {
+      "addNewContent": "Add New Content",
+      "platforms": "Platforms",
+      "title": "Title",
+      "titlePlaceholder": "Enter content title",
+      "urlOptional": "URL (Optional)",
+      "urlPlaceholder": "e.g., bestlifeturkey.com",
+      "previewLoading": "Preview is loading...",
+      "type": "Type",
+      "types": {
+        "GENERAL": "General",
+        "EXPERIENCE": "Experience",
+        "EDUCATION": "Education",
+        "INSPIRATION": "Inspiration",
+        "REVIEW_ANALYSIS": "Review/Analysis",
+        "INDUSTRY": "Industry",
+        "TECHNOLOGY": "Technology",
+        "CAREER": "Career",
+        "PERSONAL_DEVELOPMENT": "Personal Development",
+        "TRENDING": "Trending"
+      },
+      "format": "Format",
+      "formats": {
+        "TEXT": "Text",
+        "VIDEO": "Video",
+        "PODCAST": "Podcast",
+        "CAROUSEL": "Carousel",
+        "REELS_SHORTS": "Reels/Shorts",
+        "STORIES": "Stories",
+        "POLL": "Poll",
+        "LIVE": "Live Broadcast",
+        "INFOGRAPHIC": "Infographic"
+      },
+      "date": "Date",
+      "time": "Time",
+      "timePlaceholder": "e.g., Morning 10:00",
+      "tags": "Tags",
+      "tagsPlaceholder": "Separate tags with commas",
+      "description": "Description",
+      "descriptionPlaceholder": "Enter content details",
+      "cancel": "Cancel",
+      "save": "Save",
+      "errors": {
+        "loginRequired": "You need to log in!",
+        "addError": "An error occurred while adding, please try again."
+      },
+      "notifications": {
+        "addSuccess": "Content added successfully!"
+      }
+    },
+    "plannerForm": {
+      "title": "Plan Title",
+      "titlePlaceholder": "Enter plan title",
+      "startTime": "Start Time",
+      "endTime": "End Time",
+      "details": "Details",
+      "detailsPlaceholder": "Enter plan details (optional)",
+      "today": "Today",
+      "tomorrow": "Tomorrow",
+      "newPlan": "New Plan",
+      "editPlan": "Edit Plan",
+      "updatePlan": "Update Plan",
+      "createPlan": "Create Plan",
+      "submitError": "An error occurred while saving the plan.",
+      "validationError": "End time must be after start time.",
+      "cancel": "Cancel",
+      "save": "Save",
+      "deletePlan": "Delete Plan",
+      "completePlan": "Complete Plan"
+    },
+    "tagInput": {
+      "folderPlaceholder": "Enter folder path",
+      "inputPlaceholder": "Add tags separated by commas or press Enter",
+      "newTag": "New tag: {inputValue}",
+      "newFolder": "New folder: {inputValue}",
+      "usage": "usage"
+    },
+    "content": {
+      "status": {
+        "completed": "Completed",
+        "active": "Active"
+      },
+      "actions": {
+        "complete": "Complete",
+        "undo": "Undo"
+      },
+      "date": {
+        "noDate": "No Date Specified"
+      },
+      "preview": {
+        "imageAlt": "Preview image"
+      },
+      "platforms": {
+        "LINKEDIN": "LinkedIn",
+        "TWITTER": "Twitter",
+        "INSTAGRAM": "Instagram",
+        "FACEBOOK": "Facebook",
+        "YOUTUBE": "YouTube",
+        "BLOG": "Blog",
+        "TIKTOK": "TikTok"
+      },
+      "detail": {
+        "title": "Content Details",
+        "editTitle": "Edit Content",
+        "status": {
+          "completed": "Completed",
+          "active": "Active"
+        },
+        "fields": {
+          "platforms": "Platforms",
+          "url": {
+            "label": "URL (Optional)",
+            "placeholder": "E.g: bestlifeturkey.com"
+          },
+          "type": {
+            "label": "Type",
+            "options": {
+              "GENERAL": "General",
+              "EXPERIENCE": "Experience",
+              "EDUCATION": "Education",
+              "INSPIRATION": "Inspiration",
+              "REVIEW_ANALYSIS": "Review/Analysis",
+              "INDUSTRY": "Industry",
+              "TECHNOLOGY": "Technology",
+              "CAREER": "Career",
+              "PERSONAL_DEVELOPMENT": "Personal Development",
+              "TRENDING": "Trending"
+            }
+          },
+          "format": {
+            "label": "Format",
+            "options": {
+              "TEXT": "Text",
+              "VIDEO": "Video",
+              "PODCAST": "Podcast",
+              "CAROUSEL": "Carousel",
+              "REELS_SHORTS": "Reels/Shorts",
+              "STORIES": "Stories",
+              "POLL": "Poll",
+              "LIVE": "Live Broadcast",
+              "INFOGRAPHIC": "Infographic"
+            }
+          },
+          "date": "Date",
+          "time": {
+            "label": "Time",
+            "placeholder": "E.g: Morning 10:00"
+          },
+          "tags": {
+            "label": "Tags",
+            "placeholder": "Separate tags with commas"
+          },
+          "description": {
+            "label": "Description",
+            "placeholder": "Enter content details..."
+          }
+        },
+        "buttons": {
+          "cancel": "Cancel",
+          "update": "Update",
+          "edit": "Edit",
+          "delete": "Delete",
+          "complete": "Complete",
+          "undo": "Undo"
+        },
+        "messages": {
+          "updateError": "An error occurred while updating."
+        }
+      },
+      "references": {
+        "referencedContents": "Referenced Contents",
+        "referencingContents": "Mentioned in This Content"
+      },
+      "stats": {
+        "status": {
+          "title": "Content Status",
+          "total": "total",
+          "active": "Active",
+          "completed": "Completed",
+          "thisMonth": "This Month"
+        },
+        "category": {
+          "title": "Category Distribution",
+          "noContent": "No content added yet"
+        },
+        "format": {
+          "title": "Format Distribution",
+          "noContent": "No content added yet"
+        }
+      },
+      "notifications": {
+        "fetchError": "An error occurred while fetching contents.",
+        "deleteSuccess": "Content successfully deleted!",
+        "deleteError": "An error occurred during deletion.",
+        "completeSuccess": "Successfully completed!",
+        "completeError": "An error occurred.",
+        "undoSuccess": "Content restored!",
+        "undoError": "An error occurred, please try again.",
+        "updateSuccess": "Content updated successfully!",
+        "updateError": "An error occurred during update."
+      }
+    },
+    "editor": {
+      "placeholder": "Write your content here...",
+      "toolbarHints": {
+        "bold": "Bold",
+        "italic": "Italic",
+        "list": "List",
+        "heading": "Heading",
+        "link": "Link",
+        "tooltip": "Use this to add content links. Allows you to reference other content."
+      }
+    },
+    "legal": {
+      "privacyPolicy": {
+        "title": "Privacy Policy",
+        "lastUpdate": "Last updated",
+        "sections": {
+          "dataCollection": {
+            "title": "1. Data Collection and Usage",
+            "intro": "At Todayrow, we are committed to protecting our users' privacy. This policy explains what data we collect and how we use it when you use our services.",
+            "collectedInfo": {
+              "title": "1.1 Collected Information",
+              "items": {
+                "email": "Email address (for authentication)",
+                "google": "Google account information (when signing in with Google)",
+                "content": "User-created content (notes, plans, and posts)"
+              }
+            },
+            "dataUsage": {
+              "title": "1.2 Data Usage",
+              "intro": "Collected data is used only for the following purposes:",
+              "items": {
+                "account": "Account management and security",
+                "quality": "Service quality improvement",
+                "support": "User support"
+              }
+            }
+          },
+          "security": {
+            "title": "2. Data Security",
+            "content": "All user data is securely stored and encrypted in the Supabase infrastructure. Your data security is our priority."
+          },
+          "thirdParty": {
+            "title": "3. Third-Party Services",
+            "intro": "Our application uses the following third-party services:",
+            "items": {
+              "google": "Google Authentication (for sign-in)",
+              "supabase": "Supabase (for data storage and user management)"
+            }
+          },
+          "dataDeletion": {
+            "title": "4. Data Deletion and Account Closure",
+            "content": "Users can close their accounts and request data deletion at any time. In this case, all user data will be permanently deleted."
+          },
+          "contact": {
+            "title": "5. Contact",
+            "content": "For questions about our privacy policy, you can reach us at support@todayrow.app"
+          }
+        }
+      },
+      "termsOfService": {
+        "title": "Terms of Service",
+        "lastUpdate": "Last updated",
+        "sections": {
+          "serviceUsage": {
+            "title": "1. Service Usage",
+            "content": "By using Todayrow, you agree to these terms. This service allows users to create notes, plan content, and manage their posts.",
+            "accountSecurity": {
+              "title": "1.1 Account Security",
+              "content": "Users are responsible for their account security. Any suspicious activity should be reported immediately."
+            }
+          },
+          "userResponsibilities": {
+            "title": "2. User Responsibilities",
+            "intro": "Users must comply with the following rules:",
+            "items": {
+              "legal": "Create content that complies with laws",
+              "copyright": "Respect others' copyrights",
+              "security": "Do not compromise platform security",
+              "privacy": "Respect other users' privacy"
+            }
+          },
+          "contentRights": {
+            "title": "3. Content Rights",
+            "content": "All content created by users belongs to them. Todayrow reserves the minimum access rights necessary to provide the service."
+          },
+          "serviceChanges": {
+            "title": "4. Service Changes",
+            "content": "Todayrow reserves the right to make changes to its services without prior notice. Users will be notified of significant changes."
+          },
+          "pricing": {
+            "title": "5. Pricing",
+            "content": "Todayrow currently provides a free service. Paid features may be added in the future, and users will be notified in advance."
+          },
+          "accountCancellation": {
+            "title": "6. Account Cancellation",
+            "content": "Users have the right to close their accounts at any time. Todayrow reserves the right to suspend or terminate accounts in case of terms of service violations."
+          },
+          "limitations": {
+            "title": "7. Limitations of Liability",
+            "content": "Todayrow does not guarantee uninterrupted and error-free service. Regular backups are recommended to prevent data loss."
+          },
+          "contact": {
+            "title": "8. Contact",
+            "content": "For questions about the terms of service, you can reach us at support@todayrow.app"
+          }
+        }
+      },
+      "backToHome": "Back to Home"
+    }
+  },
+  "welcome": {
+    "title": "Welcome, {name}!",
+    "titleGeneric": "Welcome!",
+    "subtitle": "Get started managing your plans with TodayRow.",
+    "tabs": {
+      "plan": {
+        "title": "Planning",
+        "description": "Create and manage your daily plans",
+        "content": "Focus on today and tomorrow, create plans for specific hours using the 'Add Plan' button. Create new plans by dragging and dropping quick plans or clicking directly on the calendar."
+      },
+      "content": {
+        "title": "Content Management",
+        "description": "Plan your social media posts",
+        "content": "Plan your LinkedIn posts in advance. Save your content as drafts, edit them, and set sharing times. View all your posts together in calendar view."
+      },
+      "notes": {
+        "title": "Notes",
+        "description": "Take notes of your ideas and tasks",
+        "content": "Take quick notes, create folders, and organize your notes. Pin important notes and categorize them with tags. Quickly find your notes using search whenever you need."
+      },
+      "notifications": {
+        "title": "Notifications",
+        "description": "Stay informed of important reminders",
+        "content": "Get reminders for your plans and content. Stay informed of important updates through email notifications. Customize your notification preferences and stay in control."
+      },
+      "settings": {
+        "title": "Settings",
+        "description": "Manage your account and app settings",
+        "content": "Update your profile information, set your theme preferences, and manage other settings. Experience an eye-friendly interface with Dark/Light mode option."
+      }
+    },
+    "buttons": {
+      "start": "Let's Begin"
+    }
+  },
+  "auth": {
+    "welcome": "Welcome",
+    "login": {
+      "title": "Login",
+      "subtitle": "Sign in to your account"
+    },
+    "signup": {
+      "title": "Register",
+      "subtitle": "Create a new account",
+      "loading": "Registering...",
+      "success": "Registration successful! Please check your email for verification.",
+      "emailInUse": "This email is already in use!",
+      "failed": "Registration failed. Please try again."
+    },
+    "verify": {
+      "title": "Email Verification Required",
+      "description": "Please check your email for a verification link and verify your account.",
+      "checkSpam": "Haven't received the email? Don't forget to check your spam folder."
+    },
+    "email": "Email",
+    "password": "Password",
+    "confirmPassword": "Confirm Password",
+    "forgotPassword": "Forgot Password",
+    "noAccount": "Don't have an account?",
+    "hasAccount": "Already have an account?",
+    "or": "or",
+    "continueWithGoogle": "Continue with Google",
+    "continueWithEmail": "Continue with Email",
+    "errors": {
+      "emailRequired": "Email is required",
+      "passwordRequired": "Password is required",
+      "invalidEmail": "Please enter a valid email address",
+      "passwordMatch": "Passwords do not match",
+      "loginFailed": "An error occurred during login",
+      "googleLoginFailed": "An error occurred during Google login",
+      "passwordValidation": {
+        "title": "Your password must meet the following requirements:",
+        "minLength": "At least 8 characters",
+        "upperCase": "At least 1 uppercase letter",
+        "lowerCase": "At least 1 lowercase letter",
+        "number": "At least 1 number",
+        "special": "At least 1 special character (!@#$%^&* etc.)",
+        "noMatch": "Passwords do not match!",
+        "requirements": "Password requirements not met!"
+      }
+    },
+    "notifications": {
+      "loginSuccess": "Successfully logged in!",
+      "checkCredentials": "Login failed. Please check your credentials.",
+      "googleLoginFailed": "Google login failed."
+    },
+    "placeholders": {
+      "email": "Your email address",
+      "password": "Your password",
+      "confirmPassword": "Re-enter your password"
+    }
+  },
+  "settings": {
+    "title": "Settings",
+    "theme": "Theme",
+    "language": "Language",
+    "themes": {
+      "light": "Light",
+      "dark": "Dark",
+      "system": "System"
+    },
+    "languages": {
+      "tr": "Türkçe",
+      "en": "English"
+    }
+  },
+  "landing": {
+    "title": "Own today,",
+    "subtitle": "shape tomorrow.",
+    "features": {
+      "ideas": "ideas",
+      "contents": "contents",
+      "calendar": "calendar",
+      "and": "and",
+      "inOnePlace": "all in one place."
+    }
+  },
+  "views": {
+    "day": {
+      "title": "{date}",
+      "empty": "No content for this day",
+      "more": "+{count} more"
+    },
+    "month": {
+      "title": "{month} {year}",
+      "empty": "No content for this month",
+      "more": "+{count} more"
+    }
+  },
+  "notesFilter": {
+    "folderPlaceholder": "Folder",
+    "tagsPlaceholder": "Tags",
+    "clearFilters": "Clear Filters",
+    "selectedTags": "{count} tags"
+  },
+  "noteDetailModal": {
+    "contentTab": "Content",
+    "backlinksTab": "Backlinks",
+    "noBacklinksMessage": "No other notes reference this note yet.",
+    "editTooltip": "Edit",
+    "pinTooltip": "Pin",
+    "unpinTooltip": "Unpin",
+    "pinSuccess": "Note pinned",
+    "pinError": "An error occurred while pinning",
+    "unpinSuccess": "Note unpinned"
+  }
+}
