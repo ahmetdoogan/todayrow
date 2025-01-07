@@ -9,7 +9,8 @@ import NoteModal from '@/components/notes/NoteModal';
 import { toast } from 'react-toastify';
 
 export default function NotePage() {
-  const { slug } = useParams();
+  const params = useParams();
+  const slug = params?.slug as string;
   const router = useRouter();
   const { notes, toggleNotePin } = useNotes();
   const [note, setNote] = useState<Note | null>(null);
@@ -17,6 +18,12 @@ export default function NotePage() {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
   useEffect(() => {
+    if (!slug) {
+      toast.error('Geçersiz not bağlantısı');
+      router.push('/dashboard/notes');
+      return;
+    }
+
     if (notes.length > 0) {
       const foundNote = notes.find(n => n.slug === slug);
       if (foundNote) {
