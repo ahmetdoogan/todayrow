@@ -190,7 +190,17 @@ export default function NotesPage() {
         viewType={view}
       />
 
-      <NoteDetailModal />
+      <NoteDetailModal 
+  note={viewingNote!}
+  isOpen={!!viewingNote}
+  onClose={() => setViewingNote(null)}
+  onEdit={(note) => {
+    setSelectedNote(note);
+    setIsEditingNote(true);
+    setViewingNote(null);
+  }}
+  onTogglePin={handleTogglePin}
+/>
 
       <NoteModal
         isOpen={isModalOpen || isEditingNote}
