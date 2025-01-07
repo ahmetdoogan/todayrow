@@ -34,8 +34,6 @@ export default function CalendarPage() {
         currentMonth={selectedDate}
         onPrevMonth={navigateToPrevious}
         onNextMonth={navigateToNext}
-        darkMode={theme === 'dark'}
-        toggleTheme={toggleTheme}
       />
 
       <motion.div 

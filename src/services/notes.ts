@@ -124,3 +124,45 @@ export async function getNoteBacklinks(noteTitle: string) {
   if (error) throw error;
   return data as Note[];
 }
+
+// Yeni eklenen fonksiyon: Mevcut notları slug ile güncelle
+export async function migrateExistingNotesToSlug() {
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) throw new Error('Not authenticated');
+
+  // Tüm notları al
+  const { data: notes, error: fetchError } = await supabase
+    .from('Notes')
+    .select('*')
+    .eq('user_id', user.id);
+
+  if (fetchError) throw fetchError;
+
+  // Her bir not için slug oluştur ve güncelle
+  for (const note of notes) {
+    if (!note.slug) {
+      const slug = createSlug(note.title);
+      
+      // Mevcut slugları kontrol et
+      const { data: existingNotes } = await supabase
+        .from('Notes')
+        .select('slug')
+        .eq('user_id', user.id)
+        .neq('id', note.id);  // Kendisi hariç
+        
+      const existingSlugs = existingNotes?.map(n => n.slug).filter(Boolean) || [];
+      const uniqueSlug = makeUniqueSlug(slug, existingSlugs);
+
+      // Notu güncelle
+      const { error: updateError } = await supabase
+        .from('Notes')
+        .update({ slug: uniqueSlug })
+        .eq('id', note.id)
+        .eq('user_id', user.id);
+
+      if (updateError) throw updateError;
+    }
+  }
+
+  console.log('Mevcut notlar başarıyla slug ile güncellendi.');
+}
