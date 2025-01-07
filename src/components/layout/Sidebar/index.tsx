@@ -28,7 +28,8 @@ import { useTranslations } from 'next-intl';
 interface SidebarProps {
   onNewContent: () => void;
   onNewNote: () => void;
-  onCollapse?: (isCollapsed: boolean) => void;
+  onCollapse: (value: boolean) => void;
+  onNewPlan: () => void; 
 }
 
 const Sidebar: React.FC<SidebarProps> = ({ 
