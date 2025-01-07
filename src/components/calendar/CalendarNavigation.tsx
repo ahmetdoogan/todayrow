@@ -3,10 +3,11 @@ import React from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { useTranslations } from 'next-intl';
+import { ViewType } from '@/types/calendar';
 
 interface CalendarNavigationProps {
   view: string;
-  setView: (view: string) => void;
+  setView: (view: ViewType) => void;
   selectedDate: Date;
   setSelectedDate: (date: Date) => void;
   navigateToNext: () => void;
