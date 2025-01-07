@@ -35,7 +35,8 @@ interface SidebarProps {
 const Sidebar: React.FC<SidebarProps> = ({ 
   onNewContent, 
   onNewNote, 
-  onCollapse
+  onCollapse,
+  onNewPlan
 }) => {
   const router = useRouter();
   const pathname = usePathname();
