@@ -45,13 +45,14 @@ export default function NotesPage() {
   }>({ isOpen: false });
 
   useEffect(() => {
-  const openNoteId = searchParams?.get('openNote');
+  const openNoteId = searchParams.get('openNote');
   if (openNoteId) {
     const noteToOpen = notes.find(note => note.id === parseInt(openNoteId));
     if (noteToOpen) {
       setViewingNote(noteToOpen);
     }
   }
+// eslint-disable-next-line react-hooks/exhaustive-deps
 }, [searchParams, notes]);
 
   const handleSave = async (noteData: Partial<Note>) => {
