@@ -1,25 +1,30 @@
 "use client";
-import { useState, useEffect, useCallback } from 'react'; // useCallback'i ekledik
-import { Note, getNoteBacklinks } from '@/services/notes';
+import { useState, useEffect, useCallback } from 'react';
+import { Note, getNoteBacklinks } from '@/services/notes'; // Note tipini buradan import ediyoruz
 import { X, Edit, Pin, FolderOpen, Tag, Calendar, Link } from 'lucide-react';
 import { useDateFormatter } from '@/utils/dateUtils';
 import { motion } from 'framer-motion';
 import NoteContent from './NoteContent';
 import { useRouter } from 'next/navigation';
-import { useNotes } from '@/context/NotesContext';
 import { toast } from 'react-toastify';
 import { useTranslations } from 'next-intl';
 
-export default function NoteDetailModal() {
-  const { 
-    selectedNote,
-    setSelectedNote,
-    setIsEditingNote,
-    toggleNotePin,
-    viewingNote,
-    setViewingNote
-  } = useNotes();
+// Prop tiplerini tanımlıyoruz
+interface NoteDetailModalProps {
+  note: Note;
+  isOpen: boolean;
+  onClose: () => void;
+  onEdit: (note: Note) => void;
+  onTogglePin: (id: number, isPinned: boolean) => Promise<void>;
+}
 
+export default function NoteDetailModal({
+  note,
+  isOpen,
+  onClose,
+  onEdit,
+  onTogglePin,
+}: NoteDetailModalProps) {
   const [activeTab, setActiveTab] = useState<'content' | 'backlinks'>('content');
   const [backlinks, setBacklinks] = useState<Note[]>([]);
   const [isLoadingBacklinks, setIsLoadingBacklinks] = useState(false);
@@ -29,27 +34,27 @@ export default function NoteDetailModal() {
 
   // loadBacklinks fonksiyonunu useCallback ile sarmaladık
   const loadBacklinks = useCallback(async () => {
-    if (!viewingNote) return;
+    if (!note) return;
     
     setIsLoadingBacklinks(true);
     try {
-      const links = await getNoteBacklinks(viewingNote.title);
+      const links = await getNoteBacklinks(note.title);
       setBacklinks(links);
     } catch (error) {
       console.error('Error loading backlinks:', error);
     } finally {
       setIsLoadingBacklinks(false);
     }
-  }, [viewingNote]); // viewingNote dependency'sini ekledik
+  }, [note]); // note dependency'sini ekledik
 
   useEffect(() => {
-    if (viewingNote) {
+    if (note) {
       loadBacklinks();
       
       // Sosyal medya scriptlerini yükle
       const loadSocialScripts = async () => {
         // Twitter/X
-        if (viewingNote.content.includes('twitter.com') || viewingNote.content.includes('x.com')) {
+        if (note.content.includes('twitter.com') || note.content.includes('x.com')) {
           const script = document.createElement('script');
           script.src = 'https://platform.twitter.com/widgets.js';
           script.async = true;
@@ -63,7 +68,7 @@ export default function NoteDetailModal() {
         }
 
         // Instagram
-        if (viewingNote.content.includes('instagram.com')) {
+        if (note.content.includes('instagram.com')) {
           const script = document.createElement('script');
           script.src = '//www.instagram.com/embed.js';
           script.async = true;
@@ -84,34 +89,29 @@ export default function NoteDetailModal() {
       const scripts = document.querySelectorAll('script[src*="twitter"], script[src*="instagram"]');
       scripts.forEach(script => script.remove());
     };
-  }, [viewingNote, loadBacklinks]); // loadBacklinks'i dependency array'e ekledik
+  }, [note, loadBacklinks]); // loadBacklinks'i dependency array'e ekledik
 
   const handleClose = () => {
-    setViewingNote(null);
+    onClose();
     router.push('/dashboard/notes');
   };
 
   const handleEdit = () => {
-    if (viewingNote) {
-      setSelectedNote(viewingNote);
-      setIsEditingNote(true);
-      setViewingNote(null);
-      router.push('/dashboard/notes');  // Notlar sayfasına yönlendir
-    }
+    onEdit(note);
+    router.push('/dashboard/notes');  // Notlar sayfasına yönlendir
   };
 
   const handleTogglePin = async () => {
-    if (!viewingNote) return;
     try {
-      await toggleNotePin(viewingNote.id, !viewingNote.is_pinned);
-      toast.success(viewingNote.is_pinned ? t("unpinSuccess") : t("pinSuccess"));
+      await onTogglePin(note.id, !note.is_pinned);
+      toast.success(note.is_pinned ? t("unpinSuccess") : t("pinSuccess"));
     } catch (error) {
       console.error('Error toggling pin:', error);
       toast.error(t("pinError"));
     }
   };
 
-  if (!viewingNote) return null;
+  if (!isOpen || !note) return null;
 
   return (
     <motion.div 
@@ -134,17 +134,17 @@ export default function NoteDetailModal() {
       >
         <div className="flex items-center justify-between px-6 py-4 border-b border-slate-200 dark:border-slate-800">
           <div className="flex items-center gap-3">
-            <h2 className="text-lg font-semibold text-slate-900 dark:text-white">{viewingNote.title}</h2>
+            <h2 className="text-lg font-semibold text-slate-900 dark:text-white">{note.title}</h2>
             <button
               onClick={handleTogglePin}
               className={`p-1.5 rounded-lg transition-colors ${
-                viewingNote.is_pinned 
+                note.is_pinned 
                   ? 'text-blue-500 hover:bg-blue-50 dark:hover:bg-blue-900/20' 
                   : 'text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800'
               }`}
-              title={viewingNote.is_pinned ? t("unpinTooltip") : t("pinTooltip")}
+              title={note.is_pinned ? t("unpinTooltip") : t("pinTooltip")}
             >
-              <Pin size={16} className={viewingNote.is_pinned ? 'fill-current' : ''} />
+              <Pin size={16} className={note.is_pinned ? 'fill-current' : ''} />
             </button>
           </div>
           <div className="flex items-center gap-2">
@@ -199,25 +199,25 @@ export default function NoteDetailModal() {
           <div className="space-y-2 mb-6 text-sm text-slate-500 dark:text-slate-400">
             <div className="flex items-center gap-2">
               <Calendar className="w-4 h-4" />
-              <span>{formatDate(viewingNote.created_at)}</span>
+              <span>{formatDate(note.created_at)}</span>
             </div>
-            {viewingNote.folder_path && (
+            {note.folder_path && (
               <div className="flex items-center gap-2">
                 <FolderOpen className="w-4 h-4" />
-                <span>{viewingNote.folder_path}</span>
+                <span>{note.folder_path}</span>
               </div>
             )}
-            {viewingNote.tags && (
+            {note.tags && (
               <div className="flex items-center gap-2">
                 <Tag className="w-4 h-4" />
-                <span>{viewingNote.tags}</span>
+                <span>{note.tags}</span>
               </div>
             )}
           </div>
 
           {activeTab === 'content' && (
             <div className="prose dark:prose-invert max-w-none prose-slate prose-headings:scroll-mt-28">
-              <NoteContent content={viewingNote.content} />
+              <NoteContent content={note.content} />
             </div>
           )}
 
