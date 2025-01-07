@@ -86,10 +86,7 @@ function DashboardLayoutInner({
       />
 
       {/* Plan Modal */}
-      <PlanForm
-        isOpen={isPlanModalOpen}
-        onClose={() => setIsPlanModalOpen(false)}
-      />
+      <PlanForm/>
 
       {/* Hoş geldin popup */}
       {showWelcome && (
