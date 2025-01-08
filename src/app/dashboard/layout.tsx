@@ -6,17 +6,12 @@ import ContentModal from '@/components/content/ContentModal';
 import NoteModal from '@/components/notes/NoteModal';
 import PlanForm from '@/components/planner/PlanForm';
 import { PlannerProvider } from '@/context/PlannerContext';
-import { Note } from '@/services/notes';
+import type { Note } from '@/types/notes';
 import { useAuth } from '@/context/AuthContext';
 import { supabase } from '@/utils/supabaseClient';
 import { NotesProvider, useNotes } from '@/context/NotesContext';
 import WelcomePopup from "@/components/onboarding/WelcomePopup";
 
-/**
- * ----------------------------------------------------------------
- * 1) Child Component: Asıl "useNotes()" burada kullanıyoruz
- * ----------------------------------------------------------------
- */
 function DashboardLayoutInner({
   children,
   isContentModalOpen,
@@ -42,7 +37,6 @@ function DashboardLayoutInner({
   showWelcome: boolean;
   setShowWelcome: (v: boolean) => void;
 }) {
-  // Artık HATA vermeyecek, çünkü bu component Provider altında render ediliyor
   const { createNote } = useNotes();
 
   return (
@@ -53,29 +47,20 @@ function DashboardLayoutInner({
         onCollapse={setIsSidebarCollapsed}
         onNewPlan={() => setIsPlanModalOpen(true)}
       />
-      <main
-        className={`
-          flex-1 overflow-auto
-          transition-all duration-300
-          p-4
-        `}
-      >
+      <main className="flex-1 overflow-auto transition-all duration-300 p-4">
         {children}
       </main>
 
-      {/* İçerik Modal */}
       <ContentModal
         isOpen={isContentModalOpen}
         onClose={() => setIsContentModalOpen(false)}
       />
 
-      {/* Not Modal */}
       <NoteModal
         isOpen={isNoteModalOpen}
         onClose={() => setIsNoteModalOpen(false)}
         onSave={async (noteData) => {
           try {
-            // Burada artıık service çağırmak yerine, context fonksiyonunu kullan
             await createNote(noteData);
             setIsNoteModalOpen(false);
           } catch (error) {
@@ -85,10 +70,8 @@ function DashboardLayoutInner({
         }}
       />
 
-      {/* Plan Modal */}
-      <PlanForm/>
+      <PlanForm />
 
-      {/* Hoş geldin popup */}
       {showWelcome && (
         <WelcomePopup onClose={() => setShowWelcome(false)} />
       )}
@@ -96,11 +79,6 @@ function DashboardLayoutInner({
   );
 }
 
-/**
- * ----------------------------------------------------------------
- * 2) Parent Component: Provider'ı saran kısım
- * ----------------------------------------------------------------
- */
 export default function DashboardLayout({
   children,
 }: {
@@ -116,7 +94,6 @@ export default function DashboardLayout({
   const [isChecking, setIsChecking] = useState(true);
   const [showWelcome, setShowWelcome] = useState(false);
 
-  // Session kontrolü
   useEffect(() => {
     const checkSession = async () => {
       try {
@@ -142,7 +119,6 @@ export default function DashboardLayout({
     checkSession();
   }, []);
 
-  // Loading ekranı
   if (isChecking) {
     return (
       <div className="h-screen flex items-center justify-center">
@@ -151,7 +127,6 @@ export default function DashboardLayout({
     );
   }
 
-  // Artık buradaki Provider, alt tarafta DashboardLayoutInner'ı sarıyor
   return (
     <NotesProvider>
       <PlannerProvider>

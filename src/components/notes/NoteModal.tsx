@@ -1,7 +1,7 @@
 "use client";
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from "framer-motion";
-import { Note } from '@/services/notes';
+import type { Note } from '@/types/notes'; // Değişiklik burada
 import { X } from 'lucide-react';
 import MarkdownEditor from './MarkdownEditor';
 import { TagInput } from './TagInput';
@@ -99,7 +99,7 @@ export default function NoteModal({ isOpen, onClose, onSave, initialNote }: Note
                 type="text"
                 placeholder={t('notes.titlePlaceholder')}
                 value={note.title || ''}
-                onChange={(e) => setNote(prev => ({ ...prev, title: e.target.value }))}
+                onChange={(e) => setNote((prev: Partial<Note>) => ({ ...prev, title: e.target.value }))} // prev tipi eklendi
                 className="w-full px-4 py-2.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg text-sm focus:ring-2 focus:ring-slate-900 dark:focus:ring-slate-600 focus:border-transparent"
               />
             </div>
@@ -107,7 +107,7 @@ export default function NoteModal({ isOpen, onClose, onSave, initialNote }: Note
             <div className="min-h-[200px] border border-slate-200 dark:border-slate-700 rounded-lg overflow-hidden">
               <MarkdownEditor
                 value={note.content || ''}
-                onChange={(content) => setNote(prev => ({ ...prev, content }))}
+                onChange={(content) => setNote((prev: Partial<Note>) => ({ ...prev, content }))} // prev tipi eklendi
                 placeholder={t('notes.contentPlaceholder')}
               />
             </div>
@@ -119,7 +119,7 @@ export default function NoteModal({ isOpen, onClose, onSave, initialNote }: Note
                 </label>
                 <TagInput
                   value={note.folder_path || ''}
-                  onChange={(folder_path) => setNote(prev => ({ ...prev, folder_path }))}
+                  onChange={(folder_path) => setNote((prev: Partial<Note>) => ({ ...prev, folder_path }))} // prev tipi eklendi
                   isFolder={true}
                 />
               </div>
@@ -129,7 +129,7 @@ export default function NoteModal({ isOpen, onClose, onSave, initialNote }: Note
                 </label>
                 <TagInput
                   value={note.tags || ''}
-                  onChange={(tags) => setNote(prev => ({ ...prev, tags }))}
+                  onChange={(tags) => setNote((prev: Partial<Note>) => ({ ...prev, tags }))} // prev tipi eklendi
                 />
               </div>
             </div>

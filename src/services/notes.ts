@@ -1,22 +1,8 @@
-import { supabase } from '../utils/supabaseClient';
-import { createSlug, makeUniqueSlug } from '../utils/slugUtils';
+import { supabase } from '@/utils/supabaseClient';
+import { createSlug, makeUniqueSlug } from '@/utils/slugUtils';
+import type { Note } from '@/types/notes'; // Note tipini buradan import ediyoruz
 
-export interface Note {
-  id: number;
-  title: string;
-  content: string;
-  slug: string | null;
-  is_pinned: boolean;
-  tags: string;
-  folder_path: string;
-  format_settings: any;
-  parent_id: number | null;
-  order_index: number;
-  created_at: string;
-  user_id: string;
-}
-
-export async function getNotes() {
+export async function getNotes(): Promise<Note[]> {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) throw new Error('Not authenticated');
 
@@ -31,25 +17,28 @@ export async function getNotes() {
   return data as Note[];
 }
 
-export async function createNote(note: Omit<Note, 'id' | 'created_at' | 'user_id' | 'slug'>) {
+export async function createNote(noteData: Partial<Note>): Promise<Note> {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) throw new Error('Not authenticated');
 
-  // Slug oluştur
-  const slug = createSlug(note.title);
-  
-  // Mevcut slugları kontrol et
-  const { data: existingNotes } = await supabase
-    .from('Notes')
-    .select('slug')
-    .eq('user_id', user.id);
+  // Eğer title varsa slug oluştur
+  let uniqueSlug = null;
+  if (noteData.title) {
+    const slug = createSlug(noteData.title);
     
-  const existingSlugs = existingNotes?.map(n => n.slug).filter(Boolean) || [];
-  const uniqueSlug = makeUniqueSlug(slug, existingSlugs);
+    // Mevcut slugları kontrol et
+    const { data: existingNotes } = await supabase
+      .from('Notes')
+      .select('slug')
+      .eq('user_id', user.id);
+      
+    const existingSlugs = existingNotes?.map(n => n.slug).filter(Boolean) || [];
+    uniqueSlug = makeUniqueSlug(slug, existingSlugs);
+  }
 
   const { data, error } = await supabase
     .from('Notes')
-    .insert([{ ...note, user_id: user.id, slug: uniqueSlug }])
+    .insert([{ ...noteData, user_id: user.id, slug: uniqueSlug }])
     .select()
     .single();
 
@@ -57,15 +46,15 @@ export async function createNote(note: Omit<Note, 'id' | 'created_at' | 'user_id
   return data as Note;
 }
 
-export async function updateNote(id: number, note: Partial<Note>) {
+export async function updateNote(id: number, noteData: Partial<Note>): Promise<Note> {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) throw new Error('Not authenticated');
 
-  let updateData = { ...note };
+  let updateData = { ...noteData };
   
   // Eğer başlık değiştiyse yeni slug oluştur
-  if (note.title) {
-    const slug = createSlug(note.title);
+  if (noteData.title) {
+    const slug = createSlug(noteData.title);
     
     // Mevcut slugları kontrol et
     const { data: existingNotes } = await supabase
@@ -90,7 +79,7 @@ export async function updateNote(id: number, note: Partial<Note>) {
   return data as Note;
 }
 
-export async function deleteNote(id: number) {
+export async function deleteNote(id: number): Promise<void> {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) throw new Error('Not authenticated');
 
@@ -103,11 +92,11 @@ export async function deleteNote(id: number) {
   if (error) throw error;
 }
 
-export async function toggleNotePin(id: number, isPinned: boolean) {
+export async function toggleNotePin(id: number, isPinned: boolean): Promise<Note> {
   return updateNote(id, { is_pinned: !isPinned });
 }
 
-export async function getNoteBacklinks(noteTitle: string) {
+export async function getNoteBacklinks(noteTitle: string): Promise<Note[]> {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) throw new Error('Not authenticated');
 
@@ -125,8 +114,7 @@ export async function getNoteBacklinks(noteTitle: string) {
   return data as Note[];
 }
 
-// Yeni eklenen fonksiyon: Mevcut notları slug ile güncelle
-export async function migrateExistingNotesToSlug() {
+export async function migrateExistingNotesToSlug(): Promise<void> {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) throw new Error('Not authenticated');
 

@@ -12,6 +12,9 @@ interface BaseHeaderProps {
   className?: string;
   showThemeToggle?: boolean;
   noPadding?: boolean;
+  // Type hatasını çözmek için eklediğimiz prop’lar:
+  darkMode?: boolean;
+  toggleTheme?: () => void;
 }
 
 const BaseHeader: React.FC<BaseHeaderProps> = ({
@@ -21,21 +24,30 @@ const BaseHeader: React.FC<BaseHeaderProps> = ({
   className = '',
   showThemeToggle = true,
   noPadding = false,
+  darkMode,         // <-- Ekledik
+  toggleTheme,      // <-- Ekledik
 }) => {
-  const { theme, toggleTheme } = useTheme();
+  // Eğer parent darkMode/toggleTheme göndermediyse context'i kullan
+  const { theme, toggleTheme: contextToggleTheme } = useTheme();
   const t = useTranslations();
-  const isDark = theme === 'dark';
+
+  // Burada "dışarıdan gelen" varsa onu, yoksa context'i alır
+  const isDark = darkMode ?? (theme === 'dark');
+  const handleToggleTheme = toggleTheme ?? contextToggleTheme;
 
   return (
     <div className="sticky top-0 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 z-10">
       <div className="py-3">
         <div className={!noPadding ? 'px-4' : ''}>
-          <header className={`
-            bg-stone-50 dark:bg-slate-800/50 -mt-4 mb-4 shadow-sm border border-gray-200 dark:border-gray-700
-            rounded-xl
-            ${noPadding ? 'p-2' : 'p-4'}
-            ${className}
-          `}>
+          <header
+            className={`
+              bg-stone-50 dark:bg-slate-800/50 -mt-4 mb-4 shadow-sm 
+              border border-gray-200 dark:border-gray-700
+              rounded-xl
+              ${noPadding ? 'p-2' : 'p-4'}
+              ${className}
+            `}
+          >
             <div className="flex justify-between items-center gap-4">
               <div className="flex items-center gap-3">
                 {leftContent}
@@ -47,12 +59,14 @@ const BaseHeader: React.FC<BaseHeaderProps> = ({
 
               <div className="flex items-center gap-3">
                 {rightContent}
-                
+
                 {showThemeToggle && (
                   <button
-                    onClick={toggleTheme}
+                    onClick={handleToggleTheme}
                     className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
-                    aria-label={isDark ? t('common.theme.toggleLight') : t('common.theme.toggleDark')}
+                    aria-label={
+                      isDark ? t('common.theme.toggleLight') : t('common.theme.toggleDark')
+                    }
                   >
                     {isDark ? (
                       <Sun className="h-5 w-5 text-gray-400 hover:text-gray-300" />

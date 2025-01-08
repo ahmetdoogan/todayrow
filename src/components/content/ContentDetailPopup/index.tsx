@@ -5,15 +5,23 @@ import { motion } from 'framer-motion';
 import { useTranslations } from 'next-intl';
 import { Pencil, Trash2, Clock, Check, ArrowLeft, Calendar, Tag, Link, Globe, FileType, Layout, X } from "lucide-react";
 import { useContent } from '@/context/ContentContext';
+import { Content, ContentType, ContentFormat, PlatformType } from '@/types/content';
 import ContentReferences from '../ContentReferences';
 import ContentEditor from '../ContentEditor';
 import PlatformSelector from '../PlatformSelector';
-import PreviewCard from '../PreviewCard';
+import PreviewCard, { PreviewMetadata } from '../PreviewCard';
 import { toast } from 'react-toastify';
 
 const WIKI_LINK_REGEX = /\[\[(.+?)\]\]/g;
 
-const ContentDetailPopup: React.FC = () => {
+interface Props {
+  isOpen: boolean;
+  onClose: () => void;
+  selectedContent: Content | null;
+  onContentUpdated?: () => void;
+}
+
+const ContentDetailPopup: React.FC<Props> = ({ isOpen, onClose, selectedContent: initialContent, onContentUpdated }) => {
   const t = useTranslations('common.content.detail');
   const {
     selectedContent,
@@ -31,12 +39,12 @@ const ContentDetailPopup: React.FC = () => {
   } = useContent();
 
   const [isEditing, setIsEditing] = useState(false);
-  const [editData, setEditData] = useState(selectedContent);
+  const [editData, setEditData] = useState<Content | null>(selectedContent);
 
   if (!selectedContent) return null;
 
   const processContent = (content: string) => {
-    const parts = [];
+    const parts: (string | JSX.Element)[] = [];
     let lastIndex = 0;
     let match;
 
@@ -79,16 +87,48 @@ const ContentDetailPopup: React.FC = () => {
   };
 
   const handleUpdateContent = async () => {
+    if (!editData || !selectedContent) return;
+
     try {
-      const updated = await handleUpdate(selectedContent.id, editData);
+      const updateData = {
+        title: editData.title,
+        details: editData.details,
+        type: editData.type as ContentType,
+        format: editData.format as ContentFormat,
+        timeFrame: editData.timeFrame,
+        date: editData.date,
+        tags: editData.tags,
+        platforms: editData.platforms,
+        url: editData.url,
+        preview_data: editData.preview_data,
+        is_completed: editData.is_completed,
+        is_deleted: editData.is_deleted
+      };
+
+      const updated = await handleUpdate(selectedContent.id, updateData);
       if (updated) {
         setSelectedContent(updated);
         setIsEditing(false);
+        onContentUpdated?.();
       }
     } catch (error) {
       console.error('Update error:', error);
       toast.error(t('messages.updateError'));
     }
+  };
+
+  const handlePlatformToggle = (platform: PlatformType) => {
+    if (!editData) return;
+    
+    setEditData(prev => {
+      if (!prev) return prev;
+      return {
+        ...prev,
+        platforms: prev.platforms.includes(platform)
+          ? prev.platforms.filter(p => p !== platform)
+          : [...prev.platforms, platform]
+      };
+    });
   };
 
   return (
@@ -98,7 +138,7 @@ const ContentDetailPopup: React.FC = () => {
       transition={{ duration: 0.2 }}
       className="fixed inset-0 z-50 flex items-center justify-center bg-black/20 dark:bg-black/40 backdrop-blur-sm"
       style={{ zIndex: 50 + modalStack.length }}
-      onClick={() => {
+      onClick={(e: React.MouseEvent) => {
         if (modalStack.length > 0) {
           popFromModalStack();
         } else {
@@ -111,7 +151,7 @@ const ContentDetailPopup: React.FC = () => {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.2 }}
         className="w-full max-w-2xl mx-4 bg-white dark:bg-slate-900 rounded-2xl shadow-xl max-h-[90vh] overflow-y-auto"
-        onClick={(e) => e.stopPropagation()}
+        onClick={(e: React.MouseEvent) => e.stopPropagation()}
       >
         {isEditing ? (
           <div>
@@ -127,22 +167,17 @@ const ContentDetailPopup: React.FC = () => {
                   {t('fields.platforms')}
                 </label>
                 <PlatformSelector 
-                  selectedPlatforms={editData.platforms}
-                  onPlatformToggle={(platform) => {
-                    setEditData(prev => ({
-                      ...prev,
-                      platforms: prev.platforms.includes(platform) 
-                        ? prev.platforms.filter(p => p !== platform)
-                        : [...prev.platforms, platform]
-                    }));
-                  }}
+                  selectedPlatforms={editData?.platforms || []}
+                  onPlatformToggle={handlePlatformToggle}
                 />
               </div>
 
               <input
                 type="text"
-                value={editData.title}
-                onChange={(e) => setEditData(prev => ({ ...prev, title: e.target.value }))}
+                value={editData?.title || ''}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => 
+                  setEditData(prev => prev ? { ...prev, title: e.target.value } : prev)
+                }
                 className="w-full px-4 py-2.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg text-sm focus:ring-2 focus:ring-slate-900 dark:focus:ring-slate-600 focus:border-transparent"
                 placeholder={t('fields.title.placeholder')}
               />
@@ -153,13 +188,15 @@ const ContentDetailPopup: React.FC = () => {
                 </label>
                 <input
                   type="text"
-                  value={editData.url || ''}
-                  onChange={(e) => setEditData(prev => ({ ...prev, url: e.target.value }))}
+                  value={editData?.url || ''}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => 
+                    setEditData(prev => prev ? { ...prev, url: e.target.value } : prev)
+                  }
                   className="w-full px-4 py-2.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg text-sm focus:ring-2 focus:ring-slate-900 dark:focus:ring-slate-600 focus:border-transparent"
                   placeholder={t('fields.url.placeholder')}
                 />
-                {editData.preview_data && Object.keys(editData.preview_data).length > 0 && (
-                  <PreviewCard metadata={editData.preview_data} />
+                {editData?.preview_data && Object.keys(editData.preview_data).length > 0 && (
+                  <PreviewCard metadata={editData.preview_data as PreviewMetadata} />
                 )}
               </div>
 
@@ -170,11 +207,12 @@ const ContentDetailPopup: React.FC = () => {
                     {t('fields.type.label')}
                   </label>
                   <select
-                    value={editData.type}
-                    onChange={(e) => setEditData(prev => ({ ...prev, type: e.target.value }))}
+                    value={editData?.type || ''}
+                    onChange={(e: React.ChangeEvent<HTMLSelectElement>) => 
+                      setEditData(prev => prev ? { ...prev, type: e.target.value as ContentType } : prev)
+                    }
                     className="w-full px-4 py-2.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg text-sm focus:ring-2 focus:ring-slate-900 dark:focus:ring-slate-600 focus:border-transparent"
                   >
-                    {/* Yeni tür seçenekleri */}
                     <option value="GENERAL">{t('fields.type.options.GENERAL')}</option>
                     <option value="EXPERIENCE">{t('fields.type.options.EXPERIENCE')}</option>
                     <option value="EDUCATION">{t('fields.type.options.EDUCATION')}</option>
@@ -194,11 +232,12 @@ const ContentDetailPopup: React.FC = () => {
                     {t('fields.format.label')}
                   </label>
                   <select
-                    value={editData.format}
-                    onChange={(e) => setEditData(prev => ({ ...prev, format: e.target.value }))}
+                    value={editData?.format || ''}
+                    onChange={(e: React.ChangeEvent<HTMLSelectElement>) => 
+                      setEditData(prev => prev ? { ...prev, format: e.target.value as ContentFormat } : prev)
+                    }
                     className="w-full px-4 py-2.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg text-sm focus:ring-2 focus:ring-slate-900 dark:focus:ring-slate-600 focus:border-transparent"
                   >
-                    {/* Yeni format seçenekleri */}
                     <option value="TEXT">{t('fields.format.options.TEXT')}</option>
                     <option value="VIDEO">{t('fields.format.options.VIDEO')}</option>
                     <option value="PODCAST">{t('fields.format.options.PODCAST')}</option>
@@ -218,8 +257,10 @@ const ContentDetailPopup: React.FC = () => {
                   </label>
                   <input
                     type="date"
-                    value={editData.date}
-                    onChange={(e) => setEditData(prev => ({ ...prev, date: e.target.value }))}
+                    value={editData?.date || ''}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => 
+                      setEditData(prev => prev ? { ...prev, date: e.target.value } : prev)
+                    }
                     className="w-full px-4 py-2.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg text-sm focus:ring-2 focus:ring-slate-900 dark:focus:ring-slate-600 focus:border-transparent"
                   />
                 </div>
@@ -230,8 +271,10 @@ const ContentDetailPopup: React.FC = () => {
                   </label>
                   <input
                     type="text"
-                    value={editData.timeFrame}
-                    onChange={(e) => setEditData(prev => ({ ...prev, timeFrame: e.target.value }))}
+                    value={editData?.timeFrame || ''}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => 
+                      setEditData(prev => prev ? { ...prev, timeFrame: e.target.value } : prev)
+                    }
                     className="w-full px-4 py-2.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg text-sm focus:ring-2 focus:ring-slate-900 dark:focus:ring-slate-600 focus:border-transparent"
                     placeholder={t('fields.time.placeholder')}
                   />
@@ -245,8 +288,10 @@ const ContentDetailPopup: React.FC = () => {
                 </label>
                 <input
                   type="text"
-                  value={editData.tags}
-                  onChange={(e) => setEditData(prev => ({ ...prev, tags: e.target.value }))}
+                  value={editData?.tags || ''}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => 
+                    setEditData(prev => prev ? { ...prev, tags: e.target.value } : prev)
+                  }
                   className="w-full px-4 py-2.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg text-sm focus:ring-2 focus:ring-slate-900 dark:focus:ring-slate-600 focus:border-transparent"
                   placeholder={t('fields.tags.placeholder')}
                 />
@@ -257,8 +302,10 @@ const ContentDetailPopup: React.FC = () => {
                   {t('fields.description.label')}
                 </label>
                 <ContentEditor
-                  value={editData.details}
-                  onChange={(value) => setEditData(prev => ({ ...prev, details: value }))}
+                  value={editData?.details || ''}
+                  onChange={(value) => 
+                    setEditData(prev => prev ? { ...prev, details: value } : prev)
+                  }
                   placeholder={t('fields.description.placeholder')}
                 />
               </div>
@@ -343,7 +390,7 @@ const ContentDetailPopup: React.FC = () => {
                     </a>
                   </div>
                   {selectedContent.preview_data && Object.keys(selectedContent.preview_data).length > 0 && (
-                    <PreviewCard metadata={selectedContent.preview_data} />
+                    <PreviewCard metadata={selectedContent.preview_data as PreviewMetadata} />
                   )}
                 </div>
               )}
@@ -352,7 +399,6 @@ const ContentDetailPopup: React.FC = () => {
                 {processContent(selectedContent.details)}
               </div>
 
-              {/* Type & Format rozeti */}
               <div className="flex flex-wrap gap-2">
                 <span className="px-3 py-1.5 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 rounded-xl text-sm">
                   {t(`fields.type.options.${selectedContent.type}`)}

@@ -1,6 +1,7 @@
 "use client";
 import { useState, useEffect, useCallback } from 'react';
-import { Note, getNoteBacklinks } from '@/services/notes'; // Note tipini buradan import ediyoruz
+import type { Note } from '@/types/notes'; // Değişiklik burada
+import { getNoteBacklinks } from '@/services/notes'; // getNoteBacklinks'i ayrı import ediyoruz
 import { X, Edit, Pin, FolderOpen, Tag, Calendar, Link } from 'lucide-react';
 import { useDateFormatter } from '@/utils/dateUtils';
 import { motion } from 'framer-motion';

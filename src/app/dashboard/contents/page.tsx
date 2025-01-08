@@ -12,7 +12,7 @@ import { motion } from "framer-motion";
 export default function ContentsPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [view, setView] = useState<'grid' | 'list'>('grid');
-  const { filteredContents, selectedContent } = useContent();
+  const { filteredContents, selectedContent, setSelectedContent } = useContent(); // setSelectedContent ekledik
 
   // Liste ve Grid view için CSS sınıfları
   const contentContainerClasses = view === 'grid'
@@ -70,7 +70,13 @@ export default function ContentsPage() {
       </div>
 
       {/* Modals */}
-      {selectedContent && <ContentDetailPopup />}
+      {selectedContent && (
+        <ContentDetailPopup
+          isOpen={true}
+          onClose={() => setSelectedContent(null)} // Popup kapatıldığında selectedContent'i null yap
+          selectedContent={selectedContent}
+        />
+      )}
       <ContentModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}

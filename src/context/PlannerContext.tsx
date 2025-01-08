@@ -5,9 +5,10 @@ import { toast } from "react-toastify";
 import { plannerService } from '@/services/plannerService';
 import { useAuth } from './AuthContext';
 import { useTranslations } from 'next-intl';
-import type { Plan, QuickPlan, NewPlanData, PlanUpdateData, NewQuickPlanData } from '@/types/planner';
+import type { Plan, QuickPlan, NewPlanData, PlanUpdateData, NewQuickPlanData, User } from '@/types/planner';
 
 interface PlannerContextType {
+  user: User;
   plans: Plan[];
   quickPlans: QuickPlan[];
   selectedDate: Date;
@@ -70,7 +71,6 @@ export function PlannerProvider({ children }: { children: React.ReactNode }) {
   const [selectedPlanIds, setSelectedPlanIds] = useState<number[]>([]);
   const [hiddenSystemPlans, setHiddenSystemPlans] = useState<number[]>([]);
 
-  // Load hidden plans on user change
   useEffect(() => {
     const loadHiddenPlans = async () => {
       if (user) {
@@ -86,7 +86,6 @@ export function PlannerProvider({ children }: { children: React.ReactNode }) {
     loadHiddenPlans();
   }, [user]);
 
-  // Toggle system plan visibility
   const toggleSystemPlanVisibility = async (planId: number) => {
     if (!user) return;
 
@@ -103,7 +102,6 @@ export function PlannerProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-  // Selection mode (çoklu silme vs.)
   const togglePlanSelection = (id: number) => {
     setSelectedPlanIds(prev =>
       prev.includes(id) ? prev.filter(p => p !== id) : [...prev, id]
@@ -145,7 +143,6 @@ export function PlannerProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-  // Tarih kontrolü
   const today = new Date();
   const tomorrow = new Date(today);
   tomorrow.setDate(tomorrow.getDate() + 1);
@@ -177,7 +174,6 @@ export function PlannerProvider({ children }: { children: React.ReactNode }) {
     }
   }, [isSelectionMode]);
 
-  // Plan CRUD
   const createPlan = async (data: NewPlanData) => {
     if (!user || !canEdit) return;
     try {
@@ -253,7 +249,6 @@ export function PlannerProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-  // QuickPlan (hazır plan) CRUD
   const createQuickPlan = async (data: NewQuickPlanData) => {
     if (!user) return;
     try {
@@ -279,7 +274,6 @@ export function PlannerProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-  // fetchQuickPlans fonksiyonunu useCallback ile sarmaladık
   const fetchQuickPlans = useCallback(async () => {
     if (!user) return;
     try {
@@ -289,15 +283,14 @@ export function PlannerProvider({ children }: { children: React.ReactNode }) {
       console.error('Hazır planlar alınırken hata:', error);
       toast.error(t('loadError'));
     }
-  }, [user, t]); // user ve t dependency'lerini ekledik
+  }, [user, t]);
 
   useEffect(() => {
     if (user) {
       fetchQuickPlans();
     }
-  }, [user, fetchQuickPlans]); // fetchQuickPlans'ı dependency array'e ekledik
+  }, [user, fetchQuickPlans]);
 
-  // *** Sürükle-bırak "Hazır Plan" fonksiyonu ***
   const handleQuickPlanDrop = async (quickPlan: QuickPlan, dropTime: string) => {
     if (!user || !canEdit) return;
 
@@ -318,9 +311,11 @@ export function PlannerProvider({ children }: { children: React.ReactNode }) {
         end_time: endTime.toISOString(),
         is_completed: false,
         plan_type: 'predefined',
-        color: quickPlan.color,
+        color: quickPlan.color || 'defaultColor',
         order: 0,
-        user_id: user.id
+        user_id: user.id,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
       });
       setIsModalOpen(true);
     } catch (error) {
@@ -331,6 +326,11 @@ export function PlannerProvider({ children }: { children: React.ReactNode }) {
   return (
     <PlannerContext.Provider
       value={{
+        user: {
+          ...user!,
+          email: user?.email || "no-email@example.com",
+          name: user?.user_metadata?.name || user?.email || "Unknown",
+        },
         plans,
         quickPlans,
         selectedDate,
@@ -362,7 +362,7 @@ export function PlannerProvider({ children }: { children: React.ReactNode }) {
         togglePlanSelection,
         bulkDeletePlans,
         bulkCompletePlans,
-        fetchPlans
+        fetchPlans,
       }}
     >
       {children}

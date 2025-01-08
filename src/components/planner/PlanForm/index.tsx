@@ -1,13 +1,15 @@
 "use client";
 
-import React, { useEffect, useState, useMemo } from 'react'; // useMemo'yu buraya ekledik
+import React, { useEffect, useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Clock } from 'lucide-react';
 import { usePlanner } from '@/context/PlannerContext';
 import { useTranslations } from 'next-intl';
 import { toast } from 'react-toastify';
+import { useAuth } from '@/context/AuthContext';
 
 export default function PlanForm() {
+  const { user } = useAuth();
   const {
     isModalOpen,
     setIsModalOpen,
@@ -23,12 +25,11 @@ export default function PlanForm() {
 
   const t = useTranslations('common');
 
-  // today ve tomorrow değişkenlerini useMemo ile memoize ediyoruz
   const today = useMemo(() => new Date(), []);
   const tomorrow = useMemo(() => {
-    const t = new Date(today);
-    t.setDate(t.getDate() + 1);
-    return t;
+    const temp = new Date(today);
+    temp.setDate(temp.getDate() + 1);
+    return temp;
   }, [today]);
 
   function compareDate(d1: Date, d2: Date) {
@@ -46,21 +47,33 @@ export default function PlanForm() {
     isToday ? 'today' : 'tomorrow'
   );
 
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<{
+    title: string;
+    details: string;
+    start_time: string;
+    end_time: string;
+    plan_type: 'custom' | 'predefined' | 'regular' | 'quick';
+    order: number;
+    color: string;
+    is_completed: boolean;
+  }>({
     title: '',
     details: '',
     start_time: '',
     end_time: '',
-    plan_type: 'custom' as 'custom' | 'predefined',
-    order: 0
+    plan_type: 'custom',
+    order: 0,
+    color: '',
+    is_completed: false,
   });
+
   const [error, setError] = useState('');
 
   useEffect(() => {
     setError('');
 
-    // 1) Mevcut planı düzenle
     if (selectedPlan && selectedPlan.id !== 0) {
+      // 1) Mevcut planı düzenle
       const st = new Date(selectedPlan.start_time);
       const et = new Date(selectedPlan.end_time);
 
@@ -75,8 +88,10 @@ export default function PlanForm() {
           .getMinutes()
           .toString()
           .padStart(2, '0')}`,
-        plan_type: selectedPlan.plan_type as 'custom' | 'predefined',
-        order: selectedPlan.order
+        plan_type: selectedPlan.plan_type,
+        order: selectedPlan.order,
+        color: selectedPlan.color || 'bg-violet-500',
+        is_completed: selectedPlan.is_completed,
       });
 
       if (compareDate(new Date(selectedPlan.start_time), today)) {
@@ -84,9 +99,8 @@ export default function PlanForm() {
       } else {
         setSelectedDay('tomorrow');
       }
-    }
-    // 2) DraggedPlan'dan gelen veriler (hazır plan)
-    else if (draggedPlan) {
+    } else if (draggedPlan) {
+      // 2) DraggedPlan'dan gelen veriler (hazır plan)
       const [h, m] = draggedPlan.dropTime.split(':').map(Number);
       const endH = (h + 1) % 24;
 
@@ -99,13 +113,13 @@ export default function PlanForm() {
           .padStart(2, '0')}`,
         plan_type: 'predefined',
         order: 0,
-        color: draggedPlan.quickPlan.color
+        color: draggedPlan.quickPlan.color || 'bg-violet-500',
+        is_completed: false,
       });
 
       setSelectedDay(isToday ? 'today' : 'tomorrow');
-    }
-    // 3) Yeni plan (selectedPlan.id === 0)
-    else if (selectedPlan && selectedPlan.id === 0) {
+    } else if (selectedPlan && selectedPlan.id === 0) {
+      // 3) Yeni plan (selectedPlan.id === 0)
       const st = new Date(selectedPlan.start_time);
       const et = new Date(selectedPlan.end_time);
 
@@ -120,13 +134,14 @@ export default function PlanForm() {
           .getMinutes()
           .toString()
           .padStart(2, '0')}`,
-        plan_type: 'custom', // Manuel oluşturma
-        order: 0
+        plan_type: 'custom',
+        order: 0,
+        color: 'bg-violet-500',
+        is_completed: false,
       });
       setSelectedDay(isToday ? 'today' : 'tomorrow');
-    }
-    // 4) Sıfırdan form
-    else {
+    } else {
+      // 4) Sıfırdan form
       const now = new Date();
       const defaultStart = `${now.getHours().toString().padStart(2, '0')}:${(
         Math.floor(now.getMinutes() / 30) * 30
@@ -149,11 +164,13 @@ export default function PlanForm() {
         start_time: defaultStart,
         end_time: defaultEnd,
         plan_type: 'custom',
-        order: 0
+        order: 0,
+        color: 'bg-violet-500',
+        is_completed: false,
       });
       setSelectedDay(isToday ? 'today' : 'tomorrow');
     }
-  }, [selectedPlan, draggedPlan, isToday, isTomorrow, today]); // today artık sabit olduğu için useEffect gereksiz yere tetiklenmeyecek
+  }, [selectedPlan, draggedPlan, isToday, isTomorrow, today]);
 
   function validateTimes(start: string, end: string) {
     const [sh, sm] = start.split(':').map(Number);
@@ -186,10 +203,12 @@ export default function PlanForm() {
     const endDate = new Date(dayDate);
     endDate.setHours(eh, em, 0, 0);
 
+    // user_id: user?.id || 0  --> undefined ise 0 yapıyoruz (veya '' da olabilir)
     const planData = {
       ...formData,
       start_time: startDate.toISOString(),
-      end_time: endDate.toISOString()
+      end_time: endDate.toISOString(),
+      user_id: user?.id || 0,
     };
 
     try {
@@ -201,7 +220,11 @@ export default function PlanForm() {
         await createPlan(planData);
       }
       handleClose();
-      toast.success(isEditingPlan ? t('planner.notifications.updateSuccess') : t('planner.notifications.createSuccess'));
+      toast.success(
+        isEditingPlan
+          ? t('planner.notifications.updateSuccess')
+          : t('planner.notifications.createSuccess')
+      );
     } catch (err) {
       console.error('Form gönderilirken hata:', err);
       setError(t('plannerForm.submitError'));
@@ -279,8 +302,8 @@ export default function PlanForm() {
                   onChange={(e) => setFormData({ ...formData, title: e.target.value })}
                   placeholder={t('plannerForm.titlePlaceholder')}
                   className="w-full px-4 py-3 text-base bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl 
-                           focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all
-                           placeholder:text-gray-400 dark:placeholder:text-gray-500"
+                    focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all
+                    placeholder:text-gray-400 dark:placeholder:text-gray-500"
                   required
                 />
               </div>
@@ -299,7 +322,7 @@ export default function PlanForm() {
                         setFormData({ ...formData, start_time: e.target.value })
                       }
                       className="w-full pl-10 pr-4 py-2 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg
-                               focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all"
+                        focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all"
                       required
                     />
                   </div>
@@ -317,7 +340,7 @@ export default function PlanForm() {
                         setFormData({ ...formData, end_time: e.target.value })
                       }
                       className="w-full pl-10 pr-4 py-2 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg
-                               focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all"
+                        focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all"
                       required
                     />
                   </div>
@@ -337,8 +360,8 @@ export default function PlanForm() {
                   placeholder={t('plannerForm.detailsPlaceholder')}
                   rows={3}
                   className="w-full px-4 py-3 text-base bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl
-                           focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all
-                           placeholder:text-gray-400 dark:placeholder:text-gray-500 resize-none"
+                    focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all
+                    placeholder:text-gray-400 dark:placeholder:text-gray-500 resize-none"
                 />
               </div>
 
@@ -347,7 +370,7 @@ export default function PlanForm() {
                   type="button"
                   onClick={handleClose}
                   className="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-800 
-                           rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
+                    rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
                 >
                   {t('plannerForm.cancel')}
                 </button>

@@ -3,12 +3,14 @@ import React from 'react';
 import { Search } from 'lucide-react';
 import { Content } from '@/types/content';
 import { Plan } from '@/types/planner';
-import { Note } from '@/types/notes';
+import type { Note } from '@/types/notes';
 
-// SearchResult type'ını genişletiyoruz
-type SearchResult = (Content | Note | Plan) & {
-  type: 'content' | 'note' | 'plan';
-};
+type SearchResultType = 'content' | 'note' | 'plan'; // Bu satırı ekledik
+
+type SearchResult =
+  | (Content & { type: 'content' })
+  | (Note & { type: 'note' })
+  | (Plan & { type: 'plan' });
 
 interface SearchDropdownProps {
   searchValue: string;
@@ -25,7 +27,7 @@ const SearchDropdown: React.FC<SearchDropdownProps> = ({
 }) => {
   if (searchValue === "" || searchResults.length === 0) return null;
 
-  const getBadgeStyle = (type: string) => {
+  const getBadgeStyle = (type: SearchResultType) => {
     switch(type) {
       case 'content':
         return 'bg-blue-50 text-blue-600 dark:bg-blue-900/30 dark:text-blue-200';
@@ -38,21 +40,26 @@ const SearchDropdown: React.FC<SearchDropdownProps> = ({
     }
   };
 
-  const getTypeLabel = (type: string) => {
+  const getTypeLabel = (type: SearchResultType) => {
     switch(type) {
-      case 'content':
-        return 'İçerik';
-      case 'note':
-        return 'Not';
-      case 'plan':
-        return 'Plan';
-      default:
-        return type;
+      case 'content': return 'İçerik';
+      case 'note':    return 'Not';
+      case 'plan':    return 'Plan';
+      default:        return type;
     }
   };
 
   return (
-    <div className={`absolute left-0 right-0 mt-2 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 max-h-80 overflow-y-auto z-50 ${className}`}>
+    <div
+      className={`
+        absolute left-0 right-0 mt-2 
+        bg-white dark:bg-gray-800 
+        rounded-lg shadow-lg 
+        border border-gray-200 dark:border-gray-700 
+        max-h-80 overflow-y-auto z-50 
+        ${className}
+      `}
+    >
       <div className="p-2">
         {searchResults.map((result) => (
           <button
@@ -71,9 +78,12 @@ const SearchDropdown: React.FC<SearchDropdownProps> = ({
                     {getTypeLabel(result.type)}
                   </span>
                 </div>
+                
                 <p className="text-sm text-gray-500 dark:text-gray-400 line-clamp-1 mt-0.5">
-                  {'content' in result ? result.content :
-                   'details' in result ? result.details : result.content}
+                  {result.type === 'plan'
+                    ? result.details
+                    : result.content
+                  }
                 </p>
               </div>
             </div>

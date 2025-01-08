@@ -2,7 +2,8 @@
 
 import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import { Note, updateNote, getNotes } from '@/services/notes';
+import type { Note } from '@/types/notes'; // Değişiklik burada
+import { updateNote, getNotes } from '@/services/notes'; // Değişiklik burada
 import { useNotes } from '@/context/NotesContext';
 import NoteDetailModal from '@/components/notes/NoteDetailModal';
 import NoteModal from '@/components/notes/NoteModal';

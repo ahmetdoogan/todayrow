@@ -2,23 +2,12 @@
 import React from 'react';
 import { Calendar, Check, ArrowLeft } from "lucide-react";
 import { useContent } from '@/context/ContentContext';
-import { PlatformType } from '@/types/content';
+import { Content, PlatformType } from '@/types/content';
 import PlatformIcons from '@/components/common/PlatformIcons';
 import { useTranslations } from 'next-intl';
 
 interface ContentCardProps {
-  content: {
-    id: number;
-    title: string;
-    details: string;
-    date: string;
-    type: string;
-    format: string;
-    timeFrame: string;
-    tags: string;
-    is_completed: boolean;
-    platforms: PlatformType[];
-  };
+  content: Omit<Content, 'created_at' | 'updated_at' | 'references_to' | 'referenced_by'> // Content tipini direkt kullanalım ama bazı opsiyonel fieldları çıkaralım
   viewType?: 'grid' | 'list';
 }
 

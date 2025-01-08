@@ -100,7 +100,7 @@ const Sidebar: React.FC<SidebarProps> = ({
     }
   };
 
-  const handlePlanCreate = () => {
+    const handlePlanCreate = () => {
     setDraggedPlan(null);
     const now = new Date();
     const planStartTime = new Date(selectedDate);
@@ -118,12 +118,16 @@ const Sidebar: React.FC<SidebarProps> = ({
       plan_type: 'regular',
       order: 0,
       user_id: user?.id || 0,
+      color: '#000000',
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
     };
 
     setSelectedPlan(newPlan);
     setIsEditingPlan(false);
     setIsModalOpen(true);
   };
+
 
   useEffect(() => {
     if (searchTimeout) clearTimeout(searchTimeout);

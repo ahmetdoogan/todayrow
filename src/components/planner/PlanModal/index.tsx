@@ -8,13 +8,14 @@ import {
   Trash2, 
   CheckSquare,
   X,
-  Tag,
-  CalendarClock
+  Tag
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { usePlanner } from '@/context/PlannerContext';
-import { format } from 'date-fns';
-import { tr } from 'date-fns/locale';
+// import { format } from 'date-fns';         // date-fns v2 ile 3. argüman sorunsuz kullanılabilir
+// import { tr } from 'date-fns/locale';     // Şu an devre dışı bırakıyoruz
+
+import { format } from 'date-fns';         
 
 const PlanModal = () => {
   const { 
@@ -56,12 +57,13 @@ const PlanModal = () => {
     setIsEditingPlan(true);
   };
 
+  // ↓ Artık üçüncü argümanı (locale) kaldırdık
   const formatTime = (dateString: string) => {
-    return format(new Date(dateString), 'HH:mm', { locale: tr });
+    return format(new Date(dateString), 'HH:mm');
   };
 
   const formatDate = (dateString: string) => {
-    return format(new Date(dateString), 'dd MMMM yyyy', { locale: tr });
+    return format(new Date(dateString), 'dd MMMM yyyy');
   };
 
   return (

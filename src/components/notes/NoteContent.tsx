@@ -26,11 +26,10 @@ export default function NoteContent({ content, isPreview = false }: Props) {
         script.charset = 'utf-8';
         script.onload = () => {
           // Script yüklendikten sonra widget'ları yenile
-          if (window.twttr && window.twttr.widgets) {
-            setTimeout(() => {
-              window.twttr.widgets.load();
-            }, 100);
-          }
+          // Optional chaining ile TS hatasını çözüyoruz
+          setTimeout(() => {
+            window.twttr?.widgets?.load();
+          }, 100);
         };
         document.body.appendChild(script);
       }
@@ -41,11 +40,10 @@ export default function NoteContent({ content, isPreview = false }: Props) {
         script.src = '//www.instagram.com/embed.js';
         script.async = true;
         script.onload = () => {
-          if (window.instgrm && window.instgrm.Embeds) {
-            setTimeout(() => {
-              window.instgrm.Embeds.process();
-            }, 100);
-          }
+          // Optional chaining ile TS hatasını çözüyoruz
+          setTimeout(() => {
+            window.instgrm?.Embeds?.process();
+          }, 100);
         };
         document.body.appendChild(script);
       }
@@ -65,7 +63,7 @@ export default function NoteContent({ content, isPreview = false }: Props) {
     let lastIndex = 0;
 
     const matches = Array.from(content.matchAll(URL_REGEX));
-    
+
     matches.forEach((match) => {
       const url = match[0];
       const startIndex = match.index!;
@@ -116,7 +114,7 @@ export default function NoteContent({ content, isPreview = false }: Props) {
           );
         } else if (part.type === 'embed') {
           return (
-            <div 
+            <div
               key={index}
               className={`overflow-hidden ${isPreview ? '' : 'my-4'}`}
               dangerouslySetInnerHTML={{ __html: part.content }}
@@ -124,7 +122,7 @@ export default function NoteContent({ content, isPreview = false }: Props) {
           );
         } else if (part.type === 'url') {
           return (
-            <a 
+            <a
               key={index}
               href={part.content}
               target="_blank"

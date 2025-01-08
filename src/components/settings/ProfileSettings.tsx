@@ -1,7 +1,7 @@
 "use client";
 import React from 'react';
 import { motion } from 'framer-motion';
-import Image from "next/image"; // Image bileşenini import ediyoruz
+import Image from "next/image";
 import { User, MapPin, Globe, BookText, BadgeCheck, Linkedin } from 'lucide-react';
 import { useProfile } from '@/hooks/useProfile';
 import { toast } from 'react-toastify';
@@ -44,7 +44,12 @@ const ProfileSettings = () => {
             ) : (
               <div className="w-16 h-16 rounded-full bg-violet-500 flex items-center justify-center text-white text-xl font-medium border-2 border-slate-200 dark:border-slate-700">
                 {session?.user?.user_metadata?.name ? 
-                  session.user.user_metadata.name.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2)
+                  session.user.user_metadata.name
+                    .split(' ')
+                    .map((n: string) => n[0]) // <-- TIP EKLEDİK
+                    .join('')
+                    .toUpperCase()
+                    .substring(0, 2)
                   : 
                   session?.user?.email?.substring(0, 2).toUpperCase()
                 }
@@ -83,7 +88,9 @@ const ProfileSettings = () => {
         >
           <div className="flex items-center gap-3 mb-3">
             <User className="w-5 h-5 text-slate-700 dark:text-slate-400" />
-            <span className="text-sm text-slate-700 dark:text-slate-300">{t('fields.title.label')}</span>
+            <span className="text-sm text-slate-700 dark:text-slate-300">
+              {t('fields.title.label')}
+            </span>
           </div>
           <input
             type="text"
@@ -106,7 +113,9 @@ const ProfileSettings = () => {
         >
           <div className="flex items-center gap-3 mb-3">
             <Linkedin className="w-5 h-5 text-slate-700 dark:text-slate-400" />
-            <span className="text-sm text-slate-700 dark:text-slate-300">{t('fields.linkedin.label')}</span>
+            <span className="text-sm text-slate-700 dark:text-slate-300">
+              {t('fields.linkedin.label')}
+            </span>
           </div>
           <input
             type="text"

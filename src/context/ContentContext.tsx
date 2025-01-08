@@ -106,7 +106,7 @@ export function ContentProvider({ children }: { children: React.ReactNode }) {
         
         setContents(data.map(content => ({
           ...content,
-          platforms: content.platforms || (content.platform ? [content.platform] : ['LINKEDIN']),
+          platforms: content.platforms || ['LINKEDIN'],
           references_to: [],
           referenced_by: []
         })));
@@ -130,7 +130,7 @@ export function ContentProvider({ children }: { children: React.ReactNode }) {
             return isNaN(date.getTime()) ? null :
               `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}`;
           })
-          .filter(Boolean)
+          .filter((month): month is string => month !== null) // null değerleri filtrele
       )
     );
     setMonths(uniqueMonths);

@@ -1,6 +1,6 @@
 "use client";
 import { useDrag } from 'react-dnd';
-import { Note } from '@/services/notes';
+import type { Note } from '@/types/notes'; // Değişiklik burada
 import { useDateFormatter } from '@/utils/dateUtils';
 import { Pin, Trash2, Edit, FolderOpen } from 'lucide-react';
 import { ItemTypes } from '@/utils/constants';

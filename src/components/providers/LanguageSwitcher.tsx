@@ -1,24 +1,34 @@
 "use client";
 import React from "react";
-import { useLanguage } from "./LanguageProvider"; // senin path'ine göre düzenle
+import { useLanguage } from "./LanguageProvider";
 
 /**
- * Tailwind ile mantığı düzeltilmiş dil değiştirme butonu
+ * Bu interface, LanguageSwitcher'ın prop'larını tanımlar:
+ * - children: render props fonksiyonu (locale ve switchLocale veriyoruz)
+ * - className: opsiyonel CSS sınıfı
  */
-export default function LanguageSwitcher() {
+interface LanguageSwitcherProps {
+  className?: string;
+  children: (params: {
+    locale: "tr" | "en";
+    switchLocale: (lang: "tr" | "en") => void;
+  }) => React.ReactNode;
+}
+
+const LanguageSwitcher: React.FC<LanguageSwitcherProps> = ({ className, children }) => {
   const { language, setLanguage } = useLanguage();
 
-  const toggleLanguage = () => {
-    setLanguage(language === "tr" ? "en" : "tr");
+  // setLanguage'ı "switchLocale" adıyla çocuk bileşene aktaracağız
+  const switchLocale = (lang: "tr" | "en") => {
+    setLanguage(lang);
   };
 
   return (
-    <button
-      onClick={toggleLanguage}
-      className="flex items-center justify-center w-8 h-8 rounded-full bg-transparent hover:bg-slate-100 dark:hover:bg-slate-800 transition-transform transform hover:-translate-y-1"
-    >
-      {/* Mantık tersine çevrildi */}
-      {language === "tr" ? "🇺🇸" : "🇹🇷"}
-    </button>
+    <div className={className}>
+      {/* children bir fonksiyon olduğundan, içine locale ve switchLocale parametrelerini veriyoruz */}
+      {children({ locale: language, switchLocale })}
+    </div>
   );
-}
+};
+
+export default LanguageSwitcher;

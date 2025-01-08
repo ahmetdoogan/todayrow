@@ -7,19 +7,15 @@ import ShortcutsModal from "./ShortcutsModal";
 export default function RootLayoutClient({ children }: { children: React.ReactNode }) {
   const [isShortcutsModalOpen, setIsShortcutsModalOpen] = useState(false);
 
-  useKeyboardShortcuts({
-    shortcutsModal: {
-      isOpen: isShortcutsModalOpen,
-      setIsOpen: setIsShortcutsModalOpen
-    }
-  });
+  // Parametreleri kaldırdık:
+  useKeyboardShortcuts();
 
   return (
     <>
       {children}
-      <ShortcutsModal 
-        isOpen={isShortcutsModalOpen} 
-        onClose={() => setIsShortcutsModalOpen(false)} 
+      <ShortcutsModal
+        isOpen={isShortcutsModalOpen}
+        onClose={() => setIsShortcutsModalOpen(false)}
       />
     </>
   );

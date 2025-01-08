@@ -1,10 +1,10 @@
 "use client";
 import { useDrop } from 'react-dnd';
-import { Note } from '@/services/notes';
+import type { Note } from '@/types/notes'; // Değişiklik burada
 import NoteCard from './NoteCard';
 import { ItemTypes } from '@/utils/constants';
 import { motion } from 'framer-motion';
-import { useTranslations } from 'next-intl'; // next-intl ekleniyor
+import { useTranslations } from 'next-intl';
 
 interface NotesListProps {
   notes: Note[];
@@ -18,6 +18,15 @@ interface NotesListProps {
   viewType?: 'grid' | 'list';
 }
 
+/** 
+ * DragItem: Sürüklenen nesnenin tipi (bizde { id, is_pinned }).
+ * DropResult: Yoksa 'void'.
+ * CollectedProps: collect fonksiyonunda dönen tip ({ isOver, canDrop }).
+ */
+type DragItem = { id: number; is_pinned: boolean };
+type DropResult = void;
+type CollectedProps = { isOver: boolean; canDrop: boolean };
+
 interface DropZoneProps {
   isPinned: boolean;
   onTogglePin: (id: number, currentIsPinned: boolean) => void;
@@ -26,17 +35,18 @@ interface DropZoneProps {
 }
 
 function DropZone({ isPinned, onTogglePin, children, isSelectionMode }: DropZoneProps) {
-  const [{ isOver, canDrop }, drop] = useDrop(() => ({
+  // useDrop generics:
+  const [{ isOver, canDrop }, drop] = useDrop<DragItem, DropResult, CollectedProps>({
     accept: ItemTypes.NOTE,
-    canDrop: (item: { is_pinned: boolean }) => item.is_pinned !== isPinned,
-    drop: (item: { id: number, is_pinned: boolean }) => {
+    canDrop: (item) => item.is_pinned !== isPinned,
+    drop: (item) => {
       onTogglePin(item.id, item.is_pinned);
     },
     collect: (monitor) => ({
       isOver: monitor.isOver(),
       canDrop: monitor.canDrop(),
     }),
-  }), [isPinned, onTogglePin]);
+  });
 
   return (
     <div
@@ -117,32 +127,29 @@ export default function NotesList({
       variants={containerAnimation}
       className="space-y-8"
     >
-      {/* Pinlenmiş Notlar - Her zaman grid görünümde */}
+      {/* Pinlenmiş Notlar */}
       {pinnedNotes.length > 0 && (
         <div className="space-y-4">
           <h2 className="text-base font-semibold text-gray-900 dark:text-white pl-1">
-            {t('pinnedNotes')} {/* Dil çevirisi */}
+            {t('pinnedNotes')}
           </h2>
           <DropZone isPinned={true} onTogglePin={onTogglePin} isSelectionMode={isSelectionMode}>
-            <motion.div 
-              variants={groupAnimation}
-              className={gridClasses}
-            >
+            <motion.div variants={groupAnimation} className={gridClasses}>
               {pinnedNotes.map((note, index) => renderNote(note, index))}
             </motion.div>
           </DropZone>
         </div>
       )}
 
-      {/* Diğer Notlar - Seçilen görünüm tipine göre */}
+      {/* Diğer Notlar */}
       <div className="space-y-4">
         {pinnedNotes.length > 0 && (
           <h2 className="text-sm font-semibold text-gray-900 dark:text-white pl-1">
-            {t('otherNotes')} {/* Dil çevirisi */}
+            {t('otherNotes')}
           </h2>
         )}
         <DropZone isPinned={false} onTogglePin={onTogglePin} isSelectionMode={isSelectionMode}>
-          <motion.div 
+          <motion.div
             variants={groupAnimation}
             className={viewType === 'grid' ? gridClasses : listClasses}
           >

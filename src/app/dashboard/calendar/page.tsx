@@ -14,7 +14,7 @@ import ContentDetailPopup from '@/components/content/ContentDetailPopup';
 
 export default function CalendarPage() {
   const { theme, toggleTheme } = useTheme();
-  const { selectedContent } = useContent();
+  const { selectedContent, setSelectedContent } = useContent(); // setSelectedContent ekledik
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const {
@@ -76,7 +76,13 @@ export default function CalendarPage() {
         </div>
       </motion.div>
 
-      {selectedContent && <ContentDetailPopup />}
+      {selectedContent && (
+        <ContentDetailPopup
+          isOpen={true}
+          onClose={() => setSelectedContent(null)} // Popup kapatıldığında selectedContent'i null yap
+          selectedContent={selectedContent}
+        />
+      )}
     </>
   );
 }

@@ -5,7 +5,7 @@ import { Trash2, Pin, CheckSquare } from "lucide-react";
 import { toast } from "react-toastify";
 import { supabase } from "@/utils/supabaseClient";
 import BaseHeader from './BaseHeader';
-import type { Note } from '@/services/notes';
+import type { Note } from '@/types/notes'; // Değişiklik burada
 import { useTranslations } from 'next-intl';
 
 interface NotesHeaderProps {
@@ -15,6 +15,9 @@ interface NotesHeaderProps {
   setIsSelectionMode: (value: boolean) => void;
   selectedNotes: number[];
   setSelectedNotes: React.Dispatch<React.SetStateAction<number[]>>;
+  // Type hatasını çözmek için eklediğimiz prop’lar:
+  darkMode: boolean;
+  toggleTheme: () => void;
 }
 
 const NotesHeader: React.FC<NotesHeaderProps> = ({
@@ -24,22 +27,19 @@ const NotesHeader: React.FC<NotesHeaderProps> = ({
   setIsSelectionMode,
   selectedNotes,
   setSelectedNotes,
+  darkMode,       // <-- Ekledik
+  toggleTheme,    // <-- Ekledik
 }) => {
   const t = useTranslations();
 
   const handleBulkDelete = async () => {
     try {
       for (const id of selectedNotes) {
-        await supabase
-          .from("Notes")
-          .delete()
-          .eq("id", id);
+        await supabase.from("Notes").delete().eq("id", id);
       }
-      
       await setNotes();
       setSelectedNotes([]);
       setIsSelectionMode(false);
-      
       toast.success(t('common.notes.notifications.deleteSuccess'));
     } catch (error) {
       console.error("Silme işlemi sırasında bir hata oluştu:", error);
@@ -55,11 +55,9 @@ const NotesHeader: React.FC<NotesHeaderProps> = ({
           .update({ is_pinned: true })
           .eq("id", id);
       }
-      
       await setNotes();
       setSelectedNotes([]);
       setIsSelectionMode(false);
-      
       toast.success(t('common.notes.notifications.pinSuccess'));
     } catch (error) {
       console.error("Sabitleme işlemi sırasında bir hata oluştu:", error);
@@ -80,11 +78,17 @@ const NotesHeader: React.FC<NotesHeaderProps> = ({
               hover:bg-gray-50 dark:hover:bg-gray-700
               ${isSelectionMode ? "bg-gray-100 dark:bg-gray-700" : ""}
             `}
-            title={isSelectionMode ? t('common.notes.cancelSelection') : t('common.notes.multiSelect')}
+            title={
+              isSelectionMode
+                ? t('common.notes.cancelSelection')
+                : t('common.notes.multiSelect')
+            }
           >
             <CheckSquare className="w-4 h-4 md:mr-2" />
             <span className="hidden md:inline text-sm">
-              {isSelectionMode ? t('common.notes.cancelSelection') : t('common.notes.multiSelect')}
+              {isSelectionMode
+                ? t('common.notes.cancelSelection')
+                : t('common.notes.multiSelect')}
             </span>
           </button>
 
@@ -93,8 +97,8 @@ const NotesHeader: React.FC<NotesHeaderProps> = ({
               <button
                 onClick={handleBulkDelete}
                 className="flex items-center gap-1 px-2 py-1 md:px-4 md:py-2 
-                         bg-stone-800 hover:bg-stone-900 dark:bg-stone-700 dark:hover:bg-stone-600 
-                         text-white text-sm rounded-lg"
+                           bg-stone-800 hover:bg-stone-900 dark:bg-stone-700 dark:hover:bg-stone-600 
+                           text-white text-sm rounded-lg"
                 title={t('common.notes.deleteSelected')}
               >
                 <Trash2 className="w-4 h-4" />
@@ -105,8 +109,8 @@ const NotesHeader: React.FC<NotesHeaderProps> = ({
               <button
                 onClick={handleBulkPin}
                 className="flex items-center gap-1 px-2 py-1 md:px-4 md:py-2 
-                         bg-stone-800 hover:bg-stone-900 dark:bg-stone-700 dark:hover:bg-stone-600 
-                         text-white text-sm rounded-lg"
+                           bg-stone-800 hover:bg-stone-900 dark:bg-stone-700 dark:hover:bg-stone-600 
+                           text-white text-sm rounded-lg"
                 title={t('common.notes.pinSelected')}
               >
                 <Pin className="w-4 h-4" />
@@ -119,6 +123,9 @@ const NotesHeader: React.FC<NotesHeaderProps> = ({
       className="bg-stone-50"
       noPadding
       showThemeToggle={true}
+      // Eklediğimiz prop'ları BaseHeader'a da aktarıyoruz:
+      darkMode={darkMode}
+      toggleTheme={toggleTheme}
     />
   );
 };

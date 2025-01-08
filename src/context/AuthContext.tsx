@@ -33,19 +33,23 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     const checkUser = async () => {
       try {
-        const { data: { session: currentSession } } = await supabase.auth.getSession();
+        const {
+          data: { session: currentSession },
+        } = await supabase.auth.getSession();
         setUser(currentSession?.user ?? null);
         setSession(currentSession);
       } catch (error) {
-        console.error('Session check error:', error);
+        console.error("Session check error:", error);
       } finally {
         setIsLoading(false);
       }
     };
-    
+
     checkUser();
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
       setUser(session?.user ?? null);
       setSession(session);
     });
@@ -55,7 +59,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const signIn = async (email: string, password: string) => {
     try {
-      const { data: { session: currentSession }, error } = await supabase.auth.signInWithPassword({
+      const {
+        data: { session: currentSession },
+        error,
+      } = await supabase.auth.signInWithPassword({
         email,
         password,
       });
@@ -65,12 +72,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       if (currentSession?.user) {
         setUser(currentSession.user);
         setSession(currentSession);
-        await supabase.auth.setSession(currentSession);
-        await new Promise(resolve => setTimeout(resolve, 500));
-        window.location.href = '/dashboard';
+        // Bu satır Supabase 2.0'da resmi olarak yok, ancak projede kullanıyorsanız:
+        await (supabase.auth as any).setSession(currentSession);
+        await new Promise((resolve) => setTimeout(resolve, 500));
+        window.location.href = "/dashboard";
       }
     } catch (error) {
-      console.error('Login error:', error);
+      console.error("Login error:", error);
       throw error;
     }
   };
@@ -83,29 +91,30 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       });
 
       if (error) throw error;
-      window.location.href = '/auth/verify';
+      window.location.href = "/auth/verify";
     } catch (error) {
-      console.error('Signup error:', error);
+      console.error("Signup error:", error);
       throw error;
     }
   };
 
   const signOut = async () => {
     try {
-      if (window.google?.accounts?.id) {
-        window.google.accounts.id.cancel();
+      // window.google var ama TS bilmiyor, o yüzden as any ile gevşetiyoruz:
+      if ((window as any).google?.accounts?.id) {
+        (window as any).google.accounts.id.cancel();
       }
 
       const { error } = await supabase.auth.signOut();
       if (error) throw error;
-      
-      localStorage.setItem('lastLogoutTime', Date.now().toString());
-      
+
+      localStorage.setItem("lastLogoutTime", Date.now().toString());
+
       setUser(null);
       setSession(null);
-      window.location.href = '/';
+      window.location.href = "/";
     } catch (error) {
-      console.error('Signout error:', error);
+      console.error("Signout error:", error);
       throw error;
     }
   };
@@ -113,42 +122,48 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const signInWithGoogle = async (credential?: string) => {
     try {
       let authResponse;
-      
+
       if (credential) {
         authResponse = await supabase.auth.signInWithIdToken({
-          provider: 'google',
+          provider: "google",
           token: credential,
         });
       } else {
         authResponse = await supabase.auth.signInWithOAuth({
-          provider: 'google',
+          provider: "google",
           options: {
             redirectTo: `${window.location.origin}/auth/callback`,
-          }
+          },
         });
       }
 
       const { data, error } = authResponse;
       if (error) throw error;
 
-      if (data.session) {
+      // TypeScript: data bazen { provider, url } olabilir.
+      // Bu yüzden "session" özelliğinin varlığını kontrol ediyoruz:
+      if ("session" in data && data.session) {
         setUser(data.session.user);
         setSession(data.session);
-        await new Promise(resolve => setTimeout(resolve, 500));
-        window.location.href = '/dashboard';
+        await new Promise((resolve) => setTimeout(resolve, 500));
+        window.location.href = "/dashboard";
       }
     } catch (error) {
-      console.error('Google sign in error:', error);
+      console.error("Google sign in error:", error);
       throw error;
     }
   };
 
   if (isLoading) {
-    return <div className="flex items-center justify-center min-h-screen">Yükleniyor...</div>;
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        Yükleniyor...
+      </div>
+    );
   }
 
   return (
-    <AuthContext.Provider 
+    <AuthContext.Provider
       value={{
         user,
         session,

@@ -1,7 +1,6 @@
 "use client";
-import React, { createContext, useContext, useState, useEffect, useCallback } from 'react'; // useCallback'i ekledik
+import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import {
-  Note,
   getNotes,
   deleteNote,
   updateNote,
@@ -10,6 +9,7 @@ import {
 } from '@/services/notes';
 import { toast } from 'react-toastify';
 import { useTranslations } from 'next-intl';
+import type { Note } from '@/types/notes'; // Note tipini buradan import ediyoruz
 
 interface NotesContextType {
   notes: Note[];
@@ -24,7 +24,7 @@ interface NotesContextType {
   toggleNotePin: (id: number, isPinned: boolean) => Promise<void>;
   deleteNote: (id: number) => Promise<void>;
   updateNote: (id: number, note: Partial<Note>) => Promise<Note>;
-  createNote: (note: Partial<Note>) => Promise<Note>;
+  createNote: (note: Partial<Note>) => Promise<Note>; // Partial<Note> olarak güncellendi
 }
 
 const NotesContext = createContext<NotesContextType | undefined>(undefined);
@@ -36,10 +36,8 @@ export function NotesProvider({ children }: { children: React.ReactNode }) {
   const [isEditingNote, setIsEditingNote] = useState(false);
   const [viewingNote, setViewingNote] = useState<Note | null>(null);
 
-  // Çeviri (varsayım: "common.notes.notifications" key'leri mevcuttur)
   const t = useTranslations('common.notes.notifications');
 
-  // NOTLARI SUNUCUDAN ÇEK
   const fetchNotes = useCallback(async () => {
     try {
       const data = await getNotes();
@@ -50,19 +48,12 @@ export function NotesProvider({ children }: { children: React.ReactNode }) {
     } finally {
       setIsLoading(false);
     }
-  }, [t]); // t dependency'sini ekledik
+  }, [t]);
 
   useEffect(() => {
     fetchNotes();
-  }, [fetchNotes]); // fetchNotes'u dependency array'e ekledik
+  }, [fetchNotes]);
 
-  useEffect(() => {
-    if (isEditingNote) {
-      setViewingNote(null);
-    }
-  }, [isEditingNote]); // isEditingNote değiştiğinde çalışır
-
-  // PIN / UNPIN
   const handleTogglePin = async (id: number, isPinned: boolean) => {
     try {
       await toggleNotePin(id, isPinned);
@@ -74,7 +65,6 @@ export function NotesProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-  // SİL
   const handleDelete = async (id: number) => {
     try {
       await deleteNote(id);
@@ -93,7 +83,6 @@ export function NotesProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-  // GÜNCELLE
   const handleUpdate = async (id: number, noteData: Partial<Note>) => {
     try {
       const updated = await updateNote(id, noteData);
@@ -107,21 +96,12 @@ export function NotesProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-  // EKLE (CREATE)
   const handleCreate = async (noteData: Partial<Note>) => {
     try {
       const created = await createNote(noteData);
-
-      // Toastify başarı mesajı:
       toast.success(t('createSuccess'));
-
-      // Önce local state'e anında ekle (ekranda hemen görünsün):
       setNotes(prevNotes => [created, ...prevNotes]);
-
-      // Sonra API'den tekrar notları çek (senkronizasyon için, istersen bunu
-      // ister bu satırı eklemezsen de "anlık" çalışır ama bu daha güvenli):
       await fetchNotes();
-
       return created;
     } catch (error) {
       console.error('Error creating note:', error);

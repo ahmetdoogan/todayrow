@@ -21,7 +21,8 @@ interface QuickPlanModalProps {
 }
 
 const QuickPlanModal = ({ isOpen, onClose }: QuickPlanModalProps) => {
-  const { createQuickPlan } = usePlanner();
+  // Burada user varsa, "usePlanner()" içinden alıyoruz (örnek). Yoksa "const { user } = useAuth();" yap.
+  const { createQuickPlan, user } = usePlanner(); 
   const [title, setTitle] = useState("");
   const [selectedColor, setSelectedColor] = useState<Color>("bg-blue-500");
   const [error, setError] = useState("");
@@ -35,6 +36,9 @@ const QuickPlanModal = ({ isOpen, onClose }: QuickPlanModalProps) => {
       await createQuickPlan({
         title: title.trim(),
         color: selectedColor,
+        // Zorunlu alanlar:
+        user_id: user?.id || 0, 
+        is_system: false,
       });
       onClose();
       setTitle("");
@@ -80,7 +84,9 @@ const QuickPlanModal = ({ isOpen, onClose }: QuickPlanModalProps) => {
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-sm font-medium mb-1">{t('createModal.form.title')}</label>
+            <label className="block text-sm font-medium mb-1">
+              {t('createModal.form.title')}
+            </label>
             <input
               type="text"
               value={title}
@@ -92,23 +98,25 @@ const QuickPlanModal = ({ isOpen, onClose }: QuickPlanModalProps) => {
           </div>
 
           <div>
-            <label className="block text-sm font-medium mb-2">{t('createModal.form.color')}</label>
+            <label className="block text-sm font-medium mb-2">
+              {t('createModal.form.color')}
+            </label>
             <div className="flex gap-2">
-              {colors.map((color) => (
+              {colors.map((c) => (
                 <button
-                  key={color.value}
+                  key={c.value}
                   type="button"
-                  onClick={() => setSelectedColor(color.value)}
+                  onClick={() => setSelectedColor(c.value)}
                   className={`
                     w-8 h-8 rounded-full border-2 transition-all
-                    ${color.value}
+                    ${c.value}
                     ${
-                      selectedColor === color.value
+                      selectedColor === c.value
                         ? "border-gray-900 dark:border-white scale-110"
                         : "border-transparent hover:scale-105"
                     }
                   `}
-                  title={t(`createModal.form.colorNames.${color.name}`)}
+                  title={t(`createModal.form.colorNames.${c.name}`)}
                 />
               ))}
             </div>

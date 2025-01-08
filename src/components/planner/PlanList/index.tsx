@@ -133,6 +133,8 @@ const PlanList = () => {
       plan_type: 'regular',
       order: 0,
       user_id: user?.id || 0,
+      created_at: new Date().toISOString(),  // Ekle
+  updated_at: new Date().toISOString()
     });
 
     setIsEditingPlan(false);

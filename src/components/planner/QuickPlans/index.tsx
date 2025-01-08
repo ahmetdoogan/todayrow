@@ -24,16 +24,57 @@ const QuickPlans: React.FC<QuickPlansProps> = ({ onClose, onDragStart, onDragEnd
     setIsQuickPlanModalOpen,
     hiddenSystemPlans,
     toggleSystemPlanVisibility,
-  } = usePlanner();
+    user  // user'ı ekledik
+} = usePlanner();
 
   const t = useTranslations('common.quickPlansSection');
 
   const defaultQuickPlans: QuickPlan[] = [
-    { id: -1, title: t('defaultPlans.meeting'), color: "bg-blue-500", is_system: true },
-    { id: -2, title: t('defaultPlans.work'), color: "bg-green-500", is_system: true },
-    { id: -3, title: t('defaultPlans.bookReading'), color: "bg-purple-500", is_system: true },
-    { id: -4, title: t('defaultPlans.lunch'), color: "bg-orange-500", is_system: true },
-    { id: -5, title: t('defaultPlans.networking'), color: "bg-pink-500", is_system: true },
+    { 
+      id: -1, 
+      title: t('defaultPlans.meeting'), 
+      color: "bg-blue-500", 
+      is_system: true,
+      user_id: user?.id || '',  // user'ı usePlanner'dan alalım
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString()
+    },
+    { 
+      id: -2, 
+      title: t('defaultPlans.work'), 
+      color: "bg-green-500", 
+      is_system: true,
+      user_id: user?.id || '',
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString()
+    },
+    { 
+      id: -3, 
+      title: t('defaultPlans.bookReading'), 
+      color: "bg-purple-500", 
+      is_system: true,
+      user_id: user?.id || '',
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString()
+    },
+    { 
+      id: -4, 
+      title: t('defaultPlans.lunch'), 
+      color: "bg-orange-500", 
+      is_system: true,
+      user_id: user?.id || '',
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString()
+    },
+    { 
+      id: -5, 
+      title: t('defaultPlans.networking'), 
+      color: "bg-pink-500", 
+      is_system: true,
+      user_id: user?.id || '',
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString()
+    },
   ];
 
   const [editMode, setEditMode] = useState(false);

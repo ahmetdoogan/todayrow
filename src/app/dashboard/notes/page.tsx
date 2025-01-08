@@ -1,7 +1,7 @@
 "use client";
 import { useState, useMemo, useEffect } from 'react';
 import { useSearchParams } from 'next/navigation';
-import { Note } from '@/services/notes';
+import type { Note } from '@/types/notes'; // Değişiklik burada
 import NotesList from '@/components/notes/NotesList';
 import NoteModal from '@/components/notes/NoteModal';
 import NoteDetailModal from '@/components/notes/NoteDetailModal';
@@ -9,6 +9,7 @@ import NotesHeader from '@/components/layout/Header/components/NotesHeader';
 import { NotesFilter } from '@/components/notes/NotesFilter';
 import DeleteConfirmModal from '@/components/notes/DeleteConfirmModal';
 import { useNotes } from '@/context/NotesContext';
+import { useTheme } from '@/components/providers/ThemeProvider';
 
 interface Filters {
   folder?: string;
@@ -44,24 +45,25 @@ export default function NotesPage() {
     isBulk?: boolean;
   }>({ isOpen: false });
 
+  const { theme, toggleTheme } = useTheme();
+  const isDarkMode = theme === 'dark';
+
   useEffect(() => {
-  const openNoteId = searchParams.get('openNote');
-  if (openNoteId) {
-    const noteToOpen = notes.find(note => note.id === parseInt(openNoteId));
-    if (noteToOpen) {
-      setViewingNote(noteToOpen);
+    if (!searchParams) return;
+    const openNoteId = searchParams?.get('openNote');
+    if (openNoteId) {
+      const noteToOpen = notes.find(note => note.id === parseInt(openNoteId));
+      if (noteToOpen) {
+        setViewingNote(noteToOpen);
+      }
     }
-  }
-// eslint-disable-next-line react-hooks/exhaustive-deps
-}, [searchParams, notes]);
+  }, [searchParams, notes]);
 
   const handleSave = async (noteData: Partial<Note>) => {
     try {
       if (selectedNote) {
-        // Güncelleme işlemi
         await updateNote(selectedNote.id, noteData);
       } else {
-        // Yeni not oluşturma işlemi
         await createNote(noteData);
       }
       setIsModalOpen(false);
@@ -136,7 +138,6 @@ export default function NotesPage() {
       if (filters.folder && note.folder_path !== filters.folder) {
         return false;
       }
-
       if (filters.tags.length > 0) {
         const noteTags = note.tags ? note.tags.split(',').map(t => t.trim()) : [];
         const hasMatchingTag = filters.tags.some(tag => noteTags.includes(tag));
@@ -144,7 +145,6 @@ export default function NotesPage() {
           return false;
         }
       }
-
       return true;
     });
   }, [notes, filters]);
@@ -166,11 +166,11 @@ export default function NotesPage() {
         setIsSelectionMode={setIsSelectionMode}
         selectedNotes={selectedNotes}
         setSelectedNotes={setSelectedNotes}
+        darkMode={isDarkMode}
+        toggleTheme={toggleTheme}
       />
 
-      <NotesFilter 
-        onFilterChange={setFilters}
-      />
+      <NotesFilter onFilterChange={setFilters} />
 
       <NotesList
         notes={filteredNotes}
@@ -192,16 +192,16 @@ export default function NotesPage() {
       />
 
       <NoteDetailModal 
-  note={viewingNote!}
-  isOpen={!!viewingNote}
-  onClose={() => setViewingNote(null)}
-  onEdit={(note) => {
-    setSelectedNote(note);
-    setIsEditingNote(true);
-    setViewingNote(null);
-  }}
-  onTogglePin={handleTogglePin}
-/>
+        note={viewingNote!}
+        isOpen={!!viewingNote}
+        onClose={() => setViewingNote(null)}
+        onEdit={(note) => {
+          setSelectedNote(note);
+          setIsEditingNote(true);
+          setViewingNote(null);
+        }}
+        onTogglePin={handleTogglePin}
+      />
 
       <NoteModal
         isOpen={isModalOpen || isEditingNote}
@@ -215,18 +215,18 @@ export default function NotesPage() {
       />
 
       <DeleteConfirmModal
-  isOpen={deleteConfirm.isOpen}
-  onClose={() => setDeleteConfirm({ isOpen: false })}
-  onConfirm={async () => {
-    if (deleteConfirm.isBulk) {
-      await handleBulkDelete();
-    } else if (deleteConfirm.id) {
-      await handleDelete(deleteConfirm.id);
-    }
-    setDeleteConfirm({ isOpen: false });
-  }}
-  titleKey={deleteConfirm.isBulk ? "bulkDelete" : "singleDelete"} // sadece key'i göndermeliyiz
-/>
+        isOpen={deleteConfirm.isOpen}
+        onClose={() => setDeleteConfirm({ isOpen: false })}
+        onConfirm={async () => {
+          if (deleteConfirm.isBulk) {
+            await handleBulkDelete();
+          } else if (deleteConfirm.id) {
+            await handleDelete(deleteConfirm.id);
+          }
+          setDeleteConfirm({ isOpen: false });
+        }}
+        titleKey={deleteConfirm.isBulk ? "bulkDelete" : "singleDelete"}
+      />
     </div>
   );
 }

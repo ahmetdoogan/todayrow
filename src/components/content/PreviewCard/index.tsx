@@ -4,13 +4,16 @@ import React from "react";
 import Image from "next/image";
 import { useTranslations } from 'next-intl';
 
+// PreviewMetadata tipini tanımlayın ve export edin
+export interface PreviewMetadata {
+  title?: string;
+  description?: string;
+  image?: string;
+  site_name?: string;
+}
+
 interface PreviewCardProps {
-  metadata: {
-    title: string;
-    description: string;
-    image: string;
-    site_name: string;
-  };
+  metadata: PreviewMetadata; // metadata prop'unun tipini PreviewMetadata olarak güncelleyin
 }
 
 const PreviewCard: React.FC<PreviewCardProps> = ({ metadata }) => {
