@@ -779,16 +779,15 @@
     }
   },
   "landing": {
-    "title": "Bugünü kazan,",
-    "subtitle": "yarını şekillendir.",
+    "title": "Gelecek",
+    "subtitle": "bekleyebilir.",
     "features": {
-      "ideas": "fikirlerin",
-      "contents": "içeriklerin",
-      "calendar": "takvimin",
-      "and": "ve",
-      "inOnePlace": "tek bir yerde."
+        "today": "Bugünü",
+        "yours": "planla",
+        "prepare": "yarın",
+        "tomorrow": "için hazırlan"
     }
-  },
+},
   "views": {
     "day": {
       "title": "{date}",

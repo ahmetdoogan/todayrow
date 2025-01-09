@@ -779,16 +779,15 @@
     }
   },
   "landing": {
-    "title": "Own today,",
-    "subtitle": "shape tomorrow.",
+    "title": "The future",
+    "subtitle": "can wait.",
     "features": {
-      "ideas": "ideas",
-      "contents": "contents",
-      "calendar": "calendar",
-      "and": "and",
-      "inOnePlace": "all in one place."
+        "today": "Today",
+        "yours": "is yours",
+        "prepare": "prepare",
+        "tomorrow": "for tomorrow"
     }
-  },
+},
   "views": {
     "day": {
       "title": "{date}",
