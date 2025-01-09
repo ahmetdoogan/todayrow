@@ -114,32 +114,32 @@ const PlanList = () => {
 
   // Plan oluşturma
   const handleCreatePlanAtHour = (hour: number) => {
-    if (!canEdit) return;
+  if (!canEdit) return;
 
-    const planStartTime = new Date(selectedDate);
-    planStartTime.setHours(hour, 0, 0, 0);
+  const planStartTime = new Date(selectedDate);
+  planStartTime.setHours(hour, 0, 0, 0);
 
-    const planEndTime = new Date(planStartTime);
-    planEndTime.setHours(planEndTime.getHours() + 1);
+  const planEndTime = new Date(planStartTime);
+  planEndTime.setHours(planEndTime.getHours() + 1);
 
-    setSelectedPlan({
-      id: 0,
-      title: '',
-      details: '',
-      start_time: planStartTime.toISOString(),
-      end_time: planEndTime.toISOString(),
-      is_completed: false,
-      color: '',
-      plan_type: 'regular',
-      order: 0,
-      user_id: user?.id || 0,
-      created_at: new Date().toISOString(),  // Ekle
-  updated_at: new Date().toISOString()
-    });
+  setSelectedPlan({
+    id: 0,
+    title: '',
+    details: '',
+    start_time: planStartTime.toISOString(),
+    end_time: planEndTime.toISOString(),
+    is_completed: false,
+    color: 'bg-blue-500', // Kısıtlamaya uygun bir değer
+    plan_type: 'regular',
+    order: 0,
+    user_id: user?.id || 0,
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString()
+  });
 
-    setIsEditingPlan(false);
-    setIsModalOpen(true);
-  };
+  setIsEditingPlan(false);
+  setIsModalOpen(true);
+};
 
   // Plan işlemleri
   const handleDeleteClick = async (e: React.MouseEvent, plan: Plan) => {

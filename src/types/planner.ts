@@ -31,7 +31,7 @@ export interface Plan {
 // Yeni plan oluştururken kullanılacak veri tipi
 export type NewPlanData = Omit<Plan, 'id' | 'created_at' | 'updated_at'> & {
   is_completed?: boolean; // Opsiyonel
-  // color?: string; // Zorunlu ya da opsiyonel? Aşağıda planForm’da mecburi diyorsan eklemen gerekir
+  color: string; // Zorunlu ya da opsiyonel? Aşağıda planForm’da mecburi diyorsan eklemen gerekir
 };
 
 // Plan güncelleme verisi

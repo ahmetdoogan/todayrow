@@ -1,8 +1,8 @@
 "use client";
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react'; // useRef'i ekledik
 import Link from 'next/link';
-import Image from 'next/image'; // Image bileşenini import ediyoruz
+import Image from 'next/image';
 import { usePathname, useRouter } from 'next/navigation';
 import { 
   Layout, 
@@ -59,8 +59,10 @@ const Sidebar: React.FC<SidebarProps> = ({
 
   const [searchValue, setSearchValue] = useState('');
   const [searchResults, setSearchResults] = useState<any[]>([]);
-  const [searchTimeout, setSearchTimeout] = useState<NodeJS.Timeout>();
   const [isSearchFocused, setIsSearchFocused] = useState(false);
+
+  // searchTimeout'u useRef ile yönetiyoruz
+  const searchTimeoutRef = useRef<NodeJS.Timeout>();
 
   // Çevirili nav items
   const navItems = [
@@ -100,7 +102,7 @@ const Sidebar: React.FC<SidebarProps> = ({
     }
   };
 
-    const handlePlanCreate = () => {
+  const handlePlanCreate = () => {
     setDraggedPlan(null);
     const now = new Date();
     const planStartTime = new Date(selectedDate);
@@ -128,23 +130,31 @@ const Sidebar: React.FC<SidebarProps> = ({
     setIsModalOpen(true);
   };
 
+  // Arama işlemini handleSearchChange fonksiyonunda yönetiyoruz
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setSearchValue(value);
 
-  useEffect(() => {
-    if (searchTimeout) clearTimeout(searchTimeout);
-    if (!searchValue.trim()) {
-      setSearchResults([]);
-      return;
+    // Önceki timeout'u temizle
+    if (searchTimeoutRef.current) {
+      clearTimeout(searchTimeoutRef.current);
     }
 
-    const timeout = setTimeout(() => {
-      const searchTerm = searchValue.toLowerCase();
+    // Yeni timeout'u ayarla
+    searchTimeoutRef.current = setTimeout(() => {
+      if (!value.trim()) {
+        setSearchResults([]);
+        return;
+      }
+
+      const searchTerm = value.toLowerCase();
       const exactTitleMatches: any[] = [];
       const contentMatches: any[] = [];
 
       contents.forEach(content => {
         const isExactTitleMatch = content.title.toLowerCase() === searchTerm;
-        const isTitleMatch = fuzzySearchInText(content.title, searchValue);
-        const isContentMatch = fuzzySearchInText(content.details || '', searchValue);
+        const isTitleMatch = fuzzySearchInText(content.title, value);
+        const isContentMatch = fuzzySearchInText(content.details || '', value);
 
         if (isExactTitleMatch) {
           exactTitleMatches.push({ ...content, type: 'content' });
@@ -155,8 +165,8 @@ const Sidebar: React.FC<SidebarProps> = ({
 
       notes.forEach(note => {
         const isExactTitleMatch = note.title.toLowerCase() === searchTerm;
-        const isTitleMatch = fuzzySearchInText(note.title, searchValue);
-        const isContentMatch = fuzzySearchInText(note.content || '', searchValue);
+        const isTitleMatch = fuzzySearchInText(note.title, value);
+        const isContentMatch = fuzzySearchInText(note.content || '', value);
 
         if (isExactTitleMatch) {
           exactTitleMatches.push({ ...note, type: 'note', details: note.content });
@@ -167,8 +177,8 @@ const Sidebar: React.FC<SidebarProps> = ({
 
       plans.forEach(plan => {
         const isExactTitleMatch = plan.title.toLowerCase() === searchTerm;
-        const isTitleMatch = fuzzySearchInText(plan.title, searchValue);
-        const isDetailsMatch = fuzzySearchInText(plan.details || '', searchValue);
+        const isTitleMatch = fuzzySearchInText(plan.title, value);
+        const isDetailsMatch = fuzzySearchInText(plan.details || '', value);
 
         if (isExactTitleMatch) {
           exactTitleMatches.push({ ...plan, type: 'plan' });
@@ -180,10 +190,7 @@ const Sidebar: React.FC<SidebarProps> = ({
       const allResults = [...exactTitleMatches, ...contentMatches].slice(0, 5);
       setSearchResults(allResults);
     }, 300);
-
-    setSearchTimeout(timeout);
-    return () => clearTimeout(timeout);
-  }, [searchValue, contents, notes, plans, searchTimeout]); // searchTimeout'u dependency array'e ekledik
+  };
 
   const handleSearchResultClick = async (result: any) => {
     if (result.type === 'content') {
@@ -282,7 +289,7 @@ const Sidebar: React.FC<SidebarProps> = ({
                   type="text"
                   placeholder={isCollapsed ? "" : t('common.sidebar.search.placeholder')}
                   value={searchValue}
-                  onChange={(e) => setSearchValue(e.target.value)}
+                  onChange={handleSearchChange} // Burayı güncelledik
                   onFocus={() => {
                     setIsSearchFocused(true);
                     if (isCollapsed) setIsCollapsed(false);

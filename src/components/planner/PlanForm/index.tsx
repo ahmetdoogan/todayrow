@@ -48,24 +48,24 @@ export default function PlanForm() {
   );
 
   const [formData, setFormData] = useState<{
-    title: string;
-    details: string;
-    start_time: string;
-    end_time: string;
-    plan_type: 'custom' | 'predefined' | 'regular' | 'quick';
-    order: number;
-    color: string;
-    is_completed: boolean;
-  }>({
-    title: '',
-    details: '',
-    start_time: '',
-    end_time: '',
-    plan_type: 'custom',
-    order: 0,
-    color: '',
-    is_completed: false,
-  });
+  title: string;
+  details: string;
+  start_time: string;
+  end_time: string;
+  plan_type: 'custom' | 'predefined' | 'regular' | 'quick';
+  order: number;
+  color: string; // Sadece belirli değerler kabul ediliyor
+  is_completed: boolean;
+}>({
+  title: '',
+  details: '',
+  start_time: '',
+  end_time: '',
+  plan_type: 'custom',
+  order: 0,
+  color: 'bg-blue-500', // Kısıtlamaya uygun bir default değer
+  is_completed: false,
+});
 
   const [error, setError] = useState('');
 
@@ -205,11 +205,12 @@ export default function PlanForm() {
 
     // user_id: user?.id || 0  --> undefined ise 0 yapıyoruz (veya '' da olabilir)
     const planData = {
-      ...formData,
-      start_time: startDate.toISOString(),
-      end_time: endDate.toISOString(),
-      user_id: user?.id || 0,
-    };
+  ...formData,
+  start_time: startDate.toISOString(),
+  end_time: endDate.toISOString(),
+  user_id: user?.id || 0,
+  color: formData.color || 'bg-violet-500' // Default değer eklendi
+};
 
     try {
       if (selectedPlan && selectedPlan.id && selectedPlan.id !== 0) {

@@ -3,29 +3,34 @@ import type { Plan, QuickPlan, NewPlanData, PlanUpdateData, NewQuickPlanData } f
 
 export const plannerService = {
   async createPlan(data: NewPlanData, userId: string): Promise<Plan> {
-    const now = new Date().toISOString();
-    
-    console.log('Gönderilen veri:', { ...data, user_id: userId });
+  const now = new Date().toISOString();
+  
+  // color alanını kontrol et ve geçerli bir değer ata
+  const validColors = ['bg-blue-500', 'bg-green-500', 'bg-purple-500', 'bg-orange-500', 'bg-pink-500'];
+  const color = validColors.includes(data.color) ? data.color : 'bg-blue-500'; // Default değer
 
-    const { data: plan, error } = await supabase
-      .from('plans')
-      .insert([{ 
-        ...data, 
-        user_id: userId,
-        created_at: now,
-        updated_at: now,
-        is_completed: false 
-      }])
-      .select('*')
-      .single();
+  console.log('Gönderilen veri:', { ...data, user_id: userId, color });
 
-    if (error) {
-      console.error("Plan oluşturma hatası:", error.message, error.details, error.hint);
-      throw error;
-    }
+  const { data: plan, error } = await supabase
+    .from('plans')
+    .insert([{ 
+      ...data, 
+      user_id: userId,
+      created_at: now,
+      updated_at: now,
+      is_completed: false,
+      color: color // Geçerli bir değer atandı
+    }])
+    .select('*')
+    .single();
 
-    return plan;
-  },
+  if (error) {
+    console.error("Plan oluşturma hatası:", error.message, error.details, error.hint);
+    throw error;
+  }
+
+  return plan;
+},
 
   async updatePlan(id: number, data: PlanUpdateData, userId: string): Promise<Plan> {
     const { data: plan, error } = await supabase
