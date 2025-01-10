@@ -151,16 +151,19 @@ export default function LandingPage() {
     initial={{ opacity: 0, y: 10 }}
     animate={{ opacity: 1, y: 0 }}
     transition={{ duration: 0.8, delay: 0.4 }}
-    className="flex flex-wrap justify-center gap-2 sm:gap-3 text-base sm:text-lg"
+    className="flex flex-wrap justify-center gap-2 sm:gap-2 text-base sm:text-lg"
 >
-    <span className="px-4 sm:px-5 py-2 rounded-full bg-orange-300/50 dark:bg-white/5 text-gray-600 dark:text-gray-300">
+    <span className="px-4 sm:px-5 py-2 rounded-full bg-orange-100 dark:bg-white/5 text-gray-600 dark:text-gray-300">
         {t('landing.features.today')}
     </span>
     <span className="px-2 py-2 text-gray-500 dark:text-gray-400">
         {t('landing.features.yours')}
     </span>
-    <span className="px-4 sm:px-5 py-2 rounded-full bg-orange-100/60 dark:bg-white/5 text-gray-600 dark:text-gray-300">
+    <span className="px-4 sm:px-5 py-2 rounded-full bg-orange-200/50 dark:bg-white/5 text-gray-600 dark:text-gray-300">
         {t('landing.features.prepare')}
+    </span>
+    <span className="px-2 py-2 text-gray-500 dark:text-gray-400">
+        {t('landing.features.for')}
     </span>
     <span className="px-4 sm:px-5 py-2 rounded-full bg-orange-300/50 dark:bg-white/5 text-gray-600 dark:text-gray-300">
         {t('landing.features.tomorrow')}

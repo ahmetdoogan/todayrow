@@ -783,9 +783,10 @@
     "subtitle": "can wait.",
     "features": {
         "today": "Today",
-        "yours": "is yours",
+        "yours": "is yours,",
         "prepare": "prepare",
-        "tomorrow": "for tomorrow"
+        "for": "for",
+        "tomorrow": "tomorrow."
     }
 },
   "views": {

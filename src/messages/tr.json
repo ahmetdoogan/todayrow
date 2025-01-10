@@ -783,9 +783,10 @@
     "subtitle": "bekleyebilir.",
     "features": {
         "today": "Bugünü",
-        "yours": "planla",
+        "yours": "planla,",
         "prepare": "yarın",
-        "tomorrow": "için hazırlan"
+        "for": "için",
+        "tomorrow": "hazırlan."
     }
 },
   "views": {
