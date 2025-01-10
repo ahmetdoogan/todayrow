@@ -11,6 +11,9 @@ export async function GET(request: Request) {
     await supabase.auth.exchangeCodeForSession(code);
   }
 
-  // Auth callback'ten sonra dashboard'a yönlendir
-  return NextResponse.redirect(new URL('/dashboard', request.url));
+  // Origin'i doğrudan alalım
+  const origin = requestUrl.origin;
+  
+  // Tam URL ile yönlendirelim
+  return NextResponse.redirect(`${origin}/dashboard`);
 }
