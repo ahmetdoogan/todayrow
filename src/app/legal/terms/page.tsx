@@ -5,13 +5,14 @@ import { useTranslations } from 'next-intl';
 export default function TermsOfService() {
   const sections = useTranslations('common.legal.termsOfService.sections');
   const common = useTranslations('common.legal');
+  const termsOfService = useTranslations('common.legal.termsOfService');
 
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-slate-950">
       <div className="max-w-3xl mx-auto px-4 py-16">
         <div className="prose dark:prose-invert prose-slate max-w-none">
-          <h1>Kullanım Şartları</h1>
-          <p>Son güncelleme: {new Date().toLocaleDateString()}</p>
+          <h1>{termsOfService('title')}</h1>
+          <p>{termsOfService('lastUpdate')}: {new Date().toLocaleDateString()}</p>
 
           <section>
             <h2>{sections('serviceUsage.title')}</h2>

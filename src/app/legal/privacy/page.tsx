@@ -5,13 +5,14 @@ import { useTranslations } from 'next-intl';
 export default function PrivacyPolicy() {
   const sections = useTranslations('common.legal.privacyPolicy.sections');
   const common = useTranslations('common.legal');
+  const privacyPolicy = useTranslations('common.legal.privacyPolicy');
 
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-slate-950">
       <div className="max-w-3xl mx-auto px-4 py-16">
         <div className="prose dark:prose-invert prose-slate max-w-none">
-          <h1>Gizlilik Politikası</h1>
-          <p>Son güncelleme: {new Date().toLocaleDateString()}</p>
+          <h1>{privacyPolicy('title')}</h1>
+          <p>{privacyPolicy('lastUpdate')}: {new Date().toLocaleDateString()}</p>
 
           <section>
             <h2>{sections('dataCollection.title')}</h2>
