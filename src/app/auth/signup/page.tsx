@@ -1,7 +1,7 @@
 "use client";
 import React, { useState } from "react";
 import Link from "next/link";
-import Image from "next/image"; // Image bileşenini import ediyoruz
+import Image from "next/image";
 import { Mail, Lock, Eye, EyeOff } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 import { toast } from "react-toastify";
@@ -50,6 +50,7 @@ export default function SignupPage() {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const { signUp, signInWithGoogle } = useAuth();
   const t = useTranslations('auth');
+  const commonT = useTranslations('common'); // common çevirileri için ayrı bir hook
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -268,7 +269,7 @@ export default function SignupPage() {
                 href="/"
                 className="inline-block mt-4 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors"
               >
-                {t('common.navigation.backToHome')}
+                {commonT('navigation.backToHome')} {/* Burada düzeltme yapıldı */}
               </Link>
             </div>
           </motion.div>

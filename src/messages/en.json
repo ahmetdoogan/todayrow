@@ -293,6 +293,7 @@
         "bulkCompleteSuccess": "Selected plans completed",
         "bulkCompleteError": "An error occurred while completing plans"
       },
+      "confirmCloseMessage": "The plan will not be saved, are you sure?",
       "multiSelect": "Multi Select",
       "cancelSelection": "Cancel Selection",
       "deleteButton": "Delete",

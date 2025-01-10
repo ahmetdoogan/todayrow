@@ -293,6 +293,7 @@
         "bulkCompleteSuccess": "Seçili planlar tamamlandı",
         "bulkCompleteError": "Planlar tamamlanırken bir hata oluştu"
       },
+      "confirmCloseMessage": "Plan kaydedilmeyecek, emin misiniz?",
       "multiSelect": "Çoklu Seç",
       "cancelSelection": "Seçimi İptal Et",
       "deleteButton": "Sil",
