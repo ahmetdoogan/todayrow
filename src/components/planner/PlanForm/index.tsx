@@ -7,6 +7,7 @@ import { usePlanner } from '@/context/PlannerContext';
 import { useTranslations } from 'next-intl';
 import { toast } from 'react-toastify';
 import { useAuth } from '@/context/AuthContext';
+import ConfirmModal from '@/components/modals/ConfirmModal';
 
 export default function PlanForm() {
   const { user } = useAuth();
@@ -23,7 +24,8 @@ export default function PlanForm() {
     updatePlan
   } = usePlanner();
 
-  const t = useTranslations('common');
+  const tCommon = useTranslations('common');
+  const tPlanner = useTranslations('planner');
 
   const today = useMemo(() => new Date(), []);
   const tomorrow = useMemo(() => {
@@ -48,26 +50,28 @@ export default function PlanForm() {
   );
 
   const [formData, setFormData] = useState<{
-  title: string;
-  details: string;
-  start_time: string;
-  end_time: string;
-  plan_type: 'custom' | 'predefined' | 'regular' | 'quick';
-  order: number;
-  color: string; // Sadece belirli değerler kabul ediliyor
-  is_completed: boolean;
-}>({
-  title: '',
-  details: '',
-  start_time: '',
-  end_time: '',
-  plan_type: 'custom',
-  order: 0,
-  color: 'bg-blue-500', // Kısıtlamaya uygun bir default değer
-  is_completed: false,
-});
+    title: string;
+    details: string;
+    start_time: string;
+    end_time: string;
+    plan_type: 'custom' | 'predefined' | 'regular' | 'quick';
+    order: number;
+    color: string;
+    is_completed: boolean;
+  }>({
+    title: '',
+    details: '',
+    start_time: '',
+    end_time: '',
+    plan_type: 'custom',
+    order: 0,
+    color: 'bg-blue-500',
+    is_completed: false,
+  });
 
+  const [initialFormData, setInitialFormData] = useState(formData);
   const [error, setError] = useState('');
+  const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
 
   useEffect(() => {
     setError('');
@@ -77,7 +81,7 @@ export default function PlanForm() {
       const st = new Date(selectedPlan.start_time);
       const et = new Date(selectedPlan.end_time);
 
-      setFormData({
+      const newFormData = {
         title: selectedPlan.title,
         details: selectedPlan.details || '',
         start_time: `${st.getHours().toString().padStart(2, '0')}:${st
@@ -92,7 +96,10 @@ export default function PlanForm() {
         order: selectedPlan.order,
         color: selectedPlan.color || 'bg-violet-500',
         is_completed: selectedPlan.is_completed,
-      });
+      };
+
+      setFormData(newFormData);
+      setInitialFormData(newFormData);
 
       if (compareDate(new Date(selectedPlan.start_time), today)) {
         setSelectedDay('today');
@@ -104,7 +111,7 @@ export default function PlanForm() {
       const [h, m] = draggedPlan.dropTime.split(':').map(Number);
       const endH = (h + 1) % 24;
 
-      setFormData({
+      const newFormData = {
         title: draggedPlan.quickPlan.title,
         details: '',
         start_time: draggedPlan.dropTime,
@@ -115,7 +122,10 @@ export default function PlanForm() {
         order: 0,
         color: draggedPlan.quickPlan.color || 'bg-violet-500',
         is_completed: false,
-      });
+      };
+
+      setFormData(newFormData);
+      setInitialFormData(newFormData);
 
       setSelectedDay(isToday ? 'today' : 'tomorrow');
     } else if (selectedPlan && selectedPlan.id === 0) {
@@ -123,7 +133,7 @@ export default function PlanForm() {
       const st = new Date(selectedPlan.start_time);
       const et = new Date(selectedPlan.end_time);
 
-      setFormData({
+      const newFormData = {
         title: '',
         details: '',
         start_time: `${st.getHours().toString().padStart(2, '0')}:${st
@@ -138,7 +148,11 @@ export default function PlanForm() {
         order: 0,
         color: 'bg-violet-500',
         is_completed: false,
-      });
+      };
+
+      setFormData(newFormData);
+      setInitialFormData(newFormData);
+
       setSelectedDay(isToday ? 'today' : 'tomorrow');
     } else {
       // 4) Sıfırdan form
@@ -158,7 +172,7 @@ export default function PlanForm() {
         .toString()
         .padStart(2, '0')}`;
 
-      setFormData({
+      const newFormData = {
         title: '',
         details: '',
         start_time: defaultStart,
@@ -167,7 +181,11 @@ export default function PlanForm() {
         order: 0,
         color: 'bg-violet-500',
         is_completed: false,
-      });
+      };
+
+      setFormData(newFormData);
+      setInitialFormData(newFormData);
+
       setSelectedDay(isToday ? 'today' : 'tomorrow');
     }
   }, [selectedPlan, draggedPlan, isToday, isTomorrow, today]);
@@ -184,12 +202,39 @@ export default function PlanForm() {
     setSelectedPlan(null);
   }
 
+  const hasFormChanged = () => {
+    return (
+      formData.title !== initialFormData.title ||
+      formData.details !== initialFormData.details ||
+      formData.start_time !== initialFormData.start_time ||
+      formData.end_time !== initialFormData.end_time
+    );
+  };
+
+  const handleAttemptClose = () => {
+    if (hasFormChanged()) {
+      setIsConfirmModalOpen(true);
+    } else {
+      handleClose();
+    }
+  };
+
+  const handleConfirmClose = () => {
+    setIsConfirmModalOpen(false);
+    handleClose();
+    toast.info(tPlanner('notifications.undoSuccess'));
+  };
+
+  const handleCancelClose = () => {
+    setIsConfirmModalOpen(false);
+  };
+
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError('');
 
     if (!validateTimes(formData.start_time, formData.end_time)) {
-      setError(t('plannerForm.validationError'));
+      setError(tCommon('plannerForm.validationError'));
       return;
     }
 
@@ -203,14 +248,13 @@ export default function PlanForm() {
     const endDate = new Date(dayDate);
     endDate.setHours(eh, em, 0, 0);
 
-    // user_id: user?.id || 0  --> undefined ise 0 yapıyoruz (veya '' da olabilir)
     const planData = {
-  ...formData,
-  start_time: startDate.toISOString(),
-  end_time: endDate.toISOString(),
-  user_id: user?.id || 0,
-  color: formData.color || 'bg-violet-500' // Default değer eklendi
-};
+      ...formData,
+      start_time: startDate.toISOString(),
+      end_time: endDate.toISOString(),
+      user_id: user?.id || 0,
+      color: formData.color || 'bg-violet-500'
+    };
 
     try {
       if (selectedPlan && selectedPlan.id && selectedPlan.id !== 0) {
@@ -223,12 +267,12 @@ export default function PlanForm() {
       handleClose();
       toast.success(
         isEditingPlan
-          ? t('planner.notifications.updateSuccess')
-          : t('planner.notifications.createSuccess')
+          ? tPlanner('notifications.updateSuccess')
+          : tPlanner('notifications.createSuccess')
       );
     } catch (err) {
       console.error('Form gönderilirken hata:', err);
-      setError(t('plannerForm.submitError'));
+      setError(tCommon('plannerForm.submitError'));
     }
   }
 
@@ -241,11 +285,7 @@ export default function PlanForm() {
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 0.2 }}
-          onClick={(e) => {
-            if (e.target === e.currentTarget) {
-              handleClose();
-            }
-          }}
+          onClick={handleAttemptClose} // Popup dışına tıklanmasını yönet
         >
           <motion.div
             className="w-full max-w-xl bg-white dark:bg-gray-900 rounded-2xl shadow-xl overflow-hidden"
@@ -253,13 +293,14 @@ export default function PlanForm() {
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: 10 }}
             transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
+            onClick={(e) => e.stopPropagation()} // İçeriğe tıklamayı engelle
           >
             <div className="flex justify-between items-center px-6 py-4 border-b border-gray-200 dark:border-gray-800">
               <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
-                {isEditingPlan ? t('plannerForm.editPlan') : t('plannerForm.newPlan')}
+                {isEditingPlan ? tCommon('plannerForm.editPlan') : tCommon('plannerForm.newPlan')}
               </h2>
               <button
-                onClick={handleClose}
+                onClick={handleAttemptClose} // Çarpıya tıklamayı da yönet
                 className="p-1 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
               >
                 <X className="w-5 h-5 text-gray-500 dark:text-gray-400" />
@@ -279,7 +320,7 @@ export default function PlanForm() {
                           : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200'
                       }`}
                     >
-                      {t('plannerForm.today')}
+                      {tCommon('plannerForm.today')}
                     </button>
                     <button
                       type="button"
@@ -290,7 +331,7 @@ export default function PlanForm() {
                           : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200'
                       }`}
                     >
-                      {t('plannerForm.tomorrow')}
+                      {tCommon('plannerForm.tomorrow')}
                     </button>
                   </div>
                 </div>
@@ -301,7 +342,7 @@ export default function PlanForm() {
                   type="text"
                   value={formData.title}
                   onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                  placeholder={t('plannerForm.titlePlaceholder')}
+                  placeholder={tCommon('plannerForm.titlePlaceholder')}
                   className="w-full px-4 py-3 text-base bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl 
                     focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all
                     placeholder:text-gray-400 dark:placeholder:text-gray-500"
@@ -312,7 +353,7 @@ export default function PlanForm() {
               <div className="mb-6 grid grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                    {t('plannerForm.startTime')}
+                    {tCommon('plannerForm.startTime')}
                   </label>
                   <div className="relative">
                     <Clock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
@@ -330,7 +371,7 @@ export default function PlanForm() {
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                    {t('plannerForm.endTime')}
+                    {tCommon('plannerForm.endTime')}
                   </label>
                   <div className="relative">
                     <Clock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
@@ -358,7 +399,7 @@ export default function PlanForm() {
                 <textarea
                   value={formData.details}
                   onChange={(e) => setFormData({ ...formData, details: e.target.value })}
-                  placeholder={t('plannerForm.detailsPlaceholder')}
+                  placeholder={tCommon('plannerForm.detailsPlaceholder')}
                   rows={3}
                   className="w-full px-4 py-3 text-base bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl
                     focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all
@@ -369,23 +410,31 @@ export default function PlanForm() {
               <div className="flex justify-end gap-3">
                 <button
                   type="button"
-                  onClick={handleClose}
+                  onClick={handleAttemptClose} // İptal butonuna tıklama da onay ister
                   className="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-800 
                     rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
                 >
-                  {t('plannerForm.cancel')}
+                  {tCommon('cancel')}
                 </button>
                 <button
                   type="submit"
                   className="px-4 py-2 text-sm font-medium text-white bg-zinc-900 rounded-lg hover:bg-zinc-700 dark:bg-zinc-700 dark:hover:bg-zinc-600 transition-colors"
                 >
-                  {isEditingPlan ? t('plannerForm.updatePlan') : t('plannerForm.createPlan')}
+                  {isEditingPlan ? tCommon('plannerForm.updatePlan') : tCommon('plannerForm.createPlan')}
                 </button>
               </div>
             </form>
           </motion.div>
         </motion.div>
       )}
+
+      {/* ConfirmModal'ı ekleyin */}
+      <ConfirmModal
+        isOpen={isConfirmModalOpen}
+        onClose={handleCancelClose}
+        onConfirm={handleConfirmClose}
+        message={tPlanner('confirmCloseMessage')}
+      />
     </AnimatePresence>
   );
 }
