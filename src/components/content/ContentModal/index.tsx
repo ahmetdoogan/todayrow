@@ -12,7 +12,7 @@ import PreviewCard from "../PreviewCard";
 import ContentEditor from "../ContentEditor";
 import { PlatformType, ContentFormat, PLATFORM_FORMATS } from "@/types/content";
 import { useTranslations } from 'next-intl';
-import ConfirmModal from '@/components/modals/ConfirmModal'; // ConfirmModal'ı içe aktar
+import ConfirmModal from '@/components/modals/ConfirmModal';
 
 interface ContentModalProps {
   isOpen: boolean;
@@ -63,7 +63,7 @@ const ContentModal: React.FC<ContentModalProps> = ({
   const [metadata, setMetadata] = useState<MetaData | null>(null);
   const [isLoadingMetadata, setIsLoadingMetadata] = useState(false);
   const [urlInputTimer, setUrlInputTimer] = useState<NodeJS.Timeout | null>(null);
-  const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false); // ConfirmModal için state
+  const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
   const [initialFormData, setInitialFormData] = useState({
     title: "",
     details: "",
@@ -75,12 +75,11 @@ const ContentModal: React.FC<ContentModalProps> = ({
     selectedPlatforms: ["LINKEDIN"],
     url: "",
     normalizedUrl: "",
-    metadata: null,
+    metadata: null as MetaData | null, // Bu satırı güncelledik
   });
 
   const t = useTranslations('common.contentModal');
 
-  // Form verilerini başlangıçta kaydet
   useEffect(() => {
     if (isOpen) {
       setInitialFormData({
@@ -99,7 +98,6 @@ const ContentModal: React.FC<ContentModalProps> = ({
     }
   }, [isOpen]);
 
-  // Değişiklik yapılıp yapılmadığını kontrol et
   const hasChanges = () => {
     return (
       title !== initialFormData.title ||
@@ -118,9 +116,9 @@ const ContentModal: React.FC<ContentModalProps> = ({
 
   const handleClose = () => {
     if (hasChanges()) {
-      setIsConfirmModalOpen(true); // Değişiklik varsa ConfirmModal'ı göster
+      setIsConfirmModalOpen(true);
     } else {
-      onClose(); // Değişiklik yoksa direkt kapat
+      onClose();
     }
   };
 
@@ -467,7 +465,6 @@ const ContentModal: React.FC<ContentModalProps> = ({
         </motion.div>
       </motion.div>
 
-      {/* ConfirmModal'ı ekleyin */}
       <ConfirmModal
         isOpen={isConfirmModalOpen}
         onClose={handleCancelClose}
