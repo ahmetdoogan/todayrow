@@ -69,6 +69,7 @@ export default function PlanForm() {
     is_completed: false,
   });
 
+  const [initialFormData, setInitialFormData] = useState(formData);
   const [error, setError] = useState('');
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
 
@@ -91,7 +92,24 @@ export default function PlanForm() {
           .getMinutes()
           .toString()
           .padStart(2, '0')}`,
-        plan_type: selectedPlan.plan_type,
+        plan_type: selectedPlan.plan_type as 'custom' | 'predefined' | 'regular' | 'quick',
+        order: selectedPlan.order,
+        color: selectedPlan.color || 'bg-violet-500',
+        is_completed: selectedPlan.is_completed,
+      });
+
+      setInitialFormData({
+        title: selectedPlan.title,
+        details: selectedPlan.details || '',
+        start_time: `${st.getHours().toString().padStart(2, '0')}:${st
+          .getMinutes()
+          .toString()
+          .padStart(2, '0')}`,
+        end_time: `${et.getHours().toString().padStart(2, '0')}:${et
+          .getMinutes()
+          .toString()
+          .padStart(2, '0')}`,
+        plan_type: selectedPlan.plan_type as 'custom' | 'predefined' | 'regular' | 'quick',
         order: selectedPlan.order,
         color: selectedPlan.color || 'bg-violet-500',
         is_completed: selectedPlan.is_completed,
@@ -108,6 +126,19 @@ export default function PlanForm() {
       const endH = (h + 1) % 24;
 
       setFormData({
+        title: draggedPlan.quickPlan.title,
+        details: '',
+        start_time: draggedPlan.dropTime,
+        end_time: `${endH.toString().padStart(2, '0')}:${m
+          .toString()
+          .padStart(2, '0')}`,
+        plan_type: 'predefined',
+        order: 0,
+        color: draggedPlan.quickPlan.color || 'bg-violet-500',
+        is_completed: false,
+      });
+
+      setInitialFormData({
         title: draggedPlan.quickPlan.title,
         details: '',
         start_time: draggedPlan.dropTime,
@@ -142,6 +173,24 @@ export default function PlanForm() {
         color: 'bg-violet-500',
         is_completed: false,
       });
+
+      setInitialFormData({
+        title: '',
+        details: '',
+        start_time: `${st.getHours().toString().padStart(2, '0')}:${st
+          .getMinutes()
+          .toString()
+          .padStart(2, '0')}`,
+        end_time: `${et.getHours().toString().padStart(2, '0')}:${et
+          .getMinutes()
+          .toString()
+          .padStart(2, '0')}`,
+        plan_type: 'custom',
+        order: 0,
+        color: 'bg-violet-500',
+        is_completed: false,
+      });
+
       setSelectedDay(isToday ? 'today' : 'tomorrow');
     } else {
       // 4) Sıfırdan form
@@ -171,6 +220,18 @@ export default function PlanForm() {
         color: 'bg-violet-500',
         is_completed: false,
       });
+
+      setInitialFormData({
+        title: '',
+        details: '',
+        start_time: defaultStart,
+        end_time: defaultEnd,
+        plan_type: 'custom',
+        order: 0,
+        color: 'bg-violet-500',
+        is_completed: false,
+      });
+
       setSelectedDay(isToday ? 'today' : 'tomorrow');
     }
   }, [selectedPlan, draggedPlan, isToday, isTomorrow, today]);
@@ -190,10 +251,14 @@ export default function PlanForm() {
   const handleAttemptClose = () => {
     // Eğer formda değişiklik yapıldıysa onay iste
     if (
-      formData.title !== '' ||
-      formData.details !== '' ||
-      formData.start_time !== '' ||
-      formData.end_time !== ''
+      formData.title !== initialFormData.title ||
+      formData.details !== initialFormData.details ||
+      formData.start_time !== initialFormData.start_time ||
+      formData.end_time !== initialFormData.end_time ||
+      formData.plan_type !== initialFormData.plan_type ||
+      formData.order !== initialFormData.order ||
+      formData.color !== initialFormData.color ||
+      formData.is_completed !== initialFormData.is_completed
     ) {
       setIsConfirmModalOpen(true);
     } else {

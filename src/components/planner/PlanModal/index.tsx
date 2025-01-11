@@ -10,9 +10,10 @@ import {
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { usePlanner } from '@/context/PlannerContext';
-import { useTranslations } from 'next-intl';
+// import { format } from 'date-fns';         // date-fns v2 ile 3. argüman sorunsuz kullanılabilir
+// import { tr } from 'date-fns/locale';     // Şu an devre dışı bırakıyoruz
+
 import { format } from 'date-fns';         
-import { toast } from 'react-toastify';
 
 const PlanModal = () => {
   const { 
@@ -25,10 +26,6 @@ const PlanModal = () => {
     completePlan 
   } = usePlanner();
 
-  // İki farklı çeviri hook'u kullanıyoruz
-  const tCommon = useTranslations('common');
-  const tPlanner = useTranslations('planner');
-
   if (!selectedPlan || !isModalOpen) return null;
 
   const handleClose = () => {
@@ -40,10 +37,8 @@ const PlanModal = () => {
     try {
       await deletePlan(selectedPlan.id);
       handleClose();
-      toast.success(tPlanner('notifications.deleteSuccess'));
     } catch (error) {
       console.error('Delete error:', error);
-      toast.error(tPlanner('notifications.deleteError'));
     }
   };
 
@@ -51,10 +46,8 @@ const PlanModal = () => {
     try {
       await completePlan(selectedPlan.id);
       handleClose();
-      toast.success(tPlanner('notifications.completeSuccess'));
     } catch (error) {
       console.error('Complete error:', error);
-      toast.error(tPlanner('notifications.completeError'));
     }
   };
 
@@ -62,6 +55,7 @@ const PlanModal = () => {
     setIsEditingPlan(true);
   };
 
+  // ↓ Artık üçüncü argümanı (locale) kaldırdık
   const formatTime = (dateString: string) => {
     return format(new Date(dateString), 'HH:mm');
   };
@@ -77,7 +71,11 @@ const PlanModal = () => {
       exit={{ opacity: 0 }}
       transition={{ duration: 0.15 }}
       className="fixed inset-0 bg-black/20 dark:bg-black/40 backdrop-blur-sm z-50 flex items-center justify-center"
-      onClick={handleClose}
+      onClick={(e) => {
+        if (e.target === e.currentTarget) {
+          handleClose();
+        }
+      }}
     >
       <motion.div
         initial={{ opacity: 0, scale: 0.98 }}
@@ -85,7 +83,7 @@ const PlanModal = () => {
         exit={{ opacity: 0, scale: 0.98 }}
         transition={{ duration: 0.15 }}
         className="bg-white dark:bg-slate-900 w-full max-w-2xl mx-4 rounded-2xl shadow-xl"
-        onClick={(e) => e.stopPropagation()}
+        onClick={e => e.stopPropagation()}
       >
         {/* Header */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-slate-200 dark:border-slate-800">
@@ -98,7 +96,7 @@ const PlanModal = () => {
                 onClick={handleEdit}
                 className="p-1.5 text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-300 
                          rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
-                title={tCommon('edit')}
+                title="Düzenle"
               >
                 <Edit2 size={16} />
               </button>
@@ -135,19 +133,17 @@ const PlanModal = () => {
               <div className="flex items-center gap-2">
                 <Tag className="w-4 h-4 text-slate-400" />
                 <span className="text-slate-600 dark:text-slate-300">
-                  {selectedPlan.plan_type === 'quick' 
-                    ? tCommon('plannerForm.quickPlan') // 'common.plannerForm.quickPlan' varsa
-                    : tCommon('plannerForm.customPlan')} // 'common.plannerForm.customPlan' varsa
+                  {selectedPlan.plan_type === 'quick' ? 'Hazır Plan' : 'Özel Plan'}
                 </span>
               </div>
-              <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                selectedPlan.is_completed 
+              <span className={`
+                px-2 py-1 rounded-full text-xs font-medium
+                ${selectedPlan.is_completed 
                   ? 'bg-green-50 text-green-600 dark:bg-green-900/20 dark:text-green-400'
                   : 'bg-blue-50 text-blue-600 dark:bg-blue-900/20 dark:text-blue-400'
-              }`}>
-                {selectedPlan.is_completed 
-                  ? tCommon('completed') 
-                  : tCommon('inProgress')}
+                }
+              `}>
+                {selectedPlan.is_completed ? 'Tamamlandı' : 'Devam Ediyor'}
               </span>
             </div>
 
@@ -170,7 +166,7 @@ const PlanModal = () => {
                        transition-colors text-sm"
             >
               <Trash2 size={16} />
-              {tCommon('delete')}
+              Planı Sil
             </button>
 
             {!selectedPlan.is_completed && (
@@ -182,7 +178,7 @@ const PlanModal = () => {
                            transition-colors text-sm"
                 >
                   <Edit2 size={16} />
-                  {tCommon('edit')}
+                  Düzenle
                 </button>
 
                 <button
@@ -191,7 +187,7 @@ const PlanModal = () => {
                            hover:bg-blue-700 transition-colors text-sm"
                 >
                   <CheckSquare size={16} />
-                  {tCommon('complete')}
+                  Tamamla
                 </button>
               </>
             )}
