@@ -137,7 +137,7 @@ const PlanModal = () => {
                 <span className="text-slate-600 dark:text-slate-300">
                   {selectedPlan.plan_type === 'quick' 
                     ? tCommon('plannerForm.quickPlan') // 'common.plannerForm.quickPlan' varsa
-                    : tCommon('plannerForm.customPlan')} // 'common.plannerForm.customPlan' varsa
+                    : tCommon('plannerForm.customPlan')} {/* 'common.plannerForm.customPlan' varsa */}
                 </span>
               </div>
               <span className={`px-2 py-1 rounded-full text-xs font-medium ${

@@ -22,11 +22,11 @@ export default function DashboardPage() {
   const [isDragging, setIsDragging] = useState(false);
 
   useEffect(() => {
-  const openPlanId = searchParams?.get("openPlan");
-  if (openPlanId) {
-    const planToOpen = plans.find(
-      (plan) => plan.id === parseInt(openPlanId)
-    );
+    const openPlanId = searchParams?.get("openPlan");
+    if (openPlanId) {
+      const planToOpen = plans.find(
+        (plan) => plan.id === parseInt(openPlanId)
+      );
       if (planToOpen) {
         setSelectedPlan(planToOpen);
         setIsModalOpen(true);
@@ -38,9 +38,9 @@ export default function DashboardPage() {
 
   // Drag başlarken tetiklenecek
   const handleDragStart = () => {
-  setIsDragging(true);
-  setIsQuickPlansOpen(false); // Modalı anında kapat
-};
+    setIsDragging(true);
+    setIsQuickPlansOpen(false); // Modalı anında kapat
+  };
 
   // Drag bittikten sonra tetiklenecek
   const handleDragEnd = () => {
