@@ -81,7 +81,7 @@ export default function PlanForm() {
       const st = new Date(selectedPlan.start_time);
       const et = new Date(selectedPlan.end_time);
 
-      const newFormData = {
+      setFormData({
         title: selectedPlan.title,
         details: selectedPlan.details || '',
         start_time: `${st.getHours().toString().padStart(2, '0')}:${st
@@ -92,14 +92,28 @@ export default function PlanForm() {
           .getMinutes()
           .toString()
           .padStart(2, '0')}`,
-        plan_type: selectedPlan.plan_type,
+        plan_type: selectedPlan.plan_type as 'custom' | 'predefined' | 'regular' | 'quick',
         order: selectedPlan.order,
         color: selectedPlan.color || 'bg-violet-500',
         is_completed: selectedPlan.is_completed,
-      };
+      });
 
-      setFormData(newFormData);
-      setInitialFormData(newFormData);
+      setInitialFormData({
+        title: selectedPlan.title,
+        details: selectedPlan.details || '',
+        start_time: `${st.getHours().toString().padStart(2, '0')}:${st
+          .getMinutes()
+          .toString()
+          .padStart(2, '0')}`,
+        end_time: `${et.getHours().toString().padStart(2, '0')}:${et
+          .getMinutes()
+          .toString()
+          .padStart(2, '0')}`,
+        plan_type: selectedPlan.plan_type as 'custom' | 'predefined' | 'regular' | 'quick',
+        order: selectedPlan.order,
+        color: selectedPlan.color || 'bg-violet-500',
+        is_completed: selectedPlan.is_completed,
+      });
 
       if (compareDate(new Date(selectedPlan.start_time), today)) {
         setSelectedDay('today');
@@ -111,7 +125,7 @@ export default function PlanForm() {
       const [h, m] = draggedPlan.dropTime.split(':').map(Number);
       const endH = (h + 1) % 24;
 
-      const newFormData = {
+      setFormData({
         title: draggedPlan.quickPlan.title,
         details: '',
         start_time: draggedPlan.dropTime,
@@ -122,10 +136,20 @@ export default function PlanForm() {
         order: 0,
         color: draggedPlan.quickPlan.color || 'bg-violet-500',
         is_completed: false,
-      };
+      });
 
-      setFormData(newFormData);
-      setInitialFormData(newFormData);
+      setInitialFormData({
+        title: draggedPlan.quickPlan.title,
+        details: '',
+        start_time: draggedPlan.dropTime,
+        end_time: `${endH.toString().padStart(2, '0')}:${m
+          .toString()
+          .padStart(2, '0')}`,
+        plan_type: 'predefined',
+        order: 0,
+        color: draggedPlan.quickPlan.color || 'bg-violet-500',
+        is_completed: false,
+      });
 
       setSelectedDay(isToday ? 'today' : 'tomorrow');
     } else if (selectedPlan && selectedPlan.id === 0) {
@@ -133,7 +157,7 @@ export default function PlanForm() {
       const st = new Date(selectedPlan.start_time);
       const et = new Date(selectedPlan.end_time);
 
-      const newFormData = {
+      setFormData({
         title: '',
         details: '',
         start_time: `${st.getHours().toString().padStart(2, '0')}:${st
@@ -148,10 +172,24 @@ export default function PlanForm() {
         order: 0,
         color: 'bg-violet-500',
         is_completed: false,
-      };
+      });
 
-      setFormData(newFormData);
-      setInitialFormData(newFormData);
+      setInitialFormData({
+        title: '',
+        details: '',
+        start_time: `${st.getHours().toString().padStart(2, '0')}:${st
+          .getMinutes()
+          .toString()
+          .padStart(2, '0')}`,
+        end_time: `${et.getHours().toString().padStart(2, '0')}:${et
+          .getMinutes()
+          .toString()
+          .padStart(2, '0')}`,
+        plan_type: 'custom',
+        order: 0,
+        color: 'bg-violet-500',
+        is_completed: false,
+      });
 
       setSelectedDay(isToday ? 'today' : 'tomorrow');
     } else {
@@ -172,7 +210,7 @@ export default function PlanForm() {
         .toString()
         .padStart(2, '0')}`;
 
-      const newFormData = {
+      setFormData({
         title: '',
         details: '',
         start_time: defaultStart,
@@ -181,10 +219,18 @@ export default function PlanForm() {
         order: 0,
         color: 'bg-violet-500',
         is_completed: false,
-      };
+      });
 
-      setFormData(newFormData);
-      setInitialFormData(newFormData);
+      setInitialFormData({
+        title: '',
+        details: '',
+        start_time: defaultStart,
+        end_time: defaultEnd,
+        plan_type: 'custom',
+        order: 0,
+        color: 'bg-violet-500',
+        is_completed: false,
+      });
 
       setSelectedDay(isToday ? 'today' : 'tomorrow');
     }
@@ -202,17 +248,18 @@ export default function PlanForm() {
     setSelectedPlan(null);
   }
 
-  const hasFormChanged = () => {
-    return (
+  const handleAttemptClose = () => {
+    // Eğer formda değişiklik yapıldıysa onay iste
+    if (
       formData.title !== initialFormData.title ||
       formData.details !== initialFormData.details ||
       formData.start_time !== initialFormData.start_time ||
-      formData.end_time !== initialFormData.end_time
-    );
-  };
-
-  const handleAttemptClose = () => {
-    if (hasFormChanged()) {
+      formData.end_time !== initialFormData.end_time ||
+      formData.plan_type !== initialFormData.plan_type ||
+      formData.order !== initialFormData.order ||
+      formData.color !== initialFormData.color ||
+      formData.is_completed !== initialFormData.is_completed
+    ) {
       setIsConfirmModalOpen(true);
     } else {
       handleClose();
