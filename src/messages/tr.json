@@ -256,7 +256,7 @@
       "viewDetails": "Detayları Gör",
       "enterTitle": "Lütfen bir başlık girin",
       "saveError": "Not kaydedilirken bir hata oluştu",
-      "contentPlaceholder": "Notunuzu buraya yazın...",
+      "contentPlaceholder": "Notunuzu buraya yazın... (Markdown desteklenir)",
       "folder": "Klasör",
       "tags": "Etiketler",
       "create": "Oluştur",
@@ -433,7 +433,7 @@
       "completePlan": "Planı Tamamla"
     },
     "tagInput": {
-      "folderPlaceholder": "Klasör adı girin",
+      "folderPlaceholder": "Klasör yolu girin",
       "inputPlaceholder": "Virgülle ayırarak veya Enter'a basarak etiket ekleyin",
       "newTag": "Yeni etiket: {inputValue}",
       "newFolder": "Yeni klasör: {inputValue}",
@@ -706,9 +706,10 @@
       }
     },
     "buttons": {
-      "start": "Başlayalım"
-    }
+    "start": "Başlayalım"
   },
+  "reopenHint": "Daha sonra Ayarlar sayfasından tekrar açabilirsiniz."
+},
   "auth": {
     "welcome": "Hoş Geldiniz",
     "login": {

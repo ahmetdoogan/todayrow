@@ -248,29 +248,38 @@ const PlanList = () => {
                   )}
 
                   <div className="flex flex-col md:flex-row gap-2">
-                    <div className="flex-1 min-w-0">
-                      <h3 className={`font-medium text-sm truncate flex-1 ${
-                        plan.is_completed ? 'text-gray-500 dark:text-gray-400' : 'text-gray-900 dark:text-gray-100'
-                      }`}>
-                        {plan.title}
-                      </h3>
-                      {plan.details && (
-                        <p className="mt-1 text-xs text-gray-500 dark:text-gray-400 line-clamp-2">
-                          {plan.details}
-                        </p>
-                      )}
-                      <div className="mt-1 text-xs md:text-sm text-gray-500 dark:text-gray-400">
-                        {new Date(plan.start_time).toLocaleTimeString('tr-TR', {
-                          hour: '2-digit',
-                          minute: '2-digit',
-                        })}
-                        {' - '}
-                        {new Date(plan.end_time).toLocaleTimeString('tr-TR', {
-                          hour: '2-digit',
-                          minute: '2-digit',
-                        })}
-                      </div>
-                    </div>
+  <div className="flex-1 min-w-0">
+    <div className="flex items-center gap-2">
+      <h3 className={`font-medium text-sm truncate flex-1 ${
+        plan.is_completed ? 'text-gray-500 dark:text-gray-400' : 'text-gray-900 dark:text-gray-100'
+      }`}>
+        {plan.title}
+      </h3>
+      {plan.is_completed && (
+        <span className="inline-flex items-center rounded-md bg-green-50 dark:bg-green-900/20 
+                      px-2 py-1 text-xs font-medium text-green-700 dark:text-green-300 
+                      ring-1 ring-inset ring-green-600/20 dark:ring-green-500/30">
+          {t('content.status.completed')}
+        </span>
+      )}
+    </div>
+    {plan.details && (
+      <p className="mt-1 text-xs text-gray-500 dark:text-gray-400 line-clamp-2">
+        {plan.details}
+      </p>
+    )}
+    <div className="mt-1 text-xs md:text-sm text-gray-500 dark:text-gray-400">
+      {new Date(plan.start_time).toLocaleTimeString('tr-TR', {
+        hour: '2-digit',
+        minute: '2-digit',
+      })}
+      {' - '}
+      {new Date(plan.end_time).toLocaleTimeString('tr-TR', {
+        hour: '2-digit',
+        minute: '2-digit',
+      })}
+    </div>
+  </div>
 
                     {canEdit && (
                       <div className="flex items-center gap-1 opacity-0 group-hover/card:opacity-100 transition-opacity">

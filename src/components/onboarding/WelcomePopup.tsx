@@ -180,15 +180,21 @@ export default function WelcomePopup({ onClose }: WelcomePopupProps) {
             </div>
           </div>
 
-          {/* Footer */}
-          <div className="flex justify-end items-center gap-4 p-6 border-t border-gray-200 dark:border-gray-800">
-            <button
-              onClick={handleClose}
-              className="px-6 py-2 text-sm font-medium text-white bg-gray-900 dark:bg-gray-100 dark:text-gray-900 rounded-lg hover:bg-gray-800 dark:hover:bg-gray-200 transition-colors"
-            >
-              {t('buttons.start')}
-            </button>
-          </div>
+
+<div className="flex justify-between items-center gap-4 p-6 border-t border-gray-200 dark:border-gray-800">
+  {/* Sol tarafa bilgilendirici not ekle */}
+  <p className="text-xs text-gray-500 dark:text-gray-400">
+    {t('reopenHint')}
+  </p>
+
+  {/* Sağ tarafa "Başlayalım" butonunu ekle */}
+  <button
+    onClick={handleClose}
+    className="px-6 py-2 text-sm font-medium text-white bg-gray-900 dark:bg-gray-100 dark:text-gray-900 rounded-lg hover:bg-gray-800 dark:hover:bg-gray-200 transition-colors"
+  >
+    {t('buttons.start')}
+  </button>
+</div>
         </motion.div>
       </motion.div>
     </AnimatePresence>

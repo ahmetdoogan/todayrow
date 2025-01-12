@@ -225,7 +225,7 @@
       "pinButton": "Pin",
       "deleteSelected": "Delete Selected",
       "pinSelected": "Pin Selected",
-      "hint": "Enter tuşuyla yeni klasör veya etiket oluşturabilirsiniz.",
+      "hint": "You can create a new folder or label with the Enter key.",
       "deleteConfirmation": {
         "title": "Deletion Confirmation",
         "singleDelete": "Are you sure you want to delete this note?",
@@ -706,8 +706,9 @@
       }
     },
     "buttons": {
-      "start": "Let's Begin"
-    }
+    "start": "Let's Begin"
+  },
+  "reopenHint": "You can reopen this from the Settings page later."
   },
   "auth": {
     "welcome": "Welcome",
