@@ -225,6 +225,7 @@
       "pinButton": "Sabitle",
       "deleteSelected": "Seçilenleri Sil",
       "pinSelected": "Seçilenleri Sabitle",
+      "hint": "Enter tuşuyla yeni klasör veya etiket oluşturabilirsiniz.",
       "deleteConfirmation": {
         "title": "Silme Onayı",
         "singleDelete": "Bu notu silmek istediğinize emin misiniz?",
@@ -255,7 +256,7 @@
       "viewDetails": "Detayları Gör",
       "enterTitle": "Lütfen bir başlık girin",
       "saveError": "Not kaydedilirken bir hata oluştu",
-      "contentPlaceholder": "Notunuzu buraya yazın... (Markdown desteklenir)",
+      "contentPlaceholder": "Notunuzu buraya yazın...",
       "folder": "Klasör",
       "tags": "Etiketler",
       "create": "Oluştur",
@@ -432,7 +433,7 @@
       "completePlan": "Planı Tamamla"
     },
     "tagInput": {
-      "folderPlaceholder": "Klasör yolu girin",
+      "folderPlaceholder": "Klasör adı girin",
       "inputPlaceholder": "Virgülle ayırarak veya Enter'a basarak etiket ekleyin",
       "newTag": "Yeni etiket: {inputValue}",
       "newFolder": "Yeni klasör: {inputValue}",

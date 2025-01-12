@@ -72,6 +72,8 @@ export function TagInput({
           onChange(updatedTags.join(', '));
         }
       }
+      setInputValue('');
+      setShowSuggestions(false);
     }
   }, [tags, isFolder, onChange]);
 
@@ -91,9 +93,9 @@ export function TagInput({
     if (inputRef.current && dropdownRef.current) {
       const inputRect = inputRef.current.getBoundingClientRect();
       dropdownRef.current.style.width = `${inputRect.width}px`;
-      dropdownRef.current.style.position = 'fixed';
-      dropdownRef.current.style.top = `${inputRect.bottom + 4}px`;
-      dropdownRef.current.style.left = `${inputRect.left}px`;
+      dropdownRef.current.style.position = 'absolute';
+      dropdownRef.current.style.top = `${inputRect.height}px`;
+      dropdownRef.current.style.left = '0';
       dropdownRef.current.style.zIndex = '9999';
     }
   };
@@ -112,8 +114,8 @@ export function TagInput({
   }, [showSuggestions]);
 
   return (
-    <div ref={inputRef} className="space-y-2 relative">
-      <div className="flex flex-wrap gap-2 min-h-[28px]">
+    <div ref={inputRef} className="space-y-1 relative">
+      <div className="flex flex-wrap gap-2 min-h-[2px]">
         {tags.map(tag => (
           <span
             key={tag}
@@ -135,44 +137,40 @@ export function TagInput({
         ))}
       </div>
 
-      {(!isFolder || tags.length === 0) && (
-        <div className="relative">
-          <div className="flex items-center relative">
-            <input
-              type="text"
-              value={inputValue}
-              onChange={(e) => setInputValue(e.target.value)}
-              onFocus={() => setShowSuggestions(true)}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter') {
-                  e.preventDefault();
-                  if (inputValue.trim()) {
-                    addTag(inputValue);
-                    setInputValue('');
-                    setShowSuggestions(false);
-                  }
-                } else if (e.key === ',' && !isFolder) {
-                  e.preventDefault();
-                  if (inputValue.trim()) {
-                    addTag(inputValue);
-                    setInputValue('');
-                  }
+      {/* Klasör kutusu her zaman görünür kalacak */}
+      <div className="relative">
+        <div className="flex items-center relative">
+          <input
+            type="text"
+            value={inputValue}
+            onChange={(e) => setInputValue(e.target.value)}
+            onFocus={() => setShowSuggestions(true)}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') {
+                e.preventDefault();
+                if (inputValue.trim()) {
+                  addTag(inputValue);
                 }
-              }}
-              placeholder={isFolder ? t('tagInput.folderPlaceholder') : t('tagInput.inputPlaceholder')}
-              className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-400 dark:bg-gray-700 dark:text-white pr-8"
-            />
-            <ChevronDown 
-              className={`absolute right-3 w-4 h-4 text-gray-400 transition-transform duration-200 ${showSuggestions ? 'rotate-180' : ''}`}
-            />
-          </div>
+              } else if (e.key === ',' && !isFolder) {
+                e.preventDefault();
+                if (inputValue.trim()) {
+                  addTag(inputValue);
+                }
+              }
+            }}
+            placeholder={isFolder ? t('tagInput.folderPlaceholder') : t('tagInput.inputPlaceholder')}
+            className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-400 dark:bg-gray-700 dark:text-white pr-8"
+          />
+          <ChevronDown 
+            className={`absolute right-3 w-4 h-4 text-gray-400 transition-transform duration-200 ${showSuggestions ? 'rotate-180' : ''}`}
+          />
         </div>
-      )}
+      </div>
 
       {showSuggestions && (
         <div 
           ref={dropdownRef}
-          className="bg-white dark:bg-gray-800 rounded-lg shadow-xl border border-gray-200 dark:border-gray-700 overflow-hidden"
+          className="bg-white dark:bg-gray-800 rounded-lg shadow-xl border border-gray-200 dark:border-gray-700 overflow-hidden absolute"
         >
           {isLoading ? (
             <div className="p-2 text-center">
@@ -185,8 +183,6 @@ export function TagInput({
                   key={item.name}
                   onClick={() => {
                     addTag(item.name);
-                    setInputValue('');
-                    setShowSuggestions(false);
                   }}
                   className="w-full px-3 py-2 text-sm text-left hover:bg-gray-50 dark:hover:bg-gray-700 flex items-center justify-between"
                 >
@@ -201,9 +197,14 @@ export function TagInput({
               ))}
             </div>
           ) : inputValue && (
-            <div className="p-3 text-sm text-gray-500 dark:text-gray-400">
+            <button
+              onClick={() => {
+                addTag(inputValue);
+              }}
+              className="w-full px-3 py-2 text-sm text-left hover:bg-gray-50 dark:hover:bg-gray-700 text-gray-500 dark:text-gray-400"
+            >
               {isFolder ? t('tagInput.newFolder', { inputValue }) : t('tagInput.newTag', { inputValue })}
-            </div>
+            </button>
           )}
         </div>
       )}

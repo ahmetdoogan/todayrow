@@ -225,6 +225,7 @@
       "pinButton": "Pin",
       "deleteSelected": "Delete Selected",
       "pinSelected": "Pin Selected",
+      "hint": "Enter tuşuyla yeni klasör veya etiket oluşturabilirsiniz.",
       "deleteConfirmation": {
         "title": "Deletion Confirmation",
         "singleDelete": "Are you sure you want to delete this note?",
@@ -255,7 +256,7 @@
       "viewDetails": "View Details",
       "enterTitle": "Please enter a title",
       "saveError": "An error occurred while saving the note",
-      "contentPlaceholder": "Write your note here... (Markdown supported)",
+      "contentPlaceholder": "Write your note here...",
       "folder": "Folder",
       "tags": "Tags",
       "create": "Create",
@@ -432,7 +433,7 @@
       "completePlan": "Complete Plan"
     },
     "tagInput": {
-      "folderPlaceholder": "Enter folder path",
+      "folderPlaceholder": "Enter folder name",
       "inputPlaceholder": "Add tags separated by commas or press Enter",
       "newTag": "New tag: {inputValue}",
       "newFolder": "New folder: {inputValue}",
