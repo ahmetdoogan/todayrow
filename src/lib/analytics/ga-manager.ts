@@ -2,6 +2,56 @@ import { isValidTraffic } from './filters';
 
 export const GA_MEASUREMENT_ID = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID;
 
+// Event kategorileri için sabitler
+export const EventCategories = {
+  USER: 'user',
+  FEATURE: 'feature',
+  CONTENT: 'content',
+  PREMIUM: 'premium',
+  ENGAGEMENT: 'engagement',
+  PERFORMANCE: 'performance',
+  NAVIGATION: 'navigation',   // Bunu ekledik
+  ERROR: 'error'             // Bunu da ekledik
+} as const;
+
+// Event aksiyonları için sabitler
+export const EventActions = {
+  // Kullanıcı olayları
+  SIGNUP: 'signup',
+  LOGIN: 'login',
+  LOGOUT: 'logout',
+  PROFILE_UPDATE: 'profile_update',
+  
+  // Feature kullanımı
+  FEATURE_VIEW: 'feature_view',
+  FEATURE_USE: 'feature_use',
+  
+  // İçerik olayları
+  CONTENT_CREATE: 'content_create',
+  CONTENT_UPDATE: 'content_update',
+  CONTENT_DELETE: 'content_delete',
+  
+  // Premium olayları
+  PREMIUM_VIEW: 'premium_view',
+  PREMIUM_START: 'premium_start',
+  PREMIUM_CONVERT: 'premium_convert',
+  PREMIUM_CANCEL: 'premium_cancel',
+  
+  // Engagement olayları
+  PAGE_ENGAGEMENT: 'page_engagement',
+  FEATURE_ENGAGEMENT: 'feature_engagement',
+  
+  // Navigation olayları
+  PAGE_VIEW: 'page_view',
+  ROUTE_CHANGE: 'route_change',
+  
+  // Performance olayları
+  PERFORMANCE: 'performance',
+  
+  // Error olayları
+  ERROR: 'error',
+} as const;
+
 // Temel sayfa görüntüleme
 export const pageView = (url: string) => {
   if (typeof window !== 'undefined' && (window as any).gtag && isValidTraffic()) {
@@ -31,7 +81,7 @@ export const sendPerformanceMetrics = () => {
     const firstContentfulPaint = paint.find(entry => entry.name === 'first-contentful-paint')?.startTime;
 
     sendEvent({
-      action: 'performance',
+      action: EventActions.PERFORMANCE,
       category: EventCategories.PERFORMANCE,
       label: window.location.pathname,
       metrics: {
@@ -73,44 +123,3 @@ export const sendEvent = ({
     });
   }
 };
-
-// Event kategorileri için sabitler
-export const EventCategories = {
-  USER: 'user',
-  FEATURE: 'feature',
-  CONTENT: 'content',
-  PREMIUM: 'premium',
-  ENGAGEMENT: 'engagement',
-  PERFORMANCE: 'performance',
-} as const;
-
-// Event aksiyonları için sabitler
-export const EventActions = {
-  // Kullanıcı olayları
-  SIGNUP: 'signup',
-  LOGIN: 'login',
-  LOGOUT: 'logout',
-  PROFILE_UPDATE: 'profile_update',
-  
-  // Feature kullanımı
-  FEATURE_VIEW: 'feature_view',
-  FEATURE_USE: 'feature_use',
-  
-  // İçerik olayları
-  CONTENT_CREATE: 'content_create',
-  CONTENT_UPDATE: 'content_update',
-  CONTENT_DELETE: 'content_delete',
-  
-  // Premium olayları
-  PREMIUM_VIEW: 'premium_view',
-  PREMIUM_START: 'premium_start',
-  PREMIUM_CONVERT: 'premium_convert',
-  PREMIUM_CANCEL: 'premium_cancel',
-  
-  // Engagement olayları
-  PAGE_ENGAGEMENT: 'page_engagement',
-  FEATURE_ENGAGEMENT: 'feature_engagement',
-  
-  // Performance olayları
-  PERFORMANCE: 'performance',
-} as const;
