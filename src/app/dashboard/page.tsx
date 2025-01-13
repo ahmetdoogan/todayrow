@@ -9,13 +9,12 @@ import { usePlanner } from "@/context/PlannerContext";
 import { useRouter } from "next/navigation";
 import { ListPlus } from "lucide-react";
 import { AnimatePresence, motion } from "framer-motion";
-import { useFeatureTracking } from "@/lib/analytics/useFeatureTracking";
+import { sendEvent } from '@/lib/analytics/ga-manager';
 
 export default function DashboardPage() {
   const searchParams = useSearchParams();
   const { plans, setSelectedPlan, setIsModalOpen } = usePlanner();
   const router = useRouter();
-  const { trackUsage, trackError } = useFeatureTracking('dashboard');
 
   // Mobilde FAB'e basınca açılan QuickPlans modalı
   const [isQuickPlansOpen, setIsQuickPlansOpen] = useState(false);
@@ -32,45 +31,32 @@ export default function DashboardPage() {
       if (planToOpen) {
         setSelectedPlan(planToOpen);
         setIsModalOpen(true);
-        // Analytics: Plan açma takibi
-        trackUsage('open_plan', { planId: openPlanId });
-        // URL'i temizle
         router.replace("/dashboard");
-      } else {
-        // Analytics: Hatalı plan ID takibi
-        trackError({ 
-          error_type: 'invalid_plan_id',
-          plan_id: openPlanId 
-        });
       }
     }
-  }, [searchParams, plans, router, setSelectedPlan, setIsModalOpen, trackUsage, trackError]);
+  }, [searchParams, plans, router, setSelectedPlan, setIsModalOpen]);
 
   // Drag başlarken tetiklenecek
   const handleDragStart = () => {
     setIsDragging(true);
     setIsQuickPlansOpen(false);
-    trackUsage('drag_start');
   };
 
   // Drag bittikten sonra tetiklenecek
   const handleDragEnd = () => {
     setIsDragging(false);
-    trackUsage('drag_end');
   };
 
   // QuickPlans açılınca izle
   const handleQuickPlansOpen = () => {
     if (!isDragging) {
       setIsQuickPlansOpen(true);
-      trackUsage('open_quick_plans');
     }
   };
 
   // QuickPlans kapanınca izle
   const handleQuickPlansClose = () => {
     setIsQuickPlansOpen(false);
-    trackUsage('close_quick_plans');
   };
 
   return (
