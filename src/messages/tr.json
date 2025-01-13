@@ -259,6 +259,9 @@
       "contentPlaceholder": "Notunuzu buraya yazın... (Markdown desteklenir)",
       "folder": "Klasör",
       "tags": "Etiketler",
+      "edit": "Düzenle",
+      "delete": "Sil",
+      "unpin": "Sabitlemeyi Kaldır",
       "create": "Oluştur",
       "titlePlaceholder": "Not başlığını girin",
       "pinnedNotes": "Pinlenmiş Notlar",
@@ -298,6 +301,8 @@
       "multiSelect": "Çoklu Seç",
       "cancelSelection": "Seçimi İptal Et",
       "deleteButton": "Sil",
+      "confirm": "Onayla",
+      "confirmMessage": "Değişiklikler kaydedilmeyecek, emin misiniz?",
       "completeButton": "Tamamla",
       "deleteSelected": "Seçilenleri Sil",
       "completeSelected": "Seçilenleri Tamamla",
@@ -397,6 +402,7 @@
       },
       "date": "Tarih",
       "time": "Zaman",
+      "confirmCloseMessage": "Değişiklikler kaydedilmeyecek, emin misiniz?",
       "timePlaceholder": "Örn: Sabah 10:00",
       "tags": "Etiketler",
       "tagsPlaceholder": "Etiketleri virgülle ayırın",
@@ -409,7 +415,10 @@
         "addError": "Ekleme sırasında bir hata oluştu, lütfen tekrar deneyin."
       },
       "notifications": {
-        "addSuccess": "İçerik başarıyla eklendi!"
+        "addSuccess": "İçerik başarıyla eklendi!",
+        "undoSuccess": "İşlem geri alındı",
+        "createSuccess": "İçerik başarıyla oluşturuldu",
+        "updateSuccess": "İçerik başarıyla güncellendi"
       }
     },
     "plannerForm": {

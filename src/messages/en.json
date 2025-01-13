@@ -259,6 +259,9 @@
       "contentPlaceholder": "Write your note here...",
       "folder": "Folder",
       "tags": "Tags",
+      "edit": "Edit",
+      "delete": "Delete",
+      "unpin": "Unpin",
       "create": "Create",
       "titlePlaceholder": "Enter note title",
       "pinnedNotes": "Pinned Notes",
@@ -298,6 +301,8 @@
       "multiSelect": "Multi Select",
       "cancelSelection": "Cancel Selection",
       "deleteButton": "Delete",
+      "confirm": "Confirm",
+      "confirmMessage": "Changes will not be saved, are you sure?",
       "completeButton": "Complete",
       "deleteSelected": "Delete Selected",
       "completeSelected": "Complete Selected",
@@ -397,6 +402,7 @@
       },
       "date": "Date",
       "time": "Time",
+      "confirmCloseMessage": "Changes will not be saved, are you sure?",
       "timePlaceholder": "e.g., Morning 10:00",
       "tags": "Tags",
       "tagsPlaceholder": "Separate tags with commas",
@@ -409,7 +415,10 @@
         "addError": "An error occurred while adding, please try again."
       },
       "notifications": {
-        "addSuccess": "Content added successfully!"
+        "addSuccess": "Content added successfully!",
+        "undoSuccess": "Action undone",
+        "createSuccess": "Content created successfully",
+        "updateSuccess": "Content updated successfully"
       }
     },
     "plannerForm": {
