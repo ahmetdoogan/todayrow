@@ -18,18 +18,22 @@ export const trackPageView = (path: string) => {
   trackSpecialPages(normalizedPath);
 };
 
+type SpecialPages = {
+  [key: string]: string;
+};
+
+// Özel sayfalar için lookup table
+const specialPages: SpecialPages = {
+  '/dashboard/notes': 'notes_view',
+  '/dashboard/contents': 'contents_view',
+  '/dashboard/calendar': 'calendar_view',
+  '/dashboard/settings': 'settings_view'
+};
+
 // Özel sayfaları izle (notes, planner vs.)
 const trackSpecialPages = (path: string) => {
-  const specialPages = {
-    '/dashboard/notes': 'notes_view',
-    '/dashboard/contents': 'contents_view',
-    '/dashboard/calendar': 'calendar_view',
-    '/dashboard/settings': 'settings_view'
-  };
-
-  const eventName = specialPages[path];
-  if (eventName) {
-    window.gtag('event', eventName, {
+  if (path in specialPages) {
+    window.gtag('event', specialPages[path], {
       page_path: path,
       page_title: document.title
     });

@@ -10,8 +10,8 @@ export const EventCategories = {
   PREMIUM: 'premium',
   ENGAGEMENT: 'engagement',
   PERFORMANCE: 'performance',
-  NAVIGATION: 'navigation',   // Bunu ekledik
-  ERROR: 'error'             // Bunu da ekledik
+  NAVIGATION: 'navigation',
+  ERROR: 'error'
 } as const;
 
 // Event aksiyonları için sabitler
@@ -77,16 +77,16 @@ export const sendPerformanceMetrics = () => {
     const navigation = performance.getEntriesByType('navigation')[0] as PerformanceNavigationTiming;
     const paint = performance.getEntriesByType('paint');
     
-    const firstPaint = paint.find(entry => entry.name === 'first-paint')?.startTime;
-    const firstContentfulPaint = paint.find(entry => entry.name === 'first-contentful-paint')?.startTime;
+    const firstPaint = paint.find(entry => entry.name === 'first-paint')?.startTime || 0;
+    const firstContentfulPaint = paint.find(entry => entry.name === 'first-contentful-paint')?.startTime || 0;
 
     sendEvent({
       action: EventActions.PERFORMANCE,
       category: EventCategories.PERFORMANCE,
       label: window.location.pathname,
       metrics: {
-        domComplete: navigation.domComplete,
-        loadEventEnd: navigation.loadEventEnd,
+        domComplete: navigation.domComplete || 0,
+        loadEventEnd: navigation.loadEventEnd || 0,
         firstPaint,
         firstContentfulPaint,
       }
