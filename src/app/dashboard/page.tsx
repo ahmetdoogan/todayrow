@@ -9,11 +9,13 @@ import { usePlanner } from "@/context/PlannerContext";
 import { useRouter } from "next/navigation";
 import { ListPlus } from "lucide-react";
 import { AnimatePresence, motion } from "framer-motion";
+import { useFeatureTracking } from "@/lib/analytics/useFeatureTracking";
 
 export default function DashboardPage() {
   const searchParams = useSearchParams();
   const { plans, setSelectedPlan, setIsModalOpen } = usePlanner();
   const router = useRouter();
+  const { trackUsage, trackError } = useFeatureTracking('dashboard');
 
   // Mobilde FAB'e basınca açılan QuickPlans modalı
   const [isQuickPlansOpen, setIsQuickPlansOpen] = useState(false);
@@ -30,23 +32,45 @@ export default function DashboardPage() {
       if (planToOpen) {
         setSelectedPlan(planToOpen);
         setIsModalOpen(true);
+        // Analytics: Plan açma takibi
+        trackUsage('open_plan', { planId: openPlanId });
         // URL'i temizle
         router.replace("/dashboard");
+      } else {
+        // Analytics: Hatalı plan ID takibi
+        trackError({ 
+          error_type: 'invalid_plan_id',
+          plan_id: openPlanId 
+        });
       }
     }
-  }, [searchParams, plans, router, setSelectedPlan, setIsModalOpen]);
+  }, [searchParams, plans, router, setSelectedPlan, setIsModalOpen, trackUsage, trackError]);
 
   // Drag başlarken tetiklenecek
   const handleDragStart = () => {
     setIsDragging(true);
-    setIsQuickPlansOpen(false); // Modalı anında kapat
+    setIsQuickPlansOpen(false);
+    trackUsage('drag_start');
   };
 
   // Drag bittikten sonra tetiklenecek
   const handleDragEnd = () => {
     setIsDragging(false);
-    // Eğer drop başarıyla olduysa QuickPlans'ı kapatmak istiyorsak:
-    // setIsQuickPlansOpen(false);
+    trackUsage('drag_end');
+  };
+
+  // QuickPlans açılınca izle
+  const handleQuickPlansOpen = () => {
+    if (!isDragging) {
+      setIsQuickPlansOpen(true);
+      trackUsage('open_quick_plans');
+    }
+  };
+
+  // QuickPlans kapanınca izle
+  const handleQuickPlansClose = () => {
+    setIsQuickPlansOpen(false);
+    trackUsage('close_quick_plans');
   };
 
   return (
@@ -68,8 +92,7 @@ export default function DashboardPage() {
       {/* Mobil için Floating Action Button */}
       <div className="md:hidden">
         <button
-          // Drag sürerken tıklamayı engellemek için basit kontrol
-          onClick={() => !isDragging && setIsQuickPlansOpen(true)}
+          onClick={handleQuickPlansOpen}
           className="fixed right-4 bottom-20 z-[1000] w-14 h-14
                      bg-zinc-900 hover:bg-black/70 dark:bg-zinc-700 dark:hover:bg-zinc-600 text-white rounded-full
                      shadow-lg hover:shadow-xl flex items-center justify-center
@@ -90,8 +113,7 @@ export default function DashboardPage() {
             transition={{ duration: 0.2 }}
             className="fixed md:hidden inset-0 bg-black/50 backdrop-blur-sm flex items-end z-[1000]"
             onClick={(e) => {
-              // Modal dışına tıklayınca kapat
-              if (e.target === e.currentTarget) setIsQuickPlansOpen(false);
+              if (e.target === e.currentTarget) handleQuickPlansClose();
             }}
           >
             <motion.div
@@ -103,9 +125,8 @@ export default function DashboardPage() {
               className="w-full bg-white dark:bg-gray-800 rounded-t-2xl
                          max-h-[80vh] overflow-auto touch-pan-y"
             >
-              {/* QuickPlans'a drag callback'leri veriyoruz */}
               <QuickPlans
-                onClose={() => setIsQuickPlansOpen(false)}
+                onClose={handleQuickPlansClose}
                 onDragStart={handleDragStart}
                 onDragEnd={handleDragEnd}
               />
