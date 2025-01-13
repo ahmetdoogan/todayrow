@@ -6,7 +6,6 @@ import GoogleAnalytics from "@/components/providers/GoogleAnalytics";
 import ErrorBoundary from "@/components/ErrorBoundary";
 import { RootProviders } from "@/components/providers/RootProviders";
 import LanguageProvider from "@/components/providers/LanguageProvider";
-import PerformanceMonitor from "./PerformanceMonitor";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -30,7 +29,6 @@ export default function RootLayout({
           <AuthProvider>
             <LanguageProvider>
               <RootProviders>
-                <PerformanceMonitor />
                 {children}
               </RootProviders>
             </LanguageProvider>
