@@ -51,24 +51,23 @@ export default function NoteCard({
   }));
 
   const handleClick = async (e: React.MouseEvent) => {
-    if (e.target instanceof HTMLElement && (
-      e.target.tagName === 'BUTTON' || 
-      e.target.closest('button') || 
-      e.target.tagName === 'svg' || 
-      e.target.tagName === 'path'
-    )) {
-      return;
-    }
+  if (e.target instanceof HTMLElement && (
+    e.target.tagName === 'BUTTON' || 
+    e.target.closest('button') || 
+    e.target.tagName === 'svg' || 
+    e.target.tagName === 'path'
+  )) {
+    return;
+  }
 
-    if (isSelectionMode && onSelect) {
-      onSelect(id);
-    } else if (slug) {
-      setViewingNote(note);
-      router.push(`/dashboard/notes/${slug}`);
-    } else if (onClick) {
-      onClick(note);
-    }
-  };
+  if (isSelectionMode && onSelect) {
+    onSelect(id);
+  } else if (slug) {
+    router.push(`/dashboard/notes/${slug}`);
+  } else if (onClick) {
+    onClick(note);
+  }
+};
 
   if (viewType === 'list') {
     return (

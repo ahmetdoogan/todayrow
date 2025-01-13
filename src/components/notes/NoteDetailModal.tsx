@@ -93,14 +93,12 @@ export default function NoteDetailModal({
   }, [note, loadBacklinks]); // loadBacklinks'i dependency array'e ekledik
 
   const handleClose = () => {
-    onClose();
-    router.push('/dashboard/notes');
-  };
+  onClose();
+};
 
   const handleEdit = () => {
-    onEdit(note);
-    router.push('/dashboard/notes');  // Notlar sayfasına yönlendir
-  };
+  onEdit(note);
+};
 
   const handleTogglePin = async () => {
     try {
