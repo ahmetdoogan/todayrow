@@ -55,6 +55,7 @@ export class ConversionTracker {
       action: success ? 'payment_success' : 'payment_failure',
       category: EventCategories.PREMIUM,
       user_id: userId,
+      value: success ? 1 : 0,
       ...details
     });
   }
@@ -88,7 +89,7 @@ export class ConversionTracker {
       value: retentionDays,
       metrics: {
         days_retained: retentionDays,
-        is_active: isActive
+        is_active: isActive ? 1 : 0  // boolean'ı number'a çevirdik
       },
       ...details
     });
