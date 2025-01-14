@@ -68,6 +68,11 @@
         "upload": "Fotoğraf Yükle",
         "remove": "Fotoğrafı Kaldır"
       },
+      "trial": {
+        "badge": "Trial",
+        "daysLeft": "gün kaldı",
+        "upgrade": "Yükselt"
+      },
       "fields": {
         "title": {
           "label": "Unvan",
@@ -167,6 +172,11 @@
           "note": "Not",
           "plan": "Plan"
         }
+      },
+      "trial": {
+        "badge": "Trial",
+        "daysLeft": "gün kaldı",
+        "upgrade": "Yükselt"
       },
       "menu": {
         "plans": "Planlar",
@@ -833,5 +843,22 @@
     "pinSuccess": "Not sabitlendi",
     "pinError": "Pin işlemi sırasında hata oluştu",
     "unpinSuccess": "Not sabitlemesi kaldırıldı"
+  },
+  "pricing": {
+    "title": "Daha planlı bir sen!",
+    "description": "Sınırsız erişimin keyfini çıkarmaya devam edin",
+    "monthly": "Aylık",
+    "yearly": "Yıllık",
+    "yearlyDiscount": "%17 tasarruf edin",
+    "monthlyShort": "ay",
+    "yearlyShort": "yıl",
+    "features": {
+      "unlimited": "Sınırsız içerik ve notlar",
+      "planning": "Gelişmiş planlama araçları",
+      "calendar": "Tam takvim entegrasyonu",
+      "support": "Öncelikli e-posta desteği",
+      "noCard": "Deneme için kredi kartı gerekmez"
+    },
+    "button": "Pro Planı Başlat"
   }
 }

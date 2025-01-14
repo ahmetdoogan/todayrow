@@ -68,6 +68,11 @@
         "upload": "Upload Photo",
         "remove": "Remove Photo"
       },
+      "trial": {
+        "badge": "Trial",
+        "daysLeft": "days left",
+        "upgrade": "Upgrade"
+      },
       "fields": {
         "title": {
           "label": "Title",
@@ -168,6 +173,11 @@
           "plan": "Plan"
         }
       },
+      "trial": {
+        "badge": "Trial",
+        "daysLeft": "days left",
+        "upgrade": "Upgrade"
+      },
       "menu": {
         "plans": "Plans",
         "contents": "Contents",
@@ -243,6 +253,7 @@
         "loadError": "An error occurred while loading notes.",
         "updateError": "An error occurred while updating the note.",
         "createSuccess": "Note created successfully!",
+        "undoSuccess": "Action undone",
         "createError": "An error occurred while creating the note.",
         "updateSuccess": "Note updated successfully!",
         "unpinSuccess": "Note unpinned"
@@ -832,5 +843,22 @@
     "pinSuccess": "Note pinned",
     "pinError": "An error occurred while pinning",
     "unpinSuccess": "Note unpinned"
+  },
+  "pricing": {
+    "title": "Productive you!",
+    "description": "Continue enjoying unlimited access",
+    "monthly": "Monthly",
+    "yearly": "Yearly",
+    "yearlyDiscount": "Save 17%",
+    "monthlyShort": "mo",
+    "yearlyShort": "yr",
+    "features": {
+      "unlimited": "Unlimited contents & notes",
+      "planning": "Advanced planning tools",
+      "calendar": "Full calendar integration",
+      "support": "Priority email support",
+      "noCard": "No credit card required for trial"
+    },
+    "button": "Start Pro Plan"
   }
 }

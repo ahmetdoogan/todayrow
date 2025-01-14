@@ -3,6 +3,7 @@
 import { Dialog, Transition } from '@headlessui/react';
 import { Fragment, useState } from 'react';
 import { X } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 
 interface Props {
   isOpen: boolean;
@@ -10,10 +11,11 @@ interface Props {
 }
 
 const PricingModal = ({ isOpen, onClose }: Props) => {
+  const t = useTranslations('pricing');
   const [billingType, setBillingType] = useState<'monthly' | 'yearly'>('monthly');
 
   const price = billingType === 'monthly' ? 3 : 30;
-  const savings = billingType === 'yearly' ? 'Save 17%' : null;
+  const savings = billingType === 'yearly' ? t('yearlyDiscount') : null;
 
   return (
     <Transition show={isOpen} as={Fragment}>
@@ -47,11 +49,12 @@ const PricingModal = ({ isOpen, onClose }: Props) => {
                   <div>
                     <Dialog.Title className="text-2xl font-semibold text-gray-900 dark:text-white">
                       <span className="relative">
-                        Pro<span className="absolute -bottom-1 left-0 w-full h-0.5 bg-violet-500 rounded-full transform scale-x-100 origin-left transition-transform"></span>
-                      </span>ductive you
+                        {t('title')}
+                        <span className="absolute -bottom-1 left-0 w-full h-0.5 bg-violet-500 rounded-full transform scale-x-100 origin-left transition-transform"></span>
+                      </span>
                     </Dialog.Title>
                     <Dialog.Description className="mt-2 text-base text-gray-500 dark:text-gray-400">
-                      Continue enjoying unlimited access
+                      {t('description')}
                     </Dialog.Description>
                   </div>
                   <button
@@ -72,7 +75,7 @@ const PricingModal = ({ isOpen, onClose }: Props) => {
                         : 'text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
                     }`}
                   >
-                    Monthly
+                    {t('monthly')}
                   </button>
                   <button
                     onClick={() => setBillingType('yearly')}
@@ -82,7 +85,7 @@ const PricingModal = ({ isOpen, onClose }: Props) => {
                         : 'text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
                     }`}
                   >
-                    Yearly
+                    {t('yearly')}
                     <span className="absolute -top-2 -right-2 px-1.5 py-0.5 text-[10px] font-medium bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-200 rounded-full">
                       -17%
                     </span>
@@ -96,7 +99,7 @@ const PricingModal = ({ isOpen, onClose }: Props) => {
                       ${price}
                     </span>
                     <span className="text-lg text-gray-500 dark:text-gray-400 mb-1">
-                      /{billingType === 'monthly' ? 'mo' : 'yr'}
+                      /{billingType === 'monthly' ? t('monthlyShort') : t('yearlyShort')}
                     </span>
                   </div>
                   {savings && (
@@ -109,11 +112,11 @@ const PricingModal = ({ isOpen, onClose }: Props) => {
                 {/* Features */}
                 <div className="space-y-4 mb-8">
                   {[
-                    'Unlimited contents & notes',
-                    'Advanced planning tools',
-                    'Full calendar integration',
-                    'Priority email support',
-                    'No credit card required for trial'
+                    t('features.unlimited'),
+                    t('features.planning'),
+                    t('features.calendar'),
+                    t('features.support'),
+                    t('features.noCard')
                   ].map((feature, i) => (
                     <div key={i} className="flex items-center gap-3">
                       <div className="w-5 h-5 rounded-full bg-violet-100 dark:bg-violet-900/30 flex items-center justify-center">
@@ -128,7 +131,7 @@ const PricingModal = ({ isOpen, onClose }: Props) => {
 
                 {/* Action Button */}
                 <button className="w-full h-12 bg-violet-600 hover:bg-violet-700 text-white rounded-xl font-medium transition-colors">
-                  Start Pro Plan
+                  {t('button')}
                 </button>
               </Dialog.Panel>
             </Transition.Child>

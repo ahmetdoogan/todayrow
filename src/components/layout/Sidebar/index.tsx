@@ -62,6 +62,7 @@ const Sidebar: React.FC<SidebarProps> = ({
   } = usePlanner();
 
   const { trialDaysLeft, status } = useSubscription();
+const sidebarT = useTranslations('common.sidebar');
 
   const [searchValue, setSearchValue] = useState('');
   const [searchResults, setSearchResults] = useState<any[]>([]);
@@ -378,23 +379,24 @@ const isVerifiedUser = status === 'active' || status === 'free_trial';
           {user && (
   <div className="mt-auto">
     {/* Trial Badge */}
-    <div onClick={openPricingModal} className="flex items-center justify-between px-4 py-2 mb-3 border border-orange-500/10 dark:border-orange-400/10 bg-orange-300/10 dark:bg-orange-200/10 hover:bg-orange-500/20 dark:hover:bg-orange-400/20 cursor-pointer rounded-xl group transition-colors">
-      <div className="flex flex-col">
-        <span className="text-[10px] text-orange-600 dark:text-orange-400 font-medium">
-          {isCollapsed ? `${trialDaysLeft}d` : 'Trial'}
-        </span>
-        {!isCollapsed && (
-          <span className="text-[9px] text-orange-600/70 dark:text-orange-400/70">
-            {trialDaysLeft} gün
-          </span>
-        )}
-      </div>
-      {!isCollapsed && (
-        <button className="text-[10px] px-2 py-0.5 bg-orange-500 dark:bg-amber-800 text-white rounded-lg group-hover:bg-orange-600 dark:group-hover:bg-orange-500 transition-colors font-medium">
-          Upgrade
-        </button>
-      )}
-    </div>
+    {/* Trial Badge */}
+<div onClick={openPricingModal} className="flex items-center justify-between px-4 py-2 mb-3 border border-orange-500/10 dark:border-orange-400/10 bg-orange-300/10 dark:bg-orange-200/10 hover:bg-orange-500/20 dark:hover:bg-orange-400/20 cursor-pointer rounded-xl group transition-colors">
+  <div className="flex flex-col">
+    <span className="text-[10px] text-orange-600 dark:text-orange-400 font-medium">
+      {isCollapsed ? `${trialDaysLeft}d` : sidebarT('trial.badge')}
+    </span>
+    {!isCollapsed && (
+      <span className="text-[9px] text-orange-600/70 dark:text-orange-400/70">
+        {trialDaysLeft} {sidebarT('trial.daysLeft')}
+      </span>
+    )}
+  </div>
+  {!isCollapsed && (
+    <button className="text-[10px] px-2 py-0.5 bg-orange-500 dark:bg-amber-800 text-white rounded-lg group-hover:bg-orange-600 dark:group-hover:bg-orange-500 transition-colors font-medium">
+      {sidebarT('trial.upgrade')}
+    </button>
+  )}
+</div>
     <div className="pt-3 border-t border-gray-200/50 dark:border-gray-700/50">
       <div className="flex items-center justify-between px-2">
         {!isCollapsed && (

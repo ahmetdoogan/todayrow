@@ -82,16 +82,17 @@ const ProfileSettings = () => {
             </div>
             <div className="flex items-center gap-3">
               {status === 'free_trial' && (
-                <span className="px-3 py-1 text-xs font-medium bg-orange-500/10 text-orange-600 dark:text-orange-400 rounded-full">
-                  Trial {trialDaysLeft} gün
-                </span>
-              )}
-              <button
-                onClick={() => setIsPricingOpen(true)}
-                className="px-4 py-1 text-xs font-medium bg-orange-500 text-white rounded-full hover:bg-orange-600 transition-colors"
-              >
-                Upgrade
-              </button>
+  <span className="px-3 py-1 text-xs font-medium bg-orange-500/10 text-orange-600 dark:text-orange-400 rounded-full">
+    {t('trial.badge')} {trialDaysLeft} {t('trial.daysLeft')}
+  </span>
+)}
+
+<button
+  onClick={() => setIsPricingOpen(true)}
+  className="px-4 py-1 text-xs font-medium bg-orange-500 text-white rounded-full hover:bg-orange-600 transition-colors"
+>
+  {t('trial.upgrade')}
+</button>
             </div>
           </div>
         </motion.div>
