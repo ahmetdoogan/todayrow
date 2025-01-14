@@ -91,7 +91,7 @@ export default function NoteModal({ isOpen, onClose, onSave, initialNote }: Note
   const handleConfirmClose = () => {
     setIsConfirmModalOpen(false);
     onClose();
-    toast.info(t('notifications.undoSuccess')); // toast'ı kullan
+    toast.info(t('notes.notifications.undoSuccess'));
   };
 
   const handleCancelClose = () => {

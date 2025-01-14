@@ -269,7 +269,7 @@ export default function PlanForm() {
   const handleConfirmClose = () => {
     setIsConfirmModalOpen(false);
     handleClose();
-    toast.info(tPlanner('notifications.undoSuccess'));
+    toast.info(tCommon('planner.notifications.undoSuccess2'));
   };
 
   const handleCancelClose = () => {
@@ -277,51 +277,46 @@ export default function PlanForm() {
   };
 
   async function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    setError('');
+  e.preventDefault();
+  setError('');
 
-    if (!validateTimes(formData.start_time, formData.end_time)) {
-      setError(tCommon('plannerForm.validationError'));
-      return;
-    }
-
-    const dayDate = selectedDay === 'today' ? today : tomorrow;
-    const [sh, sm] = formData.start_time.split(':').map(Number);
-    const [eh, em] = formData.end_time.split(':').map(Number);
-
-    const startDate = new Date(dayDate);
-    startDate.setHours(sh, sm, 0, 0);
-
-    const endDate = new Date(dayDate);
-    endDate.setHours(eh, em, 0, 0);
-
-    const planData = {
-      ...formData,
-      start_time: startDate.toISOString(),
-      end_time: endDate.toISOString(),
-      user_id: user?.id || 0,
-      color: formData.color || 'bg-violet-500'
-    };
-
-    try {
-      if (selectedPlan && selectedPlan.id && selectedPlan.id !== 0) {
-        // Güncelle
-        await updatePlan(selectedPlan.id, planData);
-      } else {
-        // Yeni plan
-        await createPlan(planData);
-      }
-      handleClose();
-      toast.success(
-        isEditingPlan
-          ? tPlanner('notifications.updateSuccess')
-          : tPlanner('notifications.createSuccess')
-      );
-    } catch (err) {
-      console.error('Form gönderilirken hata:', err);
-      setError(tCommon('plannerForm.submitError'));
-    }
+  if (!validateTimes(formData.start_time, formData.end_time)) {
+    setError(tCommon('plannerForm.validationError'));
+    return;
   }
+
+  const dayDate = selectedDay === 'today' ? today : tomorrow;
+  const [sh, sm] = formData.start_time.split(':').map(Number);
+  const [eh, em] = formData.end_time.split(':').map(Number);
+
+  const startDate = new Date(dayDate);
+  startDate.setHours(sh, sm, 0, 0);
+
+  const endDate = new Date(dayDate);
+  endDate.setHours(eh, em, 0, 0);
+
+  const planData = {
+    ...formData,
+    start_time: startDate.toISOString(),
+    end_time: endDate.toISOString(),
+    user_id: user?.id || 0,
+    color: formData.color || 'bg-violet-500'
+  };
+
+  try {
+    if (selectedPlan && selectedPlan.id && selectedPlan.id !== 0) {
+      // Güncelle
+      await updatePlan(selectedPlan.id, planData);
+    } else {
+      // Yeni plan
+      await createPlan(planData);
+    }
+    handleClose();
+  } catch (err) {
+    console.error('Form gönderilirken hata:', err);
+    setError(tCommon('plannerForm.submitError'));
+  }
+}
 
   return (
     <AnimatePresence>
@@ -480,7 +475,7 @@ export default function PlanForm() {
         isOpen={isConfirmModalOpen}
         onClose={handleCancelClose}
         onConfirm={handleConfirmClose}
-        message={tPlanner('confirmCloseMessage')}
+        message={tCommon('confirmCloseMessage')}
       />
     </AnimatePresence>
   );

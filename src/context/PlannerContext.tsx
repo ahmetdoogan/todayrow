@@ -178,6 +178,7 @@ export function PlannerProvider({ children }: { children: React.ReactNode }) {
     if (!user || !canEdit) return;
     try {
       await plannerService.createPlan(data, user.id);
+      toast.success(t('createSuccess'));
       await fetchPlans();
     } catch (error) {
       console.error('Plan oluşturulurken hata:', error);
@@ -189,7 +190,7 @@ export function PlannerProvider({ children }: { children: React.ReactNode }) {
     if (!user || !canEdit) return;
     try {
       await plannerService.updatePlan(id, data, user.id);
-      toast.success(t('updateSuccess'));
+    toast.success(t('updateSuccess'));
       await fetchPlans();
       setSelectedPlan(null);
       setIsModalOpen(false);

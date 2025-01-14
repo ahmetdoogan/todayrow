@@ -102,6 +102,8 @@
     "save": "Kaydet",
     "cancel": "İptal",
     "error": "Hata",
+    "confirmCloseMessage": "Değişiklikler kaydedilmeyecek, emin misiniz?",
+    "confirm": "Onayla",
     "success": "Başarılı",
     "loading": "Yükleniyor...",
     "locales": {
@@ -241,6 +243,7 @@
         "loadError": "Notlar yüklenirken bir hata oluştu.",
         "updateError": "Not güncellenirken bir hata oluştu.",
         "createSuccess": "Not başarıyla oluşturuldu!",
+        "undoSuccess": "Action undone",
         "createError": "Not oluşturulurken bir hata oluştu.",
         "updateSuccess": "Not başarıyla güncellendi!",
         "unpinSuccess": "Not sabitlemesi kaldırıldı"
@@ -568,6 +571,7 @@
         "completeSuccess": "Başarıyla tamamlandı!",
         "completeError": "Bir hata oluştu.",
         "undoSuccess": "İçerik geri alındı!",
+        "undoSuccess2": "İşlem geri alındı",
         "undoError": "Bir hata oluştu, lütfen tekrar deneyin.",
         "updateSuccess": "İçerik başarıyla güncellendi!",
         "updateError": "Güncelleme sırasında bir hata oluştu."

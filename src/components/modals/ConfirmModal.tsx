@@ -48,7 +48,7 @@ const ConfirmModal: React.FC<ConfirmModalProps> = ({ isOpen, onClose, onConfirm,
                 onClick={onConfirm}
                 className="px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-lg hover:bg-red-700 transition-colors"
               >
-                {tPlanner('confirm')} {/* 'planner.confirm' */}
+                {tCommon('confirm')} {/* 'confirm' */}
               </button>
             </div>
           </motion.div>

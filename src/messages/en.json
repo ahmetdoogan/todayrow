@@ -102,6 +102,8 @@
     "save": "Save",
     "cancel": "Cancel",
     "error": "Error",
+    "confirmCloseMessage": "Changes will not be saved, are you sure?",
+    "confirm": "Confirm",
     "success": "Success",
     "loading": "Loading...",
     "locales": {
@@ -290,6 +292,7 @@
         "completeSuccess": "Plan completed",
         "completeError": "An error occurred while completing the plan",
         "undoSuccess": "Plan marked as active",
+        "undoSuccess2": "Action undone",
         "undoError": "An error occurred while changing plan status",
         "loadError": "An error occurred while loading plans",
         "bulkDeleteSuccess": "Selected plans deleted",
