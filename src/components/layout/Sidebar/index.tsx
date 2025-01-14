@@ -1,6 +1,8 @@
-"use client";
+"use client"; // Bu satır en üste taşındı
 
-import React, { useState, useEffect, useRef } from 'react'; // useRef'i ekledik
+import { useState, useEffect, useRef } from 'react';
+import { useSubscription } from '@/hooks/useSubscription';
+import PricingModal from '@/components/modals/PricingModal';
 import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname, useRouter } from 'next/navigation';
@@ -14,7 +16,8 @@ import {
   Search, 
   ChevronLeft, 
   FileText, 
-  CalendarCheck 
+  CalendarCheck,
+  BadgeCheck 
 } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import { useContent } from '@/context/ContentContext';
@@ -43,6 +46,7 @@ const Sidebar: React.FC<SidebarProps> = ({
   const [isCollapsed, setIsCollapsed] = useState(true);
   const [hydrated, setHydrated] = useState(false);
   const [isMobile, setIsMobile] = useState(true);
+  const [isPricingOpen, setIsPricingOpen] = useState(false); // useState buraya taşındı
   const t = useTranslations();
 
   const { user, signOut } = useAuth();
@@ -56,6 +60,8 @@ const Sidebar: React.FC<SidebarProps> = ({
     setIsEditingPlan,
     selectedDate
   } = usePlanner();
+
+  const { trialDaysLeft, status } = useSubscription();
 
   const [searchValue, setSearchValue] = useState('');
   const [searchResults, setSearchResults] = useState<any[]>([]);
@@ -93,6 +99,8 @@ const Sidebar: React.FC<SidebarProps> = ({
   useEffect(() => {
     onCollapse?.(isCollapsed);
   }, [isCollapsed, onCollapse]);
+
+const isVerifiedUser = status === 'active' || status === 'free_trial';
 
   const handleLogout = async () => {
     try {
@@ -207,6 +215,10 @@ const Sidebar: React.FC<SidebarProps> = ({
     if (isMobile) setIsCollapsed(true);
   };
 
+  const openPricingModal = () => {
+    setIsPricingOpen(true);
+  };
+
   if (!hydrated) return null;
 
   return (
@@ -281,7 +293,7 @@ const Sidebar: React.FC<SidebarProps> = ({
                       }, 300);
                     }
                   }}
-                  className={`absolute w-9 h-9 flex items-center justify-center text-gray-500 dark:text-gray-400 transition-all duration-200 hover:text-gray-700 dark:hover:text-gray-200 ${isCollapsed ? 'left-1/2 -translate-x-1/2' : 'pointer-events-none left-3'} top-1/2 -translate-y-1/2`}
+                  className={`absolute w-4 h-9 flex items-center justify-center text-gray-500 dark:text-gray-400 transition-all duration-200 hover:text-gray-700 dark:hover:text-gray-200 ${isCollapsed ? 'left-1/2 -translate-x-1/2' : 'pointer-events-none left-3'} top-1/2 -translate-y-1/2`}
                 >
                   <Search className="w-4 h-4" />
                 </button>
@@ -289,7 +301,7 @@ const Sidebar: React.FC<SidebarProps> = ({
                   type="text"
                   placeholder={isCollapsed ? "" : t('common.sidebar.search.placeholder')}
                   value={searchValue}
-                  onChange={handleSearchChange} // Burayı güncelledik
+                  onChange={handleSearchChange}
                   onFocus={() => {
                     setIsSearchFocused(true);
                     if (isCollapsed) setIsCollapsed(false);
@@ -362,51 +374,83 @@ const Sidebar: React.FC<SidebarProps> = ({
             </nav>
           </div>
 
+          {/* Profile Section */}
           {user && (
-            <div className="mt-auto pt-3 border-t border-gray-200/50 dark:border-gray-700/50">
-              <div className="flex items-center justify-between px-2">
-                {!isCollapsed && (
-                  <Link 
-                    href="/dashboard/settings/profile"
-                    className="flex items-center min-w-0 gap-2 py-1.5 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors group"
-                  >
-                    <div className="relative w-8 h-8 flex-shrink-0">
-                      {user?.user_metadata?.avatar_url ? (
-                        <Image
-                          src={user.user_metadata.avatar_url}
-                          alt={user.user_metadata.name || 'Profile'}
-                          width={32}
-                          height={32}
-                          className="w-full h-full rounded-full object-cover"
-                        />
-                      ) : (
-                        <div className="w-full h-full rounded-full bg-blue-500 flex items-center justify-center text-white text-xs font-medium">
-                          {user?.email?.substring(0, 2).toUpperCase()}
-                        </div>
-                      )}
-                    </div>
-                    <div className="min-w-0 flex-1">
-                      <div className="text-xs font-medium text-gray-700 dark:text-gray-300 truncate group-hover:text-gray-900 dark:group-hover:text-white">
-                        {user?.user_metadata?.name || user?.email?.split('@')[0]}
-                      </div>
-                      <div className="text-xs text-gray-500 dark:text-gray-400 truncate group-hover:text-gray-700 dark:group-hover:text-gray-300">
-                        {user?.email}
-                      </div>
-                    </div>
-                  </Link>
-                )}
-                <button
-                  onClick={handleLogout}
-                  className={`w-8 h-8 flex items-center justify-center text-gray-400 hover:text-gray-600 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors ${isCollapsed ? 'mx-auto' : ''}`}
-                  title={t('common.sidebar.logout')}
-                >
-                  <LogOut className="w-4 h-4" />
-                </button>
+  <div className="mt-auto">
+    {/* Trial Badge */}
+    <div onClick={openPricingModal} className="flex items-center justify-between px-4 py-2 mb-3 border border-orange-500/10 dark:border-orange-400/10 bg-orange-300/10 dark:bg-orange-200/10 hover:bg-orange-500/20 dark:hover:bg-orange-400/20 cursor-pointer rounded-xl group transition-colors">
+      <div className="flex flex-col">
+        <span className="text-[10px] text-orange-600 dark:text-orange-400 font-medium">
+          {isCollapsed ? `${trialDaysLeft}d` : 'Trial'}
+        </span>
+        {!isCollapsed && (
+          <span className="text-[9px] text-orange-600/70 dark:text-orange-400/70">
+            {trialDaysLeft} gün
+          </span>
+        )}
+      </div>
+      {!isCollapsed && (
+        <button className="text-[10px] px-2 py-0.5 bg-orange-500 dark:bg-amber-800 text-white rounded-lg group-hover:bg-orange-600 dark:group-hover:bg-orange-500 transition-colors font-medium">
+          Upgrade
+        </button>
+      )}
+    </div>
+    <div className="pt-3 border-t border-gray-200/50 dark:border-gray-700/50">
+      <div className="flex items-center justify-between px-2">
+        {!isCollapsed && (
+          <Link 
+            href="/dashboard/settings/profile"
+            className="flex items-center min-w-0 gap-2 py-1.5 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors group"
+          >
+            <div className="relative w-8 h-8 flex-shrink-0">
+              {user?.user_metadata?.avatar_url ? (
+                <>
+                  <Image
+                    src={user.user_metadata.avatar_url}
+                    alt={user.user_metadata.name || 'Profile'}
+                    width={32}
+                    height={32}
+                    className="w-full h-full rounded-full object-cover"
+                  />
+                  {isVerifiedUser && (
+  <div className="absolute -bottom-0.5 -right-0.5">
+    <div className="rounded-full bg-white dark:bg-slate-900 p-[2px]">
+      <BadgeCheck className="w-3.5 h-3.5 text-blue-500 dark:text-white" />
+    </div>
+  </div>
+)}
+                </>
+              ) : (
+                <div className="w-full h-full rounded-full bg-blue-500 flex items-center justify-center text-white text-xs font-medium">
+                  {user?.email?.substring(0, 2).toUpperCase()}
+                </div>
+              )}
+            </div>
+            <div className="min-w-0 flex-1">
+              <div className="text-xs font-medium text-gray-700 dark:text-gray-300 truncate group-hover:text-gray-900 dark:group-hover:text-white">
+                {user?.user_metadata?.name || user?.email?.split('@')[0]}
+              </div>
+              <div className="text-xs text-gray-500 dark:text-gray-400 truncate group-hover:text-gray-700 dark:group-hover:text-gray-300">
+                {user?.email}
               </div>
             </div>
-          )}
+          </Link>
+        )}
+        <button
+          onClick={handleLogout}
+          className={`w-8 h-8 flex items-center justify-center text-gray-400 hover:text-gray-600 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors ${isCollapsed ? 'mx-auto' : ''}`}
+          title={t('common.sidebar.logout')}
+        >
+          <LogOut className="w-4 h-4" />
+        </button>
+      </div>
+    </div>
+  </div>
+)}
+          
         </div>
       </aside>
+      <PricingModal isOpen={isPricingOpen} onClose={() => setIsPricingOpen(false)} />
       <div className={`${isMobile ? 'w-16' : ''} flex-shrink-0`} />
     </>
   );

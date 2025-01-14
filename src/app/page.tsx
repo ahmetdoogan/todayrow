@@ -11,6 +11,8 @@ import { useTheme } from "@/components/providers/ThemeProvider";
 import { useAuth } from "@/context/AuthContext";
 import { Logo } from "@/components/ui/logo";
 import { useTranslations } from "next-intl";
+import GoogleSignInButton from "@/components/auth/GoogleSignInButton";
+import GoogleOneTap from "@/components/auth/GoogleOneTap";
 import LanguageSwitcher from "@/components/providers/LanguageSwitcher"; // Dil değiştirme fonksiyonu
 
 const Spline = dynamic(() => import("@splinetool/react-spline"), {
@@ -49,6 +51,7 @@ export default function LandingPage() {
 
   return (
     <div className="fixed inset-0 overflow-hidden">
+
       {/* Light mode background */}
       <div className="absolute inset-0 dark:hidden bg-[#fff7ed]">
         <div className="absolute -top-40 left-1/3 w-[1000px] h-[1000px] blur-3xl bg-gradient-to-b from-orange-100/40 via-orange-50/20 to-transparent rounded-full" />
