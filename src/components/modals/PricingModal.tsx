@@ -130,7 +130,7 @@ const PricingModal = ({ isOpen, onClose }: Props) => {
                 </div>
 
                 {/* Action Button */}
-                <button className="w-full h-12 bg-violet-600 hover:bg-violet-700 text-white rounded-xl font-medium transition-colors">
+                <button className="w-full h-12 bg-black dark:bg-white text-white dark:text-black rounded-xl font-medium transition-colors hover:bg-gray-800 dark:hover:bg-gray-200">
                   {t('button')}
                 </button>
               </Dialog.Panel>
