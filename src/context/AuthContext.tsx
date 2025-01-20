@@ -2,7 +2,6 @@
 import { createContext, useContext, useEffect, useState } from 'react';
 import { supabase } from '@/utils/supabaseClient';
 import { User, Session, SupabaseClient } from '@supabase/supabase-js';
-import { sendEvent } from '@/lib/analytics/ga-manager';
 
 interface AuthContextType {
   user: User | null;
@@ -32,12 +31,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
+    // 1) İlk açılışta session çek
     const checkUser = async () => {
       try {
-        const {
-          data: { session: currentSession },
-        } = await supabase.auth.getSession();
-        
+        const { data: { session: currentSession } } = await supabase.auth.getSession();
         if (currentSession?.user) {
           setUser(currentSession.user);
           setSession(currentSession);
@@ -51,41 +48,58 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     checkUser();
 
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange((event, session) => {
-      setUser(session?.user ?? null);
-      setSession(session);
+    // 2) onAuthStateChange => "SIGNED_IN" => tablo satırı var mı, yoksa ekle
+    const { data: authListener } = supabase.auth.onAuthStateChange(
+      async (event, session) => {
+        console.log("Auth state change:", event, session?.user?.email);
 
-      if (event && session?.user) {
-        sendEvent({
-          action: event.toLowerCase(),
-          category: 'auth',
-          label: session.user.email || undefined
-        });
+        setUser(session?.user ?? null);
+        setSession(session);
+
+        if (event === 'SIGNED_IN' && session?.user) {
+          try {
+            // 2A) Tabloda subscription var mı
+            const { data: existingSub, error: subError } = await supabase
+              .from('subscriptions')
+              .select('id')
+              .eq('user_id', session.user.id)
+              .maybeSingle();
+
+            if (subError) {
+              console.error("Check subscription error:", subError);
+            } else if (!existingSub) {
+              // 2B) Yok => Insert => default free_trial
+              const { error: insertErr } = await supabase
+                .from('subscriptions')
+                .insert({ user_id: session.user.id });
+              if (insertErr) {
+                console.error("Insert subscription error:", insertErr);
+              } else {
+                console.log("Inserted free_trial for user:", session.user.id);
+              }
+            }
+          } catch (subCatchErr) {
+            console.error("Subscription insert flow error:", subCatchErr);
+          }
+        }
       }
-    });
+    );
 
-    return () => subscription.unsubscribe();
+    // 3) Cleanup: unsubscribe
+    return () => {
+      authListener?.unsubscribe?.();
+    };
   }, []);
 
   const signIn = async (email: string, password: string) => {
     try {
-      const {
-        data: { session: currentSession },
-        error,
-      } = await supabase.auth.signInWithPassword({
-        email,
-        password,
-      });
-
+      const { data: { session: currentSession }, error } =
+        await supabase.auth.signInWithPassword({ email, password });
       if (error) throw error;
 
       if (currentSession?.user) {
         setUser(currentSession.user);
         setSession(currentSession);
-        await (supabase.auth as any).setSession(currentSession);
-        await new Promise((resolve) => setTimeout(resolve, 500));
         window.location.href = "/dashboard";
       }
     } catch (error) {
@@ -96,12 +110,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const signUp = async (email: string, password: string) => {
     try {
-      const { data, error } = await supabase.auth.signUp({
-        email,
-        password,
-      });
-
+      const { data, error } = await supabase.auth.signUp({ email, password });
       if (error) throw error;
+      // E-posta verify link => redirect
       window.location.href = "/auth/verify";
     } catch (error) {
       console.error("Signup error:", error);
@@ -111,14 +122,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const signOut = async () => {
     try {
-      if ((window as any).google?.accounts?.id) {
-        (window as any).google.accounts.id.cancel();
-      }
-
       const { error } = await supabase.auth.signOut();
       if (error) throw error;
-
-      localStorage.setItem("lastLogoutTime", Date.now().toString());
 
       setUser(null);
       setSession(null);
@@ -137,7 +142,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           redirectTo: `${window.location.origin}/auth/callback`,
         },
       });
-      
       if (error) throw error;
     } catch (error) {
       console.error("Google sign in error:", error);

@@ -10,6 +10,7 @@ import { useRouter } from "next/navigation";
 import { ListPlus } from "lucide-react";
 import { AnimatePresence, motion } from "framer-motion";
 import { sendEvent } from '@/lib/analytics/ga-manager';
+import { SuccessModal } from "@/components/modals/SuccessModal"; // Mevcut SuccessModal bileşeni
 
 export default function DashboardPage() {
   const searchParams = useSearchParams();
@@ -22,6 +23,17 @@ export default function DashboardPage() {
   // Drag sürerken butona tıklama vs. engellemek için
   const [isDragging, setIsDragging] = useState(false);
 
+  // SuccessModal için state
+  const [showSuccess, setShowSuccess] = useState(false);
+
+  // Ödeme başarılıysa SuccessModal'ı aç
+  useEffect(() => {
+    if (searchParams?.get("payment") === "success") {
+      setShowSuccess(true);
+    }
+  }, [searchParams]);
+
+  // Plan açma işlemi
   useEffect(() => {
     const openPlanId = searchParams?.get("openPlan");
     if (openPlanId) {
@@ -120,6 +132,12 @@ export default function DashboardPage() {
           </motion.div>
         )}
       </AnimatePresence>
+
+      {/* Ödeme başarılıysa gösterilecek SuccessModal */}
+      <SuccessModal
+        isOpen={showSuccess}
+        onClose={() => setShowSuccess(false)}
+      />
     </div>
   );
 }

@@ -1,5 +1,5 @@
 "use client";
-import React from 'react';
+import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import Image from "next/image";
 import { User, MapPin, Globe, BookText, BadgeCheck, Linkedin } from 'lucide-react';
@@ -9,12 +9,18 @@ import { toast } from 'react-toastify';
 import { useAuth } from '@/context/AuthContext';
 import PricingModal from '@/components/modals/PricingModal';
 import { useTranslations } from 'next-intl';
+import { useSession, useSupabaseClient } from '@supabase/auth-helpers-react';
+import { Button } from "@/components/ui/button";
+import { SubscriptionBadge } from '@/components/subscription/SubscriptionBadge';
 
 const ProfileSettings = () => {
-  const { session } = useAuth();
-  const { formData, setFormData, loading, errors, saveProfile } = useProfile();
-  const { trialDaysLeft, status } = useSubscription();
-  const [isPricingOpen, setIsPricingOpen] = React.useState(false);
+  const { session: authSession } = useAuth();
+  const { formData, setFormData, loading: profileLoading, errors, saveProfile } = useProfile();
+  const { subscription, trialDaysLeft, status, isPro, loading: subscriptionLoading, isTrialing } = useSubscription();
+  const [isPricingOpen, setIsPricingOpen] = useState(false);
+  const [showCancelModal, setShowCancelModal] = useState(false);
+  const session = useSession();
+  const supabase = useSupabaseClient();
   const t = useTranslations('common.profile');
 
   const handleSave = async () => {
@@ -26,7 +32,60 @@ const ProfileSettings = () => {
     }
   };
 
-  const isVerifiedUser = status === 'active' || status === 'free_trial';
+  const isVerifiedUser = (status === 'active' || status === 'free_trial' || status === 'cancel_scheduled');
+
+  // Dönem sonu iptal (Polar API ile)
+  const handleCancelSubscription = async () => {
+console.log("Cancel subscription function triggered!");
+    if (!authSession?.user) return;
+    const userId = authSession.user.id;
+
+    try {
+      // 1) Polar Subscription ID'yi al
+      const { data: subscriptionData, error: subError } = await supabase
+        .from('subscriptions')
+        .select('polar_sub_id')
+        .eq('user_id', userId)
+        .single();
+
+      if (subError || !subscriptionData?.polar_sub_id) {
+        console.error('Subscription ID not found:', subError);
+console.log('Subscription Data:', subscriptionData);
+        toast.error('Failed to cancel subscription. Try again.');
+        return;
+      }
+
+      const polarSubscriptionId = subscriptionData.polar_sub_id;
+
+      // 2) Polar API'ye iptal isteği gönder
+      const response = await fetch(`https://api.polar.sh/subscriptions/${polarSubscriptionId}/cancel`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${process.env.POLAR_ACCESS_TOKEN}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          cancel_at_period_end: true
+        })
+      });
+
+console.log("Polar API response:", response);
+      if (!response.ok) {
+        throw new Error('Failed to cancel subscription with Polar');
+      }
+
+      toast.success('Your subscription will end at period end. You remain Pro until then.');
+      setShowCancelModal(false);
+      window.location.reload();
+    } catch (error) {
+      console.error('Cancel subscription error:', error);
+      toast.error('Something went wrong.');
+    }
+  };
+
+  if (subscriptionLoading) {
+    return null;
+  }
 
   return (
     <>
@@ -41,9 +100,9 @@ const ProfileSettings = () => {
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
               <div className="relative">
-                {session?.user?.user_metadata?.avatar_url ? (
+                {authSession?.user?.user_metadata?.avatar_url ? (
                   <Image
-                    src={session.user.user_metadata.avatar_url}
+                    src={authSession.user.user_metadata.avatar_url}
                     alt={t('photo.title')}
                     width={64}
                     height={64}
@@ -51,53 +110,92 @@ const ProfileSettings = () => {
                   />
                 ) : (
                   <div className="w-16 h-16 rounded-full bg-violet-500 flex items-center justify-center text-white text-xl font-medium border-2 border-slate-200 dark:border-slate-700">
-                    {session?.user?.user_metadata?.name ? 
-                      session.user.user_metadata.name
-                        .split(' ')
-                        .map((n: string) => n[0])
-                        .join('')
-                        .toUpperCase()
-                        .substring(0, 2)
-                      : 
-                      session?.user?.email?.substring(0, 2).toUpperCase()
+                    {authSession?.user?.user_metadata?.name 
+                      ? authSession.user.user_metadata.name
+                          .split(' ')
+                          .map((n: string) => n[0])
+                          .join('')
+                          .toUpperCase()
+                          .substring(0, 2)
+                      : authSession?.user?.email?.substring(0, 2).toUpperCase()
                     }
                   </div>
                 )}
                 {isVerifiedUser && (
-  <div className="absolute -bottom-0.5 -right-0.5">
-    <div className="rounded-full bg-white dark:bg-slate-900 p-[2px]">
-      <BadgeCheck className="w-3.5 h-3.5 text-blue-500 dark:text-white" />
-    </div>
-  </div>
-)}
+                  <div className="absolute -bottom-0.5 -right-0.5">
+                    <div className="rounded-full bg-white dark:bg-slate-900 p-[2px]">
+                      <BadgeCheck className="w-3.5 h-3.5 text-blue-500 dark:text-white" />
+                    </div>
+                  </div>
+                )}
               </div>
               <div>
                 <h3 className="text-sm font-medium text-slate-700 dark:text-slate-300">
-                  {session?.user?.user_metadata?.name || session?.user?.email?.split('@')[0]}
+                  {authSession?.user?.user_metadata?.name || authSession?.user?.email?.split('@')[0]}
                 </h3>
                 <p className="text-xs text-slate-500 dark:text-slate-400">
-                  {session?.user?.email}
+                  {authSession?.user?.email}
                 </p>
               </div>
             </div>
             <div className="flex items-center gap-3">
-              {status === 'free_trial' && (
-  <span className="px-3 py-1 text-xs font-medium bg-orange-500/10 text-orange-600 dark:text-orange-400 rounded-full">
-    {t('trial.badge')} {trialDaysLeft} {t('trial.daysLeft')}
-  </span>
-)}
-
-<button
-  onClick={() => setIsPricingOpen(true)}
-  className="px-4 py-1 text-xs font-medium bg-orange-500 text-white rounded-full hover:bg-orange-600 transition-colors"
->
-  {t('trial.upgrade')}
-</button>
+              <SubscriptionBadge />
+              {isTrialing && (
+                <p className="text-xs text-gray-500 dark:text-gray-400">
+                  {trialDaysLeft} {t('trial.daysLeft')}
+                </p>
+              )}
+              {!isPro && (
+                <Button
+                  variant="default"
+                  onClick={async () => {
+                    if (!session?.access_token) {
+                      console.error('No session found');
+                      return;
+                    }
+                    try {
+                      // plan=monthly
+                      const response = await fetch(`/api/checkout?plan=monthly`, {
+                        headers: { 'Authorization': `Bearer ${session.access_token}` }
+                      });
+                      if (response.ok) {
+                        const { url } = await response.json();
+                        window.location.href = url;
+                      } else {
+                        const error = await response.json();
+                        console.error('Checkout error:', error);
+                      }
+                    } catch (error) {
+                      console.error('Failed to fetch checkout URL:', error);
+                    }
+                  }}
+                >
+                  {t('trial.upgrade')}
+                </Button>
+              )}
             </div>
           </div>
         </motion.div>
 
-        {/* Unvan ve LinkedIn */}
+        {/* Örnek: Plan Info */}
+        {subscription && (
+          <div className="p-4 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl">
+            <p className="text-sm text-slate-600 dark:text-slate-300">
+              <strong>Plan Type:</strong> {subscription.subscription_type}
+            </p>
+            <p className="text-sm text-slate-600 dark:text-slate-300">
+              <strong>Status:</strong> {subscription.status}
+            </p>
+            {subscription.subscription_end && (
+              <p className="text-sm text-slate-600 dark:text-slate-300">
+                <strong>Ends at:</strong> {new Date(subscription.subscription_end).toLocaleString()}
+              </p>
+            )}
+          </div>
+        )}
+
+        {/* Unvan, LinkedIn, vb. => senin orijinal form */}
+        {/* (Aynen bıraktım, kısaltmadım) */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {/* Unvan */}
           <motion.div
@@ -150,7 +248,6 @@ const ProfileSettings = () => {
           </motion.div>
         </div>
 
-        {/* Konum ve Website */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {/* Konum */}
           <motion.div
@@ -222,22 +319,50 @@ const ProfileSettings = () => {
           )}
         </motion.div>
 
-        {/* Save Button */}
+        {/* Save + Cancel */}
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.2, delay: 0.35 }}
-          className="flex justify-end mt-6"
+          className="flex justify-between mt-6"
         >
+          {isPro && (
+            <button
+              onClick={() => setShowCancelModal(true)}
+              className="text-sm text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-300 underline underline-offset-4 focus:outline-none"
+            >
+              {t('trial.cancel')}
+            </button>
+          )}
+
           <button
             onClick={handleSave}
-            disabled={loading}
+            disabled={profileLoading}
             className="px-4 py-2 bg-zinc-900 hover:bg-black/70 dark:bg-slate-800 dark:hover:bg-slate-700 text-white text-sm font-medium rounded-xl focus:outline-none focus:ring-2 focus:ring-violet-500/20 transition-colors disabled:bg-zinc-700 disabled:dark:bg-slate-900"
           >
-            {loading ? t('buttons.saving') : t('buttons.save')}
+            {profileLoading ? t('buttons.saving') : t('buttons.save')}
           </button>
         </motion.div>
       </div>
+
+      {/* Cancel Subscription Modal */}
+      {showCancelModal && (
+        <div className="fixed inset-0 flex items-center justify-center z-50 bg-black/50">
+          <div className="bg-white dark:bg-slate-800 p-6 rounded shadow w-80">
+            <p className="text-sm text-slate-700 dark:text-slate-300 mb-4">
+              Are you sure you want to cancel your subscription at period end?
+            </p>
+            <div className="flex justify-end gap-2">
+              <Button variant="outline" onClick={() => setShowCancelModal(false)}>
+                No
+              </Button>
+              <Button variant="destructive" onClick={handleCancelSubscription}>
+                Yes, cancel
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Pricing Modal */}
       <PricingModal isOpen={isPricingOpen} onClose={() => setIsPricingOpen(false)} />

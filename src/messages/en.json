@@ -71,7 +71,8 @@
       "trial": {
         "badge": "Trial",
         "daysLeft": "days left",
-        "upgrade": "Upgrade"
+        "upgrade": "Upgrade",
+        "cancel": "Cancel Subscription"
       },
       "fields": {
         "title": {

@@ -1,7 +1,10 @@
-"use client"; // Bu satır en üste taşındı
+"use client";
 
 import { useState, useEffect, useRef } from 'react';
+import { useSession, useSupabaseClient } from '@supabase/auth-helpers-react';
 import { useSubscription } from '@/hooks/useSubscription';
+import { SubscriptionBadge } from '@/components/subscription/SubscriptionBadge';
+import { Button } from "@/components/ui/button";
 import PricingModal from '@/components/modals/PricingModal';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -46,7 +49,9 @@ const Sidebar: React.FC<SidebarProps> = ({
   const [isCollapsed, setIsCollapsed] = useState(true);
   const [hydrated, setHydrated] = useState(false);
   const [isMobile, setIsMobile] = useState(true);
-  const [isPricingOpen, setIsPricingOpen] = useState(false); // useState buraya taşındı
+  const [isPricingOpen, setIsPricingOpen] = useState(false);
+  const session = useSession();
+  const supabase = useSupabaseClient();
   const t = useTranslations();
 
   const { user, signOut } = useAuth();
@@ -61,17 +66,22 @@ const Sidebar: React.FC<SidebarProps> = ({
     selectedDate
   } = usePlanner();
 
-  const { trialDaysLeft, status } = useSubscription();
-const sidebarT = useTranslations('common.sidebar');
+  const { trialDaysLeft, status, isPro, loading, isTrialing } = useSubscription(); // loading değerini ekledik
+ console.log("Subscription data in Sidebar:", {
+   trialDaysLeft,
+   status,
+   isTrialing,
+   isPro,
+   loading
+ });
+  const sidebarT = useTranslations('common.sidebar');
 
   const [searchValue, setSearchValue] = useState('');
   const [searchResults, setSearchResults] = useState<any[]>([]);
   const [isSearchFocused, setIsSearchFocused] = useState(false);
 
-  // searchTimeout'u useRef ile yönetiyoruz
   const searchTimeoutRef = useRef<NodeJS.Timeout>();
 
-  // Çevirili nav items
   const navItems = [
     { label: t('common.sidebar.menu.plans'), icon: CalendarCheck, href: '/dashboard' },
     { label: t('common.sidebar.menu.contents'), icon: Layout, href: '/dashboard/contents' },
@@ -101,7 +111,7 @@ const sidebarT = useTranslations('common.sidebar');
     onCollapse?.(isCollapsed);
   }, [isCollapsed, onCollapse]);
 
-const isVerifiedUser = status === 'active' || status === 'free_trial';
+  const isVerifiedUser = status === 'active' || status === 'free_trial';
 
   const handleLogout = async () => {
     try {
@@ -139,17 +149,14 @@ const isVerifiedUser = status === 'active' || status === 'free_trial';
     setIsModalOpen(true);
   };
 
-  // Arama işlemini handleSearchChange fonksiyonunda yönetiyoruz
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     setSearchValue(value);
 
-    // Önceki timeout'u temizle
     if (searchTimeoutRef.current) {
       clearTimeout(searchTimeoutRef.current);
     }
 
-    // Yeni timeout'u ayarla
     searchTimeoutRef.current = setTimeout(() => {
       if (!value.trim()) {
         setSearchResults([]);
@@ -222,6 +229,11 @@ const isVerifiedUser = status === 'active' || status === 'free_trial';
 
   if (!hydrated) return null;
 
+  // loading durumunda Sidebar'ı render etme
+  if (loading) {
+    return null;
+  }
+
   return (
     <>
       {isMobile && !isCollapsed && (
@@ -241,7 +253,8 @@ const isVerifiedUser = status === 'active' || status === 'free_trial';
           z-40
         `}
       >
-        <div className="flex flex-col h-full relative p-3">
+
+<div className="flex flex-col h-full relative p-3">
           <button
             onClick={() => setIsCollapsed(!isCollapsed)}
             className="absolute -right-3 top-6 w-6 h-6 flex items-center justify-center rounded-full bg-white dark:bg-[#0D1117] border border-gray-200 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors z-50"
@@ -379,24 +392,23 @@ const isVerifiedUser = status === 'active' || status === 'free_trial';
           {user && (
   <div className="mt-auto">
     {/* Trial Badge */}
-    {/* Trial Badge */}
-<div onClick={openPricingModal} className="flex items-center justify-between px-4 py-2 mb-3 border border-orange-500/10 dark:border-orange-400/10 bg-orange-300/10 dark:bg-orange-200/10 hover:bg-orange-500/20 dark:hover:bg-orange-400/20 cursor-pointer rounded-xl group transition-colors">
-  <div className="flex flex-col">
-    <span className="text-[10px] text-orange-600 dark:text-orange-400 font-medium">
-      {isCollapsed ? `${trialDaysLeft}d` : sidebarT('trial.badge')}
-    </span>
-    {!isCollapsed && (
-      <span className="text-[9px] text-orange-600/70 dark:text-orange-400/70">
-        {trialDaysLeft} {sidebarT('trial.daysLeft')}
-      </span>
-    )}
+     {isTrialing && (
+       <div className="text-sm text-gray-600 dark:text-gray-300 mb-1">
+         Free Trial: {trialDaysLeft} days left
+       </div>
+     )}
+   {!isPro && (
+  <div className="mb-3">
+    <SubscriptionBadge />
+   <Button
+  variant="default"
+  className="w-full mt-2"
+  onClick={() => setIsPricingOpen(true)}
+>
+  {sidebarT('trial.upgrade')}
+</Button>
   </div>
-  {!isCollapsed && (
-    <button className="text-[10px] px-2 py-0.5 bg-orange-500 dark:bg-amber-800 text-white rounded-lg group-hover:bg-orange-600 dark:group-hover:bg-orange-500 transition-colors font-medium">
-      {sidebarT('trial.upgrade')}
-    </button>
-  )}
-</div>
+)}
     <div className="pt-3 border-t border-gray-200/50 dark:border-gray-700/50">
       <div className="flex items-center justify-between px-2">
         {!isCollapsed && (
@@ -451,6 +463,7 @@ const isVerifiedUser = status === 'active' || status === 'free_trial';
 )}
           
         </div>
+
       </aside>
       <PricingModal isOpen={isPricingOpen} onClose={() => setIsPricingOpen(false)} />
       <div className={`${isMobile ? 'w-16' : ''} flex-shrink-0`} />

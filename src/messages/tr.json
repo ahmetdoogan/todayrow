@@ -71,7 +71,8 @@
       "trial": {
         "badge": "Trial",
         "daysLeft": "gün kaldı",
-        "upgrade": "Yükselt"
+        "upgrade": "Yükselt",
+        "cancel": "Üyeliği iptal et"
       },
       "fields": {
         "title": {

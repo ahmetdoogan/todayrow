@@ -6,11 +6,11 @@ import ContentModal from '@/components/content/ContentModal';
 import NoteModal from '@/components/notes/NoteModal';
 import PlanForm from '@/components/planner/PlanForm';
 import { PlannerProvider } from '@/context/PlannerContext';
-import type { Note } from '@/types/notes';
+import { useNotes, NotesProvider } from '@/context/NotesContext';
+import WelcomePopup from "@/components/onboarding/WelcomePopup";
 import { useAuth } from '@/context/AuthContext';
 import { supabase } from '@/utils/supabaseClient';
-import { NotesProvider, useNotes } from '@/context/NotesContext';
-import WelcomePopup from "@/components/onboarding/WelcomePopup";
+import { useSubscription } from '@/hooks/useSubscription';
 
 function DashboardLayoutInner({
   children,
@@ -79,20 +79,21 @@ function DashboardLayoutInner({
   );
 }
 
-export default function DashboardLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   const { user } = useAuth();
   const router = useRouter();
   const pathname = usePathname();
+
+  // Bu state'lerin senin modal vs. mantığın için lazım
   const [isContentModalOpen, setIsContentModalOpen] = useState(false);
   const [isNoteModalOpen, setIsNoteModalOpen] = useState(false);
   const [isPlanModalOpen, setIsPlanModalOpen] = useState(false);
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [isChecking, setIsChecking] = useState(true);
   const [showWelcome, setShowWelcome] = useState(false);
+
+  // SUBSCRIPTION KONTROLÜ
+  const { loading, isExpired } = useSubscription();
 
   useEffect(() => {
     const checkSession = async () => {
@@ -103,7 +104,7 @@ export default function DashboardLayout({
           window.location.href = '/auth/login';
           return;
         }
-
+        // Welcome popup mantığı
         const hasSeen = session.user.user_metadata?.has_seen_welcome;
         if (hasSeen === undefined || hasSeen === false) {
           setShowWelcome(true);
@@ -119,7 +120,14 @@ export default function DashboardLayout({
     checkSession();
   }, []);
 
-  if (isChecking) {
+  // EĞER SUBSCRIPTION LOADING BİTTİ ve isExpired => /paywall
+  useEffect(() => {
+    if (!loading && isExpired) {
+      router.replace('/paywall');
+    }
+  }, [loading, isExpired, router]);
+
+  if (isChecking || loading) {
     return (
       <div className="h-screen flex items-center justify-center">
         <div className="text-lg text-gray-600">Yükleniyor...</div>

@@ -5,6 +5,7 @@ import { Fragment, useState } from 'react';
 import { X } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { ShineBorder } from '@/components/ui/shine-border';
+import { supabase } from '@/utils/supabaseClient'; // Doğru yol
 
 interface Props {
   isOpen: boolean;
@@ -140,9 +141,31 @@ const PricingModal = ({ isOpen, onClose }: Props) => {
                   </div>
 
                   {/* Action Button */}
-                  <button className="w-full h-12 bg-black dark:bg-white text-white dark:text-black rounded-xl font-medium transition-colors hover:bg-gray-800 dark:hover:bg-gray-200">
-                    {t('button')}
-                  </button>
+                  <button
+  onClick={async () => {
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session?.access_token) return;
+
+    const resp = await fetch('/api/checkout', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${session.access_token}`,
+        'Content-Type': 'application/json'
+      },
+    });
+
+    if (!resp.ok) {
+      console.error('Checkout error:', await resp.text());
+      return;
+    }
+
+    const data = await resp.json();
+    window.location.href = data.url;
+    onClose();
+  }}
+>
+  {t('button')}
+</button>
                 </Dialog.Panel>
               </ShineBorder>
             </Transition.Child>
