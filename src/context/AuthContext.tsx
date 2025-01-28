@@ -31,7 +31,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    // 1) İlk açılışta session çek
     const checkUser = async () => {
       try {
         const { data: { session: currentSession } } = await supabase.auth.getSession();
@@ -48,7 +47,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     checkUser();
 
-    // 2) onAuthStateChange => "SIGNED_IN" => tablo satırı var mı, yoksa ekle
     const { data: authListener } = supabase.auth.onAuthStateChange(
       async (event, session) => {
         console.log("Auth state change:", event, session?.user?.email);
@@ -58,7 +56,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
         if (event === 'SIGNED_IN' && session?.user) {
           try {
-            // 2A) Tabloda subscription var mı
             const { data: existingSub, error: subError } = await supabase
               .from('subscriptions')
               .select('id')
@@ -68,7 +65,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             if (subError) {
               console.error("Check subscription error:", subError);
             } else if (!existingSub) {
-              // 2B) Yok => Insert => default free_trial
               const { error: insertErr } = await supabase
                 .from('subscriptions')
                 .insert({ user_id: session.user.id });
@@ -85,9 +81,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       }
     );
 
-    // 3) Cleanup: unsubscribe
     return () => {
-      authListener?.unsubscribe?.();
+      authListener.subscription?.unsubscribe();
     };
   }, []);
 
@@ -112,7 +107,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     try {
       const { data, error } = await supabase.auth.signUp({ email, password });
       if (error) throw error;
-      // E-posta verify link => redirect
       window.location.href = "/auth/verify";
     } catch (error) {
       console.error("Signup error:", error);

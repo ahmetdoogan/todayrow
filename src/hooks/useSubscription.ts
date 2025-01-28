@@ -13,20 +13,22 @@ export function useSubscription() {
         const { data: { user } } = await supabase.auth.getUser();
         if (!user) return;
 
-        // Önce subscriptions tablosundan kontrol et
-        const { data: subData } = await supabase
+        const { data: subData, error } = await supabase
           .from('subscriptions')
           .select('*')
           .eq('user_id', user.id)
           .single();
 
+        if (error) {
+          console.error('Error fetching subscription:', error);
+        }
+
         if (subData) {
           setSubscription(subData);
         } else {
-          // User metadata'dan kontrol et
           const status = user.user_metadata?.subscription_status || 'free_trial';
           const type = user.user_metadata?.subscription_type || 'free';
-          const trialEnd = user.user_metadata?.trial_end_date;
+          const trialEnd = user.user_metadata?.trial_end_date || null;
 
           setSubscription({
             id: undefined,
@@ -34,9 +36,10 @@ export function useSubscription() {
             status,
             subscription_type: type,
             trial_end: trialEnd,
-            subscription_end: undefined,
             trial_start: undefined,
+            subscription_end: undefined,
             subscription_start: undefined,
+            polar_sub_id: undefined,
             created_at: undefined,
             updated_at: undefined
           });
@@ -51,10 +54,8 @@ export function useSubscription() {
     getSubscription();
   }, [supabase]);
 
-  // Bazı türetme (trialDaysLeft, isPro, vs.)
   let derivedStatus = subscription?.status || 'free_trial';
 
-  // Trial day calc
   let trialDaysLeft = 0;
   if (subscription?.trial_end) {
     const diff = new Date(subscription.trial_end).getTime() - Date.now();
@@ -64,18 +65,16 @@ export function useSubscription() {
     }
   }
 
-  // Cancel scheduled => pro until subscription_end (if in future)
   let isPro = false;
   if (derivedStatus === 'pro' || derivedStatus === 'active') {
     isPro = true;
   } else if (derivedStatus === 'cancel_scheduled') {
-    // e.g. we set subscription_end in future
-    const endTime = subscription?.subscription_end ? new Date(subscription.subscription_end).getTime() : 0;
+    const endTime = subscription?.subscription_end
+      ? new Date(subscription.subscription_end).getTime()
+      : 0;
     if (endTime > Date.now()) {
-      // still pro
       isPro = true;
     } else {
-      // period ended => expired
       derivedStatus = 'expired';
     }
   }

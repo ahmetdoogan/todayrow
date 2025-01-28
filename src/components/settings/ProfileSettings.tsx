@@ -34,14 +34,11 @@ const ProfileSettings = () => {
 
   const isVerifiedUser = (status === 'active' || status === 'free_trial' || status === 'cancel_scheduled');
 
-  // Dönem sonu iptal (Polar API ile)
   const handleCancelSubscription = async () => {
-console.log("Cancel subscription function triggered!");
     if (!authSession?.user) return;
     const userId = authSession.user.id;
 
     try {
-      // 1) Polar Subscription ID'yi al
       const { data: subscriptionData, error: subError } = await supabase
         .from('subscriptions')
         .select('polar_sub_id')
@@ -50,14 +47,12 @@ console.log("Cancel subscription function triggered!");
 
       if (subError || !subscriptionData?.polar_sub_id) {
         console.error('Subscription ID not found:', subError);
-console.log('Subscription Data:', subscriptionData);
         toast.error('Failed to cancel subscription. Try again.');
         return;
       }
 
       const polarSubscriptionId = subscriptionData.polar_sub_id;
 
-      // 2) Polar API'ye iptal isteği gönder
       const response = await fetch(`https://api.polar.sh/subscriptions/${polarSubscriptionId}/cancel`, {
         method: 'POST',
         headers: {
@@ -69,7 +64,6 @@ console.log('Subscription Data:', subscriptionData);
         })
       });
 
-console.log("Polar API response:", response);
       if (!response.ok) {
         throw new Error('Failed to cancel subscription with Polar');
       }
@@ -90,7 +84,6 @@ console.log("Polar API response:", response);
   return (
     <>
       <div className="space-y-4">
-        {/* Profil Fotoğrafı */}
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
@@ -154,7 +147,6 @@ console.log("Polar API response:", response);
                       return;
                     }
                     try {
-                      // plan=monthly
                       const response = await fetch(`/api/checkout?plan=monthly`, {
                         headers: { 'Authorization': `Bearer ${session.access_token}` }
                       });
@@ -177,7 +169,6 @@ console.log("Polar API response:", response);
           </div>
         </motion.div>
 
-        {/* Örnek: Plan Info */}
         {subscription && (
           <div className="p-4 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl">
             <p className="text-sm text-slate-600 dark:text-slate-300">
@@ -194,10 +185,7 @@ console.log("Polar API response:", response);
           </div>
         )}
 
-        {/* Unvan, LinkedIn, vb. => senin orijinal form */}
-        {/* (Aynen bıraktım, kısaltmadım) */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {/* Unvan */}
           <motion.div
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
@@ -222,7 +210,6 @@ console.log("Polar API response:", response);
             )}
           </motion.div>
 
-          {/* LinkedIn */}
           <motion.div
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
@@ -249,7 +236,6 @@ console.log("Polar API response:", response);
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {/* Konum */}
           <motion.div
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
@@ -258,7 +244,9 @@ console.log("Polar API response:", response);
           >
             <div className="flex items-center gap-3 mb-3">
               <MapPin className="w-5 h-5 text-slate-700 dark:text-slate-400" />
-              <span className="text-sm text-slate-700 dark:text-slate-300">{t('fields.location.label')}</span>
+              <span className="text-sm text-slate-700 dark:text-slate-300">
+                {t('fields.location.label')}
+              </span>
             </div>
             <input
               type="text"
@@ -272,7 +260,6 @@ console.log("Polar API response:", response);
             )}
           </motion.div>
 
-          {/* Website */}
           <motion.div
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
@@ -296,7 +283,6 @@ console.log("Polar API response:", response);
           </motion.div>
         </div>
 
-        {/* Bio */}
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
@@ -319,7 +305,6 @@ console.log("Polar API response:", response);
           )}
         </motion.div>
 
-        {/* Save + Cancel */}
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
@@ -345,7 +330,6 @@ console.log("Polar API response:", response);
         </motion.div>
       </div>
 
-      {/* Cancel Subscription Modal */}
       {showCancelModal && (
         <div className="fixed inset-0 flex items-center justify-center z-50 bg-black/50">
           <div className="bg-white dark:bg-slate-800 p-6 rounded shadow w-80">
@@ -364,7 +348,6 @@ console.log("Polar API response:", response);
         </div>
       )}
 
-      {/* Pricing Modal */}
       <PricingModal isOpen={isPricingOpen} onClose={() => setIsPricingOpen(false)} />
     </>
   );
