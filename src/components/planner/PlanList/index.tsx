@@ -296,7 +296,7 @@ const PlanList = () => {
                               : 'text-gray-400 hover:text-green-500 hover:bg-green-50 dark:hover:bg-green-900/20'
                             }
                           `}
-                          title={plan.is_completed ? t('actions.markAsIncomplete') : t('actions.markAsComplete')}
+                          title={plan.is_completed ? t('planner.actions.markAsIncomplete') : t('planner.actions.markAsComplete')}
                         >
                           <Check className="w-4 h-4" />
                         </button>
@@ -306,7 +306,7 @@ const PlanList = () => {
                             onClick={(e) => handleEditClick(e, plan)}
                             className="p-1.5 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 
                                      hover:bg-gray-100 dark:hover:bg-gray-700/50 rounded-lg transition-colors"
-                            title={t('actions.edit')}
+                            title={t('planner.actions.edit')}
                           >
                             <Edit2 className="w-4 h-4" />
                           </button>
@@ -316,7 +316,7 @@ const PlanList = () => {
                           onClick={(e) => handleDeleteClick(e, plan)}
                           className="p-1.5 text-gray-400 hover:text-red-500 dark:hover:text-red-400 
                                    hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors"
-                          title={t('actions.delete')}
+                          title={t('planner.actions.delete')}
                         >
                           <Trash2 className="w-4 h-4" />
                         </button>
