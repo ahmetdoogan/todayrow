@@ -1,3 +1,4 @@
+// src/pages/api/checkout.ts
 import { NextApiRequest, NextApiResponse } from 'next';
 import { createClient } from '@supabase/supabase-js';
 import { Polar } from '@polar-sh/sdk';
@@ -8,7 +9,6 @@ const supabase = createClient(
 );
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  // Method kontrolünü düzelttik
   if (req.method !== 'GET') {
     return res.status(405).json({ message: 'Method not allowed' });
   }
@@ -28,7 +28,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     const polar = new Polar({
       accessToken: process.env.POLAR_ACCESS_TOKEN ?? '',
-      server: 'sandbox',
+      server: 'production',  // sandbox -> production
     });
 
     const checkout = await polar.checkouts.custom.create({
