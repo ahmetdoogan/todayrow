@@ -13,26 +13,46 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     return res.status(405).json({ message: 'Method not allowed' });
   }
 
+  console.log('=== CHECKOUT START ===');
+  console.log('1. Request headers:', req.headers);
+
   try {
     const plan = (req.query.plan || 'monthly') as string;
+    console.log('2. Plan:', plan);
 
     const token = req.headers.authorization?.replace('Bearer ', '');
     if (!token) {
+      console.log('3. No token found in request');
       return res.status(401).json({ message: 'No token found' });
     }
 
     const { data: { user }, error } = await supabase.auth.getUser(token);
     if (error || !user) {
+      console.log('4. Auth error:', error);
       return res.status(401).json({ message: 'Auth failed' });
     }
 
-    const polar = new Polar({
-      accessToken: process.env.POLAR_ACCESS_TOKEN ?? '',
-      server: 'production',  // sandbox -> production
+    console.log('5. User authenticated:', user.id);
+
+    const serverEnv = 'production';
+    const polarAccessToken = process.env.POLAR_ACCESS_TOKEN;
+    const productId = process.env.POLAR_PRODUCT_ID;
+
+    console.log('6. Config:', {
+      serverEnv,
+      hasAccessToken: !!polarAccessToken,
+      hasProductId: !!productId
     });
 
+    const polar = new Polar({
+      accessToken: polarAccessToken ?? '',
+      server: serverEnv as any,
+    });
+
+    console.log('7. Creating checkout...');
+
     const checkout = await polar.checkouts.custom.create({
-      productId: process.env.POLAR_PRODUCT_ID!,
+      productId: productId!,
       successUrl: `${req.headers.origin}/dashboard?payment=success`,
       metadata: {
         user_id: user.id,
@@ -40,9 +60,15 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       },
     });
 
+    console.log('8. Checkout created:', checkout.url);
+    console.log('=== CHECKOUT END ===');
+
     return res.status(200).json({ url: checkout.url });
   } catch (err: any) {
-    console.error('Checkout error:', err);
+    console.error('=== CHECKOUT ERROR ===');
+    console.error('Error details:', err);
+    console.error('Error message:', err.message);
+    console.error('Error stack:', err.stack);
     return res.status(500).json({
       message: 'Something went wrong',
       error: err.message || String(err),
