@@ -100,7 +100,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           setUser(currentSession.user);
           setSession(currentSession);
           setIsLoading(false);
-          router.push('/dashboard');
         }
       } catch (error) {
         console.error("Session check error:", error);
@@ -121,10 +120,48 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
         setUser(session?.user ?? null);
         setSession(session);
-        setIsLoading(false);
 
         if (event === 'SIGNED_IN' && session?.user) {
-          router.push('/dashboard');
+          try {
+            const { data: existingSub, error: subError } = await supabase
+              .from('subscriptions')
+              .select('id, status')
+              .eq('user_id', session.user.id)
+              .maybeSingle();
+
+            if (subError) {
+              console.error("Check subscription error:", subError);
+            } else if (!existingSub) {
+              // Yeni üyelik oluşturma
+              const currentDate = new Date();
+              const trialEnd = new Date();
+              trialEnd.setDate(currentDate.getDate() + 14); // 14 günlük deneme süresi
+
+              const { error: insertErr } = await supabase
+                .from('subscriptions')
+                .insert({
+                  user_id: session.user.id,
+                  status: 'free_trial',
+                  trial_start: currentDate.toISOString(),
+                  trial_end: trialEnd.toISOString(),
+                  subscription_type: 'free',
+                  subscription_start: currentDate.toISOString(),
+                  subscription_end: trialEnd.toISOString(),
+                  created_at: currentDate.toISOString(),
+                  updated_at: currentDate.toISOString()
+                });
+
+              if (insertErr) {
+                console.error("Insert subscription error:", insertErr);
+              } else {
+                console.log("Inserted free_trial subscription for user:", session.user.id);
+              }
+            }
+
+            router.push('/dashboard');
+          } catch (subCatchErr) {
+            console.error("Subscription insert flow error:", subCatchErr);
+          }
         }
       }
     );
