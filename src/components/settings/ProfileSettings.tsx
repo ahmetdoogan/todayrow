@@ -23,6 +23,7 @@ const ProfileSettings = () => {
   const supabase = useSupabaseClient();
   const t = useTranslations('common.profile');
 
+  // Profil bilgilerini kaydet
   const handleSave = async () => {
     const result = await saveProfile();
     if (result.success) {
@@ -32,51 +33,45 @@ const ProfileSettings = () => {
     }
   };
 
-  const isVerifiedUser = (status === 'active' || status === 'free_trial' || status === 'cancel_scheduled');
+  // "Verified" rozet mantığı (örnek)
+  const isVerifiedUser = (
+    status === 'active' ||
+    status === 'free_trial' ||
+    status === 'cancel_scheduled'
+  );
 
-  const handleCancelSubscription = async () => {
-    if (!authSession?.user) return;
-    const userId = authSession.user.id;
+  // Yeni fonksiyon: Polar Portal açma
+  const handleOpenPortal = async () => {
+    if (!authSession?.access_token) {
+      console.error('No session found');
+      return;
+    }
 
     try {
-      const { data: subscriptionData, error: subError } = await supabase
-        .from('subscriptions')
-        .select('polar_sub_id')
-        .eq('user_id', userId)
-        .single();
-
-      if (subError || !subscriptionData?.polar_sub_id) {
-        console.error('Subscription ID not found:', subError);
-        toast.error('Failed to cancel subscription. Try again.');
-        return;
-      }
-
-      const polarSubscriptionId = subscriptionData.polar_sub_id;
-
-      const response = await fetch(`https://api.polar.sh/subscriptions/${polarSubscriptionId}/cancel`, {
+      // /api/open-portal'a istek
+      const response = await fetch('/api/open-portal', {
         method: 'POST',
         headers: {
-          'Authorization': `Bearer ${process.env.POLAR_ACCESS_TOKEN}`,
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          cancel_at_period_end: true
-        })
+          'Authorization': `Bearer ${authSession.access_token}`
+        }
       });
 
       if (!response.ok) {
-        throw new Error('Failed to cancel subscription with Polar');
+        const errorData = await response.json();
+        toast.error(errorData.message || 'Something went wrong');
+        return;
       }
 
-      toast.success('Your subscription will end at period end. You remain Pro until then.');
-      setShowCancelModal(false);
-      window.location.reload();
+      // Portal linkini alıp yönlendir
+      const { url } = await response.json();
+      window.location.href = url;
     } catch (error) {
-      console.error('Cancel subscription error:', error);
-      toast.error('Something went wrong.');
+      console.error('Open portal error:', error);
+      toast.error('Something went wrong');
     }
   };
 
+  // "subscription" yükleniyorken
   if (subscriptionLoading) {
     return null;
   }
@@ -84,6 +79,7 @@ const ProfileSettings = () => {
   return (
     <>
       <div className="space-y-4">
+        {/* Profil Fotoğrafı Kartı */}
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
@@ -91,6 +87,7 @@ const ProfileSettings = () => {
           className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-4"
         >
           <div className="flex items-center justify-between">
+            {/* Avatar + Ad Soyad */}
             <div className="flex items-center gap-4">
               <div className="relative">
                 {authSession?.user?.user_metadata?.avatar_url ? (
@@ -114,6 +111,7 @@ const ProfileSettings = () => {
                     }
                   </div>
                 )}
+                {/* Verified Badge */}
                 {isVerifiedUser && (
                   <div className="absolute -bottom-0.5 -right-0.5">
                     <div className="rounded-full bg-white dark:bg-slate-900 p-[2px]">
@@ -131,6 +129,8 @@ const ProfileSettings = () => {
                 </p>
               </div>
             </div>
+
+            {/* Üyelik Durumu + Upgrade Butonu */}
             <div className="flex items-center gap-3">
               <SubscriptionBadge />
               {isTrialing && (
@@ -169,6 +169,7 @@ const ProfileSettings = () => {
           </div>
         </motion.div>
 
+        {/* Abonelik Bilgileri */}
         {subscription && (
           <div className="p-4 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl">
             <p className="text-sm text-slate-600 dark:text-slate-300">
@@ -176,6 +177,11 @@ const ProfileSettings = () => {
             </p>
             <p className="text-sm text-slate-600 dark:text-slate-300">
               <strong>Status:</strong> {subscription.status}
+              {subscription.subscription_end && subscription.status === "cancel_scheduled" && (
+                <span className="ml-2 text-yellow-600">
+                  (Pro until {new Date(subscription.subscription_end).toLocaleDateString()})
+                </span>
+              )}
             </p>
             {subscription.subscription_end && (
               <p className="text-sm text-slate-600 dark:text-slate-300">
@@ -185,7 +191,12 @@ const ProfileSettings = () => {
           </div>
         )}
 
+        {/* -----------------------
+            Profil Formu Alanları
+           ----------------------- */}
+
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {/* Unvan */}
           <motion.div
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
@@ -210,6 +221,7 @@ const ProfileSettings = () => {
             )}
           </motion.div>
 
+          {/* LinkedIn */}
           <motion.div
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
@@ -236,6 +248,7 @@ const ProfileSettings = () => {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {/* Konum */}
           <motion.div
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
@@ -244,9 +257,7 @@ const ProfileSettings = () => {
           >
             <div className="flex items-center gap-3 mb-3">
               <MapPin className="w-5 h-5 text-slate-700 dark:text-slate-400" />
-              <span className="text-sm text-slate-700 dark:text-slate-300">
-                {t('fields.location.label')}
-              </span>
+              <span className="text-sm text-slate-700 dark:text-slate-300">{t('fields.location.label')}</span>
             </div>
             <input
               type="text"
@@ -260,6 +271,7 @@ const ProfileSettings = () => {
             )}
           </motion.div>
 
+          {/* Website */}
           <motion.div
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
@@ -283,6 +295,7 @@ const ProfileSettings = () => {
           </motion.div>
         </div>
 
+        {/* Bio */}
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
@@ -305,13 +318,15 @@ const ProfileSettings = () => {
           )}
         </motion.div>
 
+        {/* Save + Cancel */}
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.2, delay: 0.35 }}
           className="flex justify-between mt-6"
         >
-          {isPro && (
+          {/* Cancel Subscription Butonu */}
+          {isPro && status !== 'cancel_scheduled' && (
             <button
               onClick={() => setShowCancelModal(true)}
               className="text-sm text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-300 underline underline-offset-4 focus:outline-none"
@@ -320,6 +335,7 @@ const ProfileSettings = () => {
             </button>
           )}
 
+          {/* Profil Kaydet Butonu */}
           <button
             onClick={handleSave}
             disabled={profileLoading}
@@ -330,24 +346,32 @@ const ProfileSettings = () => {
         </motion.div>
       </div>
 
+      {/* Cancel Subscription Modal */}
       {showCancelModal && (
         <div className="fixed inset-0 flex items-center justify-center z-50 bg-black/50">
           <div className="bg-white dark:bg-slate-800 p-6 rounded shadow w-80">
             <p className="text-sm text-slate-700 dark:text-slate-300 mb-4">
-              Are you sure you want to cancel your subscription at period end?
+              Are you sure you want to manage or cancel your subscription?
             </p>
             <div className="flex justify-end gap-2">
               <Button variant="outline" onClick={() => setShowCancelModal(false)}>
                 No
               </Button>
-              <Button variant="destructive" onClick={handleCancelSubscription}>
-                Yes, cancel
+              <Button
+                variant="destructive"
+                onClick={() => {
+                  setShowCancelModal(false);
+                  handleOpenPortal();
+                }}
+              >
+                Yes, open portal
               </Button>
             </div>
           </div>
         </div>
       )}
 
+      {/* Pricing Modal */}
       <PricingModal isOpen={isPricingOpen} onClose={() => setIsPricingOpen(false)} />
     </>
   );

@@ -861,5 +861,25 @@
       "noCard": "No credit card required for trial"
     },
     "button": "Start Pro Plan"
+  },
+  "paywall": {
+  "titles": {
+    "accessRestricted": "Access Restricted",
+    "paymentFailed": "Payment Failed",
+    "subscriptionEnded": "Subscription Ended",
+    "subscriptionCanceled": "Subscription Will Be Canceled"
+  },
+  "messages": {
+    "proRequired": "Pro subscription is required to access this feature.",
+    "paymentFailedMessage": "Your last payment was unsuccessful. Update your payment information to continue using the service.",
+    "subscriptionEndedMessage": "Your Pro subscription has ended. Renew your subscription to access Pro features.",
+    "subscriptionCanceledMessage": "Your subscription will be canceled at the end of the period. You can reactivate or renew for the next period."
+  },
+  "buttons": {
+    "upgradeToPro": "Upgrade to Pro",
+    "updatePayment": "Update Payment Info",
+    "renewSubscription": "Renew Subscription",
+    "reactivateSubscription": "Reactivate Subscription"
   }
+}
 }

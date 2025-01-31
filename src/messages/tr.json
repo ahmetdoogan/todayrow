@@ -861,5 +861,25 @@
       "noCard": "Deneme için kredi kartı gerekmez"
     },
     "button": "Pro Planı Başlat"
+  },
+  "paywall": {
+  "titles": {
+    "accessRestricted": "Erişim Kısıtlandı",
+    "paymentFailed": "Ödeme Başarısız",
+    "subscriptionEnded": "Üyelik Sona Erdi",
+    "subscriptionCanceled": "Üyelik İptal Edilecek"
+  },
+  "messages": {
+    "proRequired": "Bu özelliğe erişmek için Pro üyelik gerekiyor.",
+    "paymentFailedMessage": "Son ödemeniz başarısız oldu. Hizmeti kullanmaya devam etmek için ödeme bilgilerinizi güncelleyin.",
+    "subscriptionEndedMessage": "Pro üyeliğiniz sona erdi. Pro özelliklere erişmek için üyeliğinizi yenileyin.",
+    "subscriptionCanceledMessage": "Üyeliğiniz dönem sonunda iptal edilecek. Yeniden aktifleştirebilir veya yeni dönem için yenileyebilirsiniz."
+  },
+  "buttons": {
+    "upgradeToPro": "Pro'ya Yükselt",
+    "updatePayment": "Ödeme Bilgilerini Güncelle",
+    "renewSubscription": "Üyeliği Yenile",
+    "reactivateSubscription": "Üyeliği Yeniden Aktifleştir"
   }
+}
 }
