@@ -31,6 +31,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [initialized, setInitialized] = useState(false);
+
+  // State değişikliklerini tek bir yerde yönetelim
+  const updateAuthState = (newUser: User | null, newSession: Session | null) => {
+    setUser(newUser);
+    setSession(newSession);
+    setIsLoading(false);
+  };
 
   const contextValue = useMemo(() => ({
     user,
@@ -38,26 +46,29 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     supabase,
     signIn: async (email: string, password: string) => {
       try {
+        setIsLoading(true);
         const { data: { session: currentSession }, error } =
           await supabase.auth.signInWithPassword({ email, password });
         if (error) throw error;
 
         if (currentSession?.user) {
-          setUser(currentSession.user);
-          setSession(currentSession);
+          updateAuthState(currentSession.user, currentSession);
           router.push('/dashboard');
         }
       } catch (error) {
+        setIsLoading(false);
         console.error("Login error:", error);
         throw error;
       }
     },
     signUp: async (email: string, password: string) => {
       try {
+        setIsLoading(true);
         const { data, error } = await supabase.auth.signUp({ email, password });
         if (error) throw error;
         router.push('/auth/verify');
       } catch (error) {
+        setIsLoading(false);
         console.error("Signup error:", error);
         throw error;
       }
@@ -66,8 +77,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       try {
         const { error } = await supabase.auth.signOut();
         if (error) throw error;
-        setUser(null);
-        setSession(null);
+        updateAuthState(null, null);
         router.push('/');
       } catch (error) {
         console.error("Signout error:", error);
@@ -91,88 +101,70 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }), [user, session, router]);
 
   useEffect(() => {
-    let isSubscribed = true;
+    if (initialized) return;
 
-    const checkUser = async () => {
+    const initAuth = async () => {
       try {
         const { data: { session: currentSession } } = await supabase.auth.getSession();
-        if (isSubscribed && currentSession?.user) {
-          setUser(currentSession.user);
-          setSession(currentSession);
-          setIsLoading(false);
+        
+        if (currentSession?.user) {
+          // Free trial kontrolü
+          const { data: existingSub } = await supabase
+            .from('subscriptions')
+            .select('id')
+            .eq('user_id', currentSession.user.id)
+            .single();
+
+          if (!existingSub) {
+            const currentDate = new Date();
+            const trialEnd = new Date();
+            trialEnd.setDate(currentDate.getDate() + 14);
+
+            await supabase
+              .from('subscriptions')
+              .insert({
+                user_id: currentSession.user.id,
+                status: 'free_trial',
+                trial_start: currentDate.toISOString(),
+                trial_end: trialEnd.toISOString(),
+                subscription_type: 'free',
+                created_at: currentDate.toISOString(),
+                updated_at: currentDate.toISOString()
+              });
+          }
+
+          updateAuthState(currentSession.user, currentSession);
+        } else {
+          updateAuthState(null, null);
         }
       } catch (error) {
-        console.error("Session check error:", error);
+        console.error("Auth initialization error:", error);
+        updateAuthState(null, null);
       } finally {
-        if (isSubscribed) {
-          setIsLoading(false);
-        }
+        setInitialized(true);
       }
     };
 
-    checkUser();
+    initAuth();
 
-    const { data: authListener } = supabase.auth.onAuthStateChange(
-      async (event, session) => {
-        console.log("Auth state change:", event, session?.user?.email);
+    const { data: authListener } = supabase.auth.onAuthStateChange(async (event, session) => {
+      if (!initialized) return;
 
-        if (!isSubscribed) return;
-
-        setUser(session?.user ?? null);
-        setSession(session);
-
-        if (event === 'SIGNED_IN' && session?.user) {
-          try {
-            const { data: existingSub, error: subError } = await supabase
-              .from('subscriptions')
-              .select('id, status')
-              .eq('user_id', session.user.id)
-              .maybeSingle();
-
-            if (subError) {
-              console.error("Check subscription error:", subError);
-            } else if (!existingSub) {
-              // Yeni üyelik oluşturma
-              const currentDate = new Date();
-              const trialEnd = new Date();
-              trialEnd.setDate(currentDate.getDate() + 14); // 14 günlük deneme süresi
-
-              const { error: insertErr } = await supabase
-                .from('subscriptions')
-                .insert({
-                  user_id: session.user.id,
-                  status: 'free_trial',
-                  trial_start: currentDate.toISOString(),
-                  trial_end: trialEnd.toISOString(),
-                  subscription_type: 'free',
-                  subscription_start: currentDate.toISOString(),
-                  subscription_end: trialEnd.toISOString(),
-                  created_at: currentDate.toISOString(),
-                  updated_at: currentDate.toISOString()
-                });
-
-              if (insertErr) {
-                console.error("Insert subscription error:", insertErr);
-              } else {
-                console.log("Inserted free_trial subscription for user:", session.user.id);
-              }
-            }
-
-            router.push('/dashboard');
-          } catch (subCatchErr) {
-            console.error("Subscription insert flow error:", subCatchErr);
-          }
-        }
+      console.log("Auth state change:", event);
+      
+      if (event === 'SIGNED_OUT') {
+        updateAuthState(null, null);
+      } else if (session?.user) {
+        updateAuthState(session.user, session);
       }
-    );
+    });
 
     return () => {
-      isSubscribed = false;
       authListener.subscription?.unsubscribe();
     };
-  }, [router]);
+  }, [initialized, router]);
 
-  if (isLoading) {
+  if (isLoading && !initialized) {
     return (
       <div className="h-screen flex flex-col items-center justify-center">
         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
