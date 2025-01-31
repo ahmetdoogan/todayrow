@@ -5,7 +5,7 @@ import { Fragment, useState } from 'react';
 import { X } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { ShineBorder } from '@/components/ui/shine-border';
-import { supabase } from '@/utils/supabaseClient'; // Doğru yol
+import { supabase } from '@/utils/supabaseClient';
 
 interface Props {
   isOpen: boolean;
@@ -45,7 +45,6 @@ const PricingModal = ({ isOpen, onClose }: Props) => {
               leaveFrom="opacity-100 scale-100"
               leaveTo="opacity-0 scale-95"
             >
-              {/* ShineBorder'ı kutunun dışına ekleyelim */}
               <ShineBorder
                 borderRadius={16}
                 borderWidth={1}
@@ -53,9 +52,7 @@ const PricingModal = ({ isOpen, onClose }: Props) => {
                 color={["#A07CFE", "#FE8FB5", "#FFBE7B"]}
                 className="w-full max-w-lg transform rounded-2xl"
               >
-                {/* Dialog.Panel içeriği aynı kalacak */}
                 <Dialog.Panel className="w-full max-w-lg transform rounded-2xl bg-white dark:bg-slate-800 p-8 shadow-xl transition-all">
-                  {/* Title */}
                   <div className="flex justify-between items-start mb-8">
                     <div>
                       <Dialog.Title className="text-2xl font-semibold text-gray-900 dark:text-white">
@@ -76,7 +73,6 @@ const PricingModal = ({ isOpen, onClose }: Props) => {
                     </button>
                   </div>
 
-                  {/* Billing Toggle */}
                   <div className="flex justify-center gap-4 mb-8">
                     <button
                       onClick={() => setBillingType('monthly')}
@@ -103,7 +99,6 @@ const PricingModal = ({ isOpen, onClose }: Props) => {
                     </button>
                   </div>
 
-                  {/* Price */}
                   <div className="text-center mb-8">
                     <div className="flex items-end justify-center gap-1">
                       <span className="text-4xl font-bold text-gray-900 dark:text-white">
@@ -120,7 +115,6 @@ const PricingModal = ({ isOpen, onClose }: Props) => {
                     )}
                   </div>
 
-                  {/* Features */}
                   <div className="space-y-4 mb-8">
                     {[
                       t('features.unlimited'),
@@ -140,32 +134,35 @@ const PricingModal = ({ isOpen, onClose }: Props) => {
                     ))}
                   </div>
 
-                  {/* Action Button */}
                   <button
-  onClick={async () => {
-    const { data: { session } } = await supabase.auth.getSession();
-    if (!session?.access_token) return;
+                    className="w-full py-3 px-4 bg-violet-600 hover:bg-violet-700 text-white rounded-lg font-medium transition-colors"
+                    onClick={async () => {
+                      const { data: { session } } = await supabase.auth.getSession();
+                      if (!session?.access_token) return;
 
-    const resp = await fetch('/api/checkout', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${session.access_token}`,
-        'Content-Type': 'application/json'
-      },
-    });
+                      try {
+                        const resp = await fetch(`/api/checkout?plan=${billingType}`, {
+                          method: 'GET',
+                          headers: {
+                            'Authorization': `Bearer ${session.access_token}`,
+                          }
+                        });
 
-    if (!resp.ok) {
-      console.error('Checkout error:', await resp.text());
-      return;
-    }
+                        if (!resp.ok) {
+                          console.error('Checkout error:', await resp.text());
+                          return;
+                        }
 
-    const data = await resp.json();
-    window.location.href = data.url;
-    onClose();
-  }}
->
-  {t('button')}
-</button>
+                        const data = await resp.json();
+                        window.location.href = data.url;
+                        onClose();
+                      } catch (error) {
+                        console.error('Checkout error:', error);
+                      }
+                    }}
+                  >
+                    {t('button')}
+                  </button>
                 </Dialog.Panel>
               </ShineBorder>
             </Transition.Child>
