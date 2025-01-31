@@ -32,7 +32,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [session, setSession] = useState<Session | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
-  // Session değişikliklerini memoize edelim
   const contextValue = useMemo(() => ({
     user,
     session,
@@ -100,6 +99,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         if (isSubscribed && currentSession?.user) {
           setUser(currentSession.user);
           setSession(currentSession);
+          setIsLoading(false);
+          router.push('/dashboard');
         }
       } catch (error) {
         console.error("Session check error:", error);
@@ -120,30 +121,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
         setUser(session?.user ?? null);
         setSession(session);
+        setIsLoading(false);
 
         if (event === 'SIGNED_IN' && session?.user) {
-          try {
-            const { data: existingSub, error: subError } = await supabase
-              .from('subscriptions')
-              .select('id')
-              .eq('user_id', session.user.id)
-              .maybeSingle();
-
-            if (subError) {
-              console.error("Check subscription error:", subError);
-            } else if (!existingSub) {
-              const { error: insertErr } = await supabase
-                .from('subscriptions')
-                .insert({ user_id: session.user.id });
-              if (insertErr) {
-                console.error("Insert subscription error:", insertErr);
-              } else {
-                console.log("Inserted free_trial for user:", session.user.id);
-              }
-            }
-          } catch (subCatchErr) {
-            console.error("Subscription insert flow error:", subCatchErr);
-          }
+          router.push('/dashboard');
         }
       }
     );
@@ -152,7 +133,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       isSubscribed = false;
       authListener.subscription?.unsubscribe();
     };
-  }, []);
+  }, [router]);
 
   if (isLoading) {
     return (
