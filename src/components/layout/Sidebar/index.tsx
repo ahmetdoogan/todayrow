@@ -419,18 +419,18 @@ const Sidebar: React.FC<SidebarProps> = ({
                 <div className="text-sm text-gray-600 dark:text-gray-300 mb-1">
                 </div>
               )}
-              {!isPro && (
-                <div className="mb-3">
-                  <SubscriptionBadge />
-                  <Button
-                    variant="default"
-                    className="w-full mt-2"
-                    onClick={() => setIsPricingOpen(true)}
-                  >
-                    {sidebarT('trial.upgrade')}
-                  </Button>
-                </div>
-              )}
+              {!isPro && !isCollapsed && (
+  <div className="mb-3">
+    <SubscriptionBadge />
+    <Button
+      variant="default"
+      className="w-full mt-2"
+      onClick={() => setIsPricingOpen(true)}
+    >
+      {sidebarT('trial.upgrade')}
+    </Button>
+  </div>
+)}
               <div className="pt-3 border-t border-gray-200/50 dark:border-gray-700/50">
                 <div className="flex items-center justify-between px-2">
                   <Link

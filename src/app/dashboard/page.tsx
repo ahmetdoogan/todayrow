@@ -91,7 +91,7 @@ export default function DashboardPage() {
       <div className="md:hidden">
         <button
           onClick={handleQuickPlansOpen}
-          className="fixed right-4 bottom-20 z-[1000] w-14 h-14
+          className="fixed right-4 bottom-20 z-10 w-14 h-14
                      bg-zinc-900 hover:bg-black/70 dark:bg-zinc-700 dark:hover:bg-zinc-600 text-white rounded-full
                      shadow-lg hover:shadow-xl flex items-center justify-center
                      transition-all duration-200 dark:bg-blue-500 dark:hover:bg-blue-600"
@@ -109,7 +109,7 @@ export default function DashboardPage() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.2 }}
-            className="fixed md:hidden inset-0 bg-black/50 backdrop-blur-sm flex items-end z-[1000]"
+            className="fixed md:hidden inset-0 bg-black/50 backdrop-blur-sm flex items-end z-40"
             onClick={(e) => {
               if (e.target === e.currentTarget) handleQuickPlansClose();
             }}
