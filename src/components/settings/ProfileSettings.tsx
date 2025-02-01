@@ -15,7 +15,8 @@ import { SubscriptionBadge } from '@/components/subscription/SubscriptionBadge';
 
 const ProfileSettings = () => {
   const { session: authSession } = useAuth();
-  // useProfile hook’unuzun state’ini (formData) başlangıçta tüm alanlar için boş stringlerle initialize ettiğinizden emin olun.
+  // useProfile hook’unuzun tip tanımında formData muhtemelen camelCase alanlara sahip:
+  // Örneğin: { firstName: string; lastName: string; title: string; linkedin: string; location: string; website: string; bio: string }
   const { formData, setFormData, loading: profileLoading, errors } = useProfile();
   const { subscription, trialDaysLeft, status, isPro, loading: subscriptionLoading, isTrialing, isVerifiedUser } = useSubscription();
   const [isPricingOpen, setIsPricingOpen] = useState(false);
@@ -24,7 +25,7 @@ const ProfileSettings = () => {
   const supabase = useSupabaseClient();
   const t = useTranslations('common.profile');
 
-  // Profil bilgilerini çekiyoruz (maybeSingle() kullanarak, kayıt yoksa hata almıyoruz)
+  // Profil bilgilerini Supabase'den çekiyoruz.
   useEffect(() => {
     const fetchProfile = async () => {
       if (authSession?.user?.id) {
@@ -36,9 +37,11 @@ const ProfileSettings = () => {
         if (error) {
           console.error('Profil bilgileri çekilirken hata:', error);
         } else if (data) {
+          // Supabase'den gelen alanlar alt çizgiyle (first_name, last_name) geliyor;
+          // fakat tip tanımınız camelCase olduğu için veriyi çeviriyoruz.
           setFormData({
-            first_name: data.first_name || '',
-            last_name: data.last_name || '',
+            firstName: data.first_name || '',
+            lastName: data.last_name || '',
             title: data.title || '',
             linkedin: data.linkedin || '',
             location: data.location || '',
@@ -46,10 +49,9 @@ const ProfileSettings = () => {
             bio: data.bio || '',
           });
         } else {
-          // Kayıt yoksa boş form verileri
           setFormData({
-            first_name: '',
-            last_name: '',
+            firstName: '',
+            lastName: '',
             title: '',
             linkedin: '',
             location: '',
@@ -63,7 +65,7 @@ const ProfileSettings = () => {
     fetchProfile();
   }, [authSession, supabase, setFormData]);
 
-  // saveProfile fonksiyonunu upsert metodu ile güncelliyoruz
+  // Kaydetme işlemi (upsert metodu kullanılıyor)
   const saveProfile = async () => {
     if (!authSession?.user?.id) {
       toast.error(t('messages.saveError'));
@@ -75,15 +77,15 @@ const ProfileSettings = () => {
         .from('profiles')
         .upsert({
           id: authSession.user.id,
-          first_name: formData.first_name,
-          last_name: formData.last_name,
+          // Burada DB'ye gönderirken yine alt çizgi kullanıyoruz (çünkü Supabase tablonuzda öyle tanımlı)
+          first_name: formData.firstName,
+          last_name: formData.lastName,
           title: formData.title,
           linkedin: formData.linkedin,
           location: formData.location,
           website: formData.website,
           bio: formData.bio,
         });
-
       if (error) throw error;
       toast.success(t('messages.saveSuccess'));
       return { success: true };
@@ -94,17 +96,13 @@ const ProfileSettings = () => {
     }
   };
 
-  // Kaydet butonuna tıklandığında saveProfile çağrılıyor
   const handleSave = async () => {
     if (!authSession?.user?.id) {
       toast.error(t('messages.saveError'));
       return;
     }
-
     const result = await saveProfile();
-    if (!result.success) {
-      return;
-    }
+    if (!result.success) return;
   };
 
   const handleOpenPortal = async () => {
@@ -135,7 +133,6 @@ const ProfileSettings = () => {
     }
   };
 
-  // Eğer abonelik bilgileri yükleniyorsa ekranda hiçbir şey göstermiyoruz
   if (subscriptionLoading) {
     return null;
   }
@@ -185,8 +182,8 @@ const ProfileSettings = () => {
               </div>
               <div>
                 <h3 className="text-sm font-medium text-slate-700 dark:text-slate-300">
-                  {formData.first_name || formData.last_name
-                    ? `${formData.first_name || ''} ${formData.last_name || ''}`.trim()
+                  {formData.firstName || formData.lastName
+                    ? `${formData.firstName || ''} ${formData.lastName || ''}`.trim()
                     : authSession?.user?.email?.split('@')[0]}
                 </h3>
                 <p className="text-xs text-slate-500 dark:text-slate-400">
@@ -271,13 +268,13 @@ const ProfileSettings = () => {
             </div>
             <input
               type="text"
-              value={formData.first_name || ''}
-              onChange={(e) => setFormData(prev => ({ ...prev, first_name: e.target.value }))}
+              value={formData.firstName || ''}
+              onChange={(e) => setFormData(prev => ({ ...prev, firstName: e.target.value }))}
               placeholder={t('fields.firstName.placeholder')}
               className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-sm text-slate-700 dark:text-slate-300 placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-violet-500/20"
             />
-            {errors.first_name && (
-              <p className="mt-1 text-xs text-red-500">{errors.first_name}</p>
+            {errors.firstName && (
+              <p className="mt-1 text-xs text-red-500">{errors.firstName}</p>
             )}
           </motion.div>
 
@@ -296,13 +293,13 @@ const ProfileSettings = () => {
             </div>
             <input
               type="text"
-              value={formData.last_name || ''}
-              onChange={(e) => setFormData(prev => ({ ...prev, last_name: e.target.value }))}
+              value={formData.lastName || ''}
+              onChange={(e) => setFormData(prev => ({ ...prev, lastName: e.target.value }))}
               placeholder={t('fields.lastName.placeholder')}
               className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-sm text-slate-700 dark:text-slate-300 placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-violet-500/20"
             />
-            {errors.last_name && (
-              <p className="mt-1 text-xs text-red-500">{errors.last_name}</p>
+            {errors.lastName && (
+              <p className="mt-1 text-xs text-red-500">{errors.lastName}</p>
             )}
           </motion.div>
 
