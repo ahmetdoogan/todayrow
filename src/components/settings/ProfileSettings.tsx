@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import Image from "next/image";
 import { User, MapPin, Globe, BookText, BadgeCheck, Linkedin } from 'lucide-react';
@@ -15,28 +15,98 @@ import { SubscriptionBadge } from '@/components/subscription/SubscriptionBadge';
 
 const ProfileSettings = () => {
   const { session: authSession } = useAuth();
-  const { formData, setFormData, loading: profileLoading, errors, saveProfile } = useProfile();
-  const { subscription, trialDaysLeft, status, isPro, loading: subscriptionLoading, isTrialing } = useSubscription();
+  // useProfile hook’unuzun state’ini (formData) başlangıçta tüm alanlar için boş stringlerle initialize ettiğinizden emin olun.
+  const { formData, setFormData, loading: profileLoading, errors } = useProfile();
+  const { subscription, trialDaysLeft, status, isPro, loading: subscriptionLoading, isTrialing, isVerifiedUser } = useSubscription();
   const [isPricingOpen, setIsPricingOpen] = useState(false);
   const [showCancelModal, setShowCancelModal] = useState(false);
   const session = useSession();
   const supabase = useSupabaseClient();
   const t = useTranslations('common.profile');
 
-  // Profil bilgilerini kaydet
-  const handleSave = async () => {
-    const result = await saveProfile();
-    if (result.success) {
-      toast.success(t('messages.saveSuccess'));
-    } else {
+  // Profil bilgilerini çekiyoruz (maybeSingle() kullanarak, kayıt yoksa hata almıyoruz)
+  useEffect(() => {
+    const fetchProfile = async () => {
+      if (authSession?.user?.id) {
+        const { data, error } = await supabase
+          .from('profiles')
+          .select('*')
+          .eq('id', authSession.user.id)
+          .maybeSingle();
+        if (error) {
+          console.error('Profil bilgileri çekilirken hata:', error);
+        } else if (data) {
+          setFormData({
+            first_name: data.first_name || '',
+            last_name: data.last_name || '',
+            title: data.title || '',
+            linkedin: data.linkedin || '',
+            location: data.location || '',
+            website: data.website || '',
+            bio: data.bio || '',
+          });
+        } else {
+          // Kayıt yoksa boş form verileri
+          setFormData({
+            first_name: '',
+            last_name: '',
+            title: '',
+            linkedin: '',
+            location: '',
+            website: '',
+            bio: '',
+          });
+        }
+      }
+    };
+
+    fetchProfile();
+  }, [authSession, supabase, setFormData]);
+
+  // saveProfile fonksiyonunu upsert metodu ile güncelliyoruz
+  const saveProfile = async () => {
+    if (!authSession?.user?.id) {
       toast.error(t('messages.saveError'));
+      return { success: false };
+    }
+
+    try {
+      const { data, error } = await supabase
+        .from('profiles')
+        .upsert({
+          id: authSession.user.id,
+          first_name: formData.first_name,
+          last_name: formData.last_name,
+          title: formData.title,
+          linkedin: formData.linkedin,
+          location: formData.location,
+          website: formData.website,
+          bio: formData.bio,
+        });
+
+      if (error) throw error;
+      toast.success(t('messages.saveSuccess'));
+      return { success: true };
+    } catch (error) {
+      console.error('Profil kaydedilirken hata:', error);
+      toast.error(t('messages.saveError'));
+      return { success: false };
     }
   };
 
-  // "Verified" rozet mantığı (örnek)
-  const { isVerifiedUser } = useSubscription(); // Hook'tan al
+  // Kaydet butonuna tıklandığında saveProfile çağrılıyor
+  const handleSave = async () => {
+    if (!authSession?.user?.id) {
+      toast.error(t('messages.saveError'));
+      return;
+    }
 
-  // Yeni fonksiyon: Polar Portal açma
+    const result = await saveProfile();
+    if (!result.success) {
+      return;
+    }
+  };
+
   const handleOpenPortal = async () => {
     if (!authSession?.access_token) {
       console.error('No session found');
@@ -44,7 +114,6 @@ const ProfileSettings = () => {
     }
 
     try {
-      // /api/open-portal'a istek
       const response = await fetch('/api/open-portal', {
         method: 'POST',
         headers: {
@@ -58,7 +127,6 @@ const ProfileSettings = () => {
         return;
       }
 
-      // Portal linkini alıp yönlendir
       const { url } = await response.json();
       window.location.href = url;
     } catch (error) {
@@ -67,7 +135,7 @@ const ProfileSettings = () => {
     }
   };
 
-  // "subscription" yükleniyorken
+  // Eğer abonelik bilgileri yükleniyorsa ekranda hiçbir şey göstermiyoruz
   if (subscriptionLoading) {
     return null;
   }
@@ -107,7 +175,6 @@ const ProfileSettings = () => {
                     }
                   </div>
                 )}
-                {/* Verified Badge */}
                 {isVerifiedUser && (
                   <div className="absolute -bottom-0.5 -right-0.5">
                     <div className="rounded-full bg-white dark:bg-slate-900 p-[2px]">
@@ -118,7 +185,9 @@ const ProfileSettings = () => {
               </div>
               <div>
                 <h3 className="text-sm font-medium text-slate-700 dark:text-slate-300">
-                  {authSession?.user?.user_metadata?.name || authSession?.user?.email?.split('@')[0]}
+                  {formData.first_name || formData.last_name
+                    ? `${formData.first_name || ''} ${formData.last_name || ''}`.trim()
+                    : authSession?.user?.email?.split('@')[0]}
                 </h3>
                 <p className="text-xs text-slate-500 dark:text-slate-400">
                   {authSession?.user?.email}
@@ -130,8 +199,7 @@ const ProfileSettings = () => {
             <div className="flex items-center gap-3">
               <SubscriptionBadge />
               {isTrialing && (
-                <p className="text-xs text-gray-500 dark:text-gray-400">
-                </p>
+                <p className="text-xs text-gray-500 dark:text-gray-400"></p>
               )}
               {!isPro && (
                 <Button
@@ -186,11 +254,58 @@ const ProfileSettings = () => {
           </div>
         )}
 
-        {/* -----------------------
-            Profil Formu Alanları
-           ----------------------- */}
-
+        {/* Profil Formu Alanları */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {/* İsim */}
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.2, delay: 0.1 }}
+            className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-4"
+          >
+            <div className="flex items-center gap-3 mb-3">
+              <User className="w-5 h-5 text-slate-700 dark:text-slate-400" />
+              <span className="text-sm text-slate-700 dark:text-slate-300">
+                {t('fields.firstName.label')}
+              </span>
+            </div>
+            <input
+              type="text"
+              value={formData.first_name || ''}
+              onChange={(e) => setFormData(prev => ({ ...prev, first_name: e.target.value }))}
+              placeholder={t('fields.firstName.placeholder')}
+              className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-sm text-slate-700 dark:text-slate-300 placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-violet-500/20"
+            />
+            {errors.first_name && (
+              <p className="mt-1 text-xs text-red-500">{errors.first_name}</p>
+            )}
+          </motion.div>
+
+          {/* Soyisim */}
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.2, delay: 0.15 }}
+            className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-4"
+          >
+            <div className="flex items-center gap-3 mb-3">
+              <User className="w-5 h-5 text-slate-700 dark:text-slate-400" />
+              <span className="text-sm text-slate-700 dark:text-slate-300">
+                {t('fields.lastName.label')}
+              </span>
+            </div>
+            <input
+              type="text"
+              value={formData.last_name || ''}
+              onChange={(e) => setFormData(prev => ({ ...prev, last_name: e.target.value }))}
+              placeholder={t('fields.lastName.placeholder')}
+              className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-sm text-slate-700 dark:text-slate-300 placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-violet-500/20"
+            />
+            {errors.last_name && (
+              <p className="mt-1 text-xs text-red-500">{errors.last_name}</p>
+            )}
+          </motion.div>
+
           {/* Unvan */}
           <motion.div
             initial={{ opacity: 0, y: 10 }}
@@ -206,7 +321,7 @@ const ProfileSettings = () => {
             </div>
             <input
               type="text"
-              value={formData.title}
+              value={formData.title || ''}
               onChange={(e) => setFormData(prev => ({ ...prev, title: e.target.value }))}
               placeholder={t('fields.title.placeholder')}
               className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-sm text-slate-700 dark:text-slate-300 placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-violet-500/20"
@@ -231,7 +346,7 @@ const ProfileSettings = () => {
             </div>
             <input
               type="text"
-              value={formData.linkedin}
+              value={formData.linkedin || ''}
               onChange={(e) => setFormData(prev => ({ ...prev, linkedin: e.target.value }))}
               placeholder={t('fields.linkedin.placeholder')}
               className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-sm text-slate-700 dark:text-slate-300 placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-violet-500/20"
@@ -240,9 +355,7 @@ const ProfileSettings = () => {
               <p className="mt-1 text-xs text-red-500">{errors.linkedin}</p>
             )}
           </motion.div>
-        </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {/* Konum */}
           <motion.div
             initial={{ opacity: 0, y: 10 }}
@@ -256,7 +369,7 @@ const ProfileSettings = () => {
             </div>
             <input
               type="text"
-              value={formData.location}
+              value={formData.location || ''}
               onChange={(e) => setFormData(prev => ({ ...prev, location: e.target.value }))}
               placeholder={t('fields.location.placeholder')}
               className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-sm text-slate-700 dark:text-slate-300 placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-violet-500/20"
@@ -279,7 +392,7 @@ const ProfileSettings = () => {
             </div>
             <input
               type="url"
-              value={formData.website}
+              value={formData.website || ''}
               onChange={(e) => setFormData(prev => ({ ...prev, website: e.target.value }))}
               placeholder={t('fields.website.placeholder')}
               className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-sm text-slate-700 dark:text-slate-300 placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-violet-500/20"
@@ -302,7 +415,7 @@ const ProfileSettings = () => {
             <span className="text-sm text-slate-700 dark:text-slate-300">{t('fields.bio.label')}</span>
           </div>
           <textarea
-            value={formData.bio}
+            value={formData.bio || ''}
             onChange={(e) => setFormData(prev => ({ ...prev, bio: e.target.value }))}
             placeholder={t('fields.bio.placeholder')}
             rows={4}
@@ -320,7 +433,6 @@ const ProfileSettings = () => {
           transition={{ duration: 0.2, delay: 0.35 }}
           className="flex justify-between mt-6"
         >
-          {/* Cancel Subscription Butonu */}
           {isPro && status !== 'cancel_scheduled' && (
             <button
               onClick={() => setShowCancelModal(true)}
@@ -330,7 +442,6 @@ const ProfileSettings = () => {
             </button>
           )}
 
-          {/* Profil Kaydet Butonu */}
           <button
             onClick={handleSave}
             disabled={profileLoading}
@@ -366,7 +477,6 @@ const ProfileSettings = () => {
         </div>
       )}
 
-      {/* Pricing Modal */}
       <PricingModal isOpen={isPricingOpen} onClose={() => setIsPricingOpen(false)} />
     </>
   );

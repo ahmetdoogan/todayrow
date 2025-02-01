@@ -75,6 +75,14 @@
         "cancel": "Cancel Subscription"
       },
       "fields": {
+        "firstName": {
+          "label": "First Name",
+          "placeholder": "e.g., John"
+        },
+        "lastName": {
+          "label": "Last Name",
+          "placeholder": "e.g., Doe"
+        },
         "title": {
           "label": "Title",
           "placeholder": "e.g., Product Designer"

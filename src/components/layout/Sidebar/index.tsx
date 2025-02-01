@@ -9,18 +9,18 @@ import PricingModal from '@/components/modals/PricingModal';
 import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname, useRouter } from 'next/navigation';
-import { 
-  Layout, 
-  Calendar, 
-  Settings, 
-  PlusCircle, 
-  LogOut, 
-  User, 
-  Search, 
-  ChevronLeft, 
-  FileText, 
+import {
+  Layout,
+  Calendar,
+  Settings,
+  PlusCircle,
+  LogOut,
+  User,
+  Search,
+  ChevronLeft,
+  FileText,
   CalendarCheck,
-  BadgeCheck 
+  BadgeCheck
 } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import { useContent } from '@/context/ContentContext';
@@ -35,12 +35,12 @@ interface SidebarProps {
   onNewContent: () => void;
   onNewNote: () => void;
   onCollapse: (value: boolean) => void;
-  onNewPlan: () => void; 
+  onNewPlan: () => void;
 }
 
-const Sidebar: React.FC<SidebarProps> = ({ 
-  onNewContent, 
-  onNewNote, 
+const Sidebar: React.FC<SidebarProps> = ({
+  onNewContent,
+  onNewNote,
   onCollapse,
   onNewPlan
 }) => {
@@ -57,16 +57,16 @@ const Sidebar: React.FC<SidebarProps> = ({
   const { user, signOut } = useAuth();
   const { contents, setSelectedContent } = useContent();
   const { notes } = useNotes();
-  const { 
+  const {
     plans,
-    setSelectedPlan, 
-    setIsModalOpen, 
-    setDraggedPlan, 
+    setSelectedPlan,
+    setIsModalOpen,
+    setDraggedPlan,
     setIsEditingPlan,
     selectedDate
   } = usePlanner();
 
-  // useSubscription hook'undan isVerifiedUser'ı da alın
+  // useSubscription hook'undan isVerifiedUser'ı da alıyoruz
   const { trialDaysLeft, status, isPro, loading, isTrialing, isVerifiedUser } = useSubscription();
 
   console.log("Subscription data in Sidebar:", {
@@ -75,7 +75,7 @@ const Sidebar: React.FC<SidebarProps> = ({
     isTrialing,
     isPro,
     loading,
-    isVerifiedUser // isVerifiedUser'ı konsola yazdırın
+    isVerifiedUser
   });
 
   const sidebarT = useTranslations('common.sidebar');
@@ -85,6 +85,9 @@ const Sidebar: React.FC<SidebarProps> = ({
   const [isSearchFocused, setIsSearchFocused] = useState(false);
 
   const searchTimeoutRef = useRef<NodeJS.Timeout>();
+
+  // Yeni: Kullanıcının güncellenmiş profil verilerini (ilk/son isim gibi) tutacağımız state
+  const [profile, setProfile] = useState<any>(null);
 
   const navItems = [
     { label: t('common.sidebar.menu.plans'), icon: CalendarCheck, href: '/dashboard' },
@@ -114,6 +117,25 @@ const Sidebar: React.FC<SidebarProps> = ({
   useEffect(() => {
     onCollapse?.(isCollapsed);
   }, [isCollapsed, onCollapse]);
+
+  // Yeni: Kullanıcının güncellenmiş profil bilgilerini Supabase'den çekiyoruz.
+  useEffect(() => {
+    const fetchProfile = async () => {
+      if (user?.id) {
+        const { data, error } = await supabase
+          .from('profiles')
+          .select('*')
+          .eq('id', user.id)
+          .maybeSingle();
+        if (error) {
+          console.error('Error fetching profile:', error);
+        } else {
+          setProfile(data);
+        }
+      }
+    };
+    fetchProfile();
+  }, [user, supabase]);
 
   const handleLogout = async () => {
     try {
@@ -239,9 +261,9 @@ const Sidebar: React.FC<SidebarProps> = ({
   return (
     <>
       {isMobile && !isCollapsed && (
-        <div 
+        <div
           className="fixed inset-0 bg-black/30 backdrop-blur-sm z-30"
-          onClick={() => setIsCollapsed(true)} 
+          onClick={() => setIsCollapsed(true)}
         />
       )}
       <aside
@@ -345,7 +367,7 @@ const Sidebar: React.FC<SidebarProps> = ({
                           <div className="font-medium text-gray-800 dark:text-gray-200 line-clamp-1 flex justify-between items-center gap-2">
                             <span className="truncate">{result.title}</span>
                             <span className={`text-xs px-2 py-0.5 rounded-full ${
-                              result.type === 'content' 
+                              result.type === 'content'
                                 ? 'bg-blue-500/20 text-blue-500'
                                 : result.type === 'note'
                                   ? 'bg-green-500/20 text-green-500'
@@ -410,66 +432,65 @@ const Sidebar: React.FC<SidebarProps> = ({
                 </div>
               )}
               <div className="pt-3 border-t border-gray-200/50 dark:border-gray-700/50">
-  <div className="flex items-center justify-between px-2">
-    <Link 
-      href="/dashboard/settings/profile"
-      className={`flex items-center min-w-0 gap-2 py-1.5 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors group ${
-        isCollapsed ? 'w-8 justify-center' : ''
-      }`}
-    >
-      <div className="relative w-8 h-8 flex-shrink-0">
-        {user?.user_metadata?.avatar_url ? (
-          <>
-            <Image
-              src={user.user_metadata.avatar_url}
-              alt={user.user_metadata.name || 'Profile'}
-              width={32}
-              height={32}
-              className="w-full h-full rounded-full object-cover"
-            />
-            {isVerifiedUser && (
-              <div className="absolute -bottom-0.5 -right-0.5">
-                <div className="rounded-full bg-white dark:bg-slate-900 p-[2px]">
-                  <BadgeCheck className="w-3.5 h-3.5 text-blue-500 dark:text-white" />
+                <div className="flex items-center justify-between px-2">
+                  <Link
+                    href="/dashboard/settings/profile"
+                    className={`flex items-center min-w-0 gap-2 py-1.5 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors group ${isCollapsed ? 'w-8 justify-center' : ''}`}
+                  >
+                    <div className="relative w-8 h-8 flex-shrink-0">
+                      {user?.user_metadata?.avatar_url ? (
+                        <>
+                          <Image
+                            src={user.user_metadata.avatar_url}
+                            alt={user.user_metadata.name || 'Profile'}
+                            width={32}
+                            height={32}
+                            className="w-full h-full rounded-full object-cover"
+                          />
+                          {isVerifiedUser && (
+                            <div className="absolute -bottom-0.5 -right-0.5">
+                              <div className="rounded-full bg-white dark:bg-slate-900 p-[2px]">
+                                <BadgeCheck className="w-3.5 h-3.5 text-blue-500 dark:text-white" />
+                              </div>
+                            </div>
+                          )}
+                        </>
+                      ) : (
+                        <div className="w-full h-full rounded-full bg-blue-500 flex items-center justify-center text-white text-xs font-medium">
+                          {user?.email?.substring(0, 2).toUpperCase()}
+                          {isVerifiedUser && (
+                            <div className="absolute -bottom-0.5 -right-0.5">
+                              <div className="rounded-full bg-white dark:bg-slate-900 p-[2px]">
+                                <BadgeCheck className="w-3.5 h-3.5 text-blue-500 dark:text-white" />
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                      )}
+                    </div>
+                    {!isCollapsed && (
+                      <div className="min-w-0 flex-1">
+                        <div className="text-xs font-medium text-gray-700 dark:text-gray-300 truncate group-hover:text-gray-900 dark:group-hover:text-white">
+                          {profile && (profile.first_name || profile.last_name)
+                            ? `${profile.first_name || ''} ${profile.last_name || ''}`.trim()
+                            : (user?.user_metadata?.name || user?.email?.split('@')[0])
+                          }
+                        </div>
+                        <div className="text-xs text-gray-500 dark:text-gray-400 truncate group-hover:text-gray-700 dark:group-hover:text-gray-300">
+                          {user?.email}
+                        </div>
+                      </div>
+                    )}
+                  </Link>
+                  <button
+                    onClick={handleLogout}
+                    className={`w-8 h-8 flex items-center justify-center text-gray-400 hover:text-gray-600 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors ${isCollapsed ? 'mx-auto' : ''}`}
+                    title={t('common.sidebar.logout')}
+                  >
+                    <LogOut className="w-4 h-4" />
+                  </button>
                 </div>
               </div>
-            )}
-          </>
-        ) : (
-          <div className="w-full h-full rounded-full bg-blue-500 flex items-center justify-center text-white text-xs font-medium">
-            {user?.email?.substring(0, 2).toUpperCase()}
-            {isVerifiedUser && (
-              <div className="absolute -bottom-0.5 -right-0.5">
-                <div className="rounded-full bg-white dark:bg-slate-900 p-[2px]">
-                  <BadgeCheck className="w-3.5 h-3.5 text-blue-500 dark:text-white" />
-                </div>
-              </div>
-            )}
-          </div>
-        )}
-      </div>
-      {!isCollapsed && (
-        <div className="min-w-0 flex-1">
-          <div className="text-xs font-medium text-gray-700 dark:text-gray-300 truncate group-hover:text-gray-900 dark:group-hover:text-white">
-            {user?.user_metadata?.name || user?.email?.split('@')[0]}
-          </div>
-          <div className="text-xs text-gray-500 dark:text-gray-400 truncate group-hover:text-gray-700 dark:group-hover:text-gray-300">
-            {user?.email}
-          </div>
-        </div>
-      )}
-    </Link>
-    <button
-      onClick={handleLogout}
-      className={`w-8 h-8 flex items-center justify-center text-gray-400 hover:text-gray-600 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors ${
-        isCollapsed ? 'mx-auto' : ''
-      }`}
-      title={t('common.sidebar.logout')}
-    >
-      <LogOut className="w-4 h-4" />
-    </button>
-  </div>
-</div>
             </div>
           )}
         </div>

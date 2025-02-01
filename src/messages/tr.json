@@ -75,21 +75,29 @@
         "cancel": "Üyeliği iptal et"
       },
       "fields": {
+        "firstName": {
+          "label": "İsim",
+          "placeholder": "Örneğin, Ahmet"
+        },
+        "lastName": {
+          "label": "Soyisim",
+          "placeholder": "Örneğin, Yılmaz"
+        },
         "title": {
           "label": "Unvan",
-          "placeholder": "Örn: Product Designer"
+          "placeholder": "Örneğin, Ürün Tasarımcısı"
         },
         "linkedin": {
           "label": "LinkedIn",
-          "placeholder": "Örn: linkedin.com/in/kullaniciadi"
+          "placeholder": "Örneğin, linkedin.com/in/kullaniciadi"
         },
         "location": {
           "label": "Konum",
-          "placeholder": "Örn: İstanbul, Türkiye"
+          "placeholder": "Örneğin, İstanbul, Türkiye"
         },
         "website": {
           "label": "Website",
-          "placeholder": "https://example.com"
+          "placeholder": "https://ornek.com"
         },
         "bio": {
           "label": "Bio",
