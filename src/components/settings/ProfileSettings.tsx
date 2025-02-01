@@ -149,114 +149,114 @@ const ProfileSettings = () => {
       <div className="space-y-4">
         {/* Profil Fotoğrafı Kartı */}
         <motion.div
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.2 }}
-          className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-4"
-        >
-          <div className="flex items-center justify-between">
-            {/* Avatar + Ad Soyad */}
-            <div className="flex items-center gap-4">
-              <div className="relative">
-                {authSession?.user?.user_metadata?.avatar_url ? (
-                  <Image
-                    src={authSession.user.user_metadata.avatar_url}
-                    alt={t('photo.title')}
-                    width={64}
-                    height={64}
-                    className="w-16 h-16 rounded-full object-cover border-2 border-slate-200 dark:border-slate-700"
-                  />
-                ) : (
-                  <div className="w-16 h-16 rounded-full bg-violet-500 flex items-center justify-center text-white text-xl font-medium border-2 border-slate-200 dark:border-slate-700">
-                    {authSession?.user?.user_metadata?.name 
-                      ? authSession.user.user_metadata.name
-                          .split(' ')
-                          .map((n: string) => n[0])
-                          .join('')
-                          .toUpperCase()
-                          .substring(0, 2)
-                      : authSession?.user?.email?.substring(0, 2).toUpperCase()
-                    }
-                  </div>
-                )}
-                {isVerifiedUser && (
-                  <div className="absolute -bottom-0.5 -right-0.5">
-                    <div className="rounded-full bg-white dark:bg-slate-900 p-[2px]">
-                      <BadgeCheck className="w-3.5 h-3.5 text-blue-500 dark:text-white" />
-                    </div>
-                  </div>
-                )}
-              </div>
-              <div>
-                <h3 className="text-sm font-medium text-slate-700 dark:text-slate-300">
-                  {formData.first_name || formData.last_name
-                    ? `${formData.first_name} ${formData.last_name}`.trim()
-                    : authSession?.user?.email?.split('@')[0]}
-                </h3>
-                <p className="text-xs text-slate-500 dark:text-slate-400">
-                  {authSession?.user?.email}
-                </p>
-              </div>
-            </div>
-
-            {/* Üyelik Durumu + Upgrade Butonu */}
-            <div className="flex items-center gap-3">
-              <SubscriptionBadge />
-              {isTrialing && (
-                <p className="text-xs text-gray-500 dark:text-gray-400"></p>
-              )}
-              {!isPro && (
-                <Button
-                  variant="default"
-                  onClick={async () => {
-                    if (!session?.access_token) {
-                      console.error('No session found');
-                      return;
-                    }
-                    try {
-                      const response = await fetch(`/api/checkout?plan=monthly`, {
-                        headers: { 'Authorization': `Bearer ${session.access_token}` }
-                      });
-                      if (response.ok) {
-                        const { url } = await response.json();
-                        window.location.href = url;
-                      } else {
-                        const error = await response.json();
-                        console.error('Checkout error:', error);
-                      }
-                    } catch (error) {
-                      console.error('Failed to fetch checkout URL:', error);
-                    }
-                  }}
-                >
-                  {t('trial.upgrade')}
-                </Button>
-              )}
-            </div>
-          </div>
-        </motion.div>
-
-        {/* Abonelik Bilgileri */}
-        {subscription && (
-          <div className="p-4 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl">
-            <p className="text-sm text-slate-600 dark:text-slate-300">
-              <strong>Plan Type:</strong> {subscription.subscription_type}
-            </p>
-            <p className="text-sm text-slate-600 dark:text-slate-300">
-              <strong>Status:</strong> {subscription.status}
-              {subscription.subscription_end && subscription.status === "cancel_scheduled" && (
-                <span className="ml-2 text-yellow-600">
-                  (Pro until {new Date(subscription.subscription_end).toLocaleDateString()})
-                </span>
-              )}
-            </p>
-            {subscription.subscription_end && (
-              <p className="text-sm text-slate-600 dark:text-slate-300">
-                <strong>Ends at:</strong> {new Date(subscription.subscription_end).toLocaleString()}
-              </p>
-            )}
+  initial={{ opacity: 0, y: 10 }}
+  animate={{ opacity: 1, y: 0 }}
+  transition={{ duration: 0.2 }}
+  className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-4"
+>
+  <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+    {/* Avatar + Ad Soyad */}
+    <div className="flex items-center gap-4">
+      <div className="relative">
+        {authSession?.user?.user_metadata?.avatar_url ? (
+          <Image
+            src={authSession.user.user_metadata.avatar_url}
+            alt={t('photo.title')}
+            width={64}
+            height={64}
+            className="w-16 h-16 rounded-full object-cover border-2 border-slate-200 dark:border-slate-700"
+          />
+        ) : (
+          <div className="w-16 h-16 rounded-full bg-violet-500 flex items-center justify-center text-white text-xl font-medium border-2 border-slate-200 dark:border-slate-700">
+            {authSession?.user?.user_metadata?.name 
+              ? authSession.user.user_metadata.name
+                  .split(' ')
+                  .map((n: string) => n[0])
+                  .join('')
+                  .toUpperCase()
+                  .substring(0, 2)
+              : authSession?.user?.email?.substring(0, 2).toUpperCase()
+            }
           </div>
         )}
+        {isVerifiedUser && (
+          <div className="absolute -bottom-0.5 -right-0.5">
+            <div className="rounded-full bg-white dark:bg-slate-900 p-[2px]">
+              <BadgeCheck className="w-3.5 h-3.5 text-blue-500 dark:text-white" />
+            </div>
+          </div>
+        )}
+      </div>
+      <div>
+        <h3 className="text-sm font-medium text-slate-700 dark:text-slate-300">
+          {formData.first_name || formData.last_name
+            ? `${formData.first_name} ${formData.last_name}`.trim()
+            : authSession?.user?.email?.split('@')[0]}
+        </h3>
+        <p className="text-xs text-slate-500 dark:text-slate-400">
+          {authSession?.user?.email}
+        </p>
+      </div>
+    </div>
+
+    {/* Üyelik Durumu + Upgrade Butonu */}
+    <div className="flex items-center gap-3">
+      <SubscriptionBadge />
+      {isTrialing && (
+        <p className="text-xs text-gray-500 dark:text-gray-400"></p>
+      )}
+      {!isPro && (
+        <Button
+          variant="default"
+          onClick={async () => {
+            if (!session?.access_token) {
+              console.error('No session found');
+              return;
+            }
+            try {
+              const response = await fetch(`/api/checkout?plan=monthly`, {
+                headers: { 'Authorization': `Bearer ${session.access_token}` }
+              });
+              if (response.ok) {
+                const { url } = await response.json();
+                window.location.href = url;
+              } else {
+                const error = await response.json();
+                console.error('Checkout error:', error);
+              }
+            } catch (error) {
+              console.error('Failed to fetch checkout URL:', error);
+            }
+          }}
+        >
+          {t('trial.upgrade')}
+        </Button>
+      )}
+    </div>
+  </div>
+</motion.div>
+
+{/* Abonelik Bilgileri - bu kısım aynı kalıyor */}
+{subscription && (
+  <div className="p-4 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl">
+    <p className="text-sm text-slate-600 dark:text-slate-300">
+      <strong>Plan Type:</strong> {subscription.subscription_type}
+    </p>
+    <p className="text-sm text-slate-600 dark:text-slate-300">
+      <strong>Status:</strong> {subscription.status}
+      {subscription.subscription_end && subscription.status === "cancel_scheduled" && (
+        <span className="ml-2 text-yellow-600">
+          (Pro until {new Date(subscription.subscription_end).toLocaleDateString()})
+        </span>
+      )}
+    </p>
+    {subscription.subscription_end && (
+      <p className="text-sm text-slate-600 dark:text-slate-300">
+        <strong>Ends at:</strong> {new Date(subscription.subscription_end).toLocaleString()}
+      </p>
+    )}
+  </div>
+)}
 
         {/* Profil Formu Alanları */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
