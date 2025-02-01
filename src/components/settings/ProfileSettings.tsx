@@ -34,11 +34,7 @@ const ProfileSettings = () => {
   };
 
   // "Verified" rozet mantığı (örnek)
-  const isVerifiedUser = (
-    status === 'active' ||
-    status === 'free_trial' ||
-    status === 'cancel_scheduled'
-  );
+  const { isVerifiedUser } = useSubscription(); // Hook'tan al
 
   // Yeni fonksiyon: Polar Portal açma
   const handleOpenPortal = async () => {
@@ -135,7 +131,6 @@ const ProfileSettings = () => {
               <SubscriptionBadge />
               {isTrialing && (
                 <p className="text-xs text-gray-500 dark:text-gray-400">
-                  {trialDaysLeft} {t('trial.daysLeft')}
                 </p>
               )}
               {!isPro && (

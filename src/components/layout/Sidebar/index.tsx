@@ -66,14 +66,18 @@ const Sidebar: React.FC<SidebarProps> = ({
     selectedDate
   } = usePlanner();
 
-  const { trialDaysLeft, status, isPro, loading, isTrialing } = useSubscription(); // loading değerini ekledik
- console.log("Subscription data in Sidebar:", {
-   trialDaysLeft,
-   status,
-   isTrialing,
-   isPro,
-   loading
- });
+  // useSubscription hook'undan isVerifiedUser'ı da alın
+  const { trialDaysLeft, status, isPro, loading, isTrialing, isVerifiedUser } = useSubscription();
+
+  console.log("Subscription data in Sidebar:", {
+    trialDaysLeft,
+    status,
+    isTrialing,
+    isPro,
+    loading,
+    isVerifiedUser // isVerifiedUser'ı konsola yazdırın
+  });
+
   const sidebarT = useTranslations('common.sidebar');
 
   const [searchValue, setSearchValue] = useState('');
@@ -110,8 +114,6 @@ const Sidebar: React.FC<SidebarProps> = ({
   useEffect(() => {
     onCollapse?.(isCollapsed);
   }, [isCollapsed, onCollapse]);
-
-  const isVerifiedUser = status === 'active' || status === 'free_trial';
 
   const handleLogout = async () => {
     try {
@@ -253,8 +255,7 @@ const Sidebar: React.FC<SidebarProps> = ({
           z-40
         `}
       >
-
-<div className="flex flex-col h-full relative p-3">
+        <div className="flex flex-col h-full relative p-3">
           <button
             onClick={() => setIsCollapsed(!isCollapsed)}
             className="absolute -right-3 top-6 w-6 h-6 flex items-center justify-center rounded-full bg-white dark:bg-[#0D1117] border border-gray-200 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors z-50"
@@ -390,80 +391,88 @@ const Sidebar: React.FC<SidebarProps> = ({
 
           {/* Profile Section */}
           {user && (
-  <div className="mt-auto">
-    {/* Trial Badge */}
-     {isTrialing && (
-       <div className="text-sm text-gray-600 dark:text-gray-300 mb-1">
-         Free Trial: {trialDaysLeft} days left
-       </div>
-     )}
-   {!isPro && (
-  <div className="mb-3">
-    <SubscriptionBadge />
-   <Button
-  variant="default"
-  className="w-full mt-2"
-  onClick={() => setIsPricingOpen(true)}
->
-  {sidebarT('trial.upgrade')}
-</Button>
-  </div>
-)}
-    <div className="pt-3 border-t border-gray-200/50 dark:border-gray-700/50">
-      <div className="flex items-center justify-between px-2">
-        {!isCollapsed && (
-          <Link 
-            href="/dashboard/settings/profile"
-            className="flex items-center min-w-0 gap-2 py-1.5 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors group"
-          >
-            <div className="relative w-8 h-8 flex-shrink-0">
-              {user?.user_metadata?.avatar_url ? (
-                <>
-                  <Image
-                    src={user.user_metadata.avatar_url}
-                    alt={user.user_metadata.name || 'Profile'}
-                    width={32}
-                    height={32}
-                    className="w-full h-full rounded-full object-cover"
-                  />
-                  {isVerifiedUser && (
-  <div className="absolute -bottom-0.5 -right-0.5">
-    <div className="rounded-full bg-white dark:bg-slate-900 p-[2px]">
-      <BadgeCheck className="w-3.5 h-3.5 text-blue-500 dark:text-white" />
-    </div>
-  </div>
-)}
-                </>
-              ) : (
-                <div className="w-full h-full rounded-full bg-blue-500 flex items-center justify-center text-white text-xs font-medium">
-                  {user?.email?.substring(0, 2).toUpperCase()}
+            <div className="mt-auto">
+              {/* Trial Badge */}
+              {isTrialing && (
+                <div className="text-sm text-gray-600 dark:text-gray-300 mb-1">
                 </div>
               )}
-            </div>
-            <div className="min-w-0 flex-1">
-              <div className="text-xs font-medium text-gray-700 dark:text-gray-300 truncate group-hover:text-gray-900 dark:group-hover:text-white">
-                {user?.user_metadata?.name || user?.email?.split('@')[0]}
+              {!isPro && (
+                <div className="mb-3">
+                  <SubscriptionBadge />
+                  <Button
+                    variant="default"
+                    className="w-full mt-2"
+                    onClick={() => setIsPricingOpen(true)}
+                  >
+                    {sidebarT('trial.upgrade')}
+                  </Button>
+                </div>
+              )}
+              <div className="pt-3 border-t border-gray-200/50 dark:border-gray-700/50">
+  <div className="flex items-center justify-between px-2">
+    <Link 
+      href="/dashboard/settings/profile"
+      className={`flex items-center min-w-0 gap-2 py-1.5 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors group ${
+        isCollapsed ? 'w-8 justify-center' : ''
+      }`}
+    >
+      <div className="relative w-8 h-8 flex-shrink-0">
+        {user?.user_metadata?.avatar_url ? (
+          <>
+            <Image
+              src={user.user_metadata.avatar_url}
+              alt={user.user_metadata.name || 'Profile'}
+              width={32}
+              height={32}
+              className="w-full h-full rounded-full object-cover"
+            />
+            {isVerifiedUser && (
+              <div className="absolute -bottom-0.5 -right-0.5">
+                <div className="rounded-full bg-white dark:bg-slate-900 p-[2px]">
+                  <BadgeCheck className="w-3.5 h-3.5 text-blue-500 dark:text-white" />
+                </div>
               </div>
-              <div className="text-xs text-gray-500 dark:text-gray-400 truncate group-hover:text-gray-700 dark:group-hover:text-gray-300">
-                {user?.email}
+            )}
+          </>
+        ) : (
+          <div className="w-full h-full rounded-full bg-blue-500 flex items-center justify-center text-white text-xs font-medium">
+            {user?.email?.substring(0, 2).toUpperCase()}
+            {isVerifiedUser && (
+              <div className="absolute -bottom-0.5 -right-0.5">
+                <div className="rounded-full bg-white dark:bg-slate-900 p-[2px]">
+                  <BadgeCheck className="w-3.5 h-3.5 text-blue-500 dark:text-white" />
+                </div>
               </div>
-            </div>
-          </Link>
+            )}
+          </div>
         )}
-        <button
-          onClick={handleLogout}
-          className={`w-8 h-8 flex items-center justify-center text-gray-400 hover:text-gray-600 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors ${isCollapsed ? 'mx-auto' : ''}`}
-          title={t('common.sidebar.logout')}
-        >
-          <LogOut className="w-4 h-4" />
-        </button>
       </div>
-    </div>
-  </div>
-)}
-          
+      {!isCollapsed && (
+        <div className="min-w-0 flex-1">
+          <div className="text-xs font-medium text-gray-700 dark:text-gray-300 truncate group-hover:text-gray-900 dark:group-hover:text-white">
+            {user?.user_metadata?.name || user?.email?.split('@')[0]}
+          </div>
+          <div className="text-xs text-gray-500 dark:text-gray-400 truncate group-hover:text-gray-700 dark:group-hover:text-gray-300">
+            {user?.email}
+          </div>
         </div>
-
+      )}
+    </Link>
+    <button
+      onClick={handleLogout}
+      className={`w-8 h-8 flex items-center justify-center text-gray-400 hover:text-gray-600 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors ${
+        isCollapsed ? 'mx-auto' : ''
+      }`}
+      title={t('common.sidebar.logout')}
+    >
+      <LogOut className="w-4 h-4" />
+    </button>
+  </div>
+</div>
+            </div>
+          )}
+        </div>
       </aside>
       <PricingModal isOpen={isPricingOpen} onClose={() => setIsPricingOpen(false)} />
       <div className={`${isMobile ? 'w-16' : ''} flex-shrink-0`} />

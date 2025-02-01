@@ -176,7 +176,7 @@
       },
       "trial": {
         "badge": "Trial",
-        "daysLeft": "days left",
+        "daysLeft": "{days} days left", 
         "upgrade": "Upgrade"
       },
       "menu": {

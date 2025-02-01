@@ -1,17 +1,19 @@
+// useSubscription.ts
 import { useEffect, useState } from 'react';
 import { useSupabaseClient } from '@supabase/auth-helpers-react';
 import { Subscription } from '@/types/subscription';
+import { useAuth } from '@/context/AuthContext'; // useAuth ekleyin
 
 export function useSubscription() {
   const [subscription, setSubscription] = useState<Subscription | null>(null);
   const [loading, setLoading] = useState(true);
   const supabase = useSupabaseClient();
+  const { user } = useAuth(); // useAuth'tan user'ı al
 
   useEffect(() => {
     async function getSubscription() {
       try {
-        const { data: { user } } = await supabase.auth.getUser();
-        if (!user) return;
+        if (!user) return; // user'ı doğrudan useAuth'tan kullan
 
         const { data: subData, error } = await supabase
           .from('subscriptions')
@@ -52,7 +54,7 @@ export function useSubscription() {
     }
 
     getSubscription();
-  }, [supabase]);
+  }, [supabase, user]); // user'ı dependency array'e ekle
 
   let derivedStatus = subscription?.status || 'free_trial';
 
@@ -82,6 +84,14 @@ export function useSubscription() {
   const isTrialing = (derivedStatus === 'free_trial');
   const isExpired = (derivedStatus === 'expired');
 
+  // Yeni: Kullanıcının verified olup olmadığını kontrol et
+  const isVerifiedUser = (
+    derivedStatus === 'pro' ||
+    derivedStatus === 'active' ||
+    derivedStatus === 'free_trial' ||
+    derivedStatus === 'cancel_scheduled'
+  );
+
   return {
     subscription,
     loading,
@@ -90,5 +100,6 @@ export function useSubscription() {
     isExpired,
     trialDaysLeft,
     status: derivedStatus,
+    isVerifiedUser, // Yeni: verified badge için
   };
 }

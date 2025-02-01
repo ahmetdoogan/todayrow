@@ -176,7 +176,7 @@
       },
       "trial": {
         "badge": "Trial",
-        "daysLeft": "gün kaldı",
+        "daysLeft": "{days} gün kaldı", 
         "upgrade": "Yükselt"
       },
       "menu": {
