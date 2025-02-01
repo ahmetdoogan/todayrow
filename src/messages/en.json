@@ -704,6 +704,9 @@
         }
       },
       "backToHome": "Back to Home"
+    },
+    "viewToggle": {
+      "calendar": "Calendar"
     }
   },
   "welcome": {

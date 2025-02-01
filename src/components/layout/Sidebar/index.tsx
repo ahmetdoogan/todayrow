@@ -93,7 +93,6 @@ const Sidebar: React.FC<SidebarProps> = ({
     { label: t('common.sidebar.menu.plans'), icon: CalendarCheck, href: '/dashboard' },
     { label: t('common.sidebar.menu.contents'), icon: Layout, href: '/dashboard/contents' },
     { label: t('common.sidebar.menu.notes'), icon: FileText, href: '/dashboard/notes' },
-    { label: t('common.sidebar.menu.calendar'), icon: Calendar, href: '/dashboard/calendar' },
     { label: t('common.sidebar.menu.settings'), icon: Settings, href: '/dashboard/settings' }
   ];
 

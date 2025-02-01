@@ -1,5 +1,7 @@
 "use client";
 import React, { useState } from "react";
+import Link from 'next/link';
+import { Calendar } from 'lucide-react';
 import DashboardHeader from "@/components/layout/Header/components/DashboardHeader";
 import ContentCard from "@/components/content/ContentCard";
 import ContentDetailPopup from "@/components/content/ContentDetailPopup";
@@ -7,12 +9,14 @@ import ContentModal from "@/components/content/ContentModal";
 import DashboardStats from "@/components/dashboard/DashboardStats";
 import ViewToggle from "@/components/common/ViewToggle";
 import { useContent } from "@/context/ContentContext";
+import { useTranslations } from 'next-intl';
 import { motion } from "framer-motion";
 
 export default function ContentsPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [view, setView] = useState<'grid' | 'list'>('grid');
   const { filteredContents, selectedContent, setSelectedContent } = useContent(); // setSelectedContent ekledik
+const t = useTranslations();
 
   // Liste ve Grid view için CSS sınıfları
   const contentContainerClasses = view === 'grid'
@@ -41,11 +45,23 @@ export default function ContentsPage() {
       {/* Dashboard Stats */}
       <DashboardStats />
 
-      {/* View Toggle & Separator */}
-      <div className="flex items-center gap-4 px-4 md:px-6 lg:px-8 mb-8">
-        <ViewToggle view={view} onViewChange={handleViewChange} />
-        <div className="h-px bg-gradient-to-r from-transparent via-slate-200 dark:via-slate-800 to-transparent flex-1" />
-      </div>
+      {/* View Toggle & Calendar & Separator */}
+<div className="flex items-center gap-4 px-4 md:px-6 lg:px-8 mb-8">
+  <div className="flex items-center gap-2">
+    <ViewToggle view={view} onViewChange={handleViewChange} />
+  </div>
+  <div className="h-px bg-gradient-to-r from-transparent via-slate-200 dark:via-slate-800 to-transparent flex-1" />
+  <Link
+    href="/dashboard/calendar"
+    className="flex items-center gap-2 px-3 py-2 text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-200 
+              bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-lg transition-colors text-xs"
+  >
+    <Calendar className="w-4 h-4" />
+    <span className="hidden md:block">
+      {t('common.viewToggle.calendar')}
+    </span>
+  </Link>
+</div>
 
       {/* Content Grid/List */}
       <div 
