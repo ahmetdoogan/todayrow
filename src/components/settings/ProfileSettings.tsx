@@ -13,19 +13,52 @@ import { useSession, useSupabaseClient } from '@supabase/auth-helpers-react';
 import { Button } from "@/components/ui/button";
 import { SubscriptionBadge } from '@/components/subscription/SubscriptionBadge';
 
+// Snake_case tip tanımları:
+interface ProfileFormData {
+  first_name: string;
+  last_name: string;
+  title: string;
+  linkedin: string;
+  location: string;
+  website: string;
+  bio: string;
+}
+
+interface ValidationErrors {
+  first_name?: string;
+  last_name?: string;
+  title?: string;
+  linkedin?: string;
+  location?: string;
+  website?: string;
+  bio?: string;
+}
+
 const ProfileSettings = () => {
   const { session: authSession } = useAuth();
-  // useProfile hook’unuzun tip tanımında formData muhtemelen camelCase alanlara sahip:
-  // Örneğin: { firstName: string; lastName: string; title: string; linkedin: string; location: string; website: string; bio: string }
+
+  // useProfile hook’unun, snake_case alanları içeren ProfileFormData tipinde çalıştığını varsayarak kullanıyoruz.
+  // Generics parametrelerini kaldırdık (useProfile<ProfileFormData, ValidationErrors>() -> useProfile()).
   const { formData, setFormData, loading: profileLoading, errors } = useProfile();
-  const { subscription, trialDaysLeft, status, isPro, loading: subscriptionLoading, isTrialing, isVerifiedUser } = useSubscription();
+
+  const { 
+    subscription, 
+    trialDaysLeft, 
+    status, 
+    isPro, 
+    loading: subscriptionLoading, 
+    isTrialing, 
+    isVerifiedUser 
+  } = useSubscription();
+
   const [isPricingOpen, setIsPricingOpen] = useState(false);
   const [showCancelModal, setShowCancelModal] = useState(false);
+
   const session = useSession();
   const supabase = useSupabaseClient();
   const t = useTranslations('common.profile');
 
-  // Profil bilgilerini Supabase'den çekiyoruz.
+  // Profil bilgilerini Supabase'den çekme
   useEffect(() => {
     const fetchProfile = async () => {
       if (authSession?.user?.id) {
@@ -34,14 +67,13 @@ const ProfileSettings = () => {
           .select('*')
           .eq('id', authSession.user.id)
           .maybeSingle();
+
         if (error) {
           console.error('Profil bilgileri çekilirken hata:', error);
         } else if (data) {
-          // Supabase'den gelen alanlar alt çizgiyle (first_name, last_name) geliyor;
-          // fakat tip tanımınız camelCase olduğu için veriyi çeviriyoruz.
           setFormData({
-            firstName: data.first_name || '',
-            lastName: data.last_name || '',
+            first_name: data.first_name || '',
+            last_name: data.last_name || '',
             title: data.title || '',
             linkedin: data.linkedin || '',
             location: data.location || '',
@@ -49,9 +81,10 @@ const ProfileSettings = () => {
             bio: data.bio || '',
           });
         } else {
+          // Kayıt yoksa boş form verileri
           setFormData({
-            firstName: '',
-            lastName: '',
+            first_name: '',
+            last_name: '',
             title: '',
             linkedin: '',
             location: '',
@@ -65,7 +98,7 @@ const ProfileSettings = () => {
     fetchProfile();
   }, [authSession, supabase, setFormData]);
 
-  // Kaydetme işlemi (upsert metodu kullanılıyor)
+  // Profil kaydetme (upsert)
   const saveProfile = async () => {
     if (!authSession?.user?.id) {
       toast.error(t('messages.saveError'));
@@ -73,20 +106,21 @@ const ProfileSettings = () => {
     }
 
     try {
-      const { data, error } = await supabase
+      const { error } = await supabase
         .from('profiles')
         .upsert({
           id: authSession.user.id,
-          // Burada DB'ye gönderirken yine alt çizgi kullanıyoruz (çünkü Supabase tablonuzda öyle tanımlı)
-          first_name: formData.firstName,
-          last_name: formData.lastName,
+          first_name: formData.first_name,
+          last_name: formData.last_name,
           title: formData.title,
           linkedin: formData.linkedin,
           location: formData.location,
           website: formData.website,
           bio: formData.bio,
         });
+
       if (error) throw error;
+
       toast.success(t('messages.saveSuccess'));
       return { success: true };
     } catch (error) {
@@ -96,6 +130,7 @@ const ProfileSettings = () => {
     }
   };
 
+  // Kaydet butonu tıklanınca
   const handleSave = async () => {
     if (!authSession?.user?.id) {
       toast.error(t('messages.saveError'));
@@ -105,6 +140,7 @@ const ProfileSettings = () => {
     if (!result.success) return;
   };
 
+  // Abonelik yönetim portalı
   const handleOpenPortal = async () => {
     if (!authSession?.access_token) {
       console.error('No session found');
@@ -118,13 +154,11 @@ const ProfileSettings = () => {
           'Authorization': `Bearer ${authSession.access_token}`
         }
       });
-
       if (!response.ok) {
         const errorData = await response.json();
         toast.error(errorData.message || 'Something went wrong');
         return;
       }
-
       const { url } = await response.json();
       window.location.href = url;
     } catch (error) {
@@ -182,8 +216,8 @@ const ProfileSettings = () => {
               </div>
               <div>
                 <h3 className="text-sm font-medium text-slate-700 dark:text-slate-300">
-                  {formData.firstName || formData.lastName
-                    ? `${formData.firstName || ''} ${formData.lastName || ''}`.trim()
+                  {formData.first_name || formData.last_name
+                    ? `${formData.first_name || ''} ${formData.last_name || ''}`.trim()
                     : authSession?.user?.email?.split('@')[0]}
                 </h3>
                 <p className="text-xs text-slate-500 dark:text-slate-400">
@@ -253,7 +287,7 @@ const ProfileSettings = () => {
 
         {/* Profil Formu Alanları */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {/* İsim */}
+          {/* İsim (First Name) */}
           <motion.div
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
@@ -268,17 +302,17 @@ const ProfileSettings = () => {
             </div>
             <input
               type="text"
-              value={formData.firstName || ''}
-              onChange={(e) => setFormData(prev => ({ ...prev, firstName: e.target.value }))}
+              value={formData.first_name || ''}
+              onChange={(e) => setFormData(prev => ({ ...prev, first_name: e.target.value }))}
               placeholder={t('fields.firstName.placeholder')}
               className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-sm text-slate-700 dark:text-slate-300 placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-violet-500/20"
             />
-            {errors.firstName && (
-              <p className="mt-1 text-xs text-red-500">{errors.firstName}</p>
+            {errors.first_name && (
+              <p className="mt-1 text-xs text-red-500">{errors.first_name}</p>
             )}
           </motion.div>
 
-          {/* Soyisim */}
+          {/* Soyisim (Last Name) */}
           <motion.div
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
@@ -293,17 +327,17 @@ const ProfileSettings = () => {
             </div>
             <input
               type="text"
-              value={formData.lastName || ''}
-              onChange={(e) => setFormData(prev => ({ ...prev, lastName: e.target.value }))}
+              value={formData.last_name || ''}
+              onChange={(e) => setFormData(prev => ({ ...prev, last_name: e.target.value }))}
               placeholder={t('fields.lastName.placeholder')}
               className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-sm text-slate-700 dark:text-slate-300 placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-violet-500/20"
             />
-            {errors.lastName && (
-              <p className="mt-1 text-xs text-red-500">{errors.lastName}</p>
+            {errors.last_name && (
+              <p className="mt-1 text-xs text-red-500">{errors.last_name}</p>
             )}
           </motion.div>
 
-          {/* Unvan */}
+          {/* Unvan (Title) */}
           <motion.div
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
@@ -353,7 +387,7 @@ const ProfileSettings = () => {
             )}
           </motion.div>
 
-          {/* Konum */}
+          {/* Konum (Location) */}
           <motion.div
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
@@ -362,7 +396,9 @@ const ProfileSettings = () => {
           >
             <div className="flex items-center gap-3 mb-3">
               <MapPin className="w-5 h-5 text-slate-700 dark:text-slate-400" />
-              <span className="text-sm text-slate-700 dark:text-slate-300">{t('fields.location.label')}</span>
+              <span className="text-sm text-slate-700 dark:text-slate-300">
+                {t('fields.location.label')}
+              </span>
             </div>
             <input
               type="text"
@@ -385,7 +421,9 @@ const ProfileSettings = () => {
           >
             <div className="flex items-center gap-3 mb-3">
               <Globe className="w-5 h-5 text-slate-700 dark:text-slate-400" />
-              <span className="text-sm text-slate-700 dark:text-slate-300">{t('fields.website.label')}</span>
+              <span className="text-sm text-slate-700 dark:text-slate-300">
+                {t('fields.website.label')}
+              </span>
             </div>
             <input
               type="url"
@@ -423,7 +461,7 @@ const ProfileSettings = () => {
           )}
         </motion.div>
 
-        {/* Save + Cancel */}
+        {/* Kaydet + Aboneliği Yönet/İptal Et */}
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
@@ -438,7 +476,6 @@ const ProfileSettings = () => {
               {t('trial.cancel')}
             </button>
           )}
-
           <button
             onClick={handleSave}
             disabled={profileLoading}
