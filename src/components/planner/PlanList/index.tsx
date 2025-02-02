@@ -282,39 +282,39 @@ const PlanList = () => {
       }
     },
     drop: (item: any) => {
-      if (!selectedTime || !canEdit) return;
+  if (!selectedTime || !canEdit) return;
 
-      if (item.isDuplicating) {
-        // Duplicate plan
-        const planStartTime = new Date(selectedDate);
-        const [hours, minutes] = selectedTime.split(':').map(Number);
-        planStartTime.setHours(hours, minutes, 0, 0);
+  if (item.isDuplicating) {
+    // Duplicate plan
+    const planStartTime = new Date(selectedDate);
+    const [hours, minutes] = selectedTime.split(':').map(Number);
+    planStartTime.setHours(hours, minutes, 0, 0);
 
-        const planEndTime = new Date(planStartTime);
-        planEndTime.setHours(planEndTime.getHours() + 1);
+    const planEndTime = new Date(planStartTime);
+    planEndTime.setHours(planEndTime.getHours() + 1);
 
-        const newPlan = {
-          id: 0,
-          title: item.title,
-          details: item.details,
-          start_time: planStartTime.toISOString(),
-          end_time: planEndTime.toISOString(),
-          is_completed: false,
-          color: item.color,
-          plan_type: 'regular',
-          order: 0,
-          user_id: user?.id || 0,
-          created_at: new Date().toISOString(),
-          updated_at: new Date().toISOString()
-        };
+    const newPlan: Plan = {
+      id: 0,
+      title: item.title,
+      details: item.details,
+      start_time: planStartTime.toISOString(),
+      end_time: planEndTime.toISOString(),
+      is_completed: false,
+      color: item.color,
+      plan_type: 'regular' as PlanType, // veya geçici olarak: 'regular' as any,
+      order: 0,
+      user_id: user?.id || 0,
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString()
+    };
 
-        setSelectedPlan(newPlan);
-        setIsModalOpen(true);
-      } else {
-        handleQuickPlanDrop(item, selectedTime);
-      }
-      setSelectedTime(null);
-    },
+    setSelectedPlan(newPlan);
+    setIsModalOpen(true);
+  } else {
+    handleQuickPlanDrop(item, selectedTime);
+  }
+  setSelectedTime(null);
+},
     collect: (monitor) => ({
       isOver: monitor.isOver() && canEdit,
     }),
