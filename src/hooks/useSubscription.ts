@@ -1,20 +1,19 @@
-// useSubscription.ts
+// src/hooks/useSubscription.ts
 import { useEffect, useState } from 'react';
 import { useSupabaseClient } from '@supabase/auth-helpers-react';
 import { Subscription } from '@/types/subscription';
-import { useAuth } from '@/context/AuthContext'; // useAuth ekleyin
+import { useAuth } from '@/context/AuthContext';
 
 export function useSubscription() {
   const [subscription, setSubscription] = useState<Subscription | null>(null);
   const [loading, setLoading] = useState(true);
   const supabase = useSupabaseClient();
-  const { user } = useAuth(); // useAuth'tan user'ı al
+  const { user } = useAuth();
 
   useEffect(() => {
     async function getSubscription() {
       try {
-        if (!user) return; // user'ı doğrudan useAuth'tan kullan
-
+        if (!user) return;
         const { data: subData, error } = await supabase
           .from('subscriptions')
           .select('*')
@@ -31,7 +30,6 @@ export function useSubscription() {
           const status = user.user_metadata?.subscription_status || 'free_trial';
           const type = user.user_metadata?.subscription_type || 'free';
           const trialEnd = user.user_metadata?.trial_end_date || null;
-
           setSubscription({
             id: undefined,
             user_id: user.id,
@@ -52,13 +50,12 @@ export function useSubscription() {
         setLoading(false);
       }
     }
-
     getSubscription();
-  }, [supabase, user]); // user'ı dependency array'e ekle
+  }, [supabase, user]);
 
   let derivedStatus = subscription?.status || 'free_trial';
-
   let trialDaysLeft = 0;
+
   if (subscription?.trial_end) {
     const diff = new Date(subscription.trial_end).getTime() - Date.now();
     trialDaysLeft = Math.max(0, Math.ceil(diff / (1000 * 60 * 60 * 24)));
@@ -67,30 +64,19 @@ export function useSubscription() {
     }
   }
 
-  let isPro = false;
-  if (derivedStatus === 'pro' || derivedStatus === 'active') {
-    isPro = true;
-  } else if (derivedStatus === 'cancel_scheduled') {
-    const endTime = subscription?.subscription_end
-      ? new Date(subscription.subscription_end).getTime()
-      : 0;
-    if (endTime > Date.now()) {
-      isPro = true;
-    } else {
-      derivedStatus = 'expired';
-    }
-  }
+  const isPro = (
+    (derivedStatus === 'pro' || derivedStatus === 'active') && 
+    subscription?.subscription_type === 'pro'
+  );
 
-  const isTrialing = (derivedStatus === 'free_trial');
+  const isTrialing = (
+    derivedStatus === 'free_trial' && 
+    subscription?.subscription_type === 'free'
+  );
+
   const isExpired = (derivedStatus === 'expired');
 
-  // Yeni: Kullanıcının verified olup olmadığını kontrol et
-  const isVerifiedUser = (
-    derivedStatus === 'pro' ||
-    derivedStatus === 'active' ||
-    derivedStatus === 'free_trial' ||
-    derivedStatus === 'cancel_scheduled'
-  );
+  const isVerifiedUser = Boolean(subscription?.polar_sub_id);
 
   return {
     subscription,
@@ -100,6 +86,6 @@ export function useSubscription() {
     isExpired,
     trialDaysLeft,
     status: derivedStatus,
-    isVerifiedUser, // Yeni: verified badge için
+    isVerifiedUser
   };
 }
