@@ -31,9 +31,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     const { data: subRecord, error: subError } = await supabase
       .from('subscriptions')
-      .select('polar_sub_id, status')
+      .select('polar_sub_id, subscription_type')
       .eq('user_id', user.id)
-      .eq('status', 'pro')
+      .eq('subscription_type', 'pro')
       .single();
 
     if (subError || !subRecord?.polar_sub_id) {
@@ -43,10 +43,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     console.log('Subscription found:', subRecord.polar_sub_id);
 
-    // Manuel olarak portal URL'i oluşturalım
-    const orgName = 'todayrow-test'; // Polar'daki organizasyon adınız
-    const returnUrl = encodeURIComponent('http://localhost:3000/settings?portal_action=cancel_complete');
-    const customerPortalUrl = `https://sandbox.polar.sh/${orgName}/portal?subscription_id=${subRecord.polar_sub_id}&return_url=${returnUrl}`;
+    const orgName = 'todayrow';
+    const returnUrl = encodeURIComponent('https://todayrow.app/settings?portal_action=cancel_complete');
+    const customerPortalUrl = `https://polar.sh/${orgName}/portal?subscription_id=${subRecord.polar_sub_id}&return_url=${returnUrl}`;
 
     console.log('Generated portal URL:', customerPortalUrl);
     console.log('=== OPEN PORTAL END ===');
