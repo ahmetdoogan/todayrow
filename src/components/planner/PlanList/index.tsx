@@ -301,7 +301,7 @@ const PlanList = () => {
       end_time: planEndTime.toISOString(),
       is_completed: false,
       color: item.color,
-      plan_type: 'regular' as PlanType, // veya geçici olarak: 'regular' as any,
+      plan_type: 'regular' as Plan['plan_type'], // Burada PlanType yerine Plan['plan_type'] kullandık.
       order: 0,
       user_id: user?.id || 0,
       created_at: new Date().toISOString(),
