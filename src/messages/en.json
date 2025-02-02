@@ -382,10 +382,10 @@
       },
       "defaultPlans": {
         "meeting": "Meeting",
-        "work": "Work",
-        "bookReading": "Book Reading",
-        "lunch": "Lunch",
-        "networking": "Networking"
+        "focus": "Focus Time",
+        "break": "Break",
+        "followup": "Follow-up",
+        "review": "Review"
       },
       "hidePlan": "Hide Plan",
       "showPlan": "Show Plan"

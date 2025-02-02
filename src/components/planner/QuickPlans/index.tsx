@@ -41,7 +41,7 @@ const QuickPlans: React.FC<QuickPlansProps> = ({ onClose, onDragStart, onDragEnd
     },
     { 
       id: -2, 
-      title: t('defaultPlans.work'), 
+      title: t('defaultPlans.focus'), 
       color: "bg-green-500", 
       is_system: true,
       user_id: user?.id || '',
@@ -50,7 +50,7 @@ const QuickPlans: React.FC<QuickPlansProps> = ({ onClose, onDragStart, onDragEnd
     },
     { 
       id: -3, 
-      title: t('defaultPlans.bookReading'), 
+      title: t('defaultPlans.break'), 
       color: "bg-purple-500", 
       is_system: true,
       user_id: user?.id || '',
@@ -59,7 +59,7 @@ const QuickPlans: React.FC<QuickPlansProps> = ({ onClose, onDragStart, onDragEnd
     },
     { 
       id: -4, 
-      title: t('defaultPlans.lunch'), 
+      title: t('defaultPlans.followup'), 
       color: "bg-orange-500", 
       is_system: true,
       user_id: user?.id || '',
@@ -68,7 +68,7 @@ const QuickPlans: React.FC<QuickPlansProps> = ({ onClose, onDragStart, onDragEnd
     },
     { 
       id: -5, 
-      title: t('defaultPlans.networking'), 
+      title: t('defaultPlans.review'), 
       color: "bg-pink-500", 
       is_system: true,
       user_id: user?.id || '',

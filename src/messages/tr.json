@@ -380,11 +380,11 @@
         "error": "Hazır plan oluşturulurken bir hata oluştu"
       },
       "defaultPlans": {
-        "meeting": "Toplantı",
-        "work": "İş",
-        "bookReading": "Kitap Okuma",
-        "lunch": "Öğle Arası",
-        "networking": "Networking"
+        "meeting": "Görüşme",
+        "focus": "Odak Zamanı",
+        "break": "Mola",
+        "followup": "Takip",
+        "review": "Gözden Geçirme"
       },
       "hidePlan": "Planı Gizle",
       "showPlan": "Planı Göster"
