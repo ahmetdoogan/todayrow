@@ -66,12 +66,14 @@ export function useSubscription() {
 
   const isPro = (
     (derivedStatus === 'pro' || derivedStatus === 'active') && 
-    subscription?.subscription_type === 'pro'
+    subscription?.subscription_type && 
+    ['pro'].includes(subscription.subscription_type)
   );
 
   const isTrialing = (
     derivedStatus === 'free_trial' && 
-    subscription?.subscription_type === 'free'
+    subscription?.subscription_type && 
+    ['free'].includes(subscription.subscription_type)
   );
 
   const isExpired = (derivedStatus === 'expired');
