@@ -1,14 +1,171 @@
 "use client";
 
-import React, { useState } from 'react';
-import { useDrop } from 'react-dnd';
+import React, { useState, useEffect } from 'react';
+import { useDrop, useDrag } from 'react-dnd';
 import { motion, AnimatePresence } from 'framer-motion';
 import { usePlanner } from '@/context/PlannerContext';
 import type { Plan, QuickPlan } from '@/types/planner';
 import { ItemTypes } from '@/utils/constants';
 import { useAuth } from '@/context/AuthContext';
-import { Check, Edit2, Trash2, Clock, Plus } from 'lucide-react';
+import { Check, Edit2, Trash2, Plus } from 'lucide-react';
 import { useTranslations } from 'next-intl';
+
+interface DraggablePlanCardProps {
+  plan: Plan;
+  isDuplicateMode: boolean;
+  isSelectionMode: boolean;
+  togglePlanSelection: (id: number) => void;
+  handlePlanClick: (plan: Plan) => void;
+  canEdit: boolean;
+  selectedPlanIds: number[];
+  t: any;
+  handleIncompleteClick: (e: React.MouseEvent, plan: Plan) => Promise<void>;
+  handleCompleteClick: (e: React.MouseEvent, plan: Plan) => Promise<void>;
+  handleEditClick: (e: React.MouseEvent, plan: Plan) => void;
+  handleDeleteClick: (e: React.MouseEvent, plan: Plan) => Promise<void>;
+}
+
+const DraggablePlanCard: React.FC<DraggablePlanCardProps> = ({
+  plan,
+  isDuplicateMode,
+  isSelectionMode,
+  togglePlanSelection,
+  handlePlanClick,
+  canEdit,
+  selectedPlanIds,
+  t,
+  handleIncompleteClick,
+  handleCompleteClick,
+  handleEditClick,
+  handleDeleteClick,
+}) => {
+  const [{ isDragging }, drag] = useDrag(
+    () => ({
+      type: ItemTypes.PLAN,
+      item: () => ({
+        ...plan,
+        isDuplicating: isDuplicateMode,
+      }),
+      collect: (monitor) => ({
+        isDragging: monitor.isDragging(),
+      }),
+    }),
+    [plan, isDuplicateMode]
+  );
+
+  return (
+    <motion.div
+      key={plan.id}
+      ref={drag}
+      layout
+      initial={{ opacity: 0, y: -10 }}
+      animate={{ opacity: isDragging ? 0.5 : 1, y: 0 }}
+      exit={{ opacity: 0, y: 10 }}
+      className={`
+        relative mb-2 p-2 md:p-3 rounded-xl border
+        ${plan.is_completed
+          ? 'bg-gray-50/50 dark:bg-gray-800/30 border-gray-200 dark:border-gray-700'
+          : 'bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600'
+        }
+        transition-all cursor-pointer group/card
+        ${isDragging ? 'cursor-grabbing' : ''}
+        ${!canEdit ? 'opacity-75' : ''}
+      `}
+      onClick={() =>
+        isSelectionMode ? togglePlanSelection(plan.id) : handlePlanClick(plan)
+      }
+    >
+      <div
+        className={`
+          absolute left-0 top-0 bottom-0 w-1 rounded-l-xl
+          ${plan.color ? plan.color : 'bg-violet-500'}
+        `}
+      />
+      {isSelectionMode && (
+        <div className="top-2 left-2 w-4 h-4 border-2 rounded transition-colors cursor-pointer border-stone-400 dark:border-stone-600 hover:border-stone-600 dark:hover:border-stone-400">
+          {selectedPlanIds.includes(plan.id) && (
+            <div className="w-full h-full bg-stone-800 dark:bg-stone-600" />
+          )}
+        </div>
+      )}
+      <div className="flex flex-col md:flex-row gap-2">
+        <div className="flex-1 min-w-0">
+          <div className="flex items-center gap-2">
+            <h3 className={`font-medium text-sm truncate flex-1 ${
+              plan.is_completed
+                ? 'text-gray-500 dark:text-gray-400'
+                : 'text-gray-900 dark:text-gray-100'
+            }`}>
+              {plan.title}
+            </h3>
+            {plan.is_completed && (
+              <span className="inline-flex items-center rounded-md bg-green-50 dark:bg-green-900/20 px-2 py-1 text-xs font-medium text-green-700 dark:text-green-300 ring-1 ring-inset ring-green-600/20 dark:ring-green-500/30">
+                {t('content.status.completed')}
+              </span>
+            )}
+          </div>
+          {plan.details && (
+            <p className="mt-1 text-xs text-gray-500 dark:text-gray-400 line-clamp-2">
+              {plan.details}
+            </p>
+          )}
+          <div className="mt-1 text-xs md:text-sm text-gray-500 dark:text-gray-400">
+            {new Date(plan.start_time).toLocaleTimeString('tr-TR', {
+              hour: '2-digit',
+              minute: '2-digit',
+            })}
+            {' - '}
+            {new Date(plan.end_time).toLocaleTimeString('tr-TR', {
+              hour: '2-digit',
+              minute: '2-digit',
+            })}
+          </div>
+        </div>
+        {canEdit && (
+          <div className="flex items-center gap-1 opacity-0 group-hover/card:opacity-100 transition-opacity">
+            <button
+              onClick={(e) => {
+                plan.is_completed
+                  ? handleIncompleteClick(e, plan)
+                  : handleCompleteClick(e, plan);
+              }}
+              className={`
+                p-1.5 rounded-lg transition-colors
+                ${plan.is_completed
+                  ? 'text-green-500 hover:bg-green-50 dark:hover:bg-green-900/20'
+                  : 'text-gray-400 hover:text-green-500 hover:bg-green-50 dark:hover:bg-green-900/20'
+                }
+              `}
+              title={
+                plan.is_completed
+                  ? t('planner.actions.markAsIncomplete')
+                  : t('planner.actions.markAsComplete')
+              }
+            >
+              <Check className="w-4 h-4" />
+            </button>
+            {!plan.is_completed && (
+              <button
+                onClick={(e) => handleEditClick(e, plan)}
+                className="p-1.5 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700/50 rounded-lg transition-colors"
+                title={t('planner.actions.edit')}
+              >
+                <Edit2 className="w-4 h-4" />
+              </button>
+            )}
+            <button
+              onClick={(e) => handleDeleteClick(e, plan)}
+              className="p-1.5 text-gray-400 hover:text-red-500 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors"
+              title={t('planner.actions.delete')}
+            >
+              <Trash2 className="w-4 h-4" />
+            </button>
+          </div>
+        )}
+      </div>
+    </motion.div>
+  );
+};
 
 const PlanList = () => {
   const {
@@ -28,7 +185,30 @@ const PlanList = () => {
 
   const { user } = useAuth();
   const [selectedTime, setSelectedTime] = useState<string | null>(null);
+  const [isDuplicateMode, setIsDuplicateMode] = useState(false);
   const t = useTranslations('common');
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.metaKey || e.ctrlKey) { // Meta = Command (Mac), Control (Windows)
+        setIsDuplicateMode(true);
+      }
+    };
+
+    const handleKeyUp = (e: KeyboardEvent) => {
+      if (!e.metaKey && !e.ctrlKey) {
+        setIsDuplicateMode(false);
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    window.addEventListener('keyup', handleKeyUp);
+
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+      window.removeEventListener('keyup', handleKeyUp);
+    };
+  }, []);
 
   const compareDate = (date1: Date, date2: Date) => {
     return (
@@ -51,11 +231,13 @@ const PlanList = () => {
   const canEdit = isToday || isTomorrow;
 
   // Planların saat aralıklarını bul
-  const allHours = plans.map(plan => {
-    const startH = new Date(plan.start_time).getHours();
-    const endH = new Date(plan.end_time).getHours();
-    return [startH, endH];
-  }).flat();
+  const allHours = plans
+    .map(plan => {
+      const startH = new Date(plan.start_time).getHours();
+      const endH = new Date(plan.end_time).getHours();
+      return [startH, endH];
+    })
+    .flat();
 
   const earliestHourInPlans = allHours.length > 0 ? Math.min(...allHours) : 6;
   const latestHourInPlans = allHours.length > 0 ? Math.max(...allHours) : 23;
@@ -68,11 +250,10 @@ const PlanList = () => {
     HOUR_BLOCKS.push(h);
   }
 
-  // QuickPlan sürükle-bırak Hook
   const [{ isOver }, dropRef] = useDrop(() => ({
-    accept: ItemTypes.QUICK_PLAN,
+    accept: [ItemTypes.QUICK_PLAN, ItemTypes.PLAN],
     canDrop: () => canEdit,
-    hover: (quickPlan: QuickPlan, monitor) => {
+    hover: (item: QuickPlan | Plan, monitor) => {
       if (!canEdit) return;
       const clientOffset = monitor.getClientOffset();
       if (clientOffset) {
@@ -93,19 +274,46 @@ const PlanList = () => {
           if (hours === 24) {
             hours = 0;
           }
-          const timeString = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
+          const timeString = `${hours.toString().padStart(2, '0')}:${minutes
+            .toString()
+            .padStart(2, '0')}`;
           setSelectedTime(timeString);
         }
       }
     },
-    drop: (quickPlan: QuickPlan) => {
+    drop: (item: any) => {
       if (!selectedTime || !canEdit) return;
-      handleQuickPlanDrop(
-        { ...quickPlan, color: quickPlan.color },
-        selectedTime
-      );
+
+      if (item.isDuplicating) {
+        // Duplicate plan
+        const planStartTime = new Date(selectedDate);
+        const [hours, minutes] = selectedTime.split(':').map(Number);
+        planStartTime.setHours(hours, minutes, 0, 0);
+
+        const planEndTime = new Date(planStartTime);
+        planEndTime.setHours(planEndTime.getHours() + 1);
+
+        const newPlan = {
+          id: 0,
+          title: item.title,
+          details: item.details,
+          start_time: planStartTime.toISOString(),
+          end_time: planEndTime.toISOString(),
+          is_completed: false,
+          color: item.color,
+          plan_type: 'regular',
+          order: 0,
+          user_id: user?.id || 0,
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString()
+        };
+
+        setSelectedPlan(newPlan);
+        setIsModalOpen(true);
+      } else {
+        handleQuickPlanDrop(item, selectedTime);
+      }
       setSelectedTime(null);
-      setIsModalOpen(true);
     },
     collect: (monitor) => ({
       isOver: monitor.isOver() && canEdit,
@@ -114,34 +322,33 @@ const PlanList = () => {
 
   // Plan oluşturma
   const handleCreatePlanAtHour = (hour: number) => {
-  if (!canEdit) return;
+    if (!canEdit) return;
 
-  const planStartTime = new Date(selectedDate);
-  planStartTime.setHours(hour, 0, 0, 0);
+    const planStartTime = new Date(selectedDate);
+    planStartTime.setHours(hour, 0, 0, 0);
 
-  const planEndTime = new Date(planStartTime);
-  planEndTime.setHours(planEndTime.getHours() + 1);
+    const planEndTime = new Date(planStartTime);
+    planEndTime.setHours(planEndTime.getHours() + 1);
 
-  setSelectedPlan({
-    id: 0,
-    title: '',
-    details: '',
-    start_time: planStartTime.toISOString(),
-    end_time: planEndTime.toISOString(),
-    is_completed: false,
-    color: 'bg-blue-500', // Kısıtlamaya uygun bir değer
-    plan_type: 'regular',
-    order: 0,
-    user_id: user?.id || 0,
-    created_at: new Date().toISOString(),
-    updated_at: new Date().toISOString()
-  });
+    setSelectedPlan({
+      id: 0,
+      title: '',
+      details: '',
+      start_time: planStartTime.toISOString(),
+      end_time: planEndTime.toISOString(),
+      is_completed: false,
+      color: 'bg-blue-500',
+      plan_type: 'regular',
+      order: 0,
+      user_id: user?.id || 0,
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString()
+    });
 
-  setIsEditingPlan(false);
-  setIsModalOpen(true);
-};
+    setIsEditingPlan(false);
+    setIsModalOpen(true);
+  };
 
-  // Plan işlemleri
   const handleDeleteClick = async (e: React.MouseEvent, plan: Plan) => {
     if (!canEdit) return;
     e.stopPropagation();
@@ -213,117 +420,21 @@ const PlanList = () => {
           {hourPlans.length > 0 ? (
             <AnimatePresence mode="popLayout">
               {hourPlans.map((plan) => (
-                <motion.div
+                <DraggablePlanCard
                   key={plan.id}
-                  layout
-                  initial={{ opacity: 0, y: -10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: 10 }}
-                  className={`
-                    relative relative mb-2 p-2 md:p-3 rounded-xl border border
-                    ${plan.is_completed
-                      ? 'bg-gray-50/50 dark:bg-gray-800/30 border-gray-200 dark:border-gray-700'
-                      : 'bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600'
-                    }
-                    transition-all cursor-pointer group/card
-                    ${!canEdit ? 'opacity-75' : ''}
-                  `}
-                  onClick={() => isSelectionMode ? togglePlanSelection(plan.id) : handlePlanClick(plan)}
-                >
-                  <div
-                    className={`
-                      absolute left-0 top-0 bottom-0 w-1 rounded-l-xl
-                      ${plan.color ? plan.color : 'bg-violet-500'}
-                    `}
-                  />
-                  {isSelectionMode && (
-                    <div className="top-2 left-2 w-4 h-4 border-2 rounded 
-                                transition-colors cursor-pointer
-                                border-stone-400 dark:border-stone-600
-                                hover:border-stone-600 dark:hover:border-stone-400">
-                      {selectedPlanIds.includes(plan.id) && (
-                        <div className="w-full h-full bg-stone-800 dark:bg-stone-600" />
-                      )}
-                    </div>
-                  )}
-
-                  <div className="flex flex-col md:flex-row gap-2">
-  <div className="flex-1 min-w-0">
-    <div className="flex items-center gap-2">
-      <h3 className={`font-medium text-sm truncate flex-1 ${
-        plan.is_completed ? 'text-gray-500 dark:text-gray-400' : 'text-gray-900 dark:text-gray-100'
-      }`}>
-        {plan.title}
-      </h3>
-      {plan.is_completed && (
-        <span className="inline-flex items-center rounded-md bg-green-50 dark:bg-green-900/20 
-                      px-2 py-1 text-xs font-medium text-green-700 dark:text-green-300 
-                      ring-1 ring-inset ring-green-600/20 dark:ring-green-500/30">
-          {t('content.status.completed')}
-        </span>
-      )}
-    </div>
-    {plan.details && (
-      <p className="mt-1 text-xs text-gray-500 dark:text-gray-400 line-clamp-2">
-        {plan.details}
-      </p>
-    )}
-    <div className="mt-1 text-xs md:text-sm text-gray-500 dark:text-gray-400">
-      {new Date(plan.start_time).toLocaleTimeString('tr-TR', {
-        hour: '2-digit',
-        minute: '2-digit',
-      })}
-      {' - '}
-      {new Date(plan.end_time).toLocaleTimeString('tr-TR', {
-        hour: '2-digit',
-        minute: '2-digit',
-      })}
-    </div>
-  </div>
-
-                    {canEdit && (
-                      <div className="flex items-center gap-1 opacity-0 group-hover/card:opacity-100 transition-opacity">
-                        <button
-                          onClick={(e) => {
-                            plan.is_completed
-                              ? handleIncompleteClick(e, plan)
-                              : handleCompleteClick(e, plan);
-                          }}
-                          className={`
-                            p-1.5 rounded-lg transition-colors
-                            ${plan.is_completed
-                              ? 'text-green-500 hover:bg-green-50 dark:hover:bg-green-900/20'
-                              : 'text-gray-400 hover:text-green-500 hover:bg-green-50 dark:hover:bg-green-900/20'
-                            }
-                          `}
-                          title={plan.is_completed ? t('planner.actions.markAsIncomplete') : t('planner.actions.markAsComplete')}
-                        >
-                          <Check className="w-4 h-4" />
-                        </button>
-
-                        {!plan.is_completed && (
-                          <button
-                            onClick={(e) => handleEditClick(e, plan)}
-                            className="p-1.5 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 
-                                     hover:bg-gray-100 dark:hover:bg-gray-700/50 rounded-lg transition-colors"
-                            title={t('planner.actions.edit')}
-                          >
-                            <Edit2 className="w-4 h-4" />
-                          </button>
-                        )}
-
-                        <button
-                          onClick={(e) => handleDeleteClick(e, plan)}
-                          className="p-1.5 text-gray-400 hover:text-red-500 dark:hover:text-red-400 
-                                   hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors"
-                          title={t('planner.actions.delete')}
-                        >
-                          <Trash2 className="w-4 h-4" />
-                        </button>
-                      </div>
-                    )}
-                  </div>
-                </motion.div>
+                  plan={plan}
+                  isDuplicateMode={isDuplicateMode}
+                  isSelectionMode={isSelectionMode}
+                  togglePlanSelection={togglePlanSelection}
+                  handlePlanClick={handlePlanClick}
+                  canEdit={canEdit}
+                  selectedPlanIds={selectedPlanIds}
+                  t={t}
+                  handleIncompleteClick={handleIncompleteClick}
+                  handleCompleteClick={handleCompleteClick}
+                  handleEditClick={handleEditClick}
+                  handleDeleteClick={handleDeleteClick}
+                />
               ))}
             </AnimatePresence>
           ) : (
@@ -335,21 +446,12 @@ const PlanList = () => {
                     ? 'rgba(59, 130, 246, 0.1)'
                     : 'transparent',
               }}
-              className="min-h-[64px] rounded-lg border border-dashed border-transparent
-                       transition-colors duration-200 group-hover:border-gray-200 dark:group-hover:border-gray-700
-                       relative"
+              className="min-h-[64px] rounded-lg border border-dashed border-transparent transition-colors duration-200 group-hover:border-gray-200 dark:group-hover:border-gray-700 relative"
             >
               {canEdit && isEmptySlot && (
-                <div
-                  className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100
-                           transition-opacity duration-200 pointer-events-none"
-                >
+                <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none">
                   <button
-                    className="flex items-center gap-1 text-sm text-gray-400 dark:text-gray-500 
-           px-3 py-1 rounded-md bg-gray-100/70 dark:bg-gray-800/50 
-           border border-gray-200 dark:border-gray-700 
-           pointer-events-auto hover:bg-gray-100 dark:hover:bg-gray-700
-           transition-colors"
+                    className="flex items-center gap-1 text-sm text-gray-400 dark:text-gray-500 px-3 py-1 rounded-md bg-gray-100/70 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 pointer-events-auto hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
                     onClick={() => handleCreatePlanAtHour(hour)}
                   >
                     <Plus className="w-4 h-4" />
@@ -364,7 +466,6 @@ const PlanList = () => {
     );
   };
 
-  // Plan yoksa
   if (plans.length === 0) {
     return (
       <div
@@ -386,7 +487,9 @@ const PlanList = () => {
         >
           {selectedTime && (
             <div className="bg-white/90 dark:bg-gray-800/90 px-4 py-2 rounded-lg shadow-lg text-center">
-              <p className="text-black dark:text-white font-medium">{t('planner.dragAndDrop.dropHere')}</p>
+              <p className="text-black dark:text-white font-medium">
+                {t('planner.dragAndDrop.dropHere')}
+              </p>
               <p className="mt-1 text-black dark:text-white text-sm">
                 {t('planner.dragAndDrop.timeLabel', { time: selectedTime })}
               </p>
@@ -395,12 +498,16 @@ const PlanList = () => {
         </motion.div>
 
         {isYesterday ? (
-          <p className="text-gray-500 dark:text-gray-400">{t('planner.emptyStates.yesterdayEmpty')}</p>
+          <p className="text-gray-500 dark:text-gray-400">
+            {t('planner.emptyStates.yesterdayEmpty')}
+          </p>
         ) : (
           (isToday || isTomorrow) && (
             <div className="text-center">
               <p className="text-gray-500 dark:text-gray-400">
-                {isToday ? t('planner.emptyStates.todayEmpty') : t('planner.emptyStates.tomorrowEmpty')}
+                {isToday
+                  ? t('planner.emptyStates.todayEmpty')
+                  : t('planner.emptyStates.tomorrowEmpty')}
               </p>
             </div>
           )
@@ -409,7 +516,6 @@ const PlanList = () => {
     );
   }
 
-  // En az 1 plan varsa timeline görünüm
   return (
     <div
       id="plan-list-container"
@@ -418,7 +524,6 @@ const PlanList = () => {
     >
       {HOUR_BLOCKS.map((hour) => renderHourBlock(hour))}
 
-      {/* Drag-drop esnasında ortada overlay */}
       <AnimatePresence>
         {isOver && selectedTime && (
           <motion.div
@@ -428,7 +533,9 @@ const PlanList = () => {
             className="fixed inset-0 pointer-events-none flex items-center justify-center bg-black/5 backdrop-blur-[1px]"
           >
             <div className="bg-white/90 dark:bg-gray-800/90 px-6 py-3 rounded-xl shadow-lg text-center">
-              <p className="text-black dark:text-white font-medium">{t('planner.dragAndDrop.dropHere')}</p>
+              <p className="text-black dark:text-white font-medium">
+                {t('planner.dragAndDrop.dropHere')}
+              </p>
               <p className="mt-1 text-black dark:text-white text-sm">
                 {t('planner.dragAndDrop.timeLabel', { time: selectedTime })}
               </p>
