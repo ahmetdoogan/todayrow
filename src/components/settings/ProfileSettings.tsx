@@ -154,13 +154,13 @@ const ProfileSettings = () => {
         const data = await res.json();
         throw new Error(data.error || 'Silme işlemi başarısız');
       }
-      toast.success('Hesabınız silindi. Yönlendiriliyorsunuz...');
+      toast.success(t('deleteAccount.toast.success'));
       setTimeout(() => {
         window.location.href = '/';
       }, 2000);
     } catch (error: any) {
       console.error(error);
-      toast.error(error.message || 'Bir hata oluştu');
+      toast.error(error.message || t('deleteAccount.toast.error'));
     } finally {
       setShowDeleteModal(false);
     }
@@ -500,11 +500,12 @@ const ProfileSettings = () => {
         {/* Hesabımı Sil Butonu */}
         <div className="mt-2">
           <button
-            onClick={() => setShowDeleteModal(true)}
-            className="text-sm text-red-600 dark:text-red-500 underline underline-offset-4"
-          >
-            Hesabımı Sil
-          </button>
+  onClick={() => setShowDeleteModal(true)}
+  className="text-sm text-red-600 dark:text-red-500 underline underline-offset-4"
+>
+  {t('deleteAccount.button')}
+</button>
+
         </div>
       </div>
 
@@ -537,19 +538,20 @@ const ProfileSettings = () => {
       {showDeleteModal && (
         <div className="fixed inset-0 flex items-center justify-center z-50 bg-black/50">
           <div className="bg-white dark:bg-slate-800 p-6 rounded shadow w-80">
-            <p className="text-sm text-slate-700 dark:text-slate-300 mb-4">
-              Hesabınızı kalıcı olarak silmek istediğinize emin misiniz?
-              <br />
-              <strong>Bu işlem geri alınamaz!</strong>
-            </p>
-            <div className="flex justify-end gap-2">
-              <Button variant="outline" onClick={() => setShowDeleteModal(false)}>
-                Vazgeç
-              </Button>
-              <Button variant="destructive" onClick={handleDeleteAccount}>
-                Evet, sil
-              </Button>
-            </div>
+           <p className="text-sm text-slate-700 dark:text-slate-300 mb-4">
+  {t('deleteAccount.modal.title')}
+  <br />
+  <strong>{t('deleteAccount.modal.warning')}</strong>
+</p>
+<div className="flex justify-end gap-2">
+  <Button variant="outline" onClick={() => setShowDeleteModal(false)}>
+    {t('deleteAccount.modal.cancel')}
+  </Button>
+  <Button variant="destructive" onClick={handleDeleteAccount}>
+    {t('deleteAccount.modal.confirm')}
+  </Button>
+</div>
+
           </div>
         </div>
       )}

@@ -63,6 +63,19 @@
     },
     "profile": {
       "title": "Profil",
+      "deleteAccount": {
+      "button": "Hesabımı Sil",
+      "modal": {
+        "title": "Hesabınızı kalıcı olarak silmek istediğinize emin misiniz?",
+        "warning": "Bu işlem geri alınamaz!",
+        "cancel": "Vazgeç",
+        "confirm": "Evet, sil"
+      },
+      "toast": {
+        "success": "Hesabınız silindi. Yönlendiriliyorsunuz...",
+        "error": "Bir hata oluştu"
+      }
+    },
       "photo": {
         "title": "Profil Fotoğrafı",
         "upload": "Fotoğraf Yükle",

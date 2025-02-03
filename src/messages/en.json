@@ -63,6 +63,19 @@
     },
     "profile": {
       "title": "Profile",
+      "deleteAccount": {
+      "button": "Delete My Account",
+      "modal": {
+        "title": "Are you sure you want to permanently delete your account?",
+        "warning": "This action cannot be undone!",
+        "cancel": "Cancel",
+        "confirm": "Yes, delete"
+      },
+      "toast": {
+        "success": "Your account has been deleted. You are being redirected...",
+        "error": "An error has occurred"
+      }
+    },
       "photo": {
         "title": "Profile Photo",
         "upload": "Upload Photo",
