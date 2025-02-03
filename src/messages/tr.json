@@ -111,6 +111,25 @@
       "messages": {
         "saveSuccess": "Profil başarıyla güncellendi",
         "saveError": "Profil güncellenirken bir hata oluştu"
+      },
+      "subscription": {
+        "planType": "Plan Tipi",
+        "status": "Durum",
+        "trialEnds": "Deneme Bitiş",
+        "renewsAt": "Yenilenme Tarihi",
+        "cancelUntil": "{date} tarihine kadar aktif",
+        "types": {
+          "pro": "Pro",
+          "monthly": "Aylık",
+          "yearly": "Yıllık",
+          "free": "Ücretsiz"
+        },
+        "statuses": {
+          "free_trial": "Deneme",
+          "active": "Aktif",
+          "cancel_scheduled": "İptal Planlandı",
+          "expired": "Süresi Doldu"
+        }
       }
     },
     "save": "Kaydet",

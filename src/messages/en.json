@@ -111,6 +111,25 @@
       "messages": {
         "saveSuccess": "Profile updated successfully",
         "saveError": "An error occurred while updating the profile"
+      },
+      "subscription": {
+        "planType": "Plan Type",
+        "status": "Status",
+        "trialEnds": "Trial Ends",
+        "renewsAt": "Renews At",
+        "cancelUntil": "Active until {date}",
+        "types": {
+          "pro": "Pro",
+          "monthly": "Monthly",
+          "yearly": "Yearly",
+          "free": "Free"
+        },
+        "statuses": {
+          "free_trial": "Trial",
+          "active": "Active",
+          "cancel_scheduled": "Cancellation Scheduled",
+          "expired": "Expired"
+        }
       }
     },
     "save": "Save",

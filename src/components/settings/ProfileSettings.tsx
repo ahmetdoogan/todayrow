@@ -240,19 +240,30 @@ const ProfileSettings = () => {
 {subscription && (
   <div className="p-4 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl">
     <p className="text-sm text-slate-600 dark:text-slate-300">
-      <strong>Plan Type:</strong> {subscription.subscription_type}
+      <strong>{t('subscription.planType')}:</strong> {' '}
+      {t(`subscription.types.${subscription.subscription_type}`)}
     </p>
     <p className="text-sm text-slate-600 dark:text-slate-300">
-      <strong>Status:</strong> {subscription.status}
+      <strong>{t('subscription.status')}:</strong> {' '}
+      {t(`subscription.statuses.${subscription.status}`)}
       {subscription.subscription_end && subscription.status === "cancel_scheduled" && (
         <span className="ml-2 text-yellow-600">
-          (Pro until {new Date(subscription.subscription_end).toLocaleDateString()})
+          ({t('subscription.cancelUntil', { 
+            date: new Date(subscription.subscription_end).toLocaleDateString() 
+          })})
         </span>
       )}
     </p>
-    {subscription.subscription_end && (
+    {subscription.status === 'free_trial' && subscription.trial_end && (
       <p className="text-sm text-slate-600 dark:text-slate-300">
-        <strong>Ends at:</strong> {new Date(subscription.subscription_end).toLocaleString()}
+        <strong>{t('subscription.trialEnds')}:</strong> {' '}
+        {new Date(subscription.trial_end).toLocaleString()}
+      </p>
+    )}
+    {subscription.status === 'active' && subscription.subscription_end && (
+      <p className="text-sm text-slate-600 dark:text-slate-300">
+        <strong>{t('subscription.renewsAt')}:</strong> {' '}
+        {new Date(subscription.subscription_end).toLocaleString()}
       </p>
     )}
   </div>
