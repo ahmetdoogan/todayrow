@@ -504,6 +504,7 @@
       "usage": "usage"
     },
     "content": {
+      "emptyState": "Henüz hiç içeriğiniz yok",
       "status": {
         "completed": "Completed",
         "active": "Active"

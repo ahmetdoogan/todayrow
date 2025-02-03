@@ -503,6 +503,7 @@
       "usage": "kullanım"
     },
     "content": {
+      "emptyState": "Henüz hiç içeriğiniz yok",
       "status": {
         "completed": "Tamamlandı",
         "active": "Aktif"
