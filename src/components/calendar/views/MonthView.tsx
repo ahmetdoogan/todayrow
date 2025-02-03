@@ -43,30 +43,34 @@ interface MonthViewProps {
 const MonthView: React.FC<MonthViewProps> = ({ selectedDate }) => {
   const { contents, setSelectedContent } = useContent();
   const isMobile = useMediaQuery('(max-width: 640px)');
-  const t = useTranslations('common');
+  
+  // common namespace için: örneğin hafta günleri ve diğer ortak anahtarlar
+  const tCommon = useTranslations('common');
+  // views namespace için: ay görünümü ile ilgili çeviriler
+  const tViews = useTranslations('views');
 
-  // Haftanın günlerini çevirilerden al
+  // Haftanın günlerini çevirilerden al (common namespace)
   const weekDays = [
-    t('calendar.days.monday'),
-    t('calendar.days.tuesday'),
-    t('calendar.days.wednesday'),
-    t('calendar.days.thursday'),
-    t('calendar.days.friday'),
-    t('calendar.days.saturday'),
-    t('calendar.days.sunday')
+    tCommon('calendar.days.monday'),
+    tCommon('calendar.days.tuesday'),
+    tCommon('calendar.days.wednesday'),
+    tCommon('calendar.days.thursday'),
+    tCommon('calendar.days.friday'),
+    tCommon('calendar.days.saturday'),
+    tCommon('calendar.days.sunday')
   ];
 
   const weekDaysShort = [
-    t('calendar.daysShort.mon'),
-    t('calendar.daysShort.tue'),
-    t('calendar.daysShort.wed'),
-    t('calendar.daysShort.thu'),
-    t('calendar.daysShort.fri'),
-    t('calendar.daysShort.sat'),
-    t('calendar.daysShort.sun')
+    tCommon('calendar.daysShort.mon'),
+    tCommon('calendar.daysShort.tue'),
+    tCommon('calendar.daysShort.wed'),
+    tCommon('calendar.daysShort.thu'),
+    tCommon('calendar.daysShort.fri'),
+    tCommon('calendar.daysShort.sat'),
+    tCommon('calendar.daysShort.sun')
   ];
 
-  // Ayın başlangıç ve bitiş tarihlerini hesapla
+  // Ayın başlangıç tarihini hesapla (takvim grid'inin başlangıcı)
   const monthStart = useMemo(() => {
     const date = new Date(selectedDate.getFullYear(), selectedDate.getMonth(), 1);
     const dayOfWeek = date.getDay();
@@ -74,7 +78,7 @@ const MonthView: React.FC<MonthViewProps> = ({ selectedDate }) => {
     return new Date(date.setDate(diff));
   }, [selectedDate]);
 
-  // Günün içeriklerini filtrele
+  // Belirtilen gün için içerikleri filtrele
   const getDayContents = (date: Date) => {
     return contents.filter(content => {
       const contentDate = new Date(content.date);
@@ -116,11 +120,11 @@ const MonthView: React.FC<MonthViewProps> = ({ selectedDate }) => {
       {/* Empty State */}
       {monthContents.length === 0 && (
         <div className="p-4 text-center text-sm text-slate-500 dark:text-slate-400">
-          {t('calendar.views.month.empty')}
+          {tViews('month.empty')}
         </div>
       )}
 
-      {/* Week Days */}
+      {/* Haftanın Günleri */}
       <div className="grid grid-cols-7 divide-x divide-slate-100 dark:divide-slate-800 border-b border-slate-200 dark:border-slate-800">
         {displayDays.map((day, index) => (
           <div key={day + index} className="text-center font-medium text-[11px] sm:text-sm text-slate-600 dark:text-slate-400 py-2 sm:py-3">
@@ -129,9 +133,9 @@ const MonthView: React.FC<MonthViewProps> = ({ selectedDate }) => {
         ))}
       </div>
 
-      {/* Calendar Grid */}
+      {/* Takvim Grid */}
       <div className="grid grid-cols-7 divide-x divide-slate-100 dark:divide-slate-800">
-        {calendar.flat().map((date, index) => {
+        {calendar.flat().map((date) => {
           const isCurrentMonth = date.getMonth() === selectedDate.getMonth();
           const dayContents = getDayContents(date);
           const maxVisibleContents = isMobile ? 2 : 3;
@@ -171,7 +175,7 @@ const MonthView: React.FC<MonthViewProps> = ({ selectedDate }) => {
                 ))}
                 {hasMoreContents && (
                   <div className="text-[10px] sm:text-xs text-slate-500 dark:text-slate-400 mt-1">
-                    {t('calendar.views.month.more', { count: dayContents.length - maxVisibleContents })}
+                    {tViews('month.more', { count: dayContents.length - maxVisibleContents })}
                   </div>
                 )}
               </div>

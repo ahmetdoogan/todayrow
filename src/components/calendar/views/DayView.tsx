@@ -20,9 +20,13 @@ const CalendarContent: React.FC<CalendarContentProps> = ({ content, onClick }) =
           : 'bg-slate-800 text-white'
       } p-1.5 sm:p-2.5 rounded-lg sm:rounded-xl text-xs sm:text-sm mb-1 sm:mb-1.5 cursor-pointer hover:opacity-90 transition-all backdrop-blur-sm`}
     >
-      <div className="font-medium text-[11px] sm:text-xs truncate leading-tight">{content.title}</div>
+      <div className="font-medium text-[11px] sm:text-xs truncate leading-tight">
+        {content.title}
+      </div>
       {content.description && (
-        <div className="text-[10px] sm:text-xs mt-1 opacity-75 truncate">{content.description}</div>
+        <div className="text-[10px] sm:text-xs mt-1 opacity-75 truncate">
+          {content.description}
+        </div>
       )}
     </div>
   );
@@ -36,7 +40,10 @@ const DayView: React.FC<DayViewProps> = ({ selectedDate }) => {
   const { contents, setSelectedContent } = useContent();
   const hours = Array.from({ length: 24 }, (_, i) => i);
   const isMobile = useMediaQuery('(max-width: 640px)');
-  const t = useTranslations('common');
+
+  // views için çeviri anahtarlarını tViews ile, common için olanları tCommon ile çekiyoruz.
+  const tViews = useTranslations('views');
+  const tCommon = useTranslations('common');
 
   // Günün içeriklerini filtrele
   const getDayContents = (hour: number) => {
@@ -62,7 +69,7 @@ const DayView: React.FC<DayViewProps> = ({ selectedDate }) => {
       {/* Header */}
       <div className="p-2 sm:p-3 border-b border-slate-200 dark:border-slate-800">
         <div className={`font-medium text-xs sm:text-sm ${isToday() ? 'text-slate-900 dark:text-white font-semibold' : 'text-slate-600 dark:text-slate-400'}`}>
-          {selectedDate.toLocaleDateString(t('locales.dateFormat'), { 
+          {selectedDate.toLocaleDateString(tCommon('locales.dateFormat'), { 
             weekday: isMobile ? 'short' : 'long',
             day: 'numeric',
             month: 'long',
@@ -74,7 +81,7 @@ const DayView: React.FC<DayViewProps> = ({ selectedDate }) => {
       {/* Empty State */}
       {dayContents.length === 0 && (
         <div className="p-4 text-center text-sm text-slate-500 dark:text-slate-400">
-          {t('calendar.views.day.empty')}
+          {tViews('day.empty')}
         </div>
       )}
 
@@ -84,7 +91,7 @@ const DayView: React.FC<DayViewProps> = ({ selectedDate }) => {
           <div key={hour} className={`flex border-b border-slate-200 dark:border-slate-800 ${todayClass}`}>
             {/* Time Column */}
             <div className="w-14 sm:w-20 flex-shrink-0 p-1.5 sm:p-2.5 text-[10px] sm:text-xs font-medium text-slate-400 dark:text-slate-500">
-              {t('calendar.timeGrid.hour', { hour: hour.toString().padStart(2, '0') })}
+              {tCommon('calendar.timeGrid.hour', { hour: hour.toString().padStart(2, '0') })}
             </div>
 
             {/* Content Column */}
