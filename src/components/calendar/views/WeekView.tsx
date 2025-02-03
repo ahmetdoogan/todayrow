@@ -63,16 +63,17 @@ const WeekView: React.FC<WeekViewProps> = ({ selectedDate }) => {
 
   // Her gün için içerikleri filtrele
   const getDayContents = (dayOffset: number, hour: number) => {
-    if (hour !== 0) return [];
+  const currentDate = new Date(weekStart);
+  currentDate.setDate(weekStart.getDate() + dayOffset);
 
-    const currentDate = new Date(weekStart);
-    currentDate.setDate(weekStart.getDate() + dayOffset);
-
-    return contents.filter(content => {
-      const contentDate = new Date(content.date);
-      return isSameDay(contentDate, currentDate);
-    });
-  };
+  return contents.filter(content => {
+    const cDate = new Date(content.date);
+    return (
+      isSameDay(cDate, currentDate) &&
+      cDate.getHours() === hour
+    );
+  });
+};
 
   // Bugünün tarihini kontrol et
   const isToday = (dayOffset: number) => {

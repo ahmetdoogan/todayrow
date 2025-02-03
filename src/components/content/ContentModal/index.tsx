@@ -17,6 +17,7 @@ import ConfirmModal from '@/components/modals/ConfirmModal';
 interface ContentModalProps {
   isOpen: boolean;
   onClose: () => void;
+  contentId?: number; // Eğer update yapılacaksa, güncellenecek içeriğin id'si
 }
 
 interface MetaData {
@@ -44,11 +45,27 @@ const createSlug = (title: string): string => {
     .replace(/-+/g, '-');
 };
 
+// Yardımcı: Date input (yyyy-mm-dd) formatına çevirir
+const toDateInputValue = (date: Date): string => {
+  const yyyy = date.getFullYear();
+  const mm = String(date.getMonth() + 1).padStart(2, '0');
+  const dd = String(date.getDate()).padStart(2, '0');
+  return `${yyyy}-${mm}-${dd}`;
+};
+
+// Yardımcı: Time input (HH:mm) formatına çevirir
+const toTimeInputValue = (date: Date): string => {
+  const hh = String(date.getHours()).padStart(2, '0');
+  const mm = String(date.getMinutes()).padStart(2, '0');
+  return `${hh}:${mm}`;
+};
+
 const ContentModal: React.FC<ContentModalProps> = ({
   isOpen,
   onClose,
+  contentId,
 }) => {
-  const { handleAddContent } = useContent();
+  const { handleAddContent, updateContent, contents } = useContent();
   const { user } = useAuth();
   const [title, setTitle] = useState("");
   const [details, setDetails] = useState("");
@@ -75,11 +92,41 @@ const ContentModal: React.FC<ContentModalProps> = ({
     selectedPlatforms: ["LINKEDIN"],
     url: "",
     normalizedUrl: "",
-    metadata: null as MetaData | null, // Bu satırı güncelledik
+    metadata: null as MetaData | null,
   });
 
   const t = useTranslations('common.contentModal');
 
+  // Eğer güncelleme modunda isen, mevcut içeriğin verilerini form alanlarına yükleyelim.
+ // Düzenleme modunda (contentId varsa) içeriği form alanlarına yükleyen useEffect:
+useEffect(() => {
+  if (isOpen && contentId) {
+    const content = contents.find(c => c.id === contentId);
+    if (content) {
+      setTitle(content.title);
+      setDetails(content.details);
+      setFormat(content.format);
+      setType(content.type);
+      // Tarih: İçerikteki date değerinin ilk 10 karakteri, yani YYYY-MM-DD kısmı.
+      if (content.date) {
+        setDate(content.date.substring(0, 10));
+      }
+      // Zaman: content.timeFrame değeri varsa; eğer nokta içermiyorsa ":00" ekleyin.
+      if (content.timeFrame) {
+        const tframe = content.timeFrame.toString();
+        setTimeFrame(tframe.includes(':') ? tframe : `${tframe}:00`);
+      }
+      setTags(content.tags || "");
+      setSelectedPlatforms(content.platforms || ["LINKEDIN"]);
+      setUrl(content.url || "");
+      setNormalizedUrl(content.url || "");
+      setMetadata(content.preview_data || null);
+    }
+  }
+}, [isOpen, contentId, contents]);
+
+
+  // Modal açıldığında formdaki başlangıç değerlerini saklıyoruz.
   useEffect(() => {
     if (isOpen) {
       setInitialFormData({
@@ -163,7 +210,6 @@ const ContentModal: React.FC<ContentModalProps> = ({
 
   const fetchMetadata = async (url: string) => {
     if (!url) return;
-
     try {
       setIsLoadingMetadata(true);
       const response = await fetch('/api/metadata', {
@@ -173,11 +219,9 @@ const ContentModal: React.FC<ContentModalProps> = ({
         },
         body: JSON.stringify({ url }),
       });
-
       if (!response.ok) {
         throw new Error('Failed to fetch metadata');
       }
-
       const data = await response.json();
       if (data.title || data.description) {
         setMetadata(data);
@@ -193,32 +237,67 @@ const ContentModal: React.FC<ContentModalProps> = ({
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  e.preventDefault();
+  if (!user) {
+    toast.error(t('errors.loginRequired'));
+    return;
+  }
 
-    if (!user) {
-      toast.error(t('errors.loginRequired'));
+  // "YYYY-MM-DD" formatındaki date string'ini ve "HH:mm" formatındaki timeFrame string'ini parçalayalım.
+  const [year, month, day] = date.split('-').map(Number);
+  const [hrs, mins] = timeFrame.split(':').map(Number);
+  
+  // Yerel zaman olarak yeni bir Date nesnesi oluşturuyoruz.
+  // new Date(year, monthIndex, day, hrs, mins, 0, 0) kullanıyoruz (monthIndex: month-1)
+  const localTimestamp = new Date(year, month - 1, day, hrs || 0, mins || 0, 0, 0);
+  
+  // localTimestamp.toISOString() UTC zamanını üretir.
+  const isoDate = localTimestamp.toISOString();
+
+  const slug = createSlug(title);
+  const now = new Date().toISOString();
+
+  const contentData = {
+    title,
+    details,
+    format,
+    type,
+    timeFrame, // Bu sütun ayrı saklanıyor (örneğin "19:10")
+    date: isoDate, // Burada birleşik timestamp (örneğin "2025-02-05T16:10:00.000Z") saklanıyor
+    platforms: selectedPlatforms,
+    url: normalizedUrl || null,
+    preview_data: metadata || {},
+    is_completed: false,
+    user_id: user.id,
+    slug,
+    updated_at: now,
+  };
+
+  if (contentId) {
+    // UPDATE işlemi: contentId varsa güncelleme yapıyoruz.
+    const { data, error } = await supabase
+      .from("Content")
+      .update(contentData)
+      .eq("id", contentId)
+      .select();
+
+    if (error || !data || data.length === 0) {
+      console.error("Güncelleme hatası:", error);
+      toast.error(t('errors.updateError'));
       return;
     }
-    
-    const now = new Date().toISOString();
-    const slug = createSlug(title);
 
+    if (updateContent) {
+      updateContent(data[0]);
+    } else {
+      handleAddContent(data[0]);
+    }
+    toast.success(t('notifications.updateSuccess'));
+  } else {
+    // INSERT işlemi: Yeni içerik ekleniyor.
     const insertData = {
-      title,
-      details,
-      format,
-      type,
-      timeFrame,
-      tags,
-      date,
-      platforms: selectedPlatforms,
-      url: normalizedUrl || null,
-      preview_data: metadata || {},
-      is_completed: false,
-      user_id: user.id,
+      ...contentData,
       created_at: now,
-      updated_at: now,
-      slug
     };
 
     const { data, error } = await supabase
@@ -227,51 +306,49 @@ const ContentModal: React.FC<ContentModalProps> = ({
       .select();
 
     if (error || !data || data.length === 0) {
-      console.error("Ekleme sırasında detaylı hata:", error);
+      console.error("Ekleme hatası:", error);
       toast.error(t('errors.addError'));
       return;
     }
-    
     handleAddContent(data[0]);
     toast.success(t('notifications.addSuccess'));
-    
-    // Form reset
-    setTitle("");
-    setDetails("");
-    setFormat("TEXT");
-    setType("GENERAL");
-    setTimeFrame("");
-    setTags("");
-    setDate("");
-    setSelectedPlatforms(["LINKEDIN"]);
-    setUrl("");
-    setNormalizedUrl("");
-    setMetadata(null);
-    
-    onClose();
-  };
+  }
+
+  // Form alanlarını sıfırlıyoruz.
+  setTitle("");
+  setDetails("");
+  setFormat("TEXT");
+  setType("GENERAL");
+  setTimeFrame("");
+  setTags("");
+  setDate("");
+  setSelectedPlatforms(["LINKEDIN"]);
+  setUrl("");
+  setNormalizedUrl("");
+  setMetadata(null);
+
+  onClose();
+};
+
 
   const handlePlatformToggle = (platform: PlatformType) => {
     setSelectedPlatforms(prev => {
       const newPlatforms = prev.includes(platform)
         ? prev.filter(p => p !== platform)
         : [...prev, platform];
-      
       const newAvailableFormats = Array.from(new Set(
         newPlatforms.flatMap(p => PLATFORM_FORMATS[p])
       ));
-      
       if (!newAvailableFormats.includes(format)) {
         setFormat(newAvailableFormats[0]);
       }
-
       return newPlatforms.length > 0 ? newPlatforms : ["LINKEDIN"];
     });
   };
 
   return (
     <>
-      <motion.div 
+      <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.15 }}
@@ -287,11 +364,12 @@ const ContentModal: React.FC<ContentModalProps> = ({
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.15 }}
           className="bg-white dark:bg-slate-900 w-full max-w-2xl mx-4 rounded-2xl shadow-xl max-h-[90vh] flex flex-col"
-          onClick={e => e.stopPropagation()}
+          onClick={(e) => e.stopPropagation()}
         >
           <div className="flex items-center justify-between px-6 py-4 border-b border-slate-200 dark:border-slate-800">
-            <h2 className="text-lg font-semibold text-slate-900 dark:text-white">{t('addNewContent')}</h2>
-
+            <h2 className="text-lg font-semibold text-slate-900 dark:text-white">
+              {t('addNewContent')}
+            </h2>
             <button
               onClick={handleClose}
               className="text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-300"
@@ -299,19 +377,17 @@ const ContentModal: React.FC<ContentModalProps> = ({
               <X className="w-5 h-5" />
             </button>
           </div>
-
           <form onSubmit={handleSubmit} className="p-6 overflow-y-auto">
             <div className="space-y-5">
               <div>
                 <label className="text-sm text-slate-700 dark:text-slate-300 mb-2 block">
                   {t('platforms')}
                 </label>
-                <PlatformSelector 
+                <PlatformSelector
                   selectedPlatforms={selectedPlatforms}
                   onPlatformToggle={handlePlatformToggle}
                 />
               </div>
-
               <div>
                 <label className="text-sm text-slate-700 dark:text-slate-300 mb-2 block">
                   {t('title')}
@@ -325,7 +401,6 @@ const ContentModal: React.FC<ContentModalProps> = ({
                   required
                 />
               </div>
-
               <div>
                 <label className="text-sm text-slate-700 dark:text-slate-300 mb-2 block">
                   {t('urlOptional')}
@@ -344,7 +419,6 @@ const ContentModal: React.FC<ContentModalProps> = ({
                 )}
                 {metadata && <PreviewCard metadata={metadata} />}
               </div>
-
               <div className="grid grid-cols-2 gap-5">
                 <div>
                   <label className="text-sm text-slate-700 dark:text-slate-300 mb-2 block flex items-center gap-2">
@@ -369,7 +443,6 @@ const ContentModal: React.FC<ContentModalProps> = ({
                     <option value="TRENDING">{t('types.TRENDING')}</option>
                   </select>
                 </div>
-
                 <div>
                   <label className="text-sm text-slate-700 dark:text-slate-300 mb-2 block flex items-center gap-2">
                     <Layout className="w-4 h-4" />
@@ -388,7 +461,6 @@ const ContentModal: React.FC<ContentModalProps> = ({
                     ))}
                   </select>
                 </div>
-
                 <div>
                   <label className="text-sm text-slate-700 dark:text-slate-300 mb-2 block flex items-center gap-2">
                     <Calendar className="w-4 h-4" />
@@ -402,13 +474,12 @@ const ContentModal: React.FC<ContentModalProps> = ({
                     required
                   />
                 </div>
-
                 <div>
                   <label className="text-sm text-slate-700 dark:text-slate-300 mb-2 block">
                     {t('time')}
                   </label>
                   <input
-                    type="text"
+                    type="time"
                     value={timeFrame}
                     onChange={(e) => setTimeFrame(e.target.value)}
                     className="w-full px-4 py-2.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg text-sm focus:ring-2 focus:ring-slate-900 dark:focus:ring-slate-600 focus:border-transparent"
@@ -417,7 +488,6 @@ const ContentModal: React.FC<ContentModalProps> = ({
                   />
                 </div>
               </div>
-
               <div>
                 <label className="text-sm text-slate-700 dark:text-slate-300 mb-2 block flex items-center gap-2">
                   <Tag className="w-4 h-4" />
@@ -431,7 +501,6 @@ const ContentModal: React.FC<ContentModalProps> = ({
                   placeholder={t('tagsPlaceholder')}
                 />
               </div>
-
               <div>
                 <label className="text-sm text-slate-700 dark:text-slate-300 mb-2 block">
                   {t('description')}
@@ -445,7 +514,6 @@ const ContentModal: React.FC<ContentModalProps> = ({
                 />
               </div>
             </div>
-
             <div className="flex gap-3 justify-end mt-8">
               <button
                 type="button"
@@ -464,7 +532,6 @@ const ContentModal: React.FC<ContentModalProps> = ({
           </form>
         </motion.div>
       </motion.div>
-
       <ConfirmModal
         isOpen={isConfirmModalOpen}
         onClose={handleCancelClose}
@@ -473,6 +540,6 @@ const ContentModal: React.FC<ContentModalProps> = ({
       />
     </>
   );
-}
+};
 
 export default ContentModal;

@@ -1,4 +1,5 @@
 "use client";
+
 import Sidebar from '@/components/layout/Sidebar';
 import { useState, useEffect } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
@@ -11,6 +12,7 @@ import WelcomePopup from "@/components/onboarding/WelcomePopup";
 import { useAuth } from '@/context/AuthContext';
 import { supabase } from '@/utils/supabaseClient';
 import { useSubscription } from '@/hooks/useSubscription';
+import { Content } from '@/types/content'; // Eğer Content tipi varsa
 
 function DashboardLayoutInner({
   children,
@@ -39,21 +41,44 @@ function DashboardLayoutInner({
 }) {
   const { createNote } = useNotes();
 
+  // Düzenlenecek içeriği tutan state ekliyoruz.
+  const [selectedContent, setSelectedContent] = useState<Content | null>(null);
+
+  // Örneğin; kullanıcı içeriğe tıkladığında düzenleme modunu açmak için:
+  const handleEditContent = (content: Content) => {
+    setSelectedContent(content);
+    setIsContentModalOpen(true);
+  };
+
   return (
     <div className="flex h-screen overflow-hidden bg-stone-100 dark:bg-gray-900">
       <Sidebar
-        onNewContent={() => setIsContentModalOpen(true)}
+        onNewContent={() => {
+          // Yeni içerik eklerken seçili içeriği temizleyelim.
+          setSelectedContent(null);
+          setIsContentModalOpen(true);
+        }}
         onNewNote={() => setIsNoteModalOpen(true)}
         onCollapse={setIsSidebarCollapsed}
         onNewPlan={() => setIsPlanModalOpen(true)}
       />
       <main className="flex-1 overflow-auto transition-all duration-300 p-4">
         {children}
+        {/* Örnek: İçerik kartlarında düzenleme butonuna tıklandığında handleEditContent çağrılabilir.
+            Eğer içerik kartlarınız Dashboard içinde render ediliyorsa,
+            ilgili düzenleme butonunda aşağıdaki gibi çağırın:
+            
+            <button onClick={() => handleEditContent(content)}>Düzenle</button>
+        */}
       </main>
 
+      {/* ContentModal'u, düzenleme modunda açarken contentId prop'unu geçiyoruz.
+          Eğer selectedContent null ise bu mod yeni içerik ekleme modunu çalıştırır,
+          aksi halde selectedContent.id güncelleme (update) modunu tetikler. */}
       <ContentModal
         isOpen={isContentModalOpen}
         onClose={() => setIsContentModalOpen(false)}
+        contentId={selectedContent ? selectedContent.id : undefined}
       />
 
       <NoteModal
@@ -84,7 +109,6 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   const router = useRouter();
   const pathname = usePathname();
 
-  // Bu state'lerin senin modal vs. mantığın için lazım
   const [isContentModalOpen, setIsContentModalOpen] = useState(false);
   const [isNoteModalOpen, setIsNoteModalOpen] = useState(false);
   const [isPlanModalOpen, setIsPlanModalOpen] = useState(false);
@@ -92,7 +116,6 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   const [isChecking, setIsChecking] = useState(true);
   const [showWelcome, setShowWelcome] = useState(false);
 
-  // SUBSCRIPTION KONTROLÜ
   const { loading, isExpired } = useSubscription();
 
   useEffect(() => {
@@ -104,12 +127,10 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           window.location.href = '/auth/login';
           return;
         }
-        // Welcome popup mantığı
         const hasSeen = session.user.user_metadata?.has_seen_welcome;
         if (hasSeen === undefined || hasSeen === false) {
           setShowWelcome(true);
         }
-        
         setIsChecking(false);
       } catch (error) {
         console.error('Session check error:', error);
@@ -120,7 +141,6 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     checkSession();
   }, []);
 
-  // EĞER SUBSCRIPTION LOADING BİTTİ ve isExpired => /paywall
   useEffect(() => {
     if (!loading && isExpired) {
       router.replace('/paywall');

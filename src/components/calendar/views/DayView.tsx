@@ -47,13 +47,14 @@ const DayView: React.FC<DayViewProps> = ({ selectedDate }) => {
 
   // Günün içeriklerini filtrele
   const getDayContents = (hour: number) => {
-    if (hour !== 0) return [];
-
-    return contents.filter(content => {
-      const contentDate = new Date(content.date);
-      return isSameDay(contentDate, selectedDate);
-    });
-  };
+  return contents.filter(content => {
+    const contentDate = new Date(content.date);
+    return (
+      isSameDay(contentDate, selectedDate) &&
+      contentDate.getHours() === hour
+    );
+  });
+};
 
   // Bugünün tarihini kontrol et
   const isToday = () => {

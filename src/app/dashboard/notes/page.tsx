@@ -161,7 +161,7 @@ export default function NotesPage() {
   }
 
   return (
-    <div className="h-full space-y-6">
+    <div className="h-full">
       <NotesHeader
         notes={notes}
         setNotes={fetchNotes}
@@ -186,11 +186,11 @@ export default function NotesPage() {
               }}
               className="relative z-10 flex flex-col items-center justify-center w-full h-64 bg-white dark:bg-slate-800/50 backdrop-blur-sm rounded-xl p-6 hover:bg-gray-50 dark:hover:bg-slate-800/70 transition-all shadow-sm hover:shadow-md"
             >
-              <FileText className="w-12 h-12 text-black mb-4" strokeWidth={1.5} />
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2">
+              <FileText className="w-10 h-12 text-black mb-4" strokeWidth={1.5} />
+              <h3 className="text-base font-semibold text-gray-900 dark:text-gray-100 mb-2">
                 {t('emptyState.title')}
               </h3>
-              <p className="text-sm text-gray-500 dark:text-gray-400 text-center">
+              <p className="text-xs text-gray-500 dark:text-gray-400 text-center">
                 {t('emptyState.subtitle')}
               </p>
             </button>
