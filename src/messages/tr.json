@@ -272,6 +272,10 @@
       }
     },
     "notes": {
+      "emptyState": {
+      "title": "İlk notunu oluştur",
+      "subtitle": "Başlamak için tıkla."
+    },
       "multiSelect": "Çoklu Seç",
       "cancelSelection": "Seçimi İptal Et",
       "deleteButton": "Sil",

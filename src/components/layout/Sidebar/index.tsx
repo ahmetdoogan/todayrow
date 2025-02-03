@@ -428,7 +428,7 @@ const Sidebar: React.FC<SidebarProps> = ({
     <SubscriptionBadge />
     <Button
       variant="default"
-      className="w-full mt-2"
+      className="w-full mt-2 rounded-xl"
       onClick={() => setIsPricingOpen(true)}
     >
       {sidebarT('trial.upgrade')}

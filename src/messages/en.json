@@ -272,6 +272,10 @@
       }
     },
     "notes": {
+      "emptyState": {
+      "title": "Create your first note",
+      "subtitle": "Click to start"
+    },
       "multiSelect": "Multi Select",
       "cancelSelection": "Cancel Selection",
       "deleteButton": "Delete",
@@ -504,7 +508,7 @@
       "usage": "usage"
     },
     "content": {
-      "emptyState": "Henüz hiç içeriğiniz yok",
+      "emptyState": "You don't have any content yet",
       "status": {
         "completed": "Completed",
         "active": "Active"

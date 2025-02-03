@@ -1,7 +1,9 @@
 "use client";
 import { useState, useMemo, useEffect } from 'react';
+import { useTranslations } from 'next-intl';
 import { useSearchParams } from 'next/navigation';
-import type { Note } from '@/types/notes'; // Değişiklik burada
+import type { Note } from '@/types/notes';
+import { PlusCircle, FileText } from 'lucide-react';
 import NotesList from '@/components/notes/NotesList';
 import NoteModal from '@/components/notes/NoteModal';
 import NoteDetailModal from '@/components/notes/NoteDetailModal';
@@ -47,6 +49,7 @@ export default function NotesPage() {
 
   const { theme, toggleTheme } = useTheme();
   const isDarkMode = theme === 'dark';
+  const t = useTranslations('common.notes');
 
   useEffect(() => {
     if (!searchParams) return;
@@ -172,24 +175,47 @@ export default function NotesPage() {
 
       <NotesFilter onFilterChange={setFilters} />
 
-      <NotesList
-        notes={filteredNotes}
-        onEdit={note => {
-          setSelectedNote(note);
-          setIsEditingNote(true);
-          setViewingNote(null);
-        }}
-        onDelete={confirmDelete}
-        onTogglePin={handleTogglePin}
-        onNoteClick={note => {
-          setViewingNote(note);
-          setIsEditingNote(false);
-        }}
-        isSelectionMode={isSelectionMode}
-        selectedNotes={selectedNotes}
-        onNoteSelect={handleNoteSelect}
-        viewType={view}
-      />
+      {filteredNotes.length === 0 ? (
+        <div className="flex flex-col items-center justify-center min-h-[60vh] p-4">
+          <div className="relative group w-full max-w-md">
+            <div className="absolute inset-0 border-2 border-dashed border-gray-300 dark:border-gray-700 rounded-xl transition-all group-hover:border-indigo-500" />
+            <button
+              onClick={() => {
+                setIsModalOpen(true);
+                setIsEditingNote(true);
+              }}
+              className="relative z-10 flex flex-col items-center justify-center w-full h-64 bg-white dark:bg-slate-800/50 backdrop-blur-sm rounded-xl p-6 hover:bg-gray-50 dark:hover:bg-slate-800/70 transition-all shadow-sm hover:shadow-md"
+            >
+              <FileText className="w-12 h-12 text-black mb-4" strokeWidth={1.5} />
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2">
+                {t('emptyState.title')}
+              </h3>
+              <p className="text-sm text-gray-500 dark:text-gray-400 text-center">
+                {t('emptyState.subtitle')}
+              </p>
+            </button>
+          </div>
+        </div>
+      ) : (
+        <NotesList
+          notes={filteredNotes}
+          onEdit={note => {
+            setSelectedNote(note);
+            setIsEditingNote(true);
+            setViewingNote(null);
+          }}
+          onDelete={confirmDelete}
+          onTogglePin={handleTogglePin}
+          onNoteClick={note => {
+            setViewingNote(note);
+            setIsEditingNote(false);
+          }}
+          isSelectionMode={isSelectionMode}
+          selectedNotes={selectedNotes}
+          onNoteSelect={handleNoteSelect}
+          viewType={view}
+        />
+      )}
 
       <NoteDetailModal 
         note={viewingNote!}
