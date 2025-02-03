@@ -7,7 +7,7 @@ import { usePlanner } from '@/context/PlannerContext';
 import type { Plan, QuickPlan } from '@/types/planner';
 import { ItemTypes } from '@/utils/constants';
 import { useAuth } from '@/context/AuthContext';
-import { Check, Edit2, Trash2, Plus } from 'lucide-react';
+import { Check, Edit2, Trash2, Plus, CalendarCheck } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 
 interface DraggablePlanCardProps {
@@ -467,54 +467,88 @@ const PlanList = () => {
   };
 
   if (plans.length === 0) {
-    return (
-      <div
-        id="plan-list-container"
-        ref={canEdit ? dropRef : null}
-        className="relative flex flex-col items-center justify-center h-[calc(100vh-200px)] min-h-[400px]"
-      >
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          className={`
-            absolute inset-0 flex items-center justify-center
-            ${isOver
-              ? 'bg-blue-50/50 dark:bg-blue-900/20 border-2 border-dashed border-blue-200 dark:border-blue-800 rounded-2xl'
-              : ''
-            }
-          `}
-        >
-          {selectedTime && (
-            <div className="bg-white/90 dark:bg-gray-800/90 px-4 py-2 rounded-lg shadow-lg text-center">
-              <p className="text-black dark:text-white font-medium">
-                {t('planner.dragAndDrop.dropHere')}
-              </p>
-              <p className="mt-1 text-black dark:text-white text-sm">
-                {t('planner.dragAndDrop.timeLabel', { time: selectedTime })}
-              </p>
-            </div>
-          )}
-        </motion.div>
+  return (
+    <div
+      id="plan-list-container"
+      ref={canEdit ? dropRef : null}
+      className="relative flex flex-col items-center justify-center h-[calc(100vh-200px)] min-h-[400px]"
+    >
+      <motion.div
+  initial={{ opacity: 0 }}
+  animate={{ opacity: 1 }}
+  exit={{ opacity: 0 }}
+  className={`
+    absolute inset-0 flex items-center justify-center
+    ${isOver
+      ? 'bg-blue-50/50 dark:bg-blue-900/20 border-2 border-dashed border-blue-200 dark:border-blue-800 rounded-2xl'
+      : ''
+    }
+    pointer-events-none // 👈 Bu satırı ekleyin
+  `}
+>
+  {selectedTime && (
+    <div className="bg-white/90 dark:bg-gray-800/90 px-4 py-2 rounded-lg shadow-lg text-center pointer-events-auto"> 
+      {/* 👆 İçerikte pointer-events-auto ekleyin */}
+      <p className="text-black dark:text-white font-medium">
+        {t('planner.dragAndDrop.dropHere')}
+      </p>
+      <p className="mt-1 text-black dark:text-white text-sm">
+        {t('planner.dragAndDrop.timeLabel', { time: selectedTime })}
+      </p>
+    </div>
+  )}
+</motion.div>
 
-        {isYesterday ? (
-          <p className="text-gray-500 dark:text-gray-400">
-            {t('planner.emptyStates.yesterdayEmpty')}
-          </p>
-        ) : (
-          (isToday || isTomorrow) && (
-            <div className="text-center">
-              <p className="text-gray-500 dark:text-gray-400">
-                {isToday
-                  ? t('planner.emptyStates.todayEmpty')
-                  : t('planner.emptyStates.tomorrowEmpty')}
-              </p>
-            </div>
-          )
-        )}
-      </div>
-    );
-  }
+      {isYesterday ? (
+        <p className="text-gray-500 dark:text-gray-400">
+          {t('planner.emptyStates.yesterdayEmpty')}
+        </p>
+      ) : (
+        (isToday || isTomorrow) && (
+          <div className="text-center">
+  <p className="text-gray-500 dark:text-gray-400">
+    {isToday
+      ? t('planner.emptyStates.todayEmpty')
+      : t('planner.emptyStates.tomorrowEmpty')}
+  </p>
+  <button
+              onClick={() => {
+                const now = new Date();
+                const planStartTime = new Date(selectedDate);
+                planStartTime.setHours(now.getHours(), now.getMinutes(), 0, 0);
+                const planEndTime = new Date(planStartTime);
+                planEndTime.setHours(planEndTime.getHours() + 1);
+
+                const newPlan: Plan = {
+                  id: 0,
+                  title: '',
+                  details: '',
+                  start_time: planStartTime.toISOString(),
+                  end_time: planEndTime.toISOString(),
+                  is_completed: false,
+                  plan_type: 'regular',
+                  order: 0,
+                  user_id: user?.id || 0,
+                  color: '#000000',
+                  created_at: new Date().toISOString(),
+                  updated_at: new Date().toISOString(),
+                };
+
+                setSelectedPlan(newPlan);
+                setIsEditingPlan(false);
+                setIsModalOpen(true);
+              }}
+              className="mt-4 mx-auto flex items-center justify-center gap-2 px-4 py-2 bg-zinc-900 hover:bg-black/70 text-white dark:bg-zinc-700 dark:hover:bg-zinc-600 rounded-xl transition-all duration-200 font-medium text-sm"
+  >
+    <CalendarCheck className="w-4 h-4" />
+    <span>{t('sidebar.createPlan')}</span>
+  </button>
+</div>
+        )
+      )}
+    </div>
+  );
+}
 
   return (
     <div

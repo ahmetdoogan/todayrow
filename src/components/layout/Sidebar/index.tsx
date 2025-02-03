@@ -286,8 +286,13 @@ const Sidebar: React.FC<SidebarProps> = ({
 
           <div>
             <div className="flex-shrink-0 h-12 flex items-center px-2">
-              <Logo collapsed={isCollapsed} className="h-6 w-auto" />
-            </div>
+  <div 
+    onClick={() => router.push('/dashboard')}
+    className="cursor-pointer"
+  >
+    <Logo collapsed={isCollapsed} className="h-6 w-auto" />
+  </div>
+</div>
 
             <div className="space-y-2 mt-2">
               <button

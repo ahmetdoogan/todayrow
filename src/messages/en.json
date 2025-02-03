@@ -384,7 +384,7 @@
       "buttons": {
         "edit": "Edit",
         "done": "Done",
-        "add": "Add New Plan"
+        "add": "Add New Quick Plan"
       },
       "deleteModal": {
         "title": "Delete Plan",
