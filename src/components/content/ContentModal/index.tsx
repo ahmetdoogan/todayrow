@@ -65,7 +65,7 @@ const ContentModal: React.FC<ContentModalProps> = ({
   onClose,
   contentId,
 }) => {
-  const { handleAddContent, updateContent, contents } = useContent();
+  const { handleAddContent, contents } = useContent();
   const { user } = useAuth();
   const [title, setTitle] = useState("");
   const [details, setDetails] = useState("");
@@ -120,7 +120,17 @@ useEffect(() => {
       setSelectedPlatforms(content.platforms || ["LINKEDIN"]);
       setUrl(content.url || "");
       setNormalizedUrl(content.url || "");
-      setMetadata(content.preview_data || null);
+setMetadata(
+  content.preview_data
+    ? {
+        title: content.preview_data.title ?? "",
+        description: content.preview_data.description ?? "",
+        image: content.preview_data.image ?? "",
+        site_name: content.preview_data.site_name ?? "",
+      }
+    : null
+);
+
     }
   }
 }, [isOpen, contentId, contents]);
@@ -274,26 +284,23 @@ useEffect(() => {
   };
 
   if (contentId) {
-    // UPDATE işlemi: contentId varsa güncelleme yapıyoruz.
-    const { data, error } = await supabase
-      .from("Content")
-      .update(contentData)
-      .eq("id", contentId)
-      .select();
+  // UPDATE işlemi
+  const { data, error } = await supabase
+    .from("Content")
+    .update(contentData)
+    .eq("id", contentId)
+    .select();
 
-    if (error || !data || data.length === 0) {
-      console.error("Güncelleme hatası:", error);
-      toast.error(t('errors.updateError'));
-      return;
-    }
+  if (error || !data || data.length === 0) {
+    console.error("Güncelleme hatası:", error);
+    toast.error(t('errors.updateError'));
+    return;
+  }
 
-    if (updateContent) {
-      updateContent(data[0]);
-    } else {
-      handleAddContent(data[0]);
-    }
-    toast.success(t('notifications.updateSuccess'));
-  } else {
+  // updateContent fonksiyonu kullanılmadığı için sadece handleAddContent ile state güncellemesi yapalım
+  handleAddContent(data[0]);
+  toast.success(t('notifications.updateSuccess'));
+} else {
     // INSERT işlemi: Yeni içerik ekleniyor.
     const insertData = {
       ...contentData,
