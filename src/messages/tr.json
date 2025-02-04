@@ -315,7 +315,8 @@
         "undoSuccess": "Action undone",
         "createError": "Not oluşturulurken bir hata oluştu.",
         "updateSuccess": "Not başarıyla güncellendi!",
-        "unpinSuccess": "Not sabitlemesi kaldırıldı"
+        "unpinSuccess": "Not sabitlemesi kaldırıldı",
+        "folderColorUpdateSuccess": "Klasör rengi güncellendi"
       },
       "preview": {
         "button": "Önizle",

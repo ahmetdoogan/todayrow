@@ -9,7 +9,8 @@ import {
 } from '@/services/notes';
 import { toast } from 'react-toastify';
 import { useTranslations } from 'next-intl';
-import type { Note } from '@/types/notes'; // Note tipini buradan import ediyoruz
+import type { Note } from '@/types/notes';
+import { supabase } from '@/utils/supabaseClient';
 
 interface NotesContextType {
   notes: Note[];
@@ -24,7 +25,9 @@ interface NotesContextType {
   toggleNotePin: (id: number, isPinned: boolean) => Promise<void>;
   deleteNote: (id: number) => Promise<void>;
   updateNote: (id: number, note: Partial<Note>) => Promise<Note>;
-  createNote: (note: Partial<Note>) => Promise<Note>; // Partial<Note> olarak güncellendi
+  createNote: (note: Partial<Note>) => Promise<Note>;
+  updateFolderColor: (folderPath: string, color: string) => Promise<void>;
+  getFolderColor: (folderPath: string) => string | undefined;
 }
 
 const NotesContext = createContext<NotesContextType | undefined>(undefined);
@@ -35,6 +38,7 @@ export function NotesProvider({ children }: { children: React.ReactNode }) {
   const [selectedNote, setSelectedNote] = useState<Note | null>(null);
   const [isEditingNote, setIsEditingNote] = useState(false);
   const [viewingNote, setViewingNote] = useState<Note | null>(null);
+  const [folderColors, setFolderColors] = useState<Record<string, string>>({});
 
   const t = useTranslations('common.notes.notifications');
 
@@ -50,9 +54,38 @@ export function NotesProvider({ children }: { children: React.ReactNode }) {
     }
   }, [t]);
 
+  // Profilde tanımlı klasör ayarlarını (renkleri) çekmek için fonksiyon
+  const fetchFolderSettings = useCallback(async () => {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        console.error('User not found');
+        return;
+      }
+
+      const { data: profile, error } = await supabase
+        .from('profiles')
+        .select('folder_settings')
+        .eq('id', user.id)
+        .single();
+
+      if (error) {
+        console.error('Error fetching folder settings:', error);
+        return;
+      }
+
+      if (profile?.folder_settings?.folder_colors) {
+        setFolderColors(profile.folder_settings.folder_colors);
+      }
+    } catch (error) {
+      console.error('Error loading folder settings:', error);
+    }
+  }, []);
+
   useEffect(() => {
     fetchNotes();
-  }, [fetchNotes]);
+    fetchFolderSettings();
+  }, [fetchNotes, fetchFolderSettings]);
 
   const handleTogglePin = async (id: number, isPinned: boolean) => {
     try {
@@ -110,6 +143,56 @@ export function NotesProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
+  const updateFolderColor = async (folderPath: string, color: string) => {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) throw new Error('User not found');
+
+      const { data: profile, error } = await supabase
+        .from('profiles')
+        .select('folder_settings')
+        .eq('id', user.id)
+        .single();
+
+      if (error) {
+        console.error('Error fetching profile for folder color update:', error);
+        return;
+      }
+
+      const currentSettings = profile?.folder_settings || { folder_colors: {} };
+      const newColors = {
+        ...currentSettings.folder_colors,
+        [folderPath]: color
+      };
+
+      const { error: updateError } = await supabase
+        .from('profiles')
+        .update({
+          folder_settings: {
+            ...currentSettings,
+            folder_colors: newColors
+          }
+        })
+        .eq('id', user.id);
+
+      if (updateError) {
+        console.error('Error updating folder color:', updateError);
+        toast.error(t('folderColorUpdateError'));
+        return;
+      }
+
+      setFolderColors(newColors);
+      toast.success(t('folderColorUpdateSuccess'));
+    } catch (error) {
+      console.error('Error updating folder color:', error);
+      toast.error(t('folderColorUpdateError'));
+    }
+  };
+
+  const getFolderColor = (folderPath: string) => {
+    return folderColors[folderPath];
+  };
+
   return (
     <NotesContext.Provider
       value={{
@@ -125,7 +208,9 @@ export function NotesProvider({ children }: { children: React.ReactNode }) {
         toggleNotePin: handleTogglePin,
         deleteNote: handleDelete,
         updateNote: handleUpdate,
-        createNote: handleCreate
+        createNote: handleCreate,
+        updateFolderColor,
+        getFolderColor
       }}
     >
       {children}

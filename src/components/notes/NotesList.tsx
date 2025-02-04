@@ -1,10 +1,11 @@
 "use client";
 import { useDrop } from 'react-dnd';
-import type { Note } from '@/types/notes'; // Değişiklik burada
+import type { Note } from '@/types/notes';
 import NoteCard from './NoteCard';
 import { ItemTypes } from '@/utils/constants';
 import { motion } from 'framer-motion';
 import { useTranslations } from 'next-intl';
+import { useNotes } from '@/context/NotesContext';
 
 interface NotesListProps {
   notes: Note[];
@@ -96,7 +97,8 @@ export default function NotesList({
   onNoteSelect,
   viewType = 'grid'
 }: NotesListProps) {
-  const t = useTranslations('common.notes'); // Dil çevirileri için hook
+  const t = useTranslations('common.notes');
+  const { getFolderColor } = useNotes();
 
   const pinnedNotes = notes.filter(note => note.is_pinned);
   const unpinnedNotes = notes.filter(note => !note.is_pinned);
@@ -117,6 +119,7 @@ export default function NotesList({
       onSelect={onNoteSelect}
       index={index}
       viewType={viewType}
+      folderColor={note.folder_path ? getFolderColor(note.folder_path) : undefined}
     />
   );
 

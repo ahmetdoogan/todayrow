@@ -2,6 +2,7 @@
 
 import { getNotes } from './notes';
 import { fuzzySearchInText } from '@/utils/fuzzySearch';
+import { supabase } from '@/utils/supabaseClient';
 
 export interface TagOrFolder {
   name: string;
@@ -89,4 +90,68 @@ export async function searchTagsAndFolders(
     console.error('Error searching:', error);
     return [];
   }
+}
+
+// Klasör silme fonksiyonu
+export async function deleteFolder(folderPath: string) {
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) throw new Error('User not found');
+
+  // Önce klasöre ait notları güncelle
+  const { error: updateError } = await supabase
+    .from('Notes')
+    .update({ folder_path: '' })
+    .eq('user_id', user.id)
+    .eq('folder_path', folderPath);
+
+  if (updateError) throw updateError;
+
+  // Sonra profiles tablosundan klasör rengini sil
+  const { data: profile } = await supabase
+    .from('profiles')
+    .select('folder_settings')
+    .eq('id', user.id)
+    .single();
+
+  if (profile?.folder_settings?.folder_colors) {
+    const newSettings = { ...profile.folder_settings };
+    delete newSettings.folder_colors[folderPath];
+
+    const { error: settingsError } = await supabase
+      .from('profiles')
+      .update({ folder_settings: newSettings })
+      .eq('id', user.id);
+
+    if (settingsError) throw settingsError;
+  }
+
+  return { success: true };
+}
+
+// Etiket silme fonksiyonu
+export async function deleteTag(tagName: string) {
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) throw new Error('User not found');
+
+  // Notlardan bu etiketi kaldır
+  const { data: notes } = await supabase
+    .from('Notes')
+    .select('id, tags')
+    .eq('user_id', user.id);
+
+  for (const note of notes || []) {
+    if (!note.tags) continue;
+    
+    const tags = note.tags.split(',').map(t => t.trim());
+    const newTags = tags.filter(t => t !== tagName).join(',');
+
+    const { error: updateError } = await supabase
+      .from('Notes')
+      .update({ tags: newTags })
+      .eq('id', note.id);
+
+    if (updateError) throw updateError;
+  }
+
+  return { success: true };
 }

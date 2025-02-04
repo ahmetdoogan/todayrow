@@ -315,7 +315,8 @@
         "undoSuccess": "Action undone",
         "createError": "An error occurred while creating the note.",
         "updateSuccess": "Note updated successfully!",
-        "unpinSuccess": "Note unpinned"
+        "unpinSuccess": "Note unpinned",
+        "folderColorUpdateSuccess": "Folder color updated"
       },
       "preview": {
         "button": "Preview",
@@ -894,7 +895,8 @@
     "folderPlaceholder": "Folder",
     "tagsPlaceholder": "Tags",
     "clearFilters": "Clear Filters",
-    "selectedTags": "{count} tags"
+    "selectedTags": "{count} tags",
+    "deleteFilter": "Delete Filter"
   },
   "noteDetailModal": {
     "contentTab": "Content",
