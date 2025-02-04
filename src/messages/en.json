@@ -894,10 +894,20 @@
   "notesFilter": {
     "folderPlaceholder": "Folder",
     "tagsPlaceholder": "Tags",
-    "clearFilters": "Clear Filters",
+    "clearFilters": "Clear filters",
     "selectedTags": "{count} tags",
-    "deleteFilter": "Delete Filter"
-  },
+
+    "deleteFolder": "Delete folder",
+    "confirmDeleteFolder": "Are you sure you want to delete the folder?",
+    "folderDeleted": "The folder was successfully deleted!",
+    "folderDeleteError": "An error occurred while deleting the folder.",
+
+    "deleteTag": "Delete tag",
+    "confirmDeleteTag": "Are you sure you want to delete the tag?",
+    "tagDeleted": "The tag was successfully deleted!",
+    "tagDeleteError": "An error occurred while deleting the tag.",
+    "setFolderColor": "Set folder color"
+    },
   "noteDetailModal": {
     "contentTab": "Content",
     "backlinksTab": "Backlinks",

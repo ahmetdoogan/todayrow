@@ -80,14 +80,14 @@ export function NotesFilter({ onFilterChange }: NotesFilterProps) {
 
   const handleDeleteFolder = async (folderName: string, e: React.MouseEvent) => {
     e.stopPropagation();
-    if (confirm(t('notes.confirmDeleteFolder'))) {
+    if (confirm(t('confirmDeleteFolder'))) {
       try {
         await deleteFolder(folderName);
         await loadFilters();
         if (selectedFolder === folderName) {
           setSelectedFolder(undefined);
         }
-        toast.success(t('notes.folderDeleted'));
+        toast.success(t('folderDeleted'));
       } catch (error) {
         console.error('Error deleting folder:', error);
         toast.error(t('notes.folderDeleteError'));
@@ -97,15 +97,15 @@ export function NotesFilter({ onFilterChange }: NotesFilterProps) {
 
   const handleDeleteTag = async (tagName: string, e: React.MouseEvent) => {
     e.stopPropagation();
-    if (confirm(t('notes.confirmDeleteTag'))) {
+    if (confirm(t('confirmDeleteTag'))) {
       try {
         await deleteTag(tagName);
         await loadFilters();
         setSelectedTags(prev => prev.filter(t => t !== tagName));
-        toast.success(t('notes.tagDeleted'));
+        toast.success(t('tagDeleted'));
       } catch (error) {
         console.error('Error deleting tag:', error);
-        toast.error(t('notes.tagDeleteError'));
+        toast.error(t('tagDeleteError'));
       }
     }
   };
@@ -184,7 +184,7 @@ export function NotesFilter({ onFilterChange }: NotesFilterProps) {
                             e.stopPropagation();
                             updateFolderColor(folder.name, color);
                           }}
-                          title={t('notes.setFolderColor')}
+                          title={t('setFolderColor')}
                         />
                       ))}
                     </div>

@@ -895,7 +895,19 @@
     "folderPlaceholder": "Klasör",
     "tagsPlaceholder": "Etiketler",
     "clearFilters": "Filtreleri temizle",
-    "selectedTags": "{count} etiket"
+    "selectedTags": "{count} etiket",
+
+    "deleteFolder": "Klasörü sil",
+    "confirmDeleteFolder": "Klasörü silmek istediğinize emin misiniz?",
+    "folderDeleted": "Klasör başarıyla silindi!",
+    "folderDeleteError": "Klasör silinirken bir hata oluştu.",
+
+    "deleteTag": "Etiketi sil",
+    "confirmDeleteTag": "Etiketi silmek istediğinize emin misiniz?",
+    "tagDeleted": "Etiket başarıyla silindi!",
+    "tagDeleteError": "Etiket silinirken bir hata oluştu.",
+
+    "setFolderColor": "Klasör rengini ayarla"
   },
   "noteDetailModal": {
     "contentTab": "İçerik",

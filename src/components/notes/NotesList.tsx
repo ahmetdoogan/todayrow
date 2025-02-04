@@ -133,7 +133,7 @@ export default function NotesList({
       {/* Pinlenmiş Notlar */}
       {pinnedNotes.length > 0 && (
         <div className="space-y-4">
-          <h2 className="text-base font-semibold text-gray-900 dark:text-white pl-1">
+          <h2 className="text-base mt-8 font-semibold text-gray-900 dark:text-white pl-1">
             {t('pinnedNotes')}
           </h2>
           <DropZone isPinned={true} onTogglePin={onTogglePin} isSelectionMode={isSelectionMode}>
