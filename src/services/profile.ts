@@ -1,5 +1,6 @@
 import { SupabaseClient } from '@supabase/supabase-js';
 import { ProfileMetadata, ProfileFormData } from '@/types/profile';
+import { supabase } from '@/utils/supabaseClient';
 
 export async function updateUserMetadata(
   supabase: SupabaseClient,
@@ -20,6 +21,21 @@ export async function updateUserMetadata(
     return { data, error: null };
   } catch (error) {
     console.error('Error updating user metadata:', error);
+    return { data: null, error };
+  }
+}
+
+export async function updateMonthlyTarget(userId: string, target: number) {
+  try {
+    const { data, error } = await supabase
+      .from('profiles')
+      .update({ monthly_target: target })
+      .eq('id', userId);
+
+    if (error) throw error;
+    return { data, error: null };
+  } catch (error) {
+    console.error('Error updating monthly target:', error);
     return { data: null, error };
   }
 }

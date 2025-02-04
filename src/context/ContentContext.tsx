@@ -6,6 +6,7 @@ import { contentService } from '@/services/contentService';
 import { Content, ContentUpdateData } from '@/types/content';
 import { useAuth } from './AuthContext';
 import { useTranslations } from 'next-intl';
+import { supabase } from '@/utils/supabaseClient';
 
 interface ContentContextType {
   contents: Content[];
@@ -19,6 +20,7 @@ interface ContentContextType {
   isSelectionMode: boolean;
   filteredContents: Content[];
   modalStack: Content[];
+  monthlyTarget: number;
   setContents: React.Dispatch<React.SetStateAction<Content[]>>;
   setSelectedContent: React.Dispatch<React.SetStateAction<Content | null>>;
   setSelectedDate: React.Dispatch<React.SetStateAction<Date | null>>;
@@ -47,6 +49,7 @@ interface ContentContextType {
     monthlyAverage: number;
     completionRate: number;
   };
+  updateMonthlyTarget: (target: number) => Promise<void>;
 }
 
 const ContentContext = createContext<ContentContextType | undefined>(undefined);
@@ -65,6 +68,29 @@ export function ContentProvider({ children }: { children: React.ReactNode }) {
   const [selectedItems, setSelectedItems] = useState<number[]>([]);
   const [isSelectionMode, setIsSelectionMode] = useState(false);
   const [modalStack, setModalStack] = useState<Content[]>([]);
+  const [monthlyTarget, setMonthlyTarget] = useState(10);
+
+  useEffect(() => {
+    const fetchProfile = async () => {
+      if (!user) return;
+      try {
+        const { data, error } = await supabase
+          .from('profiles')
+          .select('monthly_target')
+          .eq('id', user.id)
+          .single();
+        
+        if (error) throw error;
+        if (data) {
+          setMonthlyTarget(data.monthly_target);
+        }
+      } catch (error) {
+        console.error('Error fetching monthly target:', error);
+      }
+    };
+
+    fetchProfile();
+  }, [user]);
 
   const findContentByTitle = (title: string) => {
     return contents.find(content => 
@@ -130,7 +156,7 @@ export function ContentProvider({ children }: { children: React.ReactNode }) {
             return isNaN(date.getTime()) ? null :
               `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}`;
           })
-          .filter((month): month is string => month !== null) // null değerleri filtrele
+          .filter((month): month is string => month !== null)
       )
     );
     setMonths(uniqueMonths);
@@ -148,6 +174,23 @@ export function ContentProvider({ children }: { children: React.ReactNode }) {
     } catch (error) {
       console.error("Silme işlemi sırasında bir hata oluştu:", error);
       toast.error(t('content.notifications.deleteError'));
+    }
+  };
+
+  const updateMonthlyTarget = async (target: number) => {
+    if (!user) return;
+    try {
+      const { error } = await supabase
+        .from('profiles')
+        .update({ monthly_target: target })
+        .eq('id', user.id);
+
+      if (error) throw error;
+      setMonthlyTarget(target);
+      toast.success(t('profile.notifications.targetUpdateSuccess'));
+    } catch (error) {
+      console.error('Error updating monthly target:', error);
+      toast.error(t('profile.notifications.targetUpdateError'));
     }
   };
 
@@ -274,7 +317,7 @@ export function ContentProvider({ children }: { children: React.ReactNode }) {
     });
 
     return {
-      target: 10, // Hedef sayı - bu dinamik olabilir
+      target: monthlyTarget,
       completed: thisMonthContents.filter(content => content.is_completed).length
     };
   };
@@ -304,7 +347,6 @@ export function ContentProvider({ children }: { children: React.ReactNode }) {
       return contentDate >= nextWeekStart && contentDate < nextWeekEnd;
     }).length;
 
-    // Boş günleri hesapla
     const weekDays = ['Pzt', 'Sal', 'Çar', 'Per', 'Cum'];
     const contentDays = contents
       .filter(content => {
@@ -319,7 +361,6 @@ export function ContentProvider({ children }: { children: React.ReactNode }) {
   };
 
   const getContentStats = () => {
-    // En üretken gün
     const dayCount = contents.reduce((acc, content) => {
       const day = new Date(content.date).getDay();
       acc[day] = (acc[day] || 0) + 1;
@@ -331,7 +372,6 @@ export function ContentProvider({ children }: { children: React.ReactNode }) {
 
     const days = ['Pazar', 'Pazartesi', 'Salı', 'Çarşamba', 'Perşembe', 'Cuma', 'Cumartesi'];
     
-    // Tercih edilen format
     const formatCount = contents.reduce((acc, content) => {
       acc[content.format] = (acc[content.format] || 0) + 1;
       return acc;
@@ -340,7 +380,6 @@ export function ContentProvider({ children }: { children: React.ReactNode }) {
     const preferredFormat = Object.entries(formatCount)
       .sort(([, a], [, b]) => b - a)[0] || ['', 0];
 
-    // Aylık ortalama
     const months = contents.reduce((acc, content) => {
       const month = content.date.substring(0, 7);
       acc[month] = (acc[month] || 0) + 1;
@@ -349,7 +388,6 @@ export function ContentProvider({ children }: { children: React.ReactNode }) {
 
     const monthlyAverage = Object.values(months).reduce((a, b) => a + b, 0) / Object.keys(months).length;
 
-    // Tamamlama oranı
     const completionRate = (contents.filter(c => c.is_completed).length / contents.length) * 100;
 
     return {
@@ -372,6 +410,7 @@ export function ContentProvider({ children }: { children: React.ReactNode }) {
     isSelectionMode,
     filteredContents,
     modalStack,
+    monthlyTarget,
     setContents,
     setSelectedContent,
     setSelectedDate,
@@ -394,7 +433,8 @@ export function ContentProvider({ children }: { children: React.ReactNode }) {
     getMonthlyProgress,
     getUpcomingDeadlines,
     getWeeklyPlans,
-    getContentStats
+    getContentStats,
+    updateMonthlyTarget
   };
 
   return <ContentContext.Provider value={value}>{children}</ContentContext.Provider>;

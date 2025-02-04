@@ -1,5 +1,6 @@
-// src/components/ui/dialog.tsx
+"use client";
 import * as React from "react";
+import { motion } from "framer-motion";
 
 interface DialogProps {
   open: boolean;
@@ -11,18 +12,48 @@ export const Dialog: React.FC<DialogProps> = ({ open, onOpenChange, children }) 
   if (!open) return null;
 
   return (
-    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-[1000]">
-      <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg max-w-sm w-full">
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.15 }}
+      className="fixed inset-0 bg-black/20 dark:bg-black/40 backdrop-blur-sm z-50 flex items-center justify-center"
+      onClick={(e) => {
+        if (e.target === e.currentTarget) {
+          onOpenChange(false);
+        }
+      }}
+    >
+      <motion.div
+        initial={{ opacity: 0, scale: 0.98 }}
+        animate={{ opacity: 1, scale: 1 }}
+        exit={{ opacity: 0, scale: 0.98 }}
+        transition={{ duration: 0.15 }}
+        className="bg-white dark:bg-slate-900 w-full max-w-sm mx-4 rounded-2xl shadow-xl relative"
+        onClick={(e) => e.stopPropagation()}
+      >
         {children}
-      </div>
-    </div>
+      </motion.div>
+    </motion.div>
   );
 };
 
-export const DialogContent: React.FC<{ children: React.ReactNode }> = ({ children }) => (
-  <div>{children}</div>
-);
+export const DialogContent = React.forwardRef<
+  HTMLDivElement,
+  React.HTMLAttributes<HTMLDivElement>
+>(({ className = "", ...props }, ref) => (
+  <div ref={ref} className="p-6" {...props} />
+));
+DialogContent.displayName = "DialogContent";
 
-export const DialogHeader: React.FC<{ children: React.ReactNode }> = ({ children }) => (
-  <div className="mb-4">{children}</div>
-);
+export const DialogHeader = React.forwardRef<
+  HTMLDivElement,
+  React.HTMLAttributes<HTMLDivElement>
+>(({ className = "", ...props }, ref) => (
+  <div
+    ref={ref}
+    className="mb-4"
+    {...props}
+  />
+));
+DialogHeader.displayName = "DialogHeader";

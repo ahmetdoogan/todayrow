@@ -63,6 +63,10 @@
     },
     "profile": {
       "title": "Profile",
+      "notifications": {
+        "targetUpdateSuccess": "Monthly target updated",
+        "targetUpdateError": "An error occurred while updating the monthly target"
+      },
       "deleteAccount": {
       "button": "Delete My Account",
       "modal": {
@@ -253,7 +257,10 @@
             "title": "Content Status",
             "monthlyTarget": "monthly target",
             "activePlatform": "Most Active Platform",
-            "upcomingDeadline": "Upcoming Deadline"
+            "upcomingDeadline": "Upcoming Deadline",
+            "setMonthlyTarget": "Set Monthly Target",
+            "selectTarget": "Select Target",
+            "contents": "content"
           },
           "weeklyPlan": {
             "title": "Weekly Plan",

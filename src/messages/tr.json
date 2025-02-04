@@ -63,6 +63,10 @@
     },
     "profile": {
       "title": "Profil",
+      "notifications": {
+        "targetUpdateSuccess": "Aylık hedef güncellendi",
+        "targetUpdateError": "Aylık hedef güncellenirken bir hata oluştu"
+      },
       "deleteAccount": {
       "button": "Hesabımı Sil",
       "modal": {
@@ -253,7 +257,10 @@
             "title": "İçerik Durumu",
             "monthlyTarget": "aylık hedef",
             "activePlatform": "En aktif platform",
-            "upcomingDeadline": "Yaklaşan Deadline"
+            "upcomingDeadline": "Yaklaşan Deadline",
+            "setMonthlyTarget": "Aylık Hedef Belirle",
+            "selectTarget": "Hedef seçin",
+            "contents": "içerik"
           },
           "weeklyPlan": {
             "title": "Haftalık Plan",
