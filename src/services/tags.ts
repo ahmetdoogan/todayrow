@@ -142,8 +142,8 @@ export async function deleteTag(tagName: string) {
   for (const note of notes || []) {
     if (!note.tags) continue;
     
-    const tags = note.tags.split(',').map(t => t.trim());
-    const newTags = tags.filter(t => t !== tagName).join(',');
+    const tags: string[] = note.tags.split(',').map((tag: string) => tag.trim());
+    const newTags: string = tags.filter((tag: string) => tag !== tagName).join(',');
 
     const { error: updateError } = await supabase
       .from('Notes')
