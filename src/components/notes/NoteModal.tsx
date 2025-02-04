@@ -99,19 +99,19 @@ export default function NoteModal({ isOpen, onClose, onSave, initialNote }: Note
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!note.title?.trim()) {
-      alert(t('notes.enterTitle'));
-      return;
-    }
-    try {
-      await onSave(note);
-      onClose();
-    } catch (error) {
-      console.error('Error saving note:', error);
-      alert(t('notes.saveError'));
-    }
-  };
+  e.preventDefault();
+  if (!note.title?.trim()) {
+    alert(t('notes.enterTitle'));
+    return;
+  }
+  try {
+    await onSave(note);
+    onClose();
+  } catch (error) {
+    console.error('Error saving note:', error);
+    alert(t('notes.saveError'));
+  }
+};
 
   if (!isOpen) return null;
 

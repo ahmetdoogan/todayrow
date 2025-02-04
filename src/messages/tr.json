@@ -514,7 +514,7 @@
       "completePlan": "Planı Tamamla"
     },
     "tagInput": {
-      "folderPlaceholder": "Klasör yolu girin",
+      "folderPlaceholder": "Klasör oluştur veya seç",
       "inputPlaceholder": "Virgülle ayırarak veya Enter'a basarak etiket ekleyin",
       "newTag": "Yeni etiket: {inputValue}",
       "newFolder": "Yeni klasör: {inputValue}",

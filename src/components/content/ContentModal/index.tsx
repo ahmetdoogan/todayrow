@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import { supabase } from "@/utils/supabaseClient";
+import { createSlug, makeUniqueSlug } from "@/utils/slugUtils";
 import { X, Calendar, Tag, FileType, Layout } from "lucide-react";
 import { toast } from "react-toastify";
 import { useContent } from '@/context/ContentContext';
@@ -34,15 +35,6 @@ const normalizeUrl = (url: string): string => {
     normalizedUrl = 'https://' + normalizedUrl;
   }
   return normalizedUrl;
-};
-
-const createSlug = (title: string): string => {
-  return title
-    .toLowerCase()
-    .trim()
-    .replace(/[^a-z0-9\s-ğüşıöç]/g, '')
-    .replace(/[\s]/g, '-')
-    .replace(/-+/g, '-');
 };
 
 // Yardımcı: Date input (yyyy-mm-dd) formatına çevirir
@@ -258,49 +250,54 @@ setMetadata(
   const [hrs, mins] = timeFrame.split(':').map(Number);
   
   // Yerel zaman olarak yeni bir Date nesnesi oluşturuyoruz.
-  // new Date(year, monthIndex, day, hrs, mins, 0, 0) kullanıyoruz (monthIndex: month-1)
   const localTimestamp = new Date(year, month - 1, day, hrs || 0, mins || 0, 0, 0);
   
   // localTimestamp.toISOString() UTC zamanını üretir.
   const isoDate = localTimestamp.toISOString();
 
-  const slug = createSlug(title);
-  const now = new Date().toISOString();
+  // Benzersiz slug oluşturma
+const baseSlug = createSlug(title);
+const { data: existingSlugs } = await supabase
+  .from("Content")
+  .select('slug');
 
-  const contentData = {
-    title,
-    details,
-    format,
-    type,
-    timeFrame, // Bu sütun ayrı saklanıyor (örneğin "19:10")
-    date: isoDate, // Burada birleşik timestamp (örneğin "2025-02-05T16:10:00.000Z") saklanıyor
-    platforms: selectedPlatforms,
-    url: normalizedUrl || null,
-    preview_data: metadata || {},
-    is_completed: false,
-    user_id: user.id,
-    slug,
-    updated_at: now,
-  };
+const slug = makeUniqueSlug(baseSlug, existingSlugs?.map(c => c.slug) || []);
+
+const now = new Date().toISOString();
+const contentData = {
+  title,
+  details,
+  format,
+  type,
+  timeFrame,
+  date: isoDate,
+  platforms: selectedPlatforms,
+  url: normalizedUrl || null,
+  preview_data: metadata || {},
+  is_completed: false,
+  user_id: user.id,
+  slug,
+  updated_at: now,
+};
 
   if (contentId) {
-  // UPDATE işlemi
-  const { data, error } = await supabase
-    .from("Content")
-    .update(contentData)
-    .eq("id", contentId)
-    .select();
+    // UPDATE işlemi
+    const { data, error } = await supabase
+      .from("Content")
+      .update(contentData)
+      .eq("id", contentId)
+      .select();
 
-  if (error || !data || data.length === 0) {
-    console.error("Güncelleme hatası:", error);
-    toast.error(t('errors.updateError'));
-    return;
-  }
+    if (error || !data || data.length === 0) {
+      console.error("Güncelleme hatası:", error);
+      toast.error(t('errors.updateError'));
+      return;
+    }
 
-  // updateContent fonksiyonu kullanılmadığı için sadece handleAddContent ile state güncellemesi yapalım
-  handleAddContent(data[0]);
-  toast.success(t('notifications.updateSuccess'));
-} else {
+    // updateContent fonksiyonu kullanılmadığı için sadece handleAddContent ile state güncellemesi yapalım
+    handleAddContent(data[0]);
+    toast.success(t('notifications.updateSuccess'));
+  } else {
     // INSERT işlemi: Yeni içerik ekleniyor.
     const insertData = {
       ...contentData,

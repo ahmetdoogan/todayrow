@@ -515,7 +515,7 @@
       "completePlan": "Complete Plan"
     },
     "tagInput": {
-      "folderPlaceholder": "Enter folder name",
+      "folderPlaceholder": "Create or select folder",
       "inputPlaceholder": "Add tags separated by commas or press Enter",
       "newTag": "New tag: {inputValue}",
       "newFolder": "New folder: {inputValue}",
