@@ -237,6 +237,13 @@
       "toggleDark": "Switch to dark theme"
     },
     "dashboard": {
+      "weekDays": {
+        "mon": "Mon",
+        "tue": "Tue",
+        "wed": "Wed",
+        "thu": "Thu",
+        "fri": "Fri"
+      },
       "multiSelect": "Multi Select",
       "cancelSelection": "Cancel Selection",
       "showCompleted": "Show Completed",

@@ -332,6 +332,7 @@ export function ContentProvider({ children }: { children: React.ReactNode }) {
     }).length;
   };
 
+  // getWeeklyPlans fonksiyonunu tamamen değiştirelim
   const getWeeklyPlans = () => {
     const today = new Date();
     const nextWeekStart = new Date(today.getTime() + 7 * 24 * 60 * 60 * 1000);
@@ -347,7 +348,14 @@ export function ContentProvider({ children }: { children: React.ReactNode }) {
       return contentDate >= nextWeekStart && contentDate < nextWeekEnd;
     }).length;
 
-    const weekDays = ['Pzt', 'Sal', 'Çar', 'Per', 'Cum'];
+    const weekDays = [
+      t('dashboard.weekDays.mon'),
+      t('dashboard.weekDays.tue'),
+      t('dashboard.weekDays.wed'),
+      t('dashboard.weekDays.thu'),
+      t('dashboard.weekDays.fri')
+    ];
+
     const contentDays = contents
       .filter(content => {
         const contentDate = new Date(content.date);

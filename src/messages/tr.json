@@ -237,6 +237,13 @@
       "toggleDark": "Koyu temaya geç"
     },
     "dashboard": {
+      "weekDays": {
+        "mon": "Pzt",
+        "tue": "Sal",
+        "wed": "Çar",
+        "thu": "Per",
+        "fri": "Cum"
+      },
       "multiSelect": "Çoklu Seç",
       "cancelSelection": "Seçimi İptal Et",
       "showCompleted": "Tamamlananları Göster",
