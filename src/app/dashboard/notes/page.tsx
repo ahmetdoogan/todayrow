@@ -184,9 +184,9 @@ export default function NotesPage() {
                 setIsModalOpen(true);
                 setIsEditingNote(true);
               }}
-              className="relative z-10 flex flex-col items-center justify-center w-full h-64 bg-white dark:bg-slate-800/50 backdrop-blur-sm rounded-xl p-6 hover:bg-gray-50 dark:hover:bg-slate-800/70 transition-all shadow-sm hover:shadow-md"
+              className="relative z-10 flex flex-col items-center justify-center w-full h-64 dark:bg-slate-800/50 rounded-xl p-6 hover:bg-gray-50 dark:hover:bg-slate-800/70 transition-all shadow-sm hover:shadow-md"
             >
-              <FileText className="w-10 h-12 text-black mb-4" strokeWidth={1.5} />
+              <FileText className="w-10 h-12 text-black dark:text-white mb-4" strokeWidth={1.5} />
               <h3 className="text-base font-semibold text-gray-900 dark:text-gray-100 mb-2">
                 {t('emptyState.title')}
               </h3>
