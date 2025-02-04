@@ -1,19 +1,31 @@
-import React, { useMemo } from 'react';
+import React from 'react';
 import { PlatformType } from '@/types/content';
 import PlatformIcon from './PlatformIcon';
 
 interface PlatformIconsProps {
   platforms?: PlatformType[];
+  showAll?: boolean; // Yeni prop
 }
 
-const PlatformIcons: React.FC<PlatformIconsProps> = ({ platforms = [] }) => {
-  // Random bir platform seç
-  const mainPlatform = useMemo(() => {
+const PlatformIcons: React.FC<PlatformIconsProps> = ({ platforms = [], showAll = false }) => {
+  if (showAll) {
+    // Tüm platformları ikon olarak render et
+    return (
+      <div className="flex items-center gap-1">
+        {platforms.map((platform, index) => (
+          <PlatformIcon key={index} platform={platform} size="small" />
+        ))}
+      </div>
+    );
+  }
+
+  // Mevcut mantık (kart görünümü için)
+  const mainPlatform = (() => {
     if (platforms.length === 0) return null;
     if (platforms.length === 1) return platforms[0];
     const randomIndex = Math.floor(Math.random() * platforms.length);
     return platforms[randomIndex];
-  }, [platforms]);
+  })();
 
   const remaining = platforms.length > 1 ? platforms.length - 1 : 0;
 

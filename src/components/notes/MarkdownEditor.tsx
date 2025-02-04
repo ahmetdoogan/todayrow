@@ -168,13 +168,14 @@ export default function MarkdownEditor({ value, onChange, placeholder }: Markdow
       <div className="flex-1 min-h-0 flex">
         <div className={`h-full transition-all duration-200 ${showPreview ? 'w-1/2 border-r border-gray-200 dark:border-gray-700' : 'w-full'}`}>
           <textarea
-            ref={textareaRef}
-            value={value}
-            onChange={(e) => onChange(e.target.value)}
-            onKeyDown={handleTab}
-            placeholder={placeholder}
-            className="w-full h-full p-4 bg-white dark:bg-gray-800 border-0 resize-none focus:ring-0 text-gray-900 dark:text-gray-100"
-          />
+  ref={textareaRef}
+  value={value}
+  onChange={(e) => onChange(e.target.value)}
+  onKeyDown={handleTab}
+  placeholder={placeholder}
+  className="w-full h-full p-4 bg-white dark:bg-gray-800 border-0 resize-none focus:ring-0 text-gray-900 dark:text-gray-100"
+  style={{ minHeight: '200px' }} // Bu satırı ekleyin
+/>
         </div>
         
         {showPreview && (
