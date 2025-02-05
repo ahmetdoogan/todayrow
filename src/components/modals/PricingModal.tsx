@@ -1,10 +1,7 @@
-'use client';
-
 import { Dialog, Transition } from '@headlessui/react';
 import { Fragment, useState } from 'react';
 import { X } from 'lucide-react';
 import { useTranslations } from 'next-intl';
-import { ShineBorder } from '@/components/ui/shine-border';
 import { supabase } from '@/utils/supabaseClient';
 
 interface Props {
@@ -45,88 +42,94 @@ const PricingModal = ({ isOpen, onClose }: Props) => {
               leaveFrom="opacity-100 scale-100"
               leaveTo="opacity-0 scale-95"
             >
-              <ShineBorder
-                borderRadius={16}
-                borderWidth={1}
-                duration={14}
-                color={["#A07CFE", "#FE8FB5", "#FFBE7B"]}
-                className="w-full max-w-lg transform rounded-2xl"
-              >
-                <Dialog.Panel className="w-full max-w-lg transform rounded-2xl bg-white dark:bg-slate-800 p-8 shadow-xl transition-all">
-                  <div className="flex justify-between items-start mb-8">
-                    <div>
-                      <Dialog.Title className="text-2xl font-semibold text-gray-900 dark:text-white">
-                        <span className="relative">
-                          {t('title')}
-                          <span className="absolute -bottom-1 left-0 w-full h-0.5 bg-violet-500 rounded-full transform scale-x-100 origin-left transition-transform"></span>
-                        </span>
+              <Dialog.Panel className="w-full max-w-xl transform overflow-hidden bg-white dark:bg-slate-900 rounded-3xl">
+                <div className="p-8">
+                  {/* Header Section */}
+                  <div className="flex justify-between items-start">
+                    <div className="space-y-2">
+                      <Dialog.Title className="text-3xl font-bold tracking-tight text-gray-900 dark:text-white">
+                        {t('title')}
                       </Dialog.Title>
-                      <Dialog.Description className="mt-2 text-base text-gray-500 dark:text-gray-400">
+                      <Dialog.Description className="text-lg text-gray-600 dark:text-gray-400">
                         {t('description')}
                       </Dialog.Description>
                     </div>
                     <button
                       onClick={onClose}
-                      className="text-gray-400 hover:text-gray-500 dark:hover:text-gray-300"
+                      className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 transition-colors"
                     >
-                      <X className="h-5 w-5" />
+                      <X className="h-6 w-6" />
                     </button>
                   </div>
 
-                  <div className="flex justify-center gap-4 mb-8">
-                    <button
-                      onClick={() => setBillingType('monthly')}
-                      className={`px-6 py-2 rounded-full text-sm font-medium transition-all duration-200 ${
-                        billingType === 'monthly'
-                          ? 'bg-violet-100 dark:bg-violet-900/30 text-violet-900 dark:text-violet-100'
-                          : 'text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
-                      }`}
-                    >
-                      {t('monthly')}
-                    </button>
-                    <button
-                      onClick={() => setBillingType('yearly')}
-                      className={`px-6 py-2 rounded-full text-sm font-medium transition-all duration-200 relative ${
-                        billingType === 'yearly'
-                          ? 'bg-violet-100 dark:bg-violet-900/30 text-violet-900 dark:text-violet-100'
-                          : 'text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
-                      }`}
-                    >
-                      {t('yearly')}
-                      <span className="absolute -top-2 -right-2 px-1.5 py-0.5 text-[10px] font-medium bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-200 rounded-full">
-                        -17%
-                      </span>
-                    </button>
+                  {/* Pricing Switch */}
+                  <div className="mt-8 flex justify-center gap-4">
+                    <div className="inline-flex rounded-full bg-gray-100 dark:bg-gray-800 p-1">
+                      <button
+                        onClick={() => setBillingType('monthly')}
+                        className={`px-6 py-2 rounded-full text-sm font-medium transition-all duration-200 ${
+                          billingType === 'monthly'
+                            ? 'bg-white dark:bg-gray-700 text-gray-900 dark:text-white shadow-sm'
+                            : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
+                        }`}
+                      >
+                        {t('monthly')}
+                      </button>
+                      <button
+                        onClick={() => setBillingType('yearly')}
+                        className={`px-6 py-2 rounded-full text-sm font-medium transition-all duration-200 relative ${
+                          billingType === 'yearly'
+                            ? 'bg-white dark:bg-gray-700 text-gray-900 dark:text-white shadow-sm'
+                            : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
+                        }`}
+                      >
+                        {t('yearly')}
+                        <span className="absolute -top-2 -right-2 px-2 py-0.5 text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300 rounded-full">
+                          -17%
+                        </span>
+                      </button>
+                    </div>
                   </div>
 
-                  <div className="text-center mb-8">
-                    <div className="flex items-end justify-center gap-1">
-                      <span className="text-4xl font-bold text-gray-900 dark:text-white">
+                  {/* Price Display */}
+                  <div className="mt-8 text-center">
+                    <div className="inline-flex items-baseline">
+                      <span className="text-5xl font-bold tracking-tight text-gray-900 dark:text-white">
                         ${price}
                       </span>
-                      <span className="text-lg text-gray-500 dark:text-gray-400 mb-1">
+                      <span className="text-xl text-gray-500 dark:text-gray-400 ml-2">
                         /{billingType === 'monthly' ? t('monthlyShort') : t('yearlyShort')}
                       </span>
                     </div>
                     {savings && (
-                      <div className="mt-1 text-sm text-green-600 dark:text-green-400">
+                      <div className="mt-2 text-sm text-green-600 dark:text-green-400 font-medium">
                         {savings}
                       </div>
                     )}
                   </div>
 
-                  <div className="space-y-4 mb-8">
+                  {/* Features Grid */}
+                  <div className="mt-8 grid grid-cols-2 gap-6">
                     {[
                       t('features.unlimited'),
                       t('features.planning'),
                       t('features.calendar'),
                       t('features.support'),
-                      t('features.noCard')
                     ].map((feature, i) => (
                       <div key={i} className="flex items-center gap-3">
-                        <div className="w-5 h-5 rounded-full bg-violet-100 dark:bg-violet-900/30 flex items-center justify-center">
-                          <svg className="w-3.5 h-3.5 text-violet-600 dark:text-violet-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                        <div className="flex-shrink-0 h-5 w-5 rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center">
+                          <svg 
+                            className="w-3.5 h-3.5 text-gray-600 dark:text-gray-400" 
+                            fill="none" 
+                            viewBox="0 0 24 24" 
+                            stroke="currentColor"
+                          >
+                            <path 
+                              strokeLinecap="round" 
+                              strokeLinejoin="round" 
+                              strokeWidth={2} 
+                              d="M5 13l4 4L19 7" 
+                            />
                           </svg>
                         </div>
                         <span className="text-gray-700 dark:text-gray-300">{feature}</span>
@@ -134,8 +137,9 @@ const PricingModal = ({ isOpen, onClose }: Props) => {
                     ))}
                   </div>
 
+                  {/* Action Button */}
                   <button
-                    className="w-full py-3 px-4 bg-violet-600 hover:bg-violet-700 text-white rounded-lg font-medium transition-colors"
+                    className="mt-8 w-full h-14 bg-black hover:bg-black/90 dark:bg-white dark:hover:bg-white/90 text-white dark:text-black text-base font-medium rounded-2xl transition-colors"
                     onClick={async () => {
                       const { data: { session } } = await supabase.auth.getSession();
                       if (!session?.access_token) return;
@@ -163,8 +167,8 @@ const PricingModal = ({ isOpen, onClose }: Props) => {
                   >
                     {t('button')}
                   </button>
-                </Dialog.Panel>
-              </ShineBorder>
+                </div>
+              </Dialog.Panel>
             </Transition.Child>
           </div>
         </div>

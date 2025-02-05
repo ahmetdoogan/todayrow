@@ -1017,7 +1017,7 @@
     "unpinSuccess": "Not sabitlemesi kaldırıldı"
   },
   "pricing": {
-    "title": "Daha planlı bir sen!",
+    "title": "Daha planlı bir sen.",
     "description": "Sınırsız erişimin keyfini çıkarmaya devam edin",
     "monthly": "Aylık",
     "yearly": "Yıllık",
@@ -1025,10 +1025,10 @@
     "monthlyShort": "ay",
     "yearlyShort": "yıl",
     "features": {
-      "unlimited": "Sınırsız içerik ve notlar",
-      "planning": "Gelişmiş planlama araçları",
-      "calendar": "Tam takvim entegrasyonu",
-      "support": "Öncelikli e-posta desteği",
+      "unlimited": "Planlarınıza kesintisiz erişim",
+      "planning": "Zamanınızı akıllıca yönetin",
+      "calendar": "Sürekli gelişen uygulama",
+      "support": "Ne ekleyeceğiz buraya be",
       "noCard": "Deneme için kredi kartı gerekmez"
     },
     "button": "Pro Planı Başlat"
