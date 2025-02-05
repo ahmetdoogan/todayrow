@@ -669,7 +669,7 @@
     },
     "featureRequests": {
       "title": "Feature Requests",
-      "description": "Vote for features you'd like to see in Todayrow",
+      "description": "Vote for features you'd like to see in Todayow",
       "empty": "No feature requests yet.",
       "voteSuccess": "Your vote has been recorded",
       "status": {
@@ -785,6 +785,79 @@
     }
   },
   "welcome": {
+    "animations": {
+      "settings": {
+    "steps": {
+      "theme": "Set your theme preference",
+      "language": "Choose your language",
+      "profile": "Edit your profile",
+      "contact": "Get in touch with us"
+    },
+    "cards": {
+      "theme": {
+        "title": "Theme",
+        "description": "Choose light or dark theme"
+      },
+      "language": {
+        "title": "Language",
+        "description": "Change your language preference"
+      },
+      "profile": {
+        "title": "Account Info",
+        "description": "Edit your profile information"
+      },
+      "contact": {
+        "title": "Contact Us",
+        "description": "Reach out with your questions"
+      }
+    }
+  },
+      "notes": {
+    "steps": {
+      "sidebar": "Create note quickly",
+      "dragdrop": "Organize your notes",
+      "filters": "Organize with tags"
+    },
+    "success": "Note created! ✨",
+    "labels": {
+      "createNote": "Create Note",
+      "createFirst": "Create your first note",
+      "clickToStart": "Click to start"
+    }
+  },
+      "content": {
+    "steps": {
+      "create": "Start creating content",
+      "stats": "Track your content planning"
+    },
+    "success": "Content created! ✨",
+    "sidebar": {
+    "createContent": "Create Content"
+  },
+    "labels": {
+      "monthlyTarget": "Monthly Target",
+      "deadlineCount": "1",
+      "targetCount": "0/30 content",
+      "activePlatform": "Most Active Platform",
+      "platformName": "LinkedIn (6)",
+      "upcomingDeadline": "Upcoming Deadline",
+      "emptyState": "No content created yet"
+    }
+  },
+  "plan": {
+    "steps": {
+      "sidebar": "Create plan from sidebar",
+      "timeline": "Add plan to any time",
+      "quickplans": "Drag & drop quick plans"
+    },
+    "success": "Plan created! ✨",
+    "labels": {
+      "createPlan": "Create Plan",
+      "today": "Today",
+      "quickPlans": "Quick Plans"
+    }
+  }
+},
     "title": "Welcome, {name}!",
     "titleGeneric": "Welcome!",
     "subtitle": "Get started managing your plans with Todayrow.",
@@ -959,6 +1032,7 @@
     },
     "button": "Start Pro Plan"
   },
+  
   "paywall": {
   "titles": {
     "accessRestricted": "Access Restricted",

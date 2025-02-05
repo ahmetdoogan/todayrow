@@ -15,6 +15,10 @@ import { supabase } from "@/utils/supabaseClient";
 import { useAuth } from "@/context/AuthContext";
 import { Logo } from "@/components/ui/logo";
 import { useTranslations } from 'next-intl';
+import PlanTutorialAnimation from './animations/PlanTutorialAnimation';
+import ContentTutorialAnimation from './animations/ContentTutorialAnimation';
+import NoteTutorialAnimation from './animations/NoteTutorialAnimation';
+import SettingsTutorialAnimation from './animations/SettingsTutorialAnimation';
 
 interface Tab {
   id: string;
@@ -139,8 +143,8 @@ export default function WelcomePopup({ onClose }: WelcomePopupProps) {
 
           {/* Content */}
           <div className="flex flex-col sm:flex-row min-h-[400px]">
-            {/* Left sidebar - Tabs */}
-            <div className="w-full sm:w-64 border-r border-gray-200 dark:border-gray-800 sm:p-4">
+            {/* Left sidebar - Tabs (Desktop) */}
+            <div className="hidden sm:block w-full sm:w-64 border-r border-gray-200 dark:border-gray-800 sm:p-4">
               <div className="flex flex-col gap-1">
                 {tabs.map((tab) => {
                   const Icon = tab.icon;
@@ -167,15 +171,48 @@ export default function WelcomePopup({ onClose }: WelcomePopupProps) {
               </div>
             </div>
 
+            {/* Mobile Tabs */}
+            <div className="sm:hidden w-full p-2 border-b border-gray-200 dark:border-gray-700">
+              <div className="flex justify-center gap-4">
+                {tabs.map((tab) => {
+                  const Icon = tab.icon;
+                  return (
+                    <button
+                      key={tab.id}
+                      onClick={() => setSelectedTab(tab.id)}
+                      className={`p-2 rounded-lg transition-colors
+                        ${selectedTab === tab.id 
+                          ? 'bg-stone-100 dark:bg-gray-800 text-gray-900 dark:text-gray-100' 
+                          : 'text-gray-600 dark:text-gray-400'
+                        }`}
+                    >
+                      <Icon className="w-5 h-5" />
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
             {/* Right content */}
             <div className="flex-1 p-6">
-              <div className="max-w-xl">
+              <div className="max-w-2xl">
                 <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2">
                   {tabs.find(t => t.id === selectedTab)?.title}
                 </h3>
-                <p className="text-gray-600 dark:text-gray-400 text-sm leading-relaxed">
+                <p className="text-gray-600 dark:text-gray-400 text-sm leading-relaxed mb-8">
                   {tabs.find(t => t.id === selectedTab)?.content}
                 </p>
+
+                {/* Tutorial Animation Area */}
+                {selectedTab === "plan" && <PlanTutorialAnimation />}
+                {selectedTab === "content" && <ContentTutorialAnimation />}
+                {selectedTab === "notes" && <NoteTutorialAnimation />}
+                {selectedTab === "settings" && <SettingsTutorialAnimation />}
+                {selectedTab !== "plan" && selectedTab !== "content" && selectedTab !== "notes" && selectedTab !== "settings" && (
+                  <div className="h-64 w-full bg-gray-100 dark:bg-gray-800 rounded-xl flex items-center justify-center text-gray-400 dark:text-gray-600">
+                    Çok yakında...
+                  </div>
+                )}
               </div>
             </div>
           </div>

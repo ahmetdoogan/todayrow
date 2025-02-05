@@ -785,6 +785,79 @@
     }
   },
   "welcome": {
+    "animations": {
+      "settings": {
+    "steps": {
+      "theme": "Tema tercihini belirle",
+      "language": "Dil seçimini yap",
+      "profile": "Profilini düzenle",
+      "contact": "Bizimle iletişime geç"
+    },
+    "cards": {
+      "theme": {
+        "title": "Tema",
+        "description": "Aydınlık veya karanlık tema seçebilirsiniz"
+      },
+      "language": {
+        "title": "Dil",
+        "description": "Dil tercihini değiştirebilirsiniz"
+      },
+      "profile": {
+        "title": "Hesap Bilgileri",
+        "description": "Profil bilgilerinizi düzenleyin"
+      },
+      "contact": {
+        "title": "İletişime geçin",
+        "description": "Sorularınız için bize ulaşın"
+      }
+    }
+  },
+      "notes": {
+    "steps": {
+      "sidebar": "Hızlıca not oluştur",
+      "dragdrop": "Notlarını organize et",
+      "filters": "Etiketlerle düzenle"
+    },
+    "success": "Not oluşturuldu! ✨",
+    "labels": {
+      "createNote": "Not Oluştur",
+      "createFirst": "İlk notunu oluştur",
+      "clickToStart": "Başlamak için tıkla"
+    }
+  },
+      "content": {
+    "steps": {
+      "create": "İçerik oluşturmaya başla",
+      "stats": "İçerik planlamanızı takip edin"
+    },
+    "success": "İçerik oluşturuldu! ✨",
+    "sidebar": {
+    "createContent": "İçerik Oluştur"
+  },
+    "labels": {
+      "monthlyTarget": "Aylık Hedef",
+      "deadlineCount": "1",
+      "targetCount": "0/30 içerik",
+      "activePlatform": "En Aktif Platform",
+      "platformName": "LinkedIn (6)",
+      "upcomingDeadline": "Yaklaşan Deadline",
+      "emptyState": "Henüz içerik oluşturulmamış"
+    }
+  },
+  "plan": {
+    "steps": {
+      "sidebar": "Sidebardan plan oluştur",
+      "timeline": "İstediğin zamana plan ekle", 
+      "quickplans": "Hazır planları sürükle bırak"
+    },
+    "success": "Plan oluşturuldu! ✨",
+    "labels": {
+      "createPlan": "Plan Oluştur",
+      "today": "Bugün",
+      "quickPlans": "Hazır Planlar"
+    }
+  }
+},
     "title": "Hoş geldin, {name}!",
     "titleGeneric": "Hoş geldin!",
     "subtitle": "Todayrow ile planlarını yönetmeye hemen başla.",
