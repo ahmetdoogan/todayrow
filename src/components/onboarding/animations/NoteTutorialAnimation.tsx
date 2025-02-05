@@ -5,7 +5,13 @@ import { PencilLine, FolderPlus, Tag, Settings, Calendar, Clock } from "lucide-r
 import { motion, AnimatePresence } from "framer-motion";
 import { useTranslations } from 'next-intl';
 
-const CustomCursor = ({ x, y, isClicking }) => (
+interface CustomCursorProps {
+  x: number;
+  y: number;
+  isClicking: boolean;
+}
+
+const CustomCursor = ({ x, y, isClicking }: CustomCursorProps) => (
   <motion.div
     className="pointer-events-none fixed z-50"
     animate={{ x, y, scale: isClicking ? 0.9 : 1 }}
@@ -19,7 +25,12 @@ const CustomCursor = ({ x, y, isClicking }) => (
   </motion.div>
 );
 
-const CreateNoteArea = ({ active, t }) => (
+interface CreateNoteAreaProps {
+  active: boolean;
+  t: (key: string) => string;
+}
+
+const CreateNoteArea = ({ active, t }: CreateNoteAreaProps) => (
   <div className={`flex-1 py-20 ${active ? 'bg-blue-50 dark:bg-blue-900/20' : 'bg-white dark:bg-gray-800'} rounded-lg border-2 border-dashed border-gray-200 dark:border-gray-700 transition-colors duration-300`}>
     <div className="flex flex-col items-center justify-center gap-2">
       <PencilLine className="w-8 h-8 text-gray-400" />

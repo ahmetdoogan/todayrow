@@ -5,7 +5,12 @@ import { Moon, User, Globe, MessageCircle } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useTranslations } from 'next-intl';
 
-const CustomCursor = ({ x, y }) => (
+interface CustomCursorProps {
+  x: number;
+  y: number;
+}
+
+const CustomCursor = ({ x, y }: CustomCursorProps) => (
   <motion.div
     className="pointer-events-none fixed z-50"
     animate={{ x, y }}
@@ -19,7 +24,14 @@ const CustomCursor = ({ x, y }) => (
   </motion.div>
 );
 
-const SettingsCard = ({ icon: Icon, type, active, t }) => (
+interface SettingsCardProps {
+  icon: React.ComponentType<{ className?: string }>;
+  type: string;
+  active: boolean;
+  t: (key: string) => string;
+}
+
+const SettingsCard = ({ icon: Icon, type, active, t }: SettingsCardProps) => (
   <div className={`p-3 ${active ? 'bg-blue-50 dark:bg-blue-900/20' : 'bg-white dark:bg-gray-800'} rounded-lg border border-gray-200 dark:border-gray-700 transition-all duration-300`}>
     <div className="flex gap-2.5">
       <Icon className="w-4 h-4 text-gray-500 flex-shrink-0" />

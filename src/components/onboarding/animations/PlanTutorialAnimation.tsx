@@ -5,7 +5,14 @@ import { Plus, Calendar, Clock, Search, FileText, Settings } from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion";
 import { useTranslations } from 'next-intl';
 
-const CustomCursor = ({ x, y, isClicking, isDragging }) => (
+interface CustomCursorProps {
+  x: number;
+  y: number;
+  isClicking: boolean;
+  isDragging: boolean;
+}
+
+const CustomCursor = ({ x, y, isClicking, isDragging }: CustomCursorProps) => (
   <motion.div
     className="pointer-events-none fixed z-50"
     animate={{ x, y, scale: isClicking ? 0.9 : 1 }}

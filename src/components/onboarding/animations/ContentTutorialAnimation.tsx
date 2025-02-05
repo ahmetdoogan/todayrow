@@ -8,7 +8,13 @@ import { useTranslations } from "next-intl";
 //
 // 1) Turuncu fare imleci
 //
-const CustomCursor = ({ x, y, isClicking }) => {
+interface CustomCursorProps {
+  x: number;
+  y: number;
+  isClicking: boolean;
+}
+
+const CustomCursor = ({ x, y, isClicking }: CustomCursorProps) => {
   return (
     <motion.div
       className="pointer-events-none fixed z-50"
@@ -35,7 +41,14 @@ const CustomCursor = ({ x, y, isClicking }) => {
 //
 // 2) Kart bileşeni
 //
-const InfoCard = ({ icon: Icon, title, value, active }) => (
+interface InfoCardProps {
+  icon: React.ComponentType<{ className?: string }>;
+  title: string;
+  value: string;
+  active: boolean;
+}
+
+const InfoCard = ({ icon: Icon, title, value, active }: InfoCardProps) => (
   <div
     className={`p-3 ${
       active ? "bg-blue-50 dark:bg-blue-900/20" : "bg-white dark:bg-gray-800"
