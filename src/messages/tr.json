@@ -37,6 +37,14 @@
           }
         },
         "helpSupport": {
+          "contact": {
+          "title": "İletişime geçin",
+          "description": "Sorularınız ve geri bildirimleriniz için bize ulaşın"
+        },
+        "featureRequests": {
+          "title": "Özellik Talepleri",
+          "description": "Yeni özellikler için oy verin veya önerileri inceleyin"
+        },
           "title": "Yardım ve Destek",
           "guide": {
             "title": "Hoş Geldin Rehberi",
@@ -659,6 +667,21 @@
         "tooltip": "İçerik bağlantısı eklemek için kullanın. Diğer içeriklere referans vermenizi sağlar."
       }
     },
+    "featureRequests": {
+      "title": "Özellik Talepleri",
+      "description": "Todayrow'da görmek istediğiniz özellikler için oy verin",
+      "empty": "Henüz özellik talebi bulunmuyor.",
+      "voteSuccess": "Oyunuz kaydedildi",
+      "status": {
+        "planned": "Planlandı",
+        "in_progress": "Geliştiriliyor",
+        "completed": "Tamamlandı"
+      },
+      "errors": {
+        "loadError": "Özellik talepleri yüklenirken hata oluştu",
+        "voteError": "Oy verirken bir hata oluştu"
+      }
+    },
     "legal": {
       "privacyPolicy": {
         "title": "Gizlilik Politikası",
@@ -764,7 +787,7 @@
   "welcome": {
     "title": "Hoş geldin, {name}!",
     "titleGeneric": "Hoş geldin!",
-    "subtitle": "TodayRow ile planlarını yönetmeye hemen başla.",
+    "subtitle": "Todayrow ile planlarını yönetmeye hemen başla.",
     "tabs": {
       "plan": {
         "title": "Plan Yapma",

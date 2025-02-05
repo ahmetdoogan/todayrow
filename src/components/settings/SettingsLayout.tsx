@@ -1,6 +1,6 @@
 "use client";
 import React, { useState } from 'react';
-import { Sun, Moon, Palette, Type, Calendar, Bell, User, Lock, HelpCircle, Languages } from 'lucide-react';
+import { Sun, Moon, Palette, Type, Calendar, Bell, User, Lock, HelpCircle, Languages, Mail, ListPlus } from 'lucide-react';
 import { useTheme } from '@/components/providers/ThemeProvider';
 import { useLanguage } from '@/components/providers/LanguageProvider';
 import { motion } from 'framer-motion';
@@ -199,36 +199,77 @@ const SettingsLayout = () => {
       </motion.div>
 
       {/* Yardım ve Destek */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.3, delay: 0.4 }}
-      >
-        <h2 className="text-sm font-medium text-slate-500 dark:text-slate-400 mb-4">
-          {t('settings.sections.helpSupport.title')}
-        </h2>
-        
-        <div className="space-y-px">
-          <button 
-            onClick={handleShowWelcome}
-            className="w-full text-left bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 first:rounded-t-2xl last:rounded-b-2xl p-4 block hover:bg-gray-50 dark:hover:bg-slate-800/50 transition-colors"
-          >
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <HelpCircle className="w-5 h-5 text-slate-700 dark:text-slate-400" />
-                <div>
-                  <div className="text-sm text-slate-700 dark:text-slate-300">
-                    {t('settings.sections.helpSupport.guide.title')}
-                  </div>
-                  <div className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
-                    {t('settings.sections.helpSupport.guide.description')}
-                  </div>
-                </div>
-              </div>
+<motion.div
+  initial={{ opacity: 0, y: 20 }}
+  animate={{ opacity: 1, y: 0 }}
+  transition={{ duration: 0.3, delay: 0.4 }}
+>
+  <h2 className="text-sm font-medium text-slate-500 dark:text-slate-400 mb-4">
+    {t('settings.sections.helpSupport.title')}
+  </h2>
+  
+  <div className="space-y-px">
+    {/* Hoşgeldin Rehberi */}
+    <button 
+      onClick={handleShowWelcome}
+      className="w-full text-left bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 first:rounded-t-2xl last:rounded-b-2xl p-4 block hover:bg-gray-50 dark:hover:bg-slate-800/50 transition-colors"
+    >
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <HelpCircle className="w-5 h-5 text-slate-700 dark:text-slate-400" />
+          <div>
+            <div className="text-sm text-slate-700 dark:text-slate-300">
+              {t('settings.sections.helpSupport.guide.title')}
             </div>
-          </button>
+            <div className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+              {t('settings.sections.helpSupport.guide.description')}
+            </div>
+          </div>
         </div>
-      </motion.div>
+      </div>
+    </button>
+
+    {/* İletişim Butonu */}
+    <a 
+      href="mailto:hello@todayrow.app"
+      className="w-full text-left bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-4 block hover:bg-gray-50 dark:hover:bg-slate-800/50 transition-colors"
+    >
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <Mail className="w-5 h-5 text-slate-700 dark:text-slate-400" />
+          <div>
+            <div className="text-sm text-slate-700 dark:text-slate-300">
+              {t('settings.sections.helpSupport.contact.title')}
+            </div>
+            <div className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+              {t('settings.sections.helpSupport.contact.description')}
+            </div>
+          </div>
+        </div>
+      </div>
+    </a>
+
+    {/* Özellik Talepleri Butonu */}
+    <Link 
+      href="/dashboard/feature-requests"
+      className="w-full text-left bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 last:rounded-b-2xl p-4 block hover:bg-gray-50 dark:hover:bg-slate-800/50 transition-colors"
+    >
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <ListPlus className="w-5 h-5 text-slate-700 dark:text-slate-400" />
+          <div>
+            <div className="text-sm text-slate-700 dark:text-slate-300">
+              {t('settings.sections.helpSupport.featureRequests.title')}
+            </div>
+            <div className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+              {t('settings.sections.helpSupport.featureRequests.description')}
+            </div>
+          </div>
+        </div>
+      </div>
+    </Link>
+  </div>
+</motion.div>
 
       {/* Bilgi Notu */}
       <motion.div 
