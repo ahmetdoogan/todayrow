@@ -910,7 +910,7 @@
     "resetPassword": {
       "title": "Reset Password",
       "description": "Enter your email to reset your password",
-      "submit": "Send Reset Link",
+      "submit": "Reset my password",
       "emailSent": "Password reset link has been sent",
       "checkEmail": "Please check your email",
       "checkSpam": "Don't forget to check your spam folder if you don't see the email",

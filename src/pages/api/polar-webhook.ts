@@ -84,6 +84,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           return res.status(500).json({ error: updateErr.message });
         }
 
+        // Pro başladı maili gönder
+        await fetch('http://todayrow.app/api/email/sendProStarted', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email: user.email })
+        }).catch(console.error);
+
         if (!updated || updated.length === 0) {
           console.log('No existing subscription found, creating new one');
           const { data: inserted, error: insertErr } = await supabase
@@ -121,6 +128,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           console.error('Failed to process cancellation:', cancelErr);
           return res.status(500).json({ error: cancelErr.message });
         }
+
+        // Pro iptal maili gönder
+        await fetch('http://todayrow.app0/api/email/sendProCancelled', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email: user.email })
+        }).catch(console.error);
         break;
 
       default:

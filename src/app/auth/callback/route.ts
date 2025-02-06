@@ -9,8 +9,17 @@ export async function GET(request: Request) {
 
     if (code) {
       const supabase = createRouteHandlerClient({ cookies });
-      const { error } = await supabase.auth.exchangeCodeForSession(code);
+      const { data, error } = await supabase.auth.exchangeCodeForSession(code);
       if (error) throw error;
+      
+      // Mail gönderimi
+      if (data?.user) {
+        await fetch('http://todayrow.app/api/email/sendWelcome', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email: data.user.email })
+        }).catch(console.error);
+      }
     }
 
     // Host'a göre www'li veya www'siz URL oluştur

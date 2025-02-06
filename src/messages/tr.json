@@ -910,7 +910,7 @@
     "resetPassword": {
       "title": "Şifremi Sıfırla",
       "description": "Şifrenizi sıfırlamak için e-posta adresinizi girin",
-      "submit": "Sıfırlama Bağlantısı Gönder",
+      "submit": "Şifremi sıfırla",
       "emailSent": "Şifre sıfırlama bağlantısı gönderildi",
       "checkEmail": "Lütfen e-posta kutunuzu kontrol edin",
       "checkSpam": "E-posta gelmediyse spam klasörünü kontrol etmeyi unutmayın",
