@@ -168,35 +168,37 @@ const PricingModal = ({ isOpen, onClose }: Props) => {
                   </div>
 
                   {/* Action Button */}
-                  <button
-                    className="mt-8 w-full h-14 bg-black hover:bg-black/90 dark:bg-white dark:hover:bg-white/90 text-white dark:text-black text-base font-medium rounded-2xl transition-colors"
-                    onClick={async () => {
-                      const { data: { session } } = await supabase.auth.getSession();
-                      if (!session?.access_token) return;
+                  <div className="flex justify-center">
+  <button
+    className="mt-8 w-1/2 h-14 bg-black hover:bg-black/90 dark:bg-white dark:hover:bg-white/90 text-white dark:text-black text-base font-medium rounded-2xl transition-colors"
+    onClick={async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session?.access_token) return;
 
-                      try {
-                        const resp = await fetch(`/api/checkout?plan=${billingType}`, {
-                          method: 'GET',
-                          headers: {
-                            'Authorization': `Bearer ${session.access_token}`,
-                          }
-                        });
+      try {
+        const resp = await fetch(`/api/checkout?plan=${billingType}`, {
+          method: 'GET',
+          headers: {
+            'Authorization': `Bearer ${session.access_token}`,
+          }
+        });
 
-                        if (!resp.ok) {
-                          console.error('Checkout error:', await resp.text());
-                          return;
-                        }
+        if (!resp.ok) {
+          console.error('Checkout error:', await resp.text());
+          return;
+        }
 
-                        const data = await resp.json();
-                        window.location.href = data.url;
-                        onClose();
-                      } catch (error) {
-                        console.error('Checkout error:', error);
-                      }
-                    }}
-                  >
-                    {t('button')}
-                  </button>
+        const data = await resp.json();
+        window.location.href = data.url;
+        onClose();
+      } catch (error) {
+        console.error('Checkout error:', error);
+      }
+    }}
+  >
+    {t('button')}
+  </button>
+</div>
                 </div>
               </Dialog.Panel>
             </Transition.Child>

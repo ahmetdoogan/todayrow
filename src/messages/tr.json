@@ -907,6 +907,20 @@
       "emailInUse": "Bu email adresi zaten kullanımda!",
       "failed": "Kayıt başarısız. Lütfen tekrar deneyin."
     },
+    "resetPassword": {
+      "title": "Şifremi Sıfırla",
+      "description": "Şifrenizi sıfırlamak için e-posta adresinizi girin",
+      "submit": "Sıfırlama Bağlantısı Gönder",
+      "emailSent": "Şifre sıfırlama bağlantısı gönderildi",
+      "checkEmail": "Lütfen e-posta kutunuzu kontrol edin",
+      "checkSpam": "E-posta gelmediyse spam klasörünü kontrol etmeyi unutmayın",
+      "error": "Bir hata oluştu, lütfen tekrar deneyin",
+      "success": "Şifreniz başarıyla güncellendi",
+      "newPassword": "Yeni Şifre Belirle",
+      "enterNew": "Lütfen yeni şifrenizi girin",
+      "password": "Yeni Şifre",
+      "confirmPassword": "Yeni Şifre (Tekrar)"
+    },
     "verify": {
       "title": "Email Onayı Gerekli",
       "description": "Lütfen email adresinize gönderilen onay mailini kontrol edin ve hesabınızı doğrulayın.",

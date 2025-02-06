@@ -907,6 +907,20 @@
       "emailInUse": "This email is already in use!",
       "failed": "Registration failed. Please try again."
     },
+    "resetPassword": {
+      "title": "Reset Password",
+      "description": "Enter your email to reset your password",
+      "submit": "Send Reset Link",
+      "emailSent": "Password reset link has been sent",
+      "checkEmail": "Please check your email",
+      "checkSpam": "Don't forget to check your spam folder if you don't see the email",
+      "error": "An error occurred, please try again",
+      "success": "Your password has been successfully updated",
+      "newPassword": "Set New Password",
+      "enterNew": "Please enter your new password",
+      "password": "New Password",
+      "confirmPassword": "Confirm New Password"
+    },
     "verify": {
       "title": "Email Verification Required",
       "description": "Please check your email for a verification link and verify your account.",
@@ -1024,10 +1038,10 @@
     "monthlyShort": "mo",
     "yearlyShort": "yr",
     "features": {
-      "unlimited": "Unlimited contents & notes",
-      "planning": "Advanced planning tools",
-      "calendar": "Full calendar integration",
-      "support": "Priority email support",
+      "unlimited": "Continue a planned life",
+      "planning": "Manage daily routines perfectly",
+      "calendar": "Work regularly and systematically",
+      "support": "Reach your goals faster",
       "noCard": "No credit card required for trial"
     },
     "button": "Start Pro Plan"
