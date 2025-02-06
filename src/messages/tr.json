@@ -147,7 +147,7 @@
           "pro": "Pro",
           "monthly": "Aylık",
           "yearly": "Yıllık",
-          "free": "Ücretsizzz"
+          "free": "Ücretsiz"
         },
         "statuses": {
           "free_trial": "Deneme",
@@ -1025,10 +1025,10 @@
     "monthlyShort": "ay",
     "yearlyShort": "yıl",
     "features": {
-      "unlimited": "Planlarınıza kesintisiz erişim",
-      "planning": "Zamanınızı akıllıca yönetin",
-      "calendar": "Sürekli gelişen uygulama",
-      "support": "Ne ekleyeceğiz buraya be",
+      "unlimited": "Planlı bir hayata devam edin",
+      "planning": "Rutinlerinizi kusursuz yönetin",
+      "calendar": "Düzenli ve sistemli çalışın",
+      "support": "Hedeflerinize daha hızlı ulaşın",
       "noCard": "Deneme için kredi kartı gerekmez"
     },
     "button": "Pro Planı Başlat"

@@ -9,6 +9,23 @@ interface Props {
   onClose: () => void;
 }
 
+const priceChangeKeyframes = `
+  @keyframes priceChange {
+    0% {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+`;
+
 const PricingModal = ({ isOpen, onClose }: Props) => {
   const t = useTranslations('pricing');
   const [billingType, setBillingType] = useState<'monthly' | 'yearly'>('monthly');
@@ -19,6 +36,8 @@ const PricingModal = ({ isOpen, onClose }: Props) => {
   return (
     <Transition show={isOpen} as={Fragment}>
       <Dialog onClose={onClose} className="relative z-50">
+        <style>{priceChangeKeyframes}</style>
+        
         <Transition.Child
           as={Fragment}
           enter="ease-out duration-300"
@@ -42,7 +61,7 @@ const PricingModal = ({ isOpen, onClose }: Props) => {
               leaveFrom="opacity-100 scale-100"
               leaveTo="opacity-0 scale-95"
             >
-              <Dialog.Panel className="w-full max-w-xl transform overflow-hidden bg-white dark:bg-slate-900 rounded-3xl">
+              <Dialog.Panel className="w-full max-w-2xl transform overflow-hidden bg-white dark:bg-slate-900 rounded-3xl">
                 <div className="p-8">
                   {/* Header Section */}
                   <div className="flex justify-between items-start">
@@ -92,8 +111,14 @@ const PricingModal = ({ isOpen, onClose }: Props) => {
                   </div>
 
                   {/* Price Display */}
-                  <div className="mt-8 text-center">
-                    <div className="inline-flex items-baseline">
+                  <div className="mt-8 text-center relative h-20">
+                    <div 
+                      key={price} 
+                      className="inline-flex items-baseline"
+                      style={{
+                        animation: 'priceChange 300ms ease-out'
+                      }}
+                    >
                       <span className="text-5xl font-bold tracking-tight text-gray-900 dark:text-white">
                         ${price}
                       </span>
@@ -102,7 +127,12 @@ const PricingModal = ({ isOpen, onClose }: Props) => {
                       </span>
                     </div>
                     {savings && (
-                      <div className="mt-2 text-sm text-green-600 dark:text-green-400 font-medium">
+                      <div 
+                        className="mt-2 text-sm text-green-600 dark:text-green-400 font-medium"
+                        style={{
+                          animation: savings ? 'fadeIn 300ms ease-out' : 'none'
+                        }}
+                      >
                         {savings}
                       </div>
                     )}
