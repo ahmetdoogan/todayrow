@@ -54,7 +54,13 @@ export default async function handler(
 
   const { email, name } = req.body;
 
+  if (!email) {
+    console.error('Welcome email attempt failed: No email provided');
+    return res.status(400).json({ message: 'Email is required' });
+  }
+
   try {
+    console.log('Attempting to send welcome email to:', email);
     await transporter.sendMail({
       from: '"Todayrow" <hello@todayrow.app>',
       to: email,

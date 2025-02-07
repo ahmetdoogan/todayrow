@@ -14,10 +14,13 @@ export async function GET(request: Request) {
       
       // Mail gönderimi
       if (data?.user) {
-        await fetch('https://todayrow.app/api/email/sendWelcome', {
+        await fetch(`${request.headers.get('origin')}/api/email/sendWelcome`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email: data.user.email })
+          body: JSON.stringify({ 
+            email: data.user.email,
+            name: data.user.user_metadata?.full_name || '' 
+          })
         }).catch(console.error);
       }
     }
