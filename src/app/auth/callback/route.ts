@@ -5,6 +5,7 @@ import { NextResponse } from 'next/server';
 export async function GET(request: Request) {
   try {
     const requestUrl = new URL(request.url);
+    console.log('Auth callback route triggered, search params:', requestUrl.searchParams.toString());
     const code = requestUrl.searchParams.get('code');
 
     if (code) {

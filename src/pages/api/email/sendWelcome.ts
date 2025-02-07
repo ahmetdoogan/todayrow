@@ -59,7 +59,15 @@ export default async function handler(
     return res.status(400).json({ message: 'Email is required' });
   }
 
-  try {
+  // Email validasyonu
+    if (!email) {
+      console.error('Welcome email failed: Email is missing');
+      return res.status(400).json({ message: 'Email is required' });
+    }
+
+    console.log('Attempting to send welcome email to:', email);
+
+    try {
     console.log('Attempting to send welcome email to:', email);
     await transporter.sendMail({
       from: '"Todayrow" <hello@todayrow.app>',
@@ -68,7 +76,8 @@ export default async function handler(
       html: welcomeTemplate,
     });
 
-    res.status(200).json({ message: "Welcome email sent successfully" });
+    console.log('Welcome email sent successfully to:', email);
+      res.status(200).json({ message: 'Welcome email sent successfully' });
   } catch (error) {
     console.error("Error sending welcome email:", error);
     res.status(500).json({ message: "Error sending welcome email" });
