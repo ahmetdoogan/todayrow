@@ -12,16 +12,24 @@ export async function GET(request: Request) {
       const { data, error } = await supabase.auth.exchangeCodeForSession(code);
       if (error) throw error;
       
+      console.log('Auth callback triggered, user data:', data?.user?.email);
       // Mail gönderimi
       if (data?.user) {
-        await fetch(`${request.headers.get('origin')}/api/email/sendWelcome`, {
+        const origin = request.headers.get('origin') || 'https://www.todayrow.app';
+        console.log('Attempting to send welcome email, origin:', origin);
+        await fetch(`${origin}/api/email/sendWelcome`, {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers: { 
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+          },
           body: JSON.stringify({ 
             email: data.user.email,
             name: data.user.user_metadata?.full_name || '' 
           })
-        }).catch(console.error);
+        }).catch(error => {
+          console.error('Welcome email fetch error:', error);
+        });
       }
     }
 
