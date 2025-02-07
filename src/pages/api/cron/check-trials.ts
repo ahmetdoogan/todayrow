@@ -25,8 +25,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     const { data: users, error } = await supabase
       .from('subscriptions')
-      .select('user_id, trial_end, users!inner(email)')
-      .eq('status', 'trial')
+      .select('user_id, trial_end, users:auth.users!inner(email)')
+      .eq('status', 'free_trial')
       .gt('trial_end', now.toISOString())
       .lt('trial_end', sevenDaysLater.toISOString());
 
@@ -39,22 +39,22 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
       // 7 gün kaldıysa
       if (daysLeft <= 7 && daysLeft > 1) {
-        await fetch('http://todayrow.app/api/email/sendTrialWarning', {
+        await fetch('https://todayrow.app/api/email/sendTrialWarning', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ 
-            email: user.users.email,
+            email: user.users[0].email, // 'users' array'inin ilk elemanına erişim
             daysLeft: daysLeft 
           })
         });
       }
       // 1 gün kaldıysa
       else if (daysLeft <= 1) {
-        await fetch('http://todayrow.app/api/email/sendTrialWarning', {
+        await fetch('https://todayrow.app/api/email/sendTrialWarning', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ 
-            email: user.users.email,
+            email: user.users[0].email, // 'users' array'inin ilk elemanına erişim
             daysLeft: 1
           })
         });
@@ -65,23 +65,23 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const { data: expiredUsers, error: expiredError } = await supabase
       .from('subscriptions')
       .select('user_id, users!inner(email)')
-      .eq('status', 'trial')
+      .eq('status', 'free_trial')
       .lt('trial_end', now.toISOString());
 
     if (expiredError) throw expiredError;
 
     for (const user of expiredUsers) {
       // Trial bitti mail'i gönder
-      await fetch('http://todayrow.app/api/email/sendTrialEnded', {
+      await fetch('https://todayrow.app/api/email/sendTrialEnded', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: user.users.email })
+        body: JSON.stringify({ email: user.users[0].email }) // 'users' array'inin ilk elemanına erişim
       });
 
       // Status'ü güncelle
       await supabase
         .from('subscriptions')
-        .update({ status: 'expired' })
+        .update({ status: 'expired', subscription_type: 'free', updated_at: now.toISOString() })
         .eq('user_id', user.user_id);
     }
 

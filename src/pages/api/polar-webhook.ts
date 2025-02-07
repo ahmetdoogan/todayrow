@@ -85,10 +85,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         }
 
         // Pro başladı maili gönder
-        await fetch('http://todayrow.app/api/email/sendProStarted', {
+        await fetch('https://todayrow.app/api/email/sendProStarted', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email: user.email })
+          body: JSON.stringify({ email: data.email }) // 'user' yerine 'data' kullanıldı
         }).catch(console.error);
 
         if (!updated || updated.length === 0) {
@@ -119,7 +119,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         const { error: cancelErr } = await supabase
           .from('subscriptions')
           .update({
-            status: 'canceled',
+            status: 'expired', subscription_type: 'free',
             updated_at: cancelDate,
           })
           .eq('user_id', userIdFromMeta);
@@ -130,10 +130,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         }
 
         // Pro iptal maili gönder
-        await fetch('http://todayrow.app0/api/email/sendProCancelled', {
+        await fetch('https://todayrow.app/api/email/sendProCancelled', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email: user.email })
+          body: JSON.stringify({ email: data.email }) // 'user' yerine 'data' kullanıldı
         }).catch(console.error);
         break;
 

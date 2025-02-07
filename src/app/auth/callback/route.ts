@@ -14,7 +14,7 @@ export async function GET(request: Request) {
       
       // Mail gönderimi
       if (data?.user) {
-        await fetch('http://todayrow.app/api/email/sendWelcome', {
+        await fetch('https://todayrow.app/api/email/sendWelcome', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ email: data.user.email })
