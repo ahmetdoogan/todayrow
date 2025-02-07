@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
+import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 import PlannerHeader from "@/components/layout/Header/components/PlannerHeader";
 import PlanList from "@/components/planner/PlanList";
 import QuickPlans from "@/components/planner/QuickPlans";
@@ -25,6 +26,52 @@ export default function DashboardPage() {
 
   // SuccessModal için state
   const [showSuccess, setShowSuccess] = useState(false);
+  const supabase = createClientComponentClient();
+
+  // Welcome email kontrolü
+  useEffect(() => {
+    const sendWelcomeEmail = async () => {
+      try {
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) return;
+
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('welcome_email_sent')
+          .eq('id', user.id)
+          .single();
+
+        // Eğer welcome email daha önce gönderilmemişse
+        if (!profile?.welcome_email_sent) {
+          console.log('Attempting to send welcome email...');
+          const response = await fetch('/api/email/sendWelcome', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Accept': 'application/json'
+            },
+            body: JSON.stringify({
+              email: user.email,
+              name: user.user_metadata?.full_name || ''
+            })
+          });
+
+          if (response.ok) {
+            // Welcome email başarıyla gönderildiyse profiles tablosunu güncelle
+            await supabase
+              .from('profiles')
+              .update({ welcome_email_sent: true })
+              .eq('id', user.id);
+            console.log('Welcome email sent and profile updated');
+          }
+        }
+      } catch (error) {
+        console.error('Error in welcome email process:', error);
+      }
+    };
+
+    sendWelcomeEmail();
+  }, []);
 
   // Ödeme başarılıysa SuccessModal'ı aç
   useEffect(() => {
