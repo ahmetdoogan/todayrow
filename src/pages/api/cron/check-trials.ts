@@ -34,7 +34,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     // Her kullanıcı için uygun maili gönder
     for (const user of users) {
-      const trialEnd = new Date(user.trial_end);
+      const trialEnd = new Date(user.trial_end as string); // 'trial_end' alanına string olarak erişim
       const daysLeft = Math.ceil((trialEnd.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
 
       // 7 gün kaldıysa
@@ -43,7 +43,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ 
-            email: user.users[0].email, // 'users' array'inin ilk elemanına erişim
+            email: (user as any).users[0].email, // 'users' array'inin ilk elemanına erişim
             daysLeft: daysLeft 
           })
         });
@@ -54,7 +54,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ 
-            email: user.users[0].email, // 'users' array'inin ilk elemanına erişim
+            email: (user as any).users[0].email, // 'users' array'inin ilk elemanına erişim
             daysLeft: 1
           })
         });
@@ -64,7 +64,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     // Trial'ı bitenleri bul ve mail gönder
     const { data: expiredUsers, error: expiredError } = await supabase
       .from('subscriptions')
-      .select('user_id, users!inner(email)')
+      .select('user_id, users:auth.users!inner(email)')
       .eq('status', 'free_trial')
       .lt('trial_end', now.toISOString());
 
@@ -75,7 +75,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       await fetch('https://todayrow.app/api/email/sendTrialEnded', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: user.users[0].email }) // 'users' array'inin ilk elemanına erişim
+        body: JSON.stringify({ email: (user as any).users[0].email }) // 'users' array'inin ilk elemanına erişim
       });
 
       // Status'ü güncelle
