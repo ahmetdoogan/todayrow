@@ -30,15 +30,23 @@ export default function DashboardPage() {
 
   // Welcome email kontrolü
   useEffect(() => {
+    if (typeof window === 'undefined') return;
+
     const sendWelcomeEmail = async () => {
       try {
         console.log('Welcome email check started...');
-        const { data: { user } } = await supabase.auth.getUser();
+        const { data: { user }, error } = await supabase.auth.getUser();
+        
+        if (error) {
+          console.error('Auth error:', error);
+          return;
+        }
         
         if (!user) {
           console.log('No user found');
           return;
         }
+
         console.log('User found:', user.email);
 
         const { data: profile } = await supabase
