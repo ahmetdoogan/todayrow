@@ -6,72 +6,72 @@ const supabase = createClient(
   process.env.SUPABASE_SERVICE_ROLE_KEY!
 );
 
-// 'auth' alanı bir dizi [{ email: string }, ...]
 interface SubscriptionItem {
   user_id: string;
-  auth: { email: string }[];
+  email: string | null;
+  updated_at: string;
+  status: string;
+  subscription_type: string;
 }
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+  console.log("DEBUG: process.env.CRON_SECRET =", process.env.CRON_SECRET);
+  console.log("DEBUG: req.headers.authorization =", req.headers.authorization);
+
   if (req.method !== 'GET') {
     return res.status(405).json({ message: 'Method not allowed' });
   }
 
   try {
-    // API token kontrolü
+    // Güvenlik kontrolü
     const authHeader = req.headers.authorization;
     if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
       return res.status(401).json({ message: 'Unauthorized' });
     }
 
-    // 1) Pro üyeliği yeni başlayanları kontrol et
+    // 1) Pro'ya yeni geçenler (son 24 saat)
     const { data: newProUsers, error: newProError } = await supabase
       .from('subscriptions')
-      .select('user_id, auth:users!inner(email)')
+      .select('user_id, email, updated_at, status, subscription_type')
       .eq('status', 'pro')
-      .gt('updated_at', new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString()) // Son 24 saat
-      .eq('subscription_type', 'pro');
+      .eq('subscription_type', 'pro')
+      .gt('updated_at', new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString());
 
     if (newProError) throw newProError;
 
-    // 2) Pro üyeliği iptal olanları kontrol et
-    const { data: cancelledUsers, error: cancelledError } = await supabase
-      .from('subscriptions')
-      .select('user_id, auth:users!inner(email)')
-      .eq('status', 'cancelled')
-      .gt('updated_at', new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString()) // Son 24 saat
-      .eq('subscription_type', 'free');
-
-    if (cancelledError) throw cancelledError;
-
-    // 3) Yeni Pro olanlara mail gönder
     for (const user of (newProUsers as SubscriptionItem[])) {
-      // 'auth' bir dizi, 0. elemanın email'ine erişiyoruz
-      const userEmail = user.auth[0]?.email;
-      if (!userEmail) continue; // ihtimale karşı koruyucu
-
+      if (!user.email) {
+        console.log("No email for user_id:", user.user_id);
+        continue;
+      }
       await fetch('https://todayrow.app/api/email/sendProStarted', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: userEmail })
+        body: JSON.stringify({ email: user.email })
       });
     }
 
-    // 4) İptal edilen Pro kullanıcılarına mail gönder
-    for (const user of (cancelledUsers as SubscriptionItem[])) {
-      const userEmail = user.auth[0]?.email;
-      if (!userEmail) continue;
+    // 2) Pro iptal edenler (son 24 saat)
+    const { data: cancelledUsers, error: cancelledError } = await supabase
+      .from('subscriptions')
+      .select('user_id, email, updated_at, status, subscription_type')
+      .eq('status', 'cancelled')
+      .eq('subscription_type', 'free')
+      .gt('updated_at', new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString());
 
+    if (cancelledError) throw cancelledError;
+
+    for (const user of (cancelledUsers as SubscriptionItem[])) {
+      if (!user.email) continue;
       await fetch('https://todayrow.app/api/email/sendProCancelled', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: userEmail })
+        body: JSON.stringify({ email: user.email })
       });
     }
 
     return res.status(200).json({
       message: 'Subscription checks completed',
-      // length'e de bu şekilde erişiyoruz
       newProEmails: (newProUsers as SubscriptionItem[]).length,
       cancelledEmails: (cancelledUsers as SubscriptionItem[]).length
     });

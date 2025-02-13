@@ -6,22 +6,14 @@ const supabase = createClient(
   process.env.SUPABASE_SERVICE_ROLE_KEY!
 );
 
-// 1) Trial süresi henüz bitmemiş kullanıcılar
 interface SubscriptionUser {
   user_id: string;
-  trial_end: string;   // bir tarih string'i
-  auth: { email: string }[]; // auth bir dizi
-}
-
-// 2) Tamamen bitmiş kullanıcılar
-interface ExpiredUser {
-  user_id: string;
-  auth: { email: string }[]; 
+  trial_end: string;
+  email: string | null; // Kolon boş olabilir, o yüzden null olabilir
 }
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
 
-  // --- İŞTE BURAYA CONSOLE.LOG EKLEDİK ---
   console.log("DEBUG: process.env.CRON_SECRET =", process.env.CRON_SECRET);
   console.log("DEBUG: req.headers.authorization =", req.headers.authorization);
 
@@ -37,59 +29,65 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     }
 
     const now = new Date();
-
-    // 1) Bitimine 7 gün veya daha az kalanlar (ama hâlâ geçerli)
     const sevenDaysLater = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000);
 
+    // 1) 7 gün içinde bitecek trial kullanıcılarını buluyoruz
     const { data: users, error } = await supabase
       .from('subscriptions')
-      .select('user_id, trial_end, auth:users!inner(email)')
+      .select('user_id, trial_end, email') // <-- Artık 'auth:users!inner(email)' yerine 'email' var
       .eq('status', 'free_trial')
       .gt('trial_end', now.toISOString())
       .lt('trial_end', sevenDaysLater.toISOString());
 
     if (error) throw error;
 
+    // 2) Her kullanıcı için daysLeft hesapla ve mail gönder
     for (const user of (users as SubscriptionUser[])) {
+      if (!user.email) {
+        // Eposta boşsa mail gönderemeyiz
+        console.log("No email found for user_id:", user.user_id);
+        continue;
+      }
+
       const trialEnd = new Date(user.trial_end);
       const daysLeft = Math.ceil((trialEnd.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
-      const userEmail = user.auth[0]?.email;
-      if (!userEmail) continue;
 
       if (daysLeft <= 7 && daysLeft > 1) {
+        // 7 günden az, 1 günden fazla kaldı => Trial Warning
         await fetch('https://todayrow.app/api/email/sendTrialWarning', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email: userEmail, daysLeft })
+          body: JSON.stringify({ email: user.email, daysLeft })
         });
       } else if (daysLeft <= 1) {
+        // 1 günden az kaldı => Warning (1 gün kaldı)
         await fetch('https://todayrow.app/api/email/sendTrialWarning', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email: userEmail, daysLeft: 1 })
+          body: JSON.stringify({ email: user.email, daysLeft: 1 })
         });
       }
     }
 
-    // 2) Trial'ı bitenleri bul (trial_end < now)
+    // 3) Trial bitenler (trial_end < now)
     const { data: expiredUsers, error: expiredError } = await supabase
       .from('subscriptions')
-      .select('user_id, auth:users!inner(email)')
+      .select('user_id, trial_end, email')
       .eq('status', 'free_trial')
       .lt('trial_end', now.toISOString());
 
     if (expiredError) throw expiredError;
 
-    for (const user of (expiredUsers as ExpiredUser[])) {
-      const userEmail = user.auth[0]?.email;
-      if (!userEmail) continue;
+    for (const user of (expiredUsers as SubscriptionUser[])) {
+      if (!user.email) continue; // yine email kontrolü
 
       await fetch('https://todayrow.app/api/email/sendTrialEnded', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: userEmail })
+        body: JSON.stringify({ email: user.email })
       });
 
+      // status = expired
       await supabase
         .from('subscriptions')
         .update({ 
@@ -100,11 +98,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         .eq('user_id', user.user_id);
     }
 
-    // 3) Bitti
     return res.status(200).json({ 
       message: 'Trial checks completed',
       warningsSent: (users as SubscriptionUser[]).length,
-      expiredProcessed: (expiredUsers as ExpiredUser[]).length
+      expiredProcessed: (expiredUsers as SubscriptionUser[]).length
     });
 
   } catch (error) {
