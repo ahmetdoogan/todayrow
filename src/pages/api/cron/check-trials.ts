@@ -6,18 +6,23 @@ const supabase = createClient(
   process.env.SUPABASE_SERVICE_ROLE_KEY!
 );
 
+// Trial için 2 farklı arayüz kullanalım (biri henüz bitmemiş, biri bitmiş)
 interface SubscriptionUser {
   user_id: string;
   trial_end: string;
   auth: {
-    users: Array<{ email: string }>;
+    users: {
+      email: string;
+    }[];
   };
 }
 
 interface ExpiredUser {
   user_id: string;
   auth: {
-    users: Array<{ email: string }>;
+    users: {
+      email: string;
+    }[];
   };
 }
 
@@ -47,10 +52,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     if (error) throw error;
 
     // Her kullanıcı için uygun maili gönder
-    for (const user of users as unknown as SubscriptionUser[]) {
+    for (const user of (users as SubscriptionUser[])) {
       const trialEnd = new Date(user.trial_end);
       const daysLeft = Math.ceil((trialEnd.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
 
+      // 7 gün ve 1 gün aralığı
       if (daysLeft <= 7 && daysLeft > 1) {
         await fetch('https://todayrow.app/api/email/sendTrialWarning', {
           method: 'POST',
@@ -61,6 +67,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           })
         });
       }
+      // 1 gün ve altı
       else if (daysLeft <= 1) {
         await fetch('https://todayrow.app/api/email/sendTrialWarning', {
           method: 'POST',
@@ -73,7 +80,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       }
     }
 
-    // Trial'ı bitenleri bul ve mail gönder
+    // Trial'ı bitenleri bul (tarih geçmiş), mail gönder
     const { data: expiredUsers, error: expiredError } = await supabase
       .from('subscriptions')
       .select('user_id, auth:users!inner(email)')
@@ -82,13 +89,14 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     if (expiredError) throw expiredError;
 
-    for (const user of expiredUsers as unknown as ExpiredUser[]) {
+    for (const user of (expiredUsers as ExpiredUser[])) {
       await fetch('https://todayrow.app/api/email/sendTrialEnded', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email: user.auth.users[0].email })
       });
 
+      // Status'ü expired'a güncelle
       await supabase
         .from('subscriptions')
         .update({ 
@@ -101,8 +109,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     return res.status(200).json({ 
       message: 'Trial checks completed',
-      warningsSent: users.length,
-      expiredProcessed: expiredUsers.length
+      warningsSent: (users as SubscriptionUser[]).length,
+      expiredProcessed: (expiredUsers as ExpiredUser[]).length
     });
 
   } catch (error) {

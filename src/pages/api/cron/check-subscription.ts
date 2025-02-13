@@ -6,6 +6,16 @@ const supabase = createClient(
   process.env.SUPABASE_SERVICE_ROLE_KEY!
 );
 
+// BURADA tip (arayüz) tanımlıyoruz
+interface SubscriptionItem {
+  user_id: string;
+  auth: {
+    users: {
+      email: string;
+    }[];
+  };
+}
+
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'GET') {
     return res.status(405).json({ message: 'Method not allowed' });
@@ -18,18 +28,18 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       return res.status(401).json({ message: 'Unauthorized' });
     }
 
-    // Pro üyeliği yeni başlayanları kontrol et
+    // 1) Pro üyeliği yeni başlayanları kontrol et
     const { data: newProUsers, error: newProError } = await supabase
       .from('subscriptions')
       .select('user_id, auth:users!inner(email)')
       .eq('status', 'pro')
-      .gt('updated_at', new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString()) // Son 24 saat
+      .gt('updated_at', new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString()) // Son 24 saat içinde updated
       .eq('subscription_type', 'pro');
 
     if (newProError) throw newProError;
 
     // Yeni Pro kullanıcılarına mail gönder
-    for (const user of newProUsers) {
+    for (const user of (newProUsers as SubscriptionItem[])) {
       await fetch('https://todayrow.app/api/email/sendProStarted', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -37,7 +47,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       });
     }
 
-    // Pro üyeliği iptal olanları kontrol et
+    // 2) Pro üyeliği iptal olanları kontrol et
     const { data: cancelledUsers, error: cancelledError } = await supabase
       .from('subscriptions')
       .select('user_id, auth:users!inner(email)')
@@ -48,7 +58,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     if (cancelledError) throw cancelledError;
 
     // İptal edilen Pro kullanıcılarına mail gönder
-    for (const user of cancelledUsers) {
+    for (const user of (cancelledUsers as SubscriptionItem[])) {
       await fetch('https://todayrow.app/api/email/sendProCancelled', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -58,8 +68,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     return res.status(200).json({
       message: 'Subscription checks completed',
-      newProEmails: newProUsers.length,
-      cancelledEmails: cancelledUsers.length
+      newProEmails: (newProUsers as SubscriptionItem[]).length,
+      cancelledEmails: (cancelledUsers as SubscriptionItem[]).length
     });
 
   } catch (error) {
