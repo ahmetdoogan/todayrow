@@ -67,7 +67,24 @@ export default async function handler(
 
     console.log('Attempting to send welcome email to:', email);
 
-    try {
+    // Email validasyonu
+  if (!email) {
+    console.log('Welcome email failed: No email provided');
+    return res.status(400).json({ message: 'Email is required' });
+  }
+
+  console.log('Starting welcome email process for:', email);
+  console.log('SMTP Config:', {
+    host: 'smtp.gmail.com',
+    port: 587,
+    secure: false,
+    auth: {
+      user: 'hello@todayrow.app',
+      passExists: !!process.env.SMTP_PASSWORD
+    }
+  });
+
+  try {
     console.log('Attempting to send welcome email to:', email);
     await transporter.sendMail({
       from: '"Todayrow" <hello@todayrow.app>',
