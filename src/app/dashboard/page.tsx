@@ -32,14 +32,22 @@ export default function DashboardPage() {
   useEffect(() => {
     const sendWelcomeEmail = async () => {
       try {
+        console.log('Welcome email check started...');
         const { data: { user } } = await supabase.auth.getUser();
-        if (!user) return;
+        
+        if (!user) {
+          console.log('No user found');
+          return;
+        }
+        console.log('User found:', user.email);
 
         const { data: profile } = await supabase
           .from('profiles')
           .select('welcome_email_sent')
           .eq('id', user.id)
           .single();
+
+        console.log('Profile data:', profile);
 
         // Eğer welcome email daha önce gönderilmemişse
         if (!profile?.welcome_email_sent) {
