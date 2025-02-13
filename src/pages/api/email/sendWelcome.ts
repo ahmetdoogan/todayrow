@@ -31,9 +31,28 @@ const welcomeTemplate = `
       Todayrow'a Hoş Geldiniz!
     </h1>
     
-    <p style="color: #64748b; font-size: 16px; line-height: 24px; text-align: center; margin: 0 0 32px;">
-      Verimli planlama yolculuğunuza başladığınız için teşekkürler. Hemen ücretsiz deneme sürenizi başlatıp, Todayrow'un özelliklerini keşfetmeye başlayabilirsiniz.
-    </p>
+    <div style="color: #64748b; font-size: 16px; line-height: 24px; margin: 0 0 32px;">
+      <p style="margin-bottom: 16px;">
+        LinkedIn içerik planlamanızı kolaylaştırmak için buradayız. İşte Todayrow ile yapabilecekleriniz:
+      </p>
+      
+      <div style="margin-left: 24px; margin-bottom: 24px;">
+        • İçeriklerinizi takvim üzerinde planlayın<br/>
+        • Notlarınızı organize edin<br/>
+        • İçerik fikirlerinizi kaydedin<br/>
+        • Otomatik hatırlatmalar alın
+      </div>
+
+      <p style="margin-bottom: 16px;">
+        <strong>Başlamak için önerilerimiz:</strong>
+      </p>
+      
+      <div style="margin-left: 24px;">
+        1. Profilinizi güncelleyin<br/>
+        2. İlk içerik planınızı oluşturun<br/>
+        3. LinkedIn profilinizi bağlayın
+      </div>
+    </div>
 
     <div style="text-align: center;">
       <a href="https://todayrow.app/dashboard" 
