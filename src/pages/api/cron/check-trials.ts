@@ -109,6 +109,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           expiredProcessed: expiredUsers.length
         }
       });
+
+    return res.status(200).json({ 
       message: 'Trial checks completed',
       warningsSent: (users as SubscriptionUser[]).length,
       expiredProcessed: (expiredUsers as SubscriptionUser[]).length
