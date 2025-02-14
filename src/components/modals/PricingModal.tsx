@@ -7,6 +7,7 @@ import { supabase } from '@/utils/supabaseClient';
 interface Props {
   isOpen: boolean;
   onClose: () => void;
+  isTrialEnded?: boolean; // Bunu ekledik
 }
 
 const priceChangeKeyframes = `
@@ -26,7 +27,7 @@ const priceChangeKeyframes = `
   }
 `;
 
-const PricingModal = ({ isOpen, onClose }: Props) => {
+const PricingModal = ({ isOpen, onClose, isTrialEnded }: Props) => {
   const t = useTranslations('pricing');
   const [billingType, setBillingType] = useState<'monthly' | 'yearly'>('monthly');
 
@@ -63,6 +64,14 @@ const PricingModal = ({ isOpen, onClose }: Props) => {
             >
               <Dialog.Panel className="w-full max-w-2xl transform overflow-hidden bg-white dark:bg-slate-900 rounded-3xl">
                 <div className="p-8">
+                  {/* Optional: Trial bitti mesajı */}
+                  {isTrialEnded && (
+                    <div className="mb-4 text-red-600 font-semibold">
+                      {/* "Pro süreniz doldu, lütfen yenileyin" gibi */}
+                      {t('subscriptionEndedMessage')}
+                    </div>
+                  )}
+
                   {/* Header Section */}
                   <div className="flex justify-between items-start">
                     <div className="space-y-2">
@@ -115,9 +124,7 @@ const PricingModal = ({ isOpen, onClose }: Props) => {
                     <div 
                       key={price} 
                       className="inline-flex items-baseline"
-                      style={{
-                        animation: 'priceChange 300ms ease-out'
-                      }}
+                      style={{ animation: 'priceChange 300ms ease-out' }}
                     >
                       <span className="text-5xl font-bold tracking-tight text-gray-900 dark:text-white">
                         ${price}
@@ -129,9 +136,7 @@ const PricingModal = ({ isOpen, onClose }: Props) => {
                     {savings && (
                       <div 
                         className="mt-2 text-sm text-green-600 dark:text-green-400 font-medium"
-                        style={{
-                          animation: savings ? 'fadeIn 300ms ease-out' : 'none'
-                        }}
+                        style={{ animation: 'fadeIn 300ms ease-out' }}
                       >
                         {savings}
                       </div>
@@ -169,36 +174,36 @@ const PricingModal = ({ isOpen, onClose }: Props) => {
 
                   {/* Action Button */}
                   <div className="flex justify-center">
-  <button
-    className="mt-8 w-1/2 h-14 bg-black hover:bg-black/90 dark:bg-white dark:hover:bg-white/90 text-white dark:text-black text-base font-medium rounded-2xl transition-colors"
-    onClick={async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (!session?.access_token) return;
+                    <button
+                      className="mt-8 w-1/2 h-14 bg-black hover:bg-black/90 dark:bg-white dark:hover:bg-white/90 text-white dark:text-black text-base font-medium rounded-2xl transition-colors"
+                      onClick={async () => {
+                        const { data: { session } } = await supabase.auth.getSession();
+                        if (!session?.access_token) return;
 
-      try {
-        const resp = await fetch(`/api/checkout?plan=${billingType}`, {
-          method: 'GET',
-          headers: {
-            'Authorization': `Bearer ${session.access_token}`,
-          }
-        });
+                        try {
+                          const resp = await fetch(`/api/checkout?plan=${billingType}`, {
+                            method: 'GET',
+                            headers: {
+                              'Authorization': `Bearer ${session.access_token}`,
+                            }
+                          });
 
-        if (!resp.ok) {
-          console.error('Checkout error:', await resp.text());
-          return;
-        }
+                          if (!resp.ok) {
+                            console.error('Checkout error:', await resp.text());
+                            return;
+                          }
 
-        const data = await resp.json();
-        window.location.href = data.url;
-        onClose();
-      } catch (error) {
-        console.error('Checkout error:', error);
-      }
-    }}
-  >
-    {t('button')}
-  </button>
-</div>
+                          const data = await resp.json();
+                          window.location.href = data.url;
+                          onClose();
+                        } catch (error) {
+                          console.error('Checkout error:', error);
+                        }
+                      }}
+                    >
+                      {t('button')}
+                    </button>
+                  </div>
                 </div>
               </Dialog.Panel>
             </Transition.Child>

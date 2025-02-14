@@ -12,11 +12,27 @@ import WelcomePopup from "@/components/onboarding/WelcomePopup";
 import { useAuth } from '@/context/AuthContext';
 import { supabase } from '@/utils/supabaseClient';
 import { useSubscription } from '@/hooks/useSubscription';
-import { Content } from '@/types/content'; // Eğer Content tipi varsa
+import { Content } from '@/types/content';
 
+// Soft paywall modal
 import PricingModal from '@/components/modals/PricingModal';
 
-import { useToast } from '@/components/ui/use-toast';
+// React-Toastify (tüm projede de bu kullanılıyor)
+import { toast } from 'react-toastify';
+
+interface DashboardLayoutInnerProps {
+  children: React.ReactNode;
+  isContentModalOpen: boolean;
+  setIsContentModalOpen: (v: boolean) => void;
+  isNoteModalOpen: boolean;
+  setIsNoteModalOpen: (v: boolean) => void;
+  isPlanModalOpen: boolean;
+  setIsPlanModalOpen: (v: boolean) => void;
+  isSidebarCollapsed: boolean;
+  setIsSidebarCollapsed: (v: boolean) => void;
+  showWelcome: boolean;
+  setShowWelcome: (v: boolean) => void;
+}
 
 function DashboardLayoutInner({
   children,
@@ -30,40 +46,33 @@ function DashboardLayoutInner({
   setIsSidebarCollapsed,
   showWelcome,
   setShowWelcome
-}: {
-  children: React.ReactNode;
-  isContentModalOpen: boolean;
-  setIsContentModalOpen: (v: boolean) => void;
-  isNoteModalOpen: boolean;
-  setIsNoteModalOpen: (v: boolean) => void;
-  isPlanModalOpen: boolean;
-  setIsPlanModalOpen: (v: boolean) => void;
-  isSidebarCollapsed: boolean;
-  setIsSidebarCollapsed: (v: boolean) => void;
-  showWelcome: boolean;
-  setShowWelcome: (v: boolean) => void;
-}) {
-  const { toast } = useToast();
+}: DashboardLayoutInnerProps) {
+
+  // Not oluşturma fonksiyonunu context'ten alıyoruz
   const { createNote } = useNotes();
 
-  // Düzenlenecek içeriği tutan state ekliyoruz.
+  // İçerik düzenlemek için state
   const [selectedContent, setSelectedContent] = useState<Content | null>(null);
 
-  // Örneğin; kullanıcı içeriğe tıkladığında düzenleme modunu açmak için:
-  const handleEditContent = (content: Content) => {
-    setSelectedContent(content);
-    setIsContentModalOpen(true);
-  };
-
+  // Soft paywall modal
   const [isPricingModalOpen, setIsPricingModalOpen] = useState(false);
+
+  // Abonelik durumu
   const { loading, isExpired } = useSubscription();
 
+  // Basit bir fonksiyon: abone değilse PricingModal aç, yoksa callback'i çalıştır
   const handleAction = (action: () => void) => {
     if (isExpired) {
       setIsPricingModalOpen(true);
       return;
     }
     action();
+  };
+
+  // (Opsiyonel) içerik düzenlemesi örneği
+  const handleEditContent = (content: Content) => {
+    setSelectedContent(content);
+    setIsContentModalOpen(true);
   };
 
   return (
@@ -77,25 +86,19 @@ function DashboardLayoutInner({
         onCollapse={setIsSidebarCollapsed}
         onNewPlan={() => handleAction(() => setIsPlanModalOpen(true))}
       />
+
       <main className="flex-1 overflow-auto transition-all duration-300 p-4">
         {children}
-        {/* Örnek: İçerik kartlarında düzenleme butonuna tıklandığında handleEditContent çağrılabilir.
-            Eğer içerik kartlarınız Dashboard içinde render ediliyorsa,
-            ilgili düzenleme butonunda aşağıdaki gibi çağırın:
-            
-            <button onClick={() => handleEditContent(content)}>Düzenle</button>
-        */}
       </main>
 
-      {/* ContentModal'u, düzenleme modunda açarken contentId prop'unu geçiyoruz.
-          Eğer selectedContent null ise bu mod yeni içerik ekleme modunu çalıştırır,
-          aksi halde selectedContent.id güncelleme (update) modunu tetikler. */}
+      {/* ContentModal */}
       <ContentModal
         isOpen={isContentModalOpen}
         onClose={() => setIsContentModalOpen(false)}
         contentId={selectedContent ? selectedContent.id : undefined}
       />
 
+      {/* NoteModal */}
       <NoteModal
         isOpen={isNoteModalOpen}
         onClose={() => setIsNoteModalOpen(false)}
@@ -105,11 +108,10 @@ function DashboardLayoutInner({
             setIsNoteModalOpen(false);
           } catch (error) {
             console.error('Error creating note:', error);
-            toast({
-              title: 'Hata!',
-              description: 'Not oluşturulurken bir hata oluştu. Lütfen tekrar deneyin.',
-              variant: 'destructive'
-            });
+            // Şu an sabit Türkçe:
+            toast.error('Not oluşturulurken bir hata oluştu. Lütfen tekrar deneyin.');
+            // Eğer i18n kullanacaksanız:
+            // toast.error(t('createNote'));
             throw error;
           }
         }}
@@ -124,7 +126,7 @@ function DashboardLayoutInner({
       <PricingModal
         isOpen={isPricingModalOpen}
         onClose={() => setIsPricingModalOpen(false)}
-        isTrialEnded={isExpired}
+        isTrialEnded={isExpired} // Trial bitti mi?
       />
     </div>
   );
@@ -135,6 +137,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   const router = useRouter();
   const pathname = usePathname();
 
+  // Modal state'leri
   const [isContentModalOpen, setIsContentModalOpen] = useState(false);
   const [isNoteModalOpen, setIsNoteModalOpen] = useState(false);
   const [isPlanModalOpen, setIsPlanModalOpen] = useState(false);
@@ -144,11 +147,11 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
   const { loading, isExpired } = useSubscription();
 
+  // Oturum kontrolü
   useEffect(() => {
     const checkSession = async () => {
       try {
         const { data: { session } } = await supabase.auth.getSession();
-        
         if (!session) {
           window.location.href = '/auth/login';
           return;
@@ -163,10 +166,10 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         window.location.href = '/auth/login';
       }
     };
-
     checkSession();
   }, []);
 
+  // eğer user yoksa login'e at
   useEffect(() => {
     if (!loading && !user) {
       router.replace('/auth/login');
