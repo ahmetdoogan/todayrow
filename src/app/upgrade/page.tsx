@@ -30,8 +30,13 @@ export default function UpgradePage() {
   return (
     <PlannerProvider> {/* Normal Dashboard gibi aynı yapıda olmalı */}
       <div className="h-screen flex">
-        {/* Sidebar, her sayfada olduğu gibi olacak */}
-        <Sidebar />
+        {/* Sidebar çağırılırken gerekli props'lar verildi */}
+        <Sidebar
+          onNewContent={() => {}}
+          onNewNote={() => {}}
+          onCollapse={() => {}}
+          onNewPlan={() => {}}
+        />
 
         <div className="flex-1 flex flex-col">
           {/* Header, Dashboard'ta nasıl görünüyorsa öyle olacak */}
