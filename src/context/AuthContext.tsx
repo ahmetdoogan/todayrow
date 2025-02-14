@@ -45,22 +45,26 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     session,
     supabase,
     signIn: async (email: string, password: string) => {
-      try {
-        setIsLoading(true);
-        const { data: { session: currentSession }, error } =
-          await supabase.auth.signInWithPassword({ email, password });
-        if (error) throw error;
+  try {
+    setIsLoading(true);
+    const { data: { session: currentSession }, error } =
+      await supabase.auth.signInWithPassword({ email, password });
+    if (error) throw error;
 
-        if (currentSession?.user) {
-          updateAuthState(currentSession.user, currentSession);
-          router.push('/dashboard');
-        }
-      } catch (error) {
-        setIsLoading(false);
-        console.error("Login error:", error);
-        throw error;
-      }
-    },
+    if (currentSession?.user) {
+      updateAuthState(currentSession.user, currentSession);
+      const searchParams = new URLSearchParams(window.location.search);
+      const redirectPath = searchParams.get("redirect") || "/dashboard"; // 🌟 Eğer redirect varsa onu kullan
+
+      router.push(redirectPath); // Kullanıcıyı upgrade'e yönlendir
+    }
+  } catch (error) {
+    setIsLoading(false);
+    console.error("Login error:", error);
+    throw error;
+  }
+},
+
     signUp: async (email: string, password: string) => {
       try {
         setIsLoading(true);
