@@ -8,14 +8,18 @@ import ContentDetailPopup from "@/components/content/ContentDetailPopup";
 import ContentModal from "@/components/content/ContentModal";
 import DashboardStats from "@/components/dashboard/DashboardStats";
 import ViewToggle from "@/components/common/ViewToggle";
+import PricingModal from '@/components/modals/PricingModal';
 import { useContent } from "@/context/ContentContext";
+import { useSubscription } from '@/hooks/useSubscription';
 import { useTranslations } from 'next-intl';
 import { motion } from "framer-motion";
 
 export default function ContentsPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isPricingModalOpen, setIsPricingModalOpen] = useState(false);
   const [view, setView] = useState<'grid' | 'list'>('grid');
   const { filteredContents, selectedContent, setSelectedContent } = useContent();
+  const { isExpired } = useSubscription();
   const t = useTranslations();
 
   const contentContainerClasses = view === 'grid'
@@ -67,7 +71,13 @@ export default function ContentsPage() {
       {t('common.content.emptyState')}
     </p>
     <button
-      onClick={() => setIsModalOpen(true)}
+      onClick={() => {
+        if (isExpired) {
+          setIsPricingModalOpen(true);
+          return;
+        }
+        setIsModalOpen(true);
+      }}
       className="flex items-center gap-2 px-4 py-2 bg-zinc-900 hover:bg-black/70 text-white dark:bg-zinc-700 dark:hover:bg-zinc-600 rounded-xl transition-all duration-200 font-medium text-sm"
     >
       <PlusCircle className="w-4 h-4" />
@@ -108,6 +118,12 @@ export default function ContentsPage() {
     <ContentModal
       isOpen={isModalOpen}
       onClose={() => setIsModalOpen(false)}
+    />
+
+    <PricingModal
+      isOpen={isPricingModalOpen}
+      onClose={() => setIsPricingModalOpen(false)}
+      isTrialEnded={isExpired}
     />
   </>
 );
