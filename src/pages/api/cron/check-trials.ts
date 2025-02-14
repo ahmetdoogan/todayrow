@@ -98,7 +98,17 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         .eq('user_id', user.user_id);
     }
 
-    return res.status(200).json({ 
+    // Loglama
+    await supabase
+      .from('cron_logs')
+      .insert({
+        job_name: 'check-trials',
+        execution_time: new Date().toISOString(),
+        details: {
+          warningsSent: users.length,
+          expiredProcessed: expiredUsers.length
+        }
+      });
       message: 'Trial checks completed',
       warningsSent: (users as SubscriptionUser[]).length,
       expiredProcessed: (expiredUsers as SubscriptionUser[]).length
