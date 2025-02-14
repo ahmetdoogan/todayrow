@@ -13,7 +13,10 @@ export default function PaywallPage() {
 
   useEffect(() => {
     const fetchStatus = async () => {
-      if (!session?.user?.id) return;
+      if (!session?.user?.id) {
+        setSubscriptionStatus('expired');
+        return;
+      }
 
       const supabase = createClient(
         process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -39,7 +42,7 @@ export default function PaywallPage() {
 
   const handleUpgrade = async () => {
     if (!session?.access_token) {
-      console.error('No session found');
+      router.push('/auth/login?redirect=/paywall');
       return;
     }
 
