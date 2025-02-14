@@ -1,33 +1,33 @@
 "use client";
 
 import React, { useState } from "react";
-import Sidebar from "@/components/layout/Sidebar";
-import Header from "@/components/layout/Header";
+import PlannerHeader from "@/components/layout/Header/components/PlannerHeader";
 import PricingModal from "@/components/modals/PricingModal";
+import PlanList from "@/components/planner/PlanList";
+import QuickPlans from "@/components/planner/QuickPlans";
 
 export default function UpgradePage() {
   const [isPricingOpen, setIsPricingOpen] = useState(true);
 
   return (
-    <div className="flex min-h-screen bg-gray-100 dark:bg-gray-900">
-      {/* Sidebar */}
-      <Sidebar 
-        onNewContent={() => console.log("New Content Clicked")} 
-        onNewNote={() => console.log("New Note Clicked")} 
-        onCollapse={(value) => console.log("Sidebar Collapsed:", value)} 
-        onNewPlan={() => console.log("New Plan Clicked")}
-      />
+    <div className="h-full flex flex-col relative">
+      {/* Header - Dashboard gibi olsun */}
+      <PlannerHeader />
 
-      {/* İçerik Alanı */}
-      <div className="flex-1 flex flex-col">
-        {/* Header */}
-        <Header darkMode={false} toggleTheme={() => {}} setIsModalOpen={() => {}} />
+      <div className="flex-1 overflow-hidden flex">
+        {/* Sol tarafta PlanList (Normal Dashboard'taki gibi) */}
+        <div className="flex-1 overflow-y-auto">
+          <PlanList />
+        </div>
 
-        {/* Sayfa İçeriği */}
-        <div className="flex-1 flex justify-center items-center p-6">
-          <PricingModal isOpen={isPricingOpen} onClose={() => setIsPricingOpen(false)} />
+        {/* Sağ tarafta QuickPlans */}
+        <div className="hidden md:block w-64 xl:w-72 border-l border-gray-200 dark:border-gray-800 overflow-auto">
+          <QuickPlans />
         </div>
       </div>
+
+      {/* Pricing Modal */}
+      <PricingModal isOpen={isPricingOpen} onClose={() => setIsPricingOpen(false)} />
     </div>
   );
 }
