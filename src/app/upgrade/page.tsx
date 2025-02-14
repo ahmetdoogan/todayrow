@@ -5,29 +5,31 @@ import PlannerHeader from "@/components/layout/Header/components/PlannerHeader";
 import PricingModal from "@/components/modals/PricingModal";
 import PlanList from "@/components/planner/PlanList";
 import QuickPlans from "@/components/planner/QuickPlans";
+import { PlannerProvider } from "@/context/PlannerContext"; // Bunu ekledik
 
 export default function UpgradePage() {
   const [isPricingOpen, setIsPricingOpen] = useState(true);
 
   return (
-    <div className="h-full flex flex-col relative">
-      {/* Header - Dashboard gibi olsun */}
-      <PlannerHeader />
+    <PlannerProvider> {/* Bütün içeriği Provider içine aldık */}
+      <div className="h-full flex flex-col relative">
+        <PlannerHeader />
 
-      <div className="flex-1 overflow-hidden flex">
-        {/* Sol tarafta PlanList (Normal Dashboard'taki gibi) */}
-        <div className="flex-1 overflow-y-auto">
-          <PlanList />
+        <div className="flex-1 overflow-hidden flex">
+          {/* Sol tarafta PlanList (Normal Dashboard'taki gibi) */}
+          <div className="flex-1 overflow-y-auto">
+            <PlanList />
+          </div>
+
+          {/* Sağ tarafta QuickPlans */}
+          <div className="hidden md:block w-64 xl:w-72 border-l border-gray-200 dark:border-gray-800 overflow-auto">
+            <QuickPlans />
+          </div>
         </div>
 
-        {/* Sağ tarafta QuickPlans */}
-        <div className="hidden md:block w-64 xl:w-72 border-l border-gray-200 dark:border-gray-800 overflow-auto">
-          <QuickPlans />
-        </div>
+        {/* Pricing Modal */}
+        <PricingModal isOpen={isPricingOpen} onClose={() => setIsPricingOpen(false)} />
       </div>
-
-      {/* Pricing Modal */}
-      <PricingModal isOpen={isPricingOpen} onClose={() => setIsPricingOpen(false)} />
-    </div>
+    </PlannerProvider>
   );
 }

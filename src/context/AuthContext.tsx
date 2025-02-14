@@ -56,7 +56,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       const searchParams = new URLSearchParams(window.location.search);
       const redirectPath = searchParams.get("redirect") || "/dashboard"; // 🌟 Eğer redirect varsa onu kullan
 
-      router.push(redirectPath); // Kullanıcıyı upgrade'e yönlendir
+      router.push(redirectPath); // Önceki sayfaya geri dön
     }
   } catch (error) {
     setIsLoading(false);
