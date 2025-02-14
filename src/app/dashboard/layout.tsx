@@ -14,6 +14,10 @@ import { supabase } from '@/utils/supabaseClient';
 import { useSubscription } from '@/hooks/useSubscription';
 import { Content } from '@/types/content'; // Eğer Content tipi varsa
 
+import PricingModal from '@/components/modals/PricingModal';
+
+import { useToast } from '@/components/ui/use-toast';
+
 function DashboardLayoutInner({
   children,
   isContentModalOpen,
@@ -39,6 +43,7 @@ function DashboardLayoutInner({
   showWelcome: boolean;
   setShowWelcome: (v: boolean) => void;
 }) {
+  const { toast } = useToast();
   const { createNote } = useNotes();
 
   // Düzenlenecek içeriği tutan state ekliyoruz.
@@ -50,17 +55,27 @@ function DashboardLayoutInner({
     setIsContentModalOpen(true);
   };
 
+  const [isPricingModalOpen, setIsPricingModalOpen] = useState(false);
+  const { loading, isExpired } = useSubscription();
+
+  const handleAction = (action: () => void) => {
+    if (isExpired) {
+      setIsPricingModalOpen(true);
+      return;
+    }
+    action();
+  };
+
   return (
     <div className="flex h-screen overflow-hidden bg-stone-100 dark:bg-gray-900">
       <Sidebar
-        onNewContent={() => {
-          // Yeni içerik eklerken seçili içeriği temizleyelim.
+        onNewContent={() => handleAction(() => {
           setSelectedContent(null);
           setIsContentModalOpen(true);
-        }}
-        onNewNote={() => setIsNoteModalOpen(true)}
+        })}
+        onNewNote={() => handleAction(() => setIsNoteModalOpen(true))}
         onCollapse={setIsSidebarCollapsed}
-        onNewPlan={() => setIsPlanModalOpen(true)}
+        onNewPlan={() => handleAction(() => setIsPlanModalOpen(true))}
       />
       <main className="flex-1 overflow-auto transition-all duration-300 p-4">
         {children}
@@ -90,6 +105,11 @@ function DashboardLayoutInner({
             setIsNoteModalOpen(false);
           } catch (error) {
             console.error('Error creating note:', error);
+            toast({
+              title: 'Hata!',
+              description: 'Not oluşturulurken bir hata oluştu. Lütfen tekrar deneyin.',
+              variant: 'destructive'
+            });
             throw error;
           }
         }}
@@ -100,6 +120,12 @@ function DashboardLayoutInner({
       {showWelcome && (
         <WelcomePopup onClose={() => setShowWelcome(false)} />
       )}
+
+      <PricingModal
+        isOpen={isPricingModalOpen}
+        onClose={() => setIsPricingModalOpen(false)}
+        isTrialEnded={isExpired}
+      />
     </div>
   );
 }
@@ -142,10 +168,10 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   }, []);
 
   useEffect(() => {
-    if (!loading && isExpired) {
-      router.replace('/paywall');
+    if (!loading && !user) {
+      router.replace('/auth/login');
     }
-  }, [loading, isExpired, router]);
+  }, [loading, user, router]);
 
   if (isChecking || loading) {
     return (
