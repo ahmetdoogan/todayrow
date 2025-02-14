@@ -259,7 +259,9 @@ setMetadata(
 const baseSlug = createSlug(title);
 const { data: existingSlugs } = await supabase
   .from("Content")
-  .select('slug');
+  .select('slug')
+  .eq("user_id", user.id) // SADECE mevcut kullanıcının slug'larını çek
+  .eq("is_deleted", false); // İsteğe bağlı: Silinmemiş içerikleri kontrol et
 
 const slug = makeUniqueSlug(baseSlug, existingSlugs?.map(c => c.slug) || []);
 
