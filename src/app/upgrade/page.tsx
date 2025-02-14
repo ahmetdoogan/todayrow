@@ -8,14 +8,15 @@ import Sidebar from "@/components/layout/Sidebar";
 import PlannerHeader from "@/components/layout/Header/components/PlannerHeader";
 import PlanList from "@/components/planner/PlanList";
 import QuickPlans from "@/components/planner/QuickPlans";
-import { PlannerProvider } from "@/context/PlannerContext"; 
+import { PlannerProvider } from "@/context/PlannerContext";
+import { NotesProvider } from "@/context/NotesContext"; // EKLEDİK ✅
 
 export default function UpgradePage() {
   const { user } = useAuth();
   const router = useRouter();
   const [isPricingOpen, setIsPricingOpen] = useState(true);
 
-  // Kullanıcı giriş yapmamışsa login'e yönlendir
+  // Kullanıcı giriş yapmamışsa login sayfasına yönlendir
   useEffect(() => {
     if (!user) {
       router.push(`/auth/login?redirect=/upgrade`);
@@ -28,36 +29,38 @@ export default function UpgradePage() {
   }
 
   return (
-    <PlannerProvider> {/* Normal Dashboard gibi aynı yapıda olmalı */}
-      <div className="h-screen flex">
-        {/* Sidebar çağırılırken gerekli props'lar verildi */}
-        <Sidebar
-          onNewContent={() => {}}
-          onNewNote={() => {}}
-          onCollapse={() => {}}
-          onNewPlan={() => {}}
-        />
+    <PlannerProvider> {/* Dashboard gibi yapı oluşturuyoruz */}
+      <NotesProvider> {/* NotesProvider EKLEDİK ✅ */}
+        <div className="h-screen flex">
+          {/* Sidebar bileşenine props'ları vererek çağırıyoruz */}
+          <Sidebar
+            onNewContent={() => {}}
+            onNewNote={() => {}}
+            onCollapse={() => {}}
+            onNewPlan={() => {}}
+          />
 
-        <div className="flex-1 flex flex-col">
-          {/* Header, Dashboard'ta nasıl görünüyorsa öyle olacak */}
-          <PlannerHeader />
+          <div className="flex-1 flex flex-col">
+            {/* Header, Dashboard'taki gibi olacak */}
+            <PlannerHeader />
 
-          <div className="flex-1 overflow-hidden flex">
-            {/* Sol tarafta PlanList (Normal Dashboard'taki gibi) */}
-            <div className="flex-1 overflow-y-auto">
-              <PlanList />
+            <div className="flex-1 overflow-hidden flex">
+              {/* Sol tarafta PlanList (Normal Dashboard'taki gibi) */}
+              <div className="flex-1 overflow-y-auto">
+                <PlanList />
+              </div>
+
+              {/* Sağ tarafta QuickPlans (Normal Dashboard'taki gibi) */}
+              <div className="hidden md:block w-64 xl:w-72 border-l border-gray-200 dark:border-gray-800 overflow-auto">
+                <QuickPlans />
+              </div>
             </div>
 
-            {/* Sağ tarafta QuickPlans (Normal Dashboard'taki gibi) */}
-            <div className="hidden md:block w-64 xl:w-72 border-l border-gray-200 dark:border-gray-800 overflow-auto">
-              <QuickPlans />
-            </div>
+            {/* Pricing Modal Açık Olacak, Kapatınca Dashboard'a Gidecek */}
+            <PricingModal isOpen={isPricingOpen} onClose={() => router.push("/dashboard")} />
           </div>
-
-          {/* Pricing Modal Açık Olacak, Kapatınca Dashboard'a Gidecek */}
-          <PricingModal isOpen={isPricingOpen} onClose={() => router.push("/dashboard")} />
         </div>
-      </div>
+      </NotesProvider>
     </PlannerProvider>
   );
 }
