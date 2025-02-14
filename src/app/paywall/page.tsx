@@ -27,7 +27,8 @@ export default function PaywallPage() {
         .from('subscriptions')
         .select('status')
         .eq('user_id', session.user.id)
-        .single();
+        .limit(1)
+        .maybeSingle();
 
       if (error) {
         console.error('Error fetching status:', error);
