@@ -1,39 +1,39 @@
 "use client";
-
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { useSession } from "@supabase/auth-helpers-react";
-import PricingModal from "@/components/modals/PricingModal"; 
-// ↑ Kendi propendeki path'e göre düzelt
+import { useAuth } from "@/context/AuthContext"; // Senin Auth Hook'un
+import PricingModal from "@/components/modals/PricingModal";
 
 export default function UpgradePage() {
   const router = useRouter();
-  const session = useSession();
+  const { user } = useAuth(); // Buradan user bilgisini alıyoruz
+  const [checkedAuth, setCheckedAuth] = useState(false);
   const [showModal, setShowModal] = useState(false);
 
   useEffect(() => {
-    if (!session) {
-      // Kullanıcı login değilse login sayfasına yönlendirelim
-      // İstersen ?redirect=/upgrade ekleyebilirsin
-      router.push("/auth/login");
-    } else {
-      // Login ise Pricing Modal'ı açıyoruz
+    if (user === undefined) {
+      return; // Daha yüklenmemiş, bir şey yapma
+    }
+    if (!user && !checkedAuth) {
+      setCheckedAuth(true);
+      router.push("/auth/login?redirect=/upgrade"); // Login sayfasına yönlendir
+    } else if (user) {
       setShowModal(true);
     }
-  }, [session, router]);
+  }, [user, router, checkedAuth]);
 
-  // Modal kapandığında nereye gideceğinize siz karar verin, örnek /dashboard
   const handleClose = () => {
-    router.push("/dashboard");
+    router.push("/dashboard"); // Pricing modal kapanınca dashboard'a git
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center">
-      {/* Henüz login kontrolü yapılmadıysa / isLoading durumları da olabilir */}
-      {!session && <p>Yükleniyor...</p>}
-
+    <div>
+      {!showModal && <p>Yükleniyor...</p>}
       {showModal && (
-        <PricingModal isOpen={true} onClose={handleClose} />
+        <PricingModal
+          isOpen={true}
+          onClose={handleClose}
+        />
       )}
     </div>
   );
