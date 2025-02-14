@@ -1,5 +1,6 @@
 "use client";
 import { useState, useMemo, useEffect } from 'react';
+import { useSubscription } from '@/hooks/useSubscription';
 import { useTranslations } from 'next-intl';
 import { useSearchParams } from 'next/navigation';
 import type { Note } from '@/types/notes';
@@ -10,6 +11,7 @@ import NoteDetailModal from '@/components/notes/NoteDetailModal';
 import NotesHeader from '@/components/layout/Header/components/NotesHeader';
 import { NotesFilter } from '@/components/notes/NotesFilter';
 import DeleteConfirmModal from '@/components/notes/DeleteConfirmModal';
+import PricingModal from '@/components/modals/PricingModal';
 import { useNotes } from '@/context/NotesContext';
 import { useTheme } from '@/components/providers/ThemeProvider';
 
@@ -36,6 +38,8 @@ export default function NotesPage() {
     toggleNotePin
   } = useNotes();
   
+  const { isExpired } = useSubscription();
+  const [isPricingModalOpen, setIsPricingModalOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isSelectionMode, setIsSelectionMode] = useState(false);
   const [selectedNotes, setSelectedNotes] = useState<number[]>([]);
@@ -181,6 +185,10 @@ export default function NotesPage() {
             <div className="absolute inset-0 border-2 border-dashed border-gray-300 dark:border-gray-700 rounded-xl transition-all group-hover:border-indigo-500" />
             <button
               onClick={() => {
+                if (isExpired) {
+                  setIsPricingModalOpen(true);
+                  return;
+                }
                 setIsModalOpen(true);
                 setIsEditingNote(true);
               }}
@@ -238,6 +246,13 @@ export default function NotesPage() {
         }}
         onSave={handleSave}
         initialNote={selectedNote || undefined}
+      />
+
+      {/* Modals */}
+      <PricingModal
+        isOpen={isPricingModalOpen}
+        onClose={() => setIsPricingModalOpen(false)}
+        isTrialEnded={isExpired}
       />
 
       <DeleteConfirmModal
