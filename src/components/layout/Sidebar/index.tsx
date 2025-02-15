@@ -67,7 +67,7 @@ const Sidebar: React.FC<SidebarProps> = ({
   } = usePlanner();
 
   // useSubscription hook'undan isVerifiedUser'ı da alıyoruz
-  const { trialDaysLeft, status, isPro, loading, isTrialing, isVerifiedUser } = useSubscription();
+  const { trialDaysLeft, status, isPro, loading, isTrialing, isVerifiedUser, isExpired } = useSubscription();
 
   console.log("Subscription data in Sidebar:", {
     trialDaysLeft,
