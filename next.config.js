@@ -18,12 +18,13 @@ const nextConfig = {
       }
     ]
   },
-  // AŞAĞIDAKİ KISMI EKLEYİN ⬇️
-  terserOptions: {
-    compress: {
-      drop_console: true, // Tüm console.log'ları kaldırır (warn/error hariç)
-    },
-  },
+  
+  // --- ŞURADAN İTİBAREN EKLEDİK ---
+  compiler: {
+    removeConsole: {
+      exclude: ['error', 'warn'] 
+    }
+  }
 };
 
 module.exports = nextConfig;
