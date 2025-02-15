@@ -170,8 +170,8 @@ const DraggablePlanCard: React.FC<DraggablePlanCardProps> = ({
 };
 
 interface Props {
-  isPricingModalOpen: boolean;
-  setIsPricingModalOpen: (isOpen: boolean) => void;
+  isPricingModalOpen?: boolean;
+  setIsPricingModalOpen?: (open: boolean) => void;
 }
 
 const PlanList: React.FC<Props> = ({ isPricingModalOpen, setIsPricingModalOpen }) => {
@@ -293,7 +293,7 @@ const PlanList: React.FC<Props> = ({ isPricingModalOpen, setIsPricingModalOpen }
     drop: (item: any) => {
       if (!selectedTime || !canEdit || isExpired) {
       console.log('Drag drop - isExpired:', isExpired);
-      setIsPricingModalOpen(true);
+      if (setIsPricingModalOpen) setIsPricingModalOpen(true);
         return;
     }
 
@@ -337,7 +337,7 @@ const PlanList: React.FC<Props> = ({ isPricingModalOpen, setIsPricingModalOpen }
   const handleCreatePlanAtHour = (hour: number) => {
     if (!canEdit) return;
     if (isExpired) {
-      setIsPricingModalOpen(true);
+      if (setIsPricingModalOpen) setIsPricingModalOpen(true);
       return;
     }
 
@@ -388,7 +388,7 @@ const PlanList: React.FC<Props> = ({ isPricingModalOpen, setIsPricingModalOpen }
     console.log('handlePlanClick - isExpired:', isExpired);
     if (!canEdit) return;
     if (isExpired) {
-      setIsPricingModalOpen(true);
+      if (setIsPricingModalOpen) setIsPricingModalOpen(true);
       return;
     }
     setSelectedPlan(plan);
@@ -476,7 +476,7 @@ const PlanList: React.FC<Props> = ({ isPricingModalOpen, setIsPricingModalOpen }
                     className="flex items-center gap-1 text-sm text-gray-400 dark:text-gray-500 px-3 py-1 rounded-md bg-gray-100/70 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 pointer-events-auto hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
                     onClick={() => {
                       if (isExpired) {
-                        setIsPricingModalOpen(true);
+                        if (setIsPricingModalOpen) setIsPricingModalOpen(true);
                         return;
                       }
                       handleCreatePlanAtHour(hour);
@@ -546,7 +546,7 @@ const PlanList: React.FC<Props> = ({ isPricingModalOpen, setIsPricingModalOpen }
                 console.log('Setting PricingModal:', setIsPricingModalOpen);
                 if (isExpired) {
                   console.log('Trying to open PricingModal...');
-                  setIsPricingModalOpen(true);
+                  if (setIsPricingModalOpen) setIsPricingModalOpen(true);
                   return;
                 }
                 const now = new Date();
@@ -614,10 +614,12 @@ const PlanList: React.FC<Props> = ({ isPricingModalOpen, setIsPricingModalOpen }
         )}
       </AnimatePresence>
       <PricingModal
-        isOpen={isPricingModalOpen}
-        onClose={() => setIsPricingModalOpen(false)}
-        isTrialEnded={true}
-      />
+  isOpen={isPricingModalOpen ?? false}
+  onClose={() => {
+    if (setIsPricingModalOpen) setIsPricingModalOpen(false)
+  }}
+  isTrialEnded={true}
+/>
     </div>
   );
 };
