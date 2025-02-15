@@ -596,7 +596,6 @@ const PlanList = () => {
         isOpen={isPricingModalOpen}
         onClose={() => setIsPricingModalOpen(false)}
         isTrialEnded={true}
-        subscriptionEndedMessage={t('pricing.subscriptionEndedMessage')}
       />
     </div>
   );
