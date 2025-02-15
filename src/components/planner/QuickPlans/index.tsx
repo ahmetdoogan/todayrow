@@ -7,7 +7,9 @@ import { motion, AnimatePresence } from "framer-motion";
 import { usePlanner } from "@/context/PlannerContext";
 import { ItemTypes } from "@/utils/constants";
 import type { QuickPlan } from "@/types/planner";
+import { useSubscription } from '@/hooks/useSubscription';
 import { useTranslations } from 'next-intl';
+import PricingModal from '@/components/modals/PricingModal';
 import QuickPlanModal from "./QuickPlanModal";
 
 interface QuickPlansProps {
@@ -77,7 +79,8 @@ const QuickPlans: React.FC<QuickPlansProps> = ({ onClose, onDragStart, onDragEnd
     },
   ];
 
-  const [editMode, setEditMode] = useState(false);
+  const { isExpired } = useSubscription();
+  const [isPricingModalOpen, setIsPricingModalOpen] = useState(false);
   const [planToDelete, setPlanToDelete] = useState<QuickPlan | null>(null);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
@@ -226,7 +229,13 @@ const QuickPlans: React.FC<QuickPlansProps> = ({ onClose, onDragStart, onDragEnd
         </div>
 
         <button
-          onClick={() => setIsQuickPlanModalOpen(true)}
+          onClick={() => {
+            if (isExpired) {
+              setIsPricingModalOpen(true);
+              return;
+            }
+            setIsQuickPlanModalOpen(true);
+          }}
           className="w-full p-2.5 rounded-lg border border-dashed border-gray-300 dark:border-gray-700 
                     text-gray-500 hover:border-gray-400 dark:hover:border-gray-600 
                     hover:bg-gray-50 dark:hover:bg-gray-800/50
@@ -287,6 +296,12 @@ const QuickPlans: React.FC<QuickPlansProps> = ({ onClose, onDragStart, onDragEnd
           </motion.div>
         )}
       </AnimatePresence>
+
+      <PricingModal
+        isOpen={isPricingModalOpen}
+        onClose={() => setIsPricingModalOpen(false)}
+        isTrialEnded={true}
+      />
     </div>
   );
 };

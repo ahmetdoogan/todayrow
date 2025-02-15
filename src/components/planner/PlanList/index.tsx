@@ -188,7 +188,7 @@ const PlanList = () => {
   const { user } = useAuth();
   const [selectedTime, setSelectedTime] = useState<string | null>(null);
   const [isDuplicateMode, setIsDuplicateMode] = useState(false);
-  const { isPricingModalOpen, setIsPricingModalOpen } = usePlanner();
+  const [isPricingModalOpen, setIsPricingModalOpen] = useState(false);
   const { isExpired } = useSubscription();
   const t = useTranslations('common');
 
@@ -380,6 +380,10 @@ const PlanList = () => {
 
   const handlePlanClick = (plan: Plan) => {
     if (!canEdit) return;
+    if (isExpired) {
+      setIsPricingModalOpen(true);
+      return;
+    }
     setSelectedPlan(plan);
     setIsEditingPlan(true);
     setIsModalOpen(true);
