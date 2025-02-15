@@ -17,7 +17,13 @@ const nextConfig = {
         hostname: 'lh3.googleusercontent.com'
       }
     ]
-  }
+  },
+  // AŞAĞIDAKİ KISMI EKLEYİN ⬇️
+  terserOptions: {
+    compress: {
+      drop_console: true, // Tüm console.log'ları kaldırır (warn/error hariç)
+    },
+  },
 };
 
 module.exports = nextConfig;
