@@ -9,6 +9,8 @@ import { useTranslations } from 'next-intl';
 import type { Plan, QuickPlan, NewPlanData, PlanUpdateData, NewQuickPlanData, User } from '@/types/planner';
 
 interface PlannerContextType {
+  isPricingModalOpen: boolean;
+  setIsPricingModalOpen: (isOpen: boolean) => void;
   user: User;
   plans: Plan[];
   quickPlans: QuickPlan[];
@@ -72,6 +74,7 @@ export function PlannerProvider({ children }: { children: React.ReactNode }) {
   const [isSelectionMode, setIsSelectionMode] = useState(false);
   const [selectedPlanIds, setSelectedPlanIds] = useState<number[]>([]);
   const [hiddenSystemPlans, setHiddenSystemPlans] = useState<number[]>([]);
+  const [isPricingModalOpen, setIsPricingModalOpen] = useState(false);
 
   useEffect(() => {
     const loadHiddenPlans = async () => {
@@ -177,7 +180,11 @@ export function PlannerProvider({ children }: { children: React.ReactNode }) {
   }, [isSelectionMode]);
 
   const createPlan = async (data: NewPlanData) => {
-    if (!user || !canEdit || isExpired) return;
+    if (!user || !canEdit) return;
+    if (isExpired) {
+      setIsPricingModalOpen(true);
+      return;
+    }
     try {
       await plannerService.createPlan(data, user.id);
       toast.success(t('createSuccess'));
@@ -295,7 +302,11 @@ export function PlannerProvider({ children }: { children: React.ReactNode }) {
   }, [user, fetchQuickPlans]);
 
   const handleQuickPlanDrop = async (quickPlan: QuickPlan, dropTime: string) => {
-    if (!user || !canEdit || isExpired) return;
+    if (!user || !canEdit) return;
+    if (isExpired) {
+      setIsPricingModalOpen(true);
+      return;
+    }
 
     try {
       const [hours, minutes] = dropTime.split(':').map(Number);
@@ -329,6 +340,8 @@ export function PlannerProvider({ children }: { children: React.ReactNode }) {
   return (
     <PlannerContext.Provider
       value={{
+        isPricingModalOpen,
+        setIsPricingModalOpen,
         user: {
           ...user!,
           email: user?.email || "no-email@example.com",

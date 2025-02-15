@@ -188,7 +188,7 @@ const PlanList = () => {
   const { user } = useAuth();
   const [selectedTime, setSelectedTime] = useState<string | null>(null);
   const [isDuplicateMode, setIsDuplicateMode] = useState(false);
-  const [isPricingModalOpen, setIsPricingModalOpen] = useState(false);
+  const { isPricingModalOpen, setIsPricingModalOpen } = usePlanner();
   const { isExpired } = useSubscription();
   const t = useTranslations('common');
 
@@ -595,7 +595,8 @@ const PlanList = () => {
       <PricingModal
         isOpen={isPricingModalOpen}
         onClose={() => setIsPricingModalOpen(false)}
-        isTrialEnded={isExpired}
+        isTrialEnded={true}
+        subscriptionEndedMessage={t('pricing.subscriptionEndedMessage')}
       />
     </div>
   );
