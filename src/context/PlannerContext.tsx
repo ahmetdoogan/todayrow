@@ -4,6 +4,7 @@ import React, { createContext, useContext, useState, useCallback, useEffect } fr
 import { toast } from "react-toastify";
 import { plannerService } from '@/services/plannerService';
 import { useAuth } from './AuthContext';
+import { useSubscription } from '@/hooks/useSubscription';
 import { useTranslations } from 'next-intl';
 import type { Plan, QuickPlan, NewPlanData, PlanUpdateData, NewQuickPlanData, User } from '@/types/planner';
 
@@ -58,6 +59,7 @@ const compareDate = (d1: Date, d2: Date) =>
 
 export function PlannerProvider({ children }: { children: React.ReactNode }) {
   const { user } = useAuth();
+  const { isExpired } = useSubscription();
   const t = useTranslations('common.planner.notifications');
   const [plans, setPlans] = useState<Plan[]>([]);
   const [quickPlans, setQuickPlans] = useState<QuickPlan[]>([]);
@@ -175,7 +177,7 @@ export function PlannerProvider({ children }: { children: React.ReactNode }) {
   }, [isSelectionMode]);
 
   const createPlan = async (data: NewPlanData) => {
-    if (!user || !canEdit) return;
+    if (!user || !canEdit || isExpired) return;
     try {
       await plannerService.createPlan(data, user.id);
       toast.success(t('createSuccess'));
@@ -293,7 +295,7 @@ export function PlannerProvider({ children }: { children: React.ReactNode }) {
   }, [user, fetchQuickPlans]);
 
   const handleQuickPlanDrop = async (quickPlan: QuickPlan, dropTime: string) => {
-    if (!user || !canEdit) return;
+    if (!user || !canEdit || isExpired) return;
 
     try {
       const [hours, minutes] = dropTime.split(':').map(Number);

@@ -145,6 +145,10 @@ const Sidebar: React.FC<SidebarProps> = ({
   };
 
   const handlePlanCreate = () => {
+    if (isExpired) {
+      setIsPricingOpen(true);
+      return;
+    }
     setDraggedPlan(null);
     const now = new Date();
     const planStartTime = new Date(selectedDate);
