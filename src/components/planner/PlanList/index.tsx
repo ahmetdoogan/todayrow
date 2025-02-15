@@ -9,6 +9,8 @@ import { ItemTypes } from '@/utils/constants';
 import { useAuth } from '@/context/AuthContext';
 import { Check, Edit2, Trash2, Plus, CalendarCheck } from 'lucide-react';
 import { useTranslations } from 'next-intl';
+import { useSubscription } from '@/hooks/useSubscription';
+import PricingModal from '@/components/modals/PricingModal';
 
 interface DraggablePlanCardProps {
   plan: Plan;
@@ -186,6 +188,8 @@ const PlanList = () => {
   const { user } = useAuth();
   const [selectedTime, setSelectedTime] = useState<string | null>(null);
   const [isDuplicateMode, setIsDuplicateMode] = useState(false);
+  const [isPricingModalOpen, setIsPricingModalOpen] = useState(false);
+  const { isExpired } = useSubscription();
   const t = useTranslations('common');
 
   useEffect(() => {
@@ -252,7 +256,7 @@ const PlanList = () => {
 
   const [{ isOver }, dropRef] = useDrop(() => ({
     accept: [ItemTypes.QUICK_PLAN, ItemTypes.PLAN],
-    canDrop: () => canEdit,
+    canDrop: () => canEdit && !isExpired,
     hover: (item: QuickPlan | Plan, monitor) => {
       if (!canEdit) return;
       const clientOffset = monitor.getClientOffset();
@@ -282,7 +286,10 @@ const PlanList = () => {
       }
     },
     drop: (item: any) => {
-  if (!selectedTime || !canEdit) return;
+  if (!selectedTime || !canEdit || isExpired) {
+    setIsPricingModalOpen(true);
+    return;
+  }
 
   if (item.isDuplicating) {
     // Duplicate plan
@@ -323,6 +330,10 @@ const PlanList = () => {
   // Plan oluşturma
   const handleCreatePlanAtHour = (hour: number) => {
     if (!canEdit) return;
+    if (isExpired) {
+      setIsPricingModalOpen(true);
+      return;
+    }
 
     const planStartTime = new Date(selectedDate);
     planStartTime.setHours(hour, 0, 0, 0);
@@ -513,6 +524,10 @@ const PlanList = () => {
   </p>
   <button
               onClick={() => {
+                if (isExpired) {
+                  setIsPricingModalOpen(true);
+                  return;
+                }
                 const now = new Date();
                 const planStartTime = new Date(selectedDate);
                 planStartTime.setHours(now.getHours(), now.getMinutes(), 0, 0);
@@ -577,6 +592,11 @@ const PlanList = () => {
           </motion.div>
         )}
       </AnimatePresence>
+      <PricingModal
+        isOpen={isPricingModalOpen}
+        onClose={() => setIsPricingModalOpen(false)}
+        isTrialEnded={isExpired}
+      />
     </div>
   );
 };
