@@ -81,6 +81,7 @@ const QuickPlans: React.FC<QuickPlansProps> = ({ onClose, onDragStart, onDragEnd
 
   const { isExpired } = useSubscription();
   const [isPricingModalOpen, setIsPricingModalOpen] = useState(false);
+  const [editMode, setEditMode] = useState(false);
   const [planToDelete, setPlanToDelete] = useState<QuickPlan | null>(null);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
