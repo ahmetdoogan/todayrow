@@ -1034,7 +1034,7 @@
   },
   "pricing": {
     "title": "Daha planlı bir sen.",
-    "subscriptionEndedMessage": "Üyeliğiniz sona erdi. Pro özelliklerine erişmek için lütfen aboneliğinizi başlatın veya yenileyin",
+    "subscriptionEndedMessage": "Üyeliğiniz sona erdi.",
     "description": "Sınırsız erişimin keyfini çıkarmaya devam edin",
     "monthly": "Aylık",
     "yearly": "Yıllık",

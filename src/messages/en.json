@@ -1033,7 +1033,7 @@
   },
   "pricing": {
     "title": "Productive you!",
-    "subscriptionEndedMessage": "Your subscription has expired. Please start or renew your subscription to access Pro features.",
+    "subscriptionEndedMessage": "Your subscription has expired.",
     "description": "Continue enjoying unlimited access",
     "monthly": "Monthly",
     "yearly": "Yearly",

@@ -229,31 +229,13 @@ const ProfileSettings = () => {
             <div className="flex items-center gap-3">
               <SubscriptionBadge />
               {isTrialing && (
-                <p className="text-xs text-gray-500 dark:text-gray-400"></p>
+                <p className="text-is text-gray-500 dark:text-gray-400"></p>
               )}
               {!isPro && (
                 <Button
                   variant="default"
-                  onClick={async () => {
-                    if (!session?.access_token) {
-                      console.error('No session found');
-                      return;
-                    }
-                    try {
-                      const response = await fetch(`/api/checkout?plan=monthly`, {
-                        headers: { 'Authorization': `Bearer ${session.access_token}` }
-                      });
-                      if (response.ok) {
-                        const { url } = await response.json();
-                        window.location.href = url;
-                      } else {
-                        const error = await response.json();
-                        console.error('Checkout error:', error);
-                      }
-                    } catch (error) {
-                      console.error('Failed to fetch checkout URL:', error);
-                    }
-                  }}
+                  onClick={() => setIsPricingOpen(true)}
+                  className="rounded-xl"
                 >
                   {t('trial.upgrade')}
                 </Button>

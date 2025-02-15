@@ -503,7 +503,7 @@ const Sidebar: React.FC<SidebarProps> = ({
           )}
         </div>
       </aside>
-      <PricingModal isOpen={isPricingOpen} onClose={() => setIsPricingOpen(false)} />
+      <PricingModal isOpen={isPricingOpen} onClose={() => setIsPricingOpen(false)} isTrialEnded={true} />
       <div className={`${isMobile ? 'w-16' : ''} flex-shrink-0`} />
     </>
   );

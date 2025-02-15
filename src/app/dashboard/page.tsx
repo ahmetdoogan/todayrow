@@ -10,13 +10,17 @@ import { usePlanner } from "@/context/PlannerContext";
 import { useRouter } from "next/navigation";
 import { ListPlus } from "lucide-react";
 import { AnimatePresence, motion } from "framer-motion";
-import { sendEvent } from '@/lib/analytics/ga-manager';
-import { SuccessModal } from "@/components/modals/SuccessModal"; // Mevcut SuccessModal bileşeni
+import { useSubscription } from '@/hooks/useSubscription';
+import PricingModal from '@/components/modals/PricingModal';
+import { SuccessModal } from "@/components/modals/SuccessModal";
 
 export default function DashboardPage() {
   const searchParams = useSearchParams();
   const { plans, setSelectedPlan, setIsModalOpen } = usePlanner();
   const router = useRouter();
+
+  const { isExpired } = useSubscription();
+  const [isPricingModalOpen, setIsPricingModalOpen] = useState(false);
 
   // Mobilde FAB'e basınca açılan QuickPlans modalı
   const [isQuickPlansOpen, setIsQuickPlansOpen] = useState(false);
@@ -141,7 +145,10 @@ export default function DashboardPage() {
       <div className="flex-1 overflow-hidden flex">
         {/* Sol tarafta PlanList */}
         <div className="flex-1 overflow-y-auto">
-          <PlanList />
+          <PlanList
+            isPricingModalOpen={isPricingModalOpen}
+            setIsPricingModalOpen={setIsPricingModalOpen}
+          />
         </div>
 
         {/* Masaüstünde sağ panel */}
@@ -195,6 +202,13 @@ export default function DashboardPage() {
           </motion.div>
         )}
       </AnimatePresence>
+
+      {/* PricingModal */}
+      <PricingModal
+        isOpen={isPricingModalOpen}
+        onClose={() => setIsPricingModalOpen(false)}
+        isTrialEnded={true}
+      />
 
       {/* Ödeme başarılıysa gösterilecek SuccessModal */}
       <SuccessModal

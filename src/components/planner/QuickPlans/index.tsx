@@ -111,6 +111,11 @@ const QuickPlans: React.FC<QuickPlansProps> = ({ onClose, onDragStart, onDragEnd
       () => ({
         type: ItemTypes.QUICK_PLAN,
         item: () => {
+          console.log('QuickPlan drag started - isExpired:', isExpired);
+          if (isExpired) {
+            setIsPricingModalOpen(true);
+            return;
+          }
           onDragStart?.();
           return plan;
         },

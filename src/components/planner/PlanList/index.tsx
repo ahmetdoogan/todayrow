@@ -169,7 +169,12 @@ const DraggablePlanCard: React.FC<DraggablePlanCardProps> = ({
   );
 };
 
-const PlanList = () => {
+interface Props {
+  isPricingModalOpen: boolean;
+  setIsPricingModalOpen: (isOpen: boolean) => void;
+}
+
+const PlanList: React.FC<Props> = ({ isPricingModalOpen, setIsPricingModalOpen }) => {
   const {
     plans,
     deletePlan,
@@ -186,10 +191,10 @@ const PlanList = () => {
   } = usePlanner();
 
   const { user } = useAuth();
+  const { isExpired } = useSubscription();
+  console.log('PlanList - useSubscription isExpired:', isExpired);
   const [selectedTime, setSelectedTime] = useState<string | null>(null);
   const [isDuplicateMode, setIsDuplicateMode] = useState(false);
-  const [isPricingModalOpen, setIsPricingModalOpen] = useState(false);
-  const { isExpired } = useSubscription();
   const t = useTranslations('common');
 
   useEffect(() => {
@@ -286,12 +291,13 @@ const PlanList = () => {
       }
     },
     drop: (item: any) => {
-  if (!selectedTime || !canEdit || isExpired) {
-    setIsPricingModalOpen(true);
-    return;
-  }
+      if (!selectedTime || !canEdit || isExpired) {
+      console.log('Drag drop - isExpired:', isExpired);
+      setIsPricingModalOpen(true);
+        return;
+    }
 
-  if (item.isDuplicating) {
+      if (item.isDuplicating) {
     // Duplicate plan
     const planStartTime = new Date(selectedDate);
     const [hours, minutes] = selectedTime.split(':').map(Number);
@@ -379,6 +385,7 @@ const PlanList = () => {
   };
 
   const handlePlanClick = (plan: Plan) => {
+    console.log('handlePlanClick - isExpired:', isExpired);
     if (!canEdit) return;
     if (isExpired) {
       setIsPricingModalOpen(true);
@@ -467,7 +474,13 @@ const PlanList = () => {
                 <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none">
                   <button
                     className="flex items-center gap-1 text-sm text-gray-400 dark:text-gray-500 px-3 py-1 rounded-md bg-gray-100/70 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 pointer-events-auto hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
-                    onClick={() => handleCreatePlanAtHour(hour)}
+                    onClick={() => {
+                      if (isExpired) {
+                        setIsPricingModalOpen(true);
+                        return;
+                      }
+                      handleCreatePlanAtHour(hour);
+                    }}
                   >
                     <Plus className="w-4 h-4" />
                     {t('planner.actions.createPlan')}
@@ -528,8 +541,11 @@ const PlanList = () => {
   </p>
   <button
               onClick={() => {
-                console.log('Button clicked, isExpired:', isExpired);
+                console.log('Empty state button clicked');
+                console.log('isExpired:', isExpired);
+                console.log('Setting PricingModal:', setIsPricingModalOpen);
                 if (isExpired) {
+                  console.log('Trying to open PricingModal...');
                   setIsPricingModalOpen(true);
                   return;
                 }

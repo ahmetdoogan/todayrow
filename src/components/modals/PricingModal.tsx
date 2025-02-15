@@ -28,6 +28,7 @@ const priceChangeKeyframes = `
 `;
 
 const PricingModal = ({ isOpen, onClose, isTrialEnded }: Props) => {
+  const [loading, setLoading] = useState(false);
   const t = useTranslations('pricing');
   const [billingType, setBillingType] = useState<'monthly' | 'yearly'>('monthly');
 
@@ -175,10 +176,15 @@ const PricingModal = ({ isOpen, onClose, isTrialEnded }: Props) => {
                   {/* Action Button */}
                   <div className="flex justify-center">
                     <button
-                      className="mt-8 w-1/2 h-14 bg-black hover:bg-black/90 dark:bg-white dark:hover:bg-white/90 text-white dark:text-black text-base font-medium rounded-2xl transition-colors"
+                      className="mt-8 w-1/2 h-14 bg-black hover:bg-black/90 dark:bg-white dark:hover:bg-white/90 text-white dark:text-black text-base font-medium rounded-2xl transition-colors relative overflow-hidden"
+                      disabled={loading}
                       onClick={async () => {
+                        setLoading(true);
                         const { data: { session } } = await supabase.auth.getSession();
-                        if (!session?.access_token) return;
+                        if (!session?.access_token) {
+                          setLoading(false);
+                          return;
+                        }
 
                         try {
                           const resp = await fetch(`/api/checkout?plan=${billingType}`, {
@@ -190,6 +196,7 @@ const PricingModal = ({ isOpen, onClose, isTrialEnded }: Props) => {
 
                           if (!resp.ok) {
                             console.error('Checkout error:', await resp.text());
+                            setLoading(false);
                             return;
                           }
 
@@ -198,9 +205,13 @@ const PricingModal = ({ isOpen, onClose, isTrialEnded }: Props) => {
                           onClose();
                         } catch (error) {
                           console.error('Checkout error:', error);
+                          setLoading(false);
                         }
                       }}
                     >
+                      {loading && (
+                        <div className="absolute inset-0 bg-white/20 animate-pulse" />
+                      )}
                       {t('button')}
                     </button>
                   </div>
