@@ -229,6 +229,7 @@
       "trial": {
         "badge": "Trial",
         "daysLeft": "{days} days left", 
+        "ended": "Trial ended",
         "upgrade": "Upgrade"
       },
       "menu": {

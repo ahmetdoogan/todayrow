@@ -4,8 +4,16 @@ import { Badge } from '@/components/ui/badge';
 import { useTranslations } from 'next-intl';
 
 export const SubscriptionBadge = () => {
-  const { isTrialing, isPro, trialDaysLeft } = useSubscription();
+  const { isTrialing, isPro, trialDaysLeft, isExpired } = useSubscription();
   const t = useTranslations('common.sidebar.trial');
+
+  if (isExpired) {
+    return (
+      <Badge variant="destructive" className="bg-red-500 text-white">
+        {t('ended')}
+      </Badge>
+    );
+  }
 
   if (isPro) {
     return (

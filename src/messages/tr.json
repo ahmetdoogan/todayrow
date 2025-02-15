@@ -228,7 +228,8 @@
       },
       "trial": {
         "badge": "Trial",
-        "daysLeft": "{days} gün kaldı", 
+        "daysLeft": "{days} gün kaldı",
+        "ended": "Deneme sona erdi",
         "upgrade": "Yükselt"
       },
       "menu": {
