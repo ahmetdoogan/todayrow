@@ -528,6 +528,7 @@ const PlanList = () => {
   </p>
   <button
               onClick={() => {
+                console.log('Button clicked, isExpired:', isExpired);
                 if (isExpired) {
                   setIsPricingModalOpen(true);
                   return;
