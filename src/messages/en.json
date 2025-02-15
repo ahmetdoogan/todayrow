@@ -762,6 +762,7 @@
           },
           "pricing": {
             "title": "5. Pricing",
+            "subscriptionEndedMessage": "Your Pro subscription has ended. Renew your subscription to access Pro features.",
             "content": "Todayrow currently provides a free service. Paid features may be added in the future, and users will be notified in advance."
           },
           "accountCancellation": {
@@ -1031,6 +1032,7 @@
   },
   "pricing": {
     "title": "Productive you!",
+    "subscriptionEndedMessage": "Your subscription has expired. Please start or renew your subscription to access Pro features.",
     "description": "Continue enjoying unlimited access",
     "monthly": "Monthly",
     "yearly": "Yearly",

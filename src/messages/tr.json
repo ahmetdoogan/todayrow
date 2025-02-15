@@ -762,6 +762,7 @@
           },
           "pricing": {
             "title": "5. Ücretlendirme",
+            "subscriptionEndedMessage": "Your Pro subscription has ended. Renew your subscription to access Pro features.",
             "content": "Todayrow şu an ücretsiz bir hizmet sunmaktadır. İleride ücretli özellikler eklenebilir, bu durumda kullanıcılar önceden bilgilendirilecektir."
           },
           "accountCancellation": {
@@ -1032,6 +1033,7 @@
   },
   "pricing": {
     "title": "Daha planlı bir sen.",
+    "subscriptionEndedMessage": "Üyeliğiniz sona erdi. Pro özelliklerine erişmek için lütfen aboneliğinizi başlatın veya yenileyin",
     "description": "Sınırsız erişimin keyfini çıkarmaya devam edin",
     "monthly": "Aylık",
     "yearly": "Yıllık",
