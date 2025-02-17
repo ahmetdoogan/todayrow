@@ -60,6 +60,11 @@
       "theme": "Theme",
       "language": "Language",
       "themes": {
+        "default": "Default Theme",
+      "blue": "Blue Theme",
+      "green": "Green Theme",
+      "purple": "Purple Theme",
+      "orange": "Orange Theme",
         "light": "Light",
         "dark": "Dark",
         "system": "System"

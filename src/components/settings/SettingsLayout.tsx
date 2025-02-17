@@ -85,39 +85,10 @@ const SettingsLayout = () => {
             </div>
           </div>
 
-          {/* Renk Teması */}
-          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 first:rounded-t-2xl last:rounded-b-2xl p-4 opacity-50">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <Palette className="w-5 h-5 text-slate-700 dark:text-slate-400" />
-                <div>
-                  <div className="text-sm text-slate-700 dark:text-slate-300">
-                    {t('settings.sections.appearance.colorTheme.title')}
-                  </div>
-                  <div className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
-                    {t('settings.sections.appearance.colorTheme.description')}
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
+          
 
           {/* Varsayılan Görünüm */}
-          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 first:rounded-t-2xl last:rounded-b-2xl p-4 opacity-50">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <Calendar className="w-5 h-5 text-slate-700 dark:text-slate-400" />
-                <div>
-                  <div className="text-sm text-slate-700 dark:text-slate-300">
-                    {t('settings.sections.appearance.defaultView.title')}
-                  </div>
-                  <div className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
-                    {t('settings.sections.appearance.defaultView.description')}
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
+          
         </div>
       </motion.div>
 

@@ -7,6 +7,13 @@
     "settings": {
       "title": "Ayarlar",
       "sections": {
+        "themes": {
+      "default": "Default Theme",
+      "blue": "Blue Theme",
+      "green": "Green Theme",
+      "purple": "Purple Theme",
+      "orange": "Orange Theme"
+    },
         "appearance": {
           "title": "Görünüm Ayarları",
           "colorTheme": {
@@ -60,6 +67,11 @@
       "theme": "Tema",
       "language": "Dil",
       "themes": {
+        "default": "Default Theme",
+      "blue": "Blue Theme",
+      "green": "Green Theme",
+      "purple": "Purple Theme",
+      "orange": "Orange Theme",
         "light": "Açık",
         "dark": "Koyu",
         "system": "Sistem"
