@@ -1,7 +1,7 @@
 "use client";
 
 import React from 'react';
-import { Clock, Check, Edit2, Trash2, ArrowLeft } from 'lucide-react';
+import { Clock, Check, Edit2, Trash2, ArrowLeft, Bell, AlertTriangle } from 'lucide-react';
 import { motion } from 'framer-motion';
 import type { Plan } from '@/types/planner';
 import { usePlanner } from '@/context/PlannerContext';  // Eklendi
@@ -84,12 +84,34 @@ const PlanCard = ({
           </div>
 
           <div className="flex items-center gap-2">
+            {/* Status Badge */}
             {plan.is_completed && (
               <span className="px-2 py-0.5 text-xs font-medium rounded-full 
                            bg-green-50 text-green-600 dark:bg-green-900/20 dark:text-green-400">
                 Tamamlandı
               </span>
             )}
+            
+            {/* Priority Badge */}
+            {!plan.is_completed && plan.priority === 'high' && (
+              <span className="px-2 py-0.5 text-xs font-medium rounded-full 
+                           bg-red-50 text-red-600 dark:bg-red-900/20 dark:text-red-400 
+                           flex items-center gap-1">
+                <AlertTriangle className="w-3 h-3" />
+                Yüksek
+              </span>
+            )}
+            
+            {/* Notification Badge */}
+            {!plan.is_completed && plan.notify && (
+              <span className="px-2 py-0.5 text-xs font-medium rounded-full 
+                           bg-blue-50 text-blue-600 dark:bg-blue-900/20 dark:text-blue-400
+                           flex items-center gap-1">
+                <Bell className="w-3 h-3" />
+                {plan.notify_before}dk
+              </span>
+            )}
+            
             <h3 className={`
               text-sm font-medium truncate  
               ${plan.is_completed 

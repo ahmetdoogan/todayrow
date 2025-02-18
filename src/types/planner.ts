@@ -26,6 +26,9 @@ export interface Plan {
   created_at: string;
   updated_at: string;
   isHidden?: boolean;
+  priority: 'high' | 'medium' | 'low';
+  notify: boolean;
+  notify_before: number;
 }
 
 // Yeni plan oluştururken kullanılacak veri tipi

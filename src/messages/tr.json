@@ -533,7 +533,16 @@
       "cancel": "İptal",
       "save": "Kaydet",
       "deletePlan": "Planı Sil",
-      "completePlan": "Planı Tamamla"
+      "completePlan": "Planı Tamamla",
+      "priority": "Öncelik",
+      "priorityLow": "Düşük",
+      "priorityMedium": "Orta",
+      "priorityHigh": "Yüksek",
+      "notification": "E-posta Bildirimi",
+      "notifyBefore": "Ne kadar önce?",
+      "notifyBefore10": "10 dakika önce",
+      "notifyBefore30": "30 dakika önce",
+      "notifyBefore60": "1 saat önce"
     },
     "tagInput": {
       "folderPlaceholder": "Klasör oluştur veya seç",
@@ -695,6 +704,10 @@
         "voteError": "Oy verirken bir hata oluştu"
       }
     },
+    "timeUnit": {
+  "minute": "dk",
+  "minutes": "dk"
+},
     "legal": {
       "privacyPolicy": {
         "title": "Gizlilik Politikası",
@@ -909,6 +922,21 @@
 },
   "auth": {
     "welcome": "Hoş Geldiniz",
+    "changePassword": "Şifremi Değiştir",
+    "currentPassword": "Mevcut Şifre",
+    "newPassword": "Yeni Şifre",
+    "passwordMismatch": "Şifreler eşleşmiyor",
+    "passwordTooShort": "Şifre en az 6 karakter olmalıdır",
+    "currentPasswordWrong": "Mevcut şifre yanlış",
+    "passwordChanged": "Şifreniz başarıyla değiştirildi",
+    "currentPasswordTitle": "Mevcut şifrenizi girin",
+    "currentPasswordPlaceholder": "Mevcut şifreniz",
+    "newPasswordTitle": "Yeni şifrenizi girin (en az 6 karakter)",
+    "newPasswordPlaceholder": "Yeni şifreniz",
+    "confirmPasswordTitle": "Yeni şifrenizi tekrar girin",
+    "confirmPasswordPlaceholder": "Yeni şifrenizi onaylayın",
+    "errorChangingPassword": "Şifre değiştirme sırasında bir hata oluştu",
+    "confirmCloseMessage": "Değişiklikleriniz kaydedilmedi. Çıkmak istediğinize emin misiniz?",
     "login": {
       "title": "Giriş",
       "subtitle": "Hesabınıza giriş yapın"
@@ -1033,6 +1061,10 @@
 
     "setFolderColor": "Klasör rengini ayarla"
   },
+  "timeUnit": {
+  "minute": "dk",
+  "minutes": "dk"
+},
   "noteDetailModal": {
     "contentTab": "İçerik",
     "backlinksTab": "Referanslar",

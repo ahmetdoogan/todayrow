@@ -7,7 +7,7 @@ import { usePlanner } from '@/context/PlannerContext';
 import type { Plan, QuickPlan } from '@/types/planner';
 import { ItemTypes } from '@/utils/constants';
 import { useAuth } from '@/context/AuthContext';
-import { Check, Edit2, Trash2, Plus, CalendarCheck } from 'lucide-react';
+import { Check, Edit2, Trash2, Plus, CalendarCheck, Bell, AlertTriangle } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useSubscription } from '@/hooks/useSubscription';
 import PricingModal from '@/components/modals/PricingModal';
@@ -27,20 +27,22 @@ interface DraggablePlanCardProps {
   handleDeleteClick: (e: React.MouseEvent, plan: Plan) => Promise<void>;
 }
 
-const DraggablePlanCard: React.FC<DraggablePlanCardProps> = ({
-  plan,
-  isDuplicateMode,
-  isSelectionMode,
-  togglePlanSelection,
-  handlePlanClick,
-  canEdit,
-  selectedPlanIds,
-  t,
-  handleIncompleteClick,
-  handleCompleteClick,
-  handleEditClick,
-  handleDeleteClick,
-}) => {
+const DraggablePlanCard = React.forwardRef<HTMLDivElement, DraggablePlanCardProps>((props, ref) => {
+  const {
+    plan,
+    isDuplicateMode,
+    isSelectionMode,
+    togglePlanSelection,
+    handlePlanClick,
+    canEdit,
+    selectedPlanIds,
+    t,
+    handleIncompleteClick,
+    handleCompleteClick,
+    handleEditClick,
+    handleDeleteClick,
+  } = props;
+
   const [{ isDragging }, drag] = useDrag(
     () => ({
       type: ItemTypes.PLAN,
@@ -55,10 +57,19 @@ const DraggablePlanCard: React.FC<DraggablePlanCardProps> = ({
     [plan, isDuplicateMode]
   );
 
+  const dragRef = (el: HTMLDivElement) => {
+    drag(el);
+    if (ref && typeof ref === 'function') {
+      ref(el);
+    } else if (ref) {
+      (ref as React.MutableRefObject<HTMLDivElement>).current = el;
+    }
+  };
+
   return (
     <motion.div
       key={plan.id}
-      ref={drag}
+      ref={dragRef}
       layout
       initial={{ opacity: 0, y: -10 }}
       animate={{ opacity: isDragging ? 0.5 : 1, y: 0 }}
@@ -93,18 +104,32 @@ const DraggablePlanCard: React.FC<DraggablePlanCardProps> = ({
       <div className="flex flex-col md:flex-row gap-2">
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2">
-            <h3 className={`font-medium text-sm truncate flex-1 ${
-              plan.is_completed
-                ? 'text-gray-500 dark:text-gray-400'
-                : 'text-gray-900 dark:text-gray-100'
-            }`}>
-              {plan.title}
-            </h3>
+            {/* Status Badge */}
             {plan.is_completed && (
               <span className="inline-flex items-center rounded-md bg-green-50 dark:bg-green-900/20 px-2 py-1 text-xs font-medium text-green-700 dark:text-green-300 ring-1 ring-inset ring-green-600/20 dark:ring-green-500/30">
                 {t('content.status.completed')}
               </span>
             )}
+            
+            {/* Priority Badge */}
+            {!plan.is_completed && plan.priority === 'high' && (
+              <span className="inline-flex items-center rounded-md bg-red-50 dark:bg-red-900/20 px-2 py-1 text-xs font-medium text-red-700 dark:text-red-300 ring-1 ring-inset ring-red-600/20 dark:ring-red-500/30">
+                <AlertTriangle className="w-3 h-3 mr-1" />
+                {t('plannerForm.priorityHigh')}
+              </span>
+            )}
+            
+            {/* Notification Badge */}
+            {!plan.is_completed && plan.notify && (
+              <span className="inline-flex items-center rounded-md bg-blue-50 dark:bg-blue-900/20 px-2 py-1 text-xs font-medium text-blue-700 dark:text-blue-300 ring-1 ring-inset ring-blue-600/20 dark:ring-blue-500/30">
+                <Bell className="w-3 h-3 mr-1" />
+                {plan.notify_before}{t('timeUnit.minutes')}
+              </span>
+            )}
+
+            <h3 className={`font-medium text-sm truncate flex-1 ${plan.is_completed ? 'text-gray-500 dark:text-gray-400' : 'text-gray-900 dark:text-gray-100'}`}>
+              {plan.title}
+            </h3>
           </div>
           {plan.details && (
             <p className="mt-1 text-xs text-gray-500 dark:text-gray-400 line-clamp-2">
@@ -167,7 +192,8 @@ const DraggablePlanCard: React.FC<DraggablePlanCardProps> = ({
       </div>
     </motion.div>
   );
-};
+});
+
 
 interface Props {
   isPricingModalOpen?: boolean;

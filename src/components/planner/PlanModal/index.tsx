@@ -1,4 +1,56 @@
-import React from 'react';
+            {/* Priority & Notification Settings */}
+            <div className="space-y-4 mt-4 border-t border-slate-200 dark:border-slate-800 pt-4">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <AlertTriangle className="w-4 h-4 text-slate-400" />
+                  <span className="text-sm text-slate-700 dark:text-slate-300">
+                    {tPlanner('planModal.priority')}
+                  </span>
+                </div>
+                <select
+                  value={priority}
+                  onChange={(e) => setPriority(e.target.value)}
+                  className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg text-sm px-3 py-1.5"
+                >
+                  <option value="low">{tPlanner('planModal.priorityLow')}</option>
+                  <option value="medium">{tPlanner('planModal.priorityMedium')}</option>
+                  <option value="high">{tPlanner('planModal.priorityHigh')}</option>
+                </select>
+              </div>
+
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <Bell className="w-4 h-4 text-slate-400" />
+                  <span className="text-sm text-slate-700 dark:text-slate-300">
+                    {tPlanner('planModal.notification')}
+                  </span>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setNotify(!notify)}
+                  className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${notify ? 'bg-slate-900 dark:bg-slate-700' : 'bg-slate-200 dark:bg-slate-700'}`}
+                >
+                  <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${notify ? 'translate-x-6' : 'translate-x-1'}`} />
+                </button>
+              </div>
+
+              {notify && (
+                <div className="flex items-center justify-between pl-6">
+                  <span className="text-sm text-slate-700 dark:text-slate-300">
+                    {tPlanner('planModal.notifyBefore')}
+                  </span>
+                  <select
+                    value={notifyBefore}
+                    onChange={(e) => setNotifyBefore(Number(e.target.value))}
+                    className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg text-sm px-3 py-1.5"
+                  >
+                    <option value="10">{tPlanner('planModal.notifyBefore10')}</option>
+                    <option value="30">{tPlanner('planModal.notifyBefore30')}</option>
+                    <option value="60">{tPlanner('planModal.notifyBefore60')}</option>
+                  </select>
+                </div>
+              )}
+            </div>import React, { useState } from 'react';
 import { 
   Clock, 
   Calendar,
@@ -6,7 +58,9 @@ import {
   Trash2, 
   CheckSquare,
   X,
-  Tag
+  Tag,
+  Bell,
+  AlertTriangle
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { usePlanner } from '@/context/PlannerContext';
@@ -24,6 +78,10 @@ const PlanModal = () => {
     deletePlan, 
     completePlan 
   } = usePlanner();
+
+  const [priority, setPriority] = useState(selectedPlan?.priority || 'medium');
+  const [notify, setNotify] = useState(selectedPlan?.notify || false);
+  const [notifyBefore, setNotifyBefore] = useState(selectedPlan?.notify_before || 30);
 
   // İki farklı çeviri hook'u kullanıyoruz
   const tCommon = useTranslations('common');
