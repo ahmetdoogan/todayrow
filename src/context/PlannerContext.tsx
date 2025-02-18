@@ -199,7 +199,7 @@ export function PlannerProvider({ children }: { children: React.ReactNode }) {
     if (!user || !canEdit) return;
     try {
       await plannerService.updatePlan(id, data, user.id);
-    toast.success(t('updateSuccess'));
+      toast.success(t('updateSuccess'));
       await fetchPlans();
       setSelectedPlan(null);
       setIsModalOpen(false);
@@ -330,6 +330,10 @@ export function PlannerProvider({ children }: { children: React.ReactNode }) {
         user_id: user.id,
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString(),
+        // Eklenen alanlar:
+        priority: 'medium',
+        notify: false,
+        notify_before: 30
       });
       setIsModalOpen(true);
     } catch (error) {

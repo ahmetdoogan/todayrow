@@ -203,13 +203,12 @@ export default function ChangePasswordModal({ isOpen, onClose }: ChangePasswordM
         </motion.div>
       )}
 
-      {/* Confirm Modal */}
+      {/* Confirm Modal – style prop kaldırıldı */}
       <ConfirmModal
         isOpen={showConfirmModal}
         onClose={() => setShowConfirmModal(false)}
         onConfirm={handleConfirmClose}
         message={t('auth.confirmCloseMessage')}
-        style={{ zIndex: 1000, backgroundColor: 'rgba(0, 0, 0, 0.5)' }} // z-index ve arka plan opaklığı
       />
     </AnimatePresence>
   );

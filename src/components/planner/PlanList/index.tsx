@@ -104,22 +104,17 @@ const DraggablePlanCard = React.forwardRef<HTMLDivElement, DraggablePlanCardProp
       <div className="flex flex-col md:flex-row gap-2">
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2">
-            {/* Status Badge */}
             {plan.is_completed && (
               <span className="inline-flex items-center rounded-md bg-green-50 dark:bg-green-900/20 px-2 py-1 text-xs font-medium text-green-700 dark:text-green-300 ring-1 ring-inset ring-green-600/20 dark:ring-green-500/30">
                 {t('content.status.completed')}
               </span>
             )}
-            
-            {/* Priority Badge */}
             {!plan.is_completed && plan.priority === 'high' && (
               <span className="inline-flex items-center rounded-md bg-red-50 dark:bg-red-900/20 px-2 py-1 text-xs font-medium text-red-700 dark:text-red-300 ring-1 ring-inset ring-red-600/20 dark:ring-red-500/30">
                 <AlertTriangle className="w-3 h-3 mr-1" />
                 {t('plannerForm.priorityHigh')}
               </span>
             )}
-            
-            {/* Notification Badge */}
             {!plan.is_completed && plan.notify && (
               <span className="inline-flex items-center rounded-md bg-blue-50 dark:bg-blue-900/20 px-2 py-1 text-xs font-medium text-blue-700 dark:text-blue-300 ring-1 ring-inset ring-blue-600/20 dark:ring-blue-500/30">
                 <Bell className="w-3 h-3 mr-1" />
@@ -194,7 +189,6 @@ const DraggablePlanCard = React.forwardRef<HTMLDivElement, DraggablePlanCardProp
   );
 });
 
-
 interface Props {
   isPricingModalOpen?: boolean;
   setIsPricingModalOpen?: (open: boolean) => void;
@@ -218,14 +212,13 @@ const PlanList: React.FC<Props> = ({ isPricingModalOpen, setIsPricingModalOpen }
 
   const { user } = useAuth();
   const { isExpired } = useSubscription();
-  console.log('PlanList - useSubscription isExpired:', isExpired);
   const [selectedTime, setSelectedTime] = useState<string | null>(null);
   const [isDuplicateMode, setIsDuplicateMode] = useState(false);
   const t = useTranslations('common');
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.metaKey || e.ctrlKey) { // Meta = Command (Mac), Control (Windows)
+      if (e.metaKey || e.ctrlKey) {
         setIsDuplicateMode(true);
       }
     };
@@ -253,7 +246,6 @@ const PlanList: React.FC<Props> = ({ isPricingModalOpen, setIsPricingModalOpen }
     );
   };
 
-  // Bugün, yarın, dün kontrolü
   const today = new Date();
   const tomorrow = new Date(today);
   tomorrow.setDate(tomorrow.getDate() + 1);
@@ -265,7 +257,6 @@ const PlanList: React.FC<Props> = ({ isPricingModalOpen, setIsPricingModalOpen }
   const isYesterday = compareDate(selectedDate, yesterday);
   const canEdit = isToday || isTomorrow;
 
-  // Planların saat aralıklarını bul
   const allHours = plans
     .map(plan => {
       const startH = new Date(plan.start_time).getHours();
@@ -318,48 +309,49 @@ const PlanList: React.FC<Props> = ({ isPricingModalOpen, setIsPricingModalOpen }
     },
     drop: (item: any) => {
       if (!selectedTime || !canEdit || isExpired) {
-      console.log('Drag drop - isExpired:', isExpired);
-      if (setIsPricingModalOpen) setIsPricingModalOpen(true);
+        if (setIsPricingModalOpen) setIsPricingModalOpen(true);
         return;
-    }
+      }
 
       if (item.isDuplicating) {
-    // Duplicate plan
-    const planStartTime = new Date(selectedDate);
-    const [hours, minutes] = selectedTime.split(':').map(Number);
-    planStartTime.setHours(hours, minutes, 0, 0);
+        const planStartTime = new Date(selectedDate);
+        const [hours, minutes] = selectedTime.split(':').map(Number);
+        planStartTime.setHours(hours, minutes, 0, 0);
 
-    const planEndTime = new Date(planStartTime);
-    planEndTime.setHours(planEndTime.getHours() + 1);
+        const planEndTime = new Date(planStartTime);
+        planEndTime.setHours(planEndTime.getHours() + 1);
 
-    const newPlan: Plan = {
-      id: 0,
-      title: item.title,
-      details: item.details,
-      start_time: planStartTime.toISOString(),
-      end_time: planEndTime.toISOString(),
-      is_completed: false,
-      color: item.color,
-      plan_type: 'regular' as Plan['plan_type'], // Burada PlanType yerine Plan['plan_type'] kullandık.
-      order: 0,
-      user_id: user?.id || 0,
-      created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString()
-    };
+        const newPlan: Plan = {
+          id: 0,
+          title: item.title,
+          details: item.details,
+          start_time: planStartTime.toISOString(),
+          end_time: planEndTime.toISOString(),
+          is_completed: false,
+          color: item.color,
+          plan_type: 'regular',
+          order: 0,
+          user_id: user?.id || 0,
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
+          // Eklenen alanlar:
+          priority: 'medium',
+          notify: false,
+          notify_before: 30
+        };
 
-    setSelectedPlan(newPlan);
-    setIsModalOpen(true);
-  } else {
-    handleQuickPlanDrop(item, selectedTime);
-  }
-  setSelectedTime(null);
-},
+        setSelectedPlan(newPlan);
+        setIsModalOpen(true);
+      } else {
+        handleQuickPlanDrop(item, selectedTime);
+      }
+      setSelectedTime(null);
+    },
     collect: (monitor) => ({
       isOver: monitor.isOver() && canEdit,
     }),
   }), [selectedTime, selectedDate, canEdit, handleQuickPlanDrop]);
 
-  // Plan oluşturma
   const handleCreatePlanAtHour = (hour: number) => {
     if (!canEdit) return;
     if (isExpired) {
@@ -385,7 +377,11 @@ const PlanList: React.FC<Props> = ({ isPricingModalOpen, setIsPricingModalOpen }
       order: 0,
       user_id: user?.id || 0,
       created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString()
+      updated_at: new Date().toISOString(),
+      // Eklenen alanlar:
+      priority: 'medium',
+      notify: false,
+      notify_before: 30
     });
 
     setIsEditingPlan(false);
@@ -411,7 +407,6 @@ const PlanList: React.FC<Props> = ({ isPricingModalOpen, setIsPricingModalOpen }
   };
 
   const handlePlanClick = (plan: Plan) => {
-    console.log('handlePlanClick - isExpired:', isExpired);
     if (!canEdit) return;
     if (isExpired) {
       if (setIsPricingModalOpen) setIsPricingModalOpen(true);
@@ -442,7 +437,6 @@ const PlanList: React.FC<Props> = ({ isPricingModalOpen, setIsPricingModalOpen }
     }
   };
 
-  // Saat grupları
   const plansByHour = HOUR_BLOCKS.reduce((acc, hour) => {
     const hourPlans = plans.filter((plan) => {
       const startHour = new Date(plan.start_time).getHours();
@@ -452,7 +446,6 @@ const PlanList: React.FC<Props> = ({ isPricingModalOpen, setIsPricingModalOpen }
     return acc;
   }, {} as Record<number, Plan[]>);
 
-  // Her saat bloğunu çizdir
   const renderHourBlock = (hour: number) => {
     const timeString = `${hour.toString().padStart(2, '0')}:00`;
     const hourPlans = plansByHour[hour] || [];
@@ -521,96 +514,91 @@ const PlanList: React.FC<Props> = ({ isPricingModalOpen, setIsPricingModalOpen }
   };
 
   if (plans.length === 0) {
-  return (
-    <div
-      id="plan-list-container"
-      ref={canEdit ? dropRef : null}
-      className="relative flex flex-col items-center justify-center h-[calc(100vh-200px)] min-h-[400px]"
-    >
-      <motion.div
-  initial={{ opacity: 0 }}
-  animate={{ opacity: 1 }}
-  exit={{ opacity: 0 }}
-  className={`
-    absolute inset-0 flex items-center justify-center
-    ${isOver
-      ? 'bg-blue-50/50 dark:bg-blue-900/20 border-2 border-dashed border-blue-200 dark:border-blue-800 rounded-2xl'
-      : ''
-    }
-    pointer-events-none // 👈 Bu satırı ekleyin
-  `}
->
-  {selectedTime && (
-    <div className="bg-white/90 dark:bg-gray-800/90 px-4 py-2 rounded-lg shadow-lg text-center pointer-events-auto"> 
-      {/* 👆 İçerikte pointer-events-auto ekleyin */}
-      <p className="text-black dark:text-white font-medium">
-        {t('planner.dragAndDrop.dropHere')}
-      </p>
-      <p className="mt-1 text-black dark:text-white text-sm">
-        {t('planner.dragAndDrop.timeLabel', { time: selectedTime })}
-      </p>
-    </div>
-  )}
-</motion.div>
+    return (
+      <div
+        id="plan-list-container"
+        ref={canEdit ? dropRef : null}
+        className="relative flex flex-col items-center justify-center h-[calc(100vh-200px)] min-h-[400px]"
+      >
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          className={`
+            absolute inset-0 flex items-center justify-center
+            ${isOver
+              ? 'bg-blue-50/50 dark:bg-blue-900/20 border-2 border-dashed border-blue-200 dark:border-blue-800 rounded-2xl'
+              : ''
+            }
+            pointer-events-none
+          `}
+        >
+          {selectedTime && (
+            <div className="bg-white/90 dark:bg-gray-800/90 px-4 py-2 rounded-lg shadow-lg text-center pointer-events-auto"> 
+              <p className="text-black dark:text-white font-medium">
+                {t('planner.dragAndDrop.dropHere')}
+              </p>
+              <p className="mt-1 text-black dark:text-white text-sm">
+                {t('planner.dragAndDrop.timeLabel', { time: selectedTime })}
+              </p>
+            </div>
+          )}
+        </motion.div>
 
-      {isYesterday ? (
-        <p className="text-gray-500 dark:text-gray-400">
-          {t('planner.emptyStates.yesterdayEmpty')}
-        </p>
-      ) : (
-        (isToday || isTomorrow) && (
-          <div className="text-center">
-  <p className="text-gray-500 dark:text-gray-400">
-    {isToday
-      ? t('planner.emptyStates.todayEmpty')
-      : t('planner.emptyStates.tomorrowEmpty')}
-  </p>
-  <button
-              onClick={() => {
-                console.log('Empty state button clicked');
-                console.log('isExpired:', isExpired);
-                console.log('Setting PricingModal:', setIsPricingModalOpen);
-                if (isExpired) {
-                  console.log('Trying to open PricingModal...');
-                  if (setIsPricingModalOpen) setIsPricingModalOpen(true);
-                  return;
-                }
-                const now = new Date();
-                const planStartTime = new Date(selectedDate);
-                planStartTime.setHours(now.getHours(), now.getMinutes(), 0, 0);
-                const planEndTime = new Date(planStartTime);
-                planEndTime.setHours(planEndTime.getHours() + 1);
+        {isYesterday ? (
+          <p className="text-gray-500 dark:text-gray-400">
+            {t('planner.emptyStates.yesterdayEmpty')}
+          </p>
+        ) : (
+          (isToday || isTomorrow) && (
+            <div className="text-center">
+              <p className="text-gray-500 dark:text-gray-400">
+                {isToday
+                  ? t('planner.emptyStates.todayEmpty')
+                  : t('planner.emptyStates.tomorrowEmpty')}
+              </p>
+              <button
+                onClick={() => {
+                  const now = new Date();
+                  const planStartTime = new Date(selectedDate);
+                  planStartTime.setHours(now.getHours(), now.getMinutes(), 0, 0);
+                  const planEndTime = new Date(planStartTime);
+                  planEndTime.setHours(planEndTime.getHours() + 1);
 
-                const newPlan: Plan = {
-                  id: 0,
-                  title: '',
-                  details: '',
-                  start_time: planStartTime.toISOString(),
-                  end_time: planEndTime.toISOString(),
-                  is_completed: false,
-                  plan_type: 'regular',
-                  order: 0,
-                  user_id: user?.id || 0,
-                  color: '#000000',
-                  created_at: new Date().toISOString(),
-                  updated_at: new Date().toISOString(),
-                };
+                  const newPlan: Plan = {
+                    id: 0,
+                    title: '',
+                    details: '',
+                    start_time: planStartTime.toISOString(),
+                    end_time: planEndTime.toISOString(),
+                    is_completed: false,
+                    plan_type: 'regular',
+                    order: 0,
+                    user_id: user?.id || 0,
+                    color: '#000000',
+                    created_at: new Date().toISOString(),
+                    updated_at: new Date().toISOString(),
+                    // Eklenen alanlar:
+                    priority: 'medium',
+                    notify: false,
+                    notify_before: 30
+                  };
 
-                setSelectedPlan(newPlan);
-                setIsEditingPlan(false);
-                setIsModalOpen(true);
-              }}
-              className="mt-4 mx-auto flex items-center justify-center gap-2 px-4 py-2 bg-zinc-900 hover:bg-black/70 text-white dark:bg-zinc-700 dark:hover:bg-zinc-600 rounded-xl transition-all duration-200 font-medium text-sm"
-  >
-    <CalendarCheck className="w-4 h-4" />
-    <span>{t('sidebar.createPlan')}</span>
-  </button>
-</div>
-        )
-      )}
-    </div>
-  );
-}
+                  setSelectedPlan(newPlan);
+                  setIsEditingPlan(false);
+                  setIsModalOpen(true);
+                }}
+                className="mt-4 mx-auto flex items-center justify-center gap-2 px-4 py-2 bg-zinc-900 hover:bg-black/70 text-white dark:bg-zinc-700 dark:hover:bg-zinc-600 rounded-xl transition-all duration-200 font-medium text-sm"
+              >
+                <CalendarCheck className="w-4 h-4" />
+                <span>{t('sidebar.createPlan')}</span>
+              </button>
+            </div>
+          )
+        )}
+      </div>
+    );
+  }
 
   return (
     <div
@@ -640,12 +628,12 @@ const PlanList: React.FC<Props> = ({ isPricingModalOpen, setIsPricingModalOpen }
         )}
       </AnimatePresence>
       <PricingModal
-  isOpen={isPricingModalOpen ?? false}
-  onClose={() => {
-    if (setIsPricingModalOpen) setIsPricingModalOpen(false)
-  }}
-  isTrialEnded={true}
-/>
+        isOpen={isPricingModalOpen ?? false}
+        onClose={() => {
+          if (setIsPricingModalOpen) setIsPricingModalOpen(false);
+        }}
+        isTrialEnded={true}
+      />
     </div>
   );
 };

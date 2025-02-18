@@ -66,17 +66,7 @@ const Sidebar: React.FC<SidebarProps> = ({
     selectedDate
   } = usePlanner();
 
-  // useSubscription hook'undan isVerifiedUser'ı da alıyoruz
   const { trialDaysLeft, status, isPro, loading, isTrialing, isVerifiedUser, isExpired } = useSubscription();
-
-  console.log("Subscription data in Sidebar:", {
-    trialDaysLeft,
-    status,
-    isTrialing,
-    isPro,
-    loading,
-    isVerifiedUser
-  });
 
   const sidebarT = useTranslations('common.sidebar');
 
@@ -86,7 +76,6 @@ const Sidebar: React.FC<SidebarProps> = ({
 
   const searchTimeoutRef = useRef<NodeJS.Timeout>();
 
-  // Yeni: Kullanıcının güncellenmiş profil verilerini (ilk/son isim gibi) tutacağımız state
   const [profile, setProfile] = useState<any>(null);
 
   const navItems = [
@@ -117,7 +106,6 @@ const Sidebar: React.FC<SidebarProps> = ({
     onCollapse?.(isCollapsed);
   }, [isCollapsed, onCollapse]);
 
-  // Yeni: Kullanıcının güncellenmiş profil bilgilerini Supabase'den çekiyoruz.
   useEffect(() => {
     const fetchProfile = async () => {
       if (user?.id) {
@@ -169,6 +157,10 @@ const Sidebar: React.FC<SidebarProps> = ({
       color: '#000000',
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString(),
+      // Eklenen alanlar:
+      priority: 'medium',
+      notify: false,
+      notify_before: 30
     };
 
     setSelectedPlan(newPlan);
@@ -256,7 +248,6 @@ const Sidebar: React.FC<SidebarProps> = ({
 
   if (!hydrated) return null;
 
-  // loading durumunda Sidebar'ı render etme
   if (loading) {
     return null;
   }
@@ -290,13 +281,13 @@ const Sidebar: React.FC<SidebarProps> = ({
 
           <div>
             <div className="flex-shrink-0 h-12 flex items-center px-2">
-  <div 
-    onClick={() => router.push('/dashboard')}
-    className="cursor-pointer"
-  >
-    <Logo collapsed={isCollapsed} className="h-6 w-auto" />
-  </div>
-</div>
+              <div 
+                onClick={() => router.push('/dashboard')}
+                className="cursor-pointer"
+              >
+                <Logo collapsed={isCollapsed} className="h-6 w-auto" />
+              </div>
+            </div>
 
             <div className="space-y-2 mt-2">
               <button
@@ -422,23 +413,22 @@ const Sidebar: React.FC<SidebarProps> = ({
           {/* Profile Section */}
           {user && (
             <div className="mt-auto">
-              {/* Trial Badge */}
               {isTrialing && (
                 <div className="text-sm text-gray-600 dark:text-gray-300 mb-1">
                 </div>
               )}
               {!isPro && !isCollapsed && (
-  <div className="mb-3">
-    <SubscriptionBadge />
-    <Button
-      variant="default"
-      className="w-full mt-2 rounded-xl"
-      onClick={() => setIsPricingOpen(true)}
-    >
-      {sidebarT('trial.upgrade')}
-    </Button>
-  </div>
-)}
+                <div className="mb-3">
+                  <SubscriptionBadge />
+                  <Button
+                    variant="default"
+                    className="w-full mt-2 rounded-xl"
+                    onClick={() => setIsPricingOpen(true)}
+                  >
+                    {sidebarT('trial.upgrade')}
+                  </Button>
+                </div>
+              )}
               <div className="pt-3 border-t border-gray-200/50 dark:border-gray-700/50">
                 <div className="flex items-center justify-between px-2">
                   <Link

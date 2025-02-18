@@ -27,11 +27,10 @@ const PlanModal = () => {
     completePlan 
   } = usePlanner();
 
-  const [priority, setPriority] = useState(selectedPlan?.priority || 'medium');
+  const [priority, setPriority] = useState<"high" | "medium" | "low">(selectedPlan?.priority || 'medium');
   const [notify, setNotify] = useState(selectedPlan?.notify || false);
   const [notifyBefore, setNotifyBefore] = useState(selectedPlan?.notify_before || 30);
 
-  // İki farklı çeviri hook'u kullanıyoruz
   const tCommon = useTranslations('common');
   const tPlanner = useTranslations('planner');
 
@@ -177,7 +176,7 @@ const PlanModal = () => {
                 </div>
                 <select
                   value={priority}
-                  onChange={(e) => setPriority(e.target.value)}
+                  onChange={(e) => setPriority(e.target.value as "high" | "medium" | "low")}
                   className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg text-sm px-3 py-1.5"
                 >
                   <option value="low">{tPlanner('planModal.priorityLow')}</option>
