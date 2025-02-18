@@ -189,6 +189,12 @@ const DraggablePlanCard = React.forwardRef<HTMLDivElement, DraggablePlanCardProp
   );
 });
 
+DraggablePlanCard.displayName = "DraggablePlanCard";
+
+// -----------------------------------------------------------------
+// PlanList bileşeninin ana kısmı
+// -----------------------------------------------------------------
+
 interface Props {
   isPricingModalOpen?: boolean;
   setIsPricingModalOpen?: (open: boolean) => void;
@@ -216,6 +222,7 @@ const PlanList: React.FC<Props> = ({ isPricingModalOpen, setIsPricingModalOpen }
   const [isDuplicateMode, setIsDuplicateMode] = useState(false);
   const t = useTranslations('common');
 
+  // Klavye olaylarıyla duplicate mod kontrolü
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.metaKey || e.ctrlKey) {
@@ -238,13 +245,10 @@ const PlanList: React.FC<Props> = ({ isPricingModalOpen, setIsPricingModalOpen }
     };
   }, []);
 
-  const compareDate = (date1: Date, date2: Date) => {
-    return (
-      date1.getFullYear() === date2.getFullYear() &&
-      date1.getMonth() === date2.getMonth() &&
-      date1.getDate() === date2.getDate()
-    );
-  };
+  const compareDate = (date1: Date, date2: Date) =>
+    date1.getFullYear() === date2.getFullYear() &&
+    date1.getMonth() === date2.getMonth() &&
+    date1.getDate() === date2.getDate();
 
   const today = new Date();
   const tomorrow = new Date(today);
@@ -334,7 +338,7 @@ const PlanList: React.FC<Props> = ({ isPricingModalOpen, setIsPricingModalOpen }
           user_id: user?.id || 0,
           created_at: new Date().toISOString(),
           updated_at: new Date().toISOString(),
-          // Eklenen alanlar:
+          // Ek alanlar:
           priority: 'medium',
           notify: false,
           notify_before: 30
@@ -378,7 +382,7 @@ const PlanList: React.FC<Props> = ({ isPricingModalOpen, setIsPricingModalOpen }
       user_id: user?.id || 0,
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString(),
-      // Eklenen alanlar:
+      // Ek alanlar:
       priority: 'medium',
       notify: false,
       notify_before: 30
@@ -578,7 +582,6 @@ const PlanList: React.FC<Props> = ({ isPricingModalOpen, setIsPricingModalOpen }
                     color: '#000000',
                     created_at: new Date().toISOString(),
                     updated_at: new Date().toISOString(),
-                    // Eklenen alanlar:
                     priority: 'medium',
                     notify: false,
                     notify_before: 30
