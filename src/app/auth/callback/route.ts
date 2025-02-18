@@ -14,23 +14,38 @@ export async function GET(request: Request) {
       if (error) throw error;
       
       console.log('Auth callback triggered, user data:', data?.session);
-      // Mail gönderimi - sadece ilk kayıtta gönder
-      if (data?.user && !data.session?.user?.app_metadata?.role) {
-        const origin = request.headers.get('origin') || 'https://www.todayrow.app';
-        console.log('New user detected, sending welcome email');
-        await fetch(`${origin}/api/email/sendWelcome`, {
-          method: 'POST',
-          headers: { 
-            'Content-Type': 'application/json',
-            'Accept': 'application/json'
-          },
-          body: JSON.stringify({ 
-            email: data.user.email,
-            name: data.user.user_metadata?.full_name || '' 
-          })
-        }).catch(error => {
-          console.error('Welcome email fetch error:', error);
-        });
+      if (data?.user) {
+        // Önce profiles tablosundan kontrol et
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('welcome_email_sent')
+          .eq('id', data.user.id)
+          .single();
+
+        // Eğer welcome email gönderilmemişse
+        if (!profile?.welcome_email_sent) {
+          const origin = request.headers.get('origin') || 'https://www.todayrow.app';
+          console.log('Welcome email not sent yet, sending now');
+          await fetch(`${origin}/api/email/sendWelcome`, {
+            method: 'POST',
+            headers: { 
+              'Content-Type': 'application/json',
+              'Accept': 'application/json'
+            },
+            body: JSON.stringify({ 
+              email: data.user.email,
+              name: data.user.user_metadata?.full_name || '' 
+            })
+          }).catch(error => {
+            console.error('Welcome email fetch error:', error);
+          });
+
+          // welcome_email_sent'i güncelle
+          await supabase
+            .from('profiles')
+            .update({ welcome_email_sent: true })
+            .eq('id', data.user.id);
+        }
       }
     }
 
