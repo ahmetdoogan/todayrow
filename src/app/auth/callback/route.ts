@@ -13,11 +13,11 @@ export async function GET(request: Request) {
       const { data, error } = await supabase.auth.exchangeCodeForSession(code);
       if (error) throw error;
       
-      console.log('Auth callback triggered, user data:', data?.user?.email);
-      // Mail gönderimi
-      if (data?.user && data.user.new_user) {  // new_user kontrolü ekledik
+      console.log('Auth callback triggered, user data:', data?.session);
+      // Mail gönderimi - sadece ilk kayıtta gönder
+      if (data?.user && !data.session?.user?.app_metadata?.role) {
         const origin = request.headers.get('origin') || 'https://www.todayrow.app';
-        console.log('Attempting to send welcome email, origin:', origin);
+        console.log('New user detected, sending welcome email');
         await fetch(`${origin}/api/email/sendWelcome`, {
           method: 'POST',
           headers: { 
