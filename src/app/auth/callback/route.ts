@@ -15,7 +15,7 @@ export async function GET(request: Request) {
       
       console.log('Auth callback triggered, user data:', data?.user?.email);
       // Mail gönderimi
-      if (data?.user) {
+      if (data?.user && data.user.new_user) {  // new_user kontrolü ekledik
         const origin = request.headers.get('origin') || 'https://www.todayrow.app';
         console.log('Attempting to send welcome email, origin:', origin);
         await fetch(`${origin}/api/email/sendWelcome`, {
