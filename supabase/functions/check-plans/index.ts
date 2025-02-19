@@ -1,17 +1,19 @@
-import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
-import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.1.0'
+/// <reference lib="deno.ns" />
+
+import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2.1.0";
 import { SMTPClient } from "https://deno.land/x/denomailer@1.3.0/mod.ts";
 
-const SUPABASE_URL = Deno.env.get('SUPABASE_URL') ?? ''
-const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
+const SUPABASE_URL = Deno.env.get("SUPABASE_URL") ?? "";
+const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "";
 
-const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY)
+const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
 
 const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-  'Access-Control-Allow-Methods': 'POST, OPTIONS'
-}
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
+  "Access-Control-Allow-Methods": "POST, OPTIONS",
+};
 
 const emailTemplate = (title: string, startTime: string) => `
 <div style="background-color: #f8fafc; padding: 40px 0;">
@@ -46,27 +48,25 @@ const emailTemplate = (title: string, startTime: string) => `
 </div>`;
 
 async function checkAndNotify() {
-  console.log('Starting plan notifications check...');
-  
+  console.log("Starting plan notifications check...");
   try {
     const now = new Date();
-    
-    // Get plans and user emails
-    const { data: plans, error } = await supabase
-      .rpc('fetch_plans_with_emails', { check_time: now.toISOString() });
+
+    // Get plans and user emails (via our SQL function)
+    const { data: plans, error } = await supabase.rpc("fetch_plans_with_emails", { check_time: now.toISOString() });
 
     if (error) {
-      console.error('Error fetching plans:', error);
+      console.error("Error fetching plans:", error);
       throw error;
     }
-    
+
     if (!plans || plans.length === 0) {
-      console.log('No plans found');
-      return { message: 'No plans to check' };
+      console.log("No plans found");
+      return { message: "No plans to check" };
     }
 
     console.log(`Found ${plans.length} plans to process`);
-    
+
     // Setup SMTP client
     const client = new SMTPClient({
       connection: {
@@ -74,49 +74,48 @@ async function checkAndNotify() {
         port: 465,
         tls: true,
         auth: {
-          username: Deno.env.get('SMTP_USER'),
-          password: Deno.env.get('SMTP_PASSWORD'),
-        }
-      }
+          username: Deno.env.get("SMTP_USER") || "",
+          password: Deno.env.get("SMTP_PASSWORD") || "",
+        },
+      },
     });
 
-    const results = [];
-    
+    const results: Array<{ id: number; title: string; email: string; status: string }> = [];
+
     // Process each plan
-    for (const plan of plans) {
+    for (const plan of plans as Array<any>) {
       console.log(`Processing plan: ${plan.title}`);
-      
-      // Check if it's time to notify
       const startTime = new Date(plan.start_time);
       const minutesBefore = plan.notify_before_minutes || 10;
-      const notifyTime = new Date(startTime.getTime() - (minutesBefore * 60000));
-      
+      const notifyTime = new Date(startTime.getTime() - minutesBefore * 60000);
+
       if (now >= notifyTime && now < startTime) {
         console.log(`Time to notify for plan: ${plan.id}`);
 
-        const formattedTime = startTime.toLocaleString('en-US', {
-  month: 'long',
-  day: 'numeric',
-  hour: '2-digit',
-  minute: '2-digit',
-  timeZone: plan.user_time_zone || 'UTC',
-  hour12: false
-});
+        // Format time using the user's time zone; 24-hour format
+        const formattedTime = startTime.toLocaleString("en-GB", {
+          month: "long",
+          day: "numeric",
+          hour: "2-digit",
+          minute: "2-digit",
+          timeZone: plan.user_time_zone || "UTC",
+          hour12: false,
+        });
 
         try {
           console.log(`Sending email for plan ${plan.id} to ${plan.user_email}`);
           await client.send({
-            from: Deno.env.get('SMTP_USER') || '',
+            from: Deno.env.get("SMTP_USER") || "",
             to: plan.user_email,
             subject: `Plan Reminder: ${plan.title}`,
-            html: emailTemplate(plan.title, formattedTime)
+            html: emailTemplate(plan.title, formattedTime),
           });
 
           // Mark as notified
           const { error: updateError } = await supabase
-            .from('plans')
+            .from("plans")
             .update({ notification_sent: true })
-            .eq('id', plan.id);
+            .eq("id", plan.id);
 
           if (updateError) {
             console.error(`Error updating plan ${plan.id}:`, updateError);
@@ -125,13 +124,14 @@ async function checkAndNotify() {
               id: plan.id,
               title: plan.title,
               email: plan.user_email,
-              status: 'notified'
+              status: "notified",
             });
             console.log(`Notification sent for plan: ${plan.id}`);
           }
-        } catch (error) {
+        } catch (err) {
+          const error = err as Error;
           console.error(`Error sending email for plan ${plan.id}:`, error);
-          console.error('Detailed error:', error.stack);
+          console.error("Detailed error:", error.stack);
         }
       } else {
         console.log(`Not time to notify yet for plan ${plan.id}`);
@@ -139,40 +139,44 @@ async function checkAndNotify() {
     }
 
     await client.close();
-    
+
     return {
       message: `Notifications sent for ${results.length} plans`,
-      notifications: results
+      notifications: results,
     };
-  } catch (error) {
-    console.error('Error:', error);
+  } catch (err) {
+    const error = err as Error;
+    console.error("Error:", error);
     throw error;
   }
 }
 
-serve(async (req) => {
-  if (req.method === 'OPTIONS') {
-    return new Response('ok', { headers: corsHeaders });
+serve(async (req: Request) => {
+  if (req.method === "OPTIONS") {
+    return new Response("ok", { headers: corsHeaders });
   }
 
   try {
-    console.log('Starting Edge Function execution...');
+    console.log("Starting Edge Function execution...");
     const result = await checkAndNotify();
-    console.log('Function completed:', result);
-    
+    console.log("Function completed:", result);
     return new Response(JSON.stringify(result), {
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      status: 200
+      headers: { ...corsHeaders, "Content-Type": "application/json" },
+      status: 200,
     });
-  } catch (error) {
-    console.error('Function error:', error);
-    return new Response(JSON.stringify({ 
-      error: error.message,
-      errorName: error.name,
-      errorStack: error.stack
-    }), {
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      status: 500
-    });
+  } catch (err) {
+    const error = err as Error;
+    console.error("Function error:", error);
+    return new Response(
+      JSON.stringify({
+        error: error.message,
+        errorName: error.name,
+        errorStack: error.stack,
+      }),
+      {
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        status: 500,
+      }
+    );
   }
 });
