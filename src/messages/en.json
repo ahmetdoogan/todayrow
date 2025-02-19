@@ -19,6 +19,12 @@
           }
         },
         "notifications": {
+    "planReminder": {
+      "title": "Plan Reminder",
+      "message": "Your plan '{planTitle}' will start at {startTime}.",
+      "emailSubject": "Plan Reminder: {planTitle}",
+      "viewButton": "View My Plans"
+    },
           "title": "Notifications",
           "email": {
             "title": "Email Notifications",

@@ -26,6 +26,12 @@
           }
         },
         "notifications": {
+    "planReminder": {
+      "title": "Plan Hatırlatması",
+      "message": "{planTitle} başlıklı planınız {startTime} saatinde başlayacak.",
+      "emailSubject": "Plan Hatırlatması: {planTitle}",
+      "viewButton": "Planlarımı Görüntüle"
+    },
           "title": "Bildirimler",
           "email": {
             "title": "E-posta Bildirimleri",
@@ -384,6 +390,7 @@
         "completeSuccess": "Plan tamamlandı",
         "completeError": "Plan tamamlanırken bir hata oluştu",
         "undoSuccess": "Plan aktif hale getirildi",
+        "undoSuccess2": "İşlem geri alındı",
         "undoError": "Plan durumu değiştirilirken bir hata oluştu",
         "loadError": "Planlar yüklenirken bir hata oluştu",
         "bulkDeleteSuccess": "Seçili planlar silindi",
