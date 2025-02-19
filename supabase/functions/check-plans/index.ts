@@ -1,4 +1,25 @@
-/// <reference lib="deno.ns" />
+// Aşağıdaki deklarasyonlar, tsc'nin Deno'ya özgü global ve modül tanımlarını bulmasına yardımcı olur.
+declare var Deno: {
+  env: {
+    get(key: string): string | undefined;
+  };
+};
+
+declare module "https://deno.land/std@0.168.0/http/server.ts" {
+  export function serve(handler: (req: Request) => Response | Promise<Response>): void;
+}
+
+declare module "https://esm.sh/@supabase/supabase-js@2.1.0" {
+  export * from "supabase-js";
+}
+
+declare module "https://deno.land/x/denomailer@1.3.0/mod.ts" {
+  export class SMTPClient {
+    constructor(options: any);
+    send(options: { from: string; to: string; subject: string; html: string }): Promise<void>;
+    close(): Promise<void>;
+  }
+}
 
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.1.0";
@@ -51,8 +72,7 @@ async function checkAndNotify() {
   console.log("Starting plan notifications check...");
   try {
     const now = new Date();
-
-    // Get plans and user emails (via our SQL function)
+    // Çağırdığımız SQL fonksiyonu; 'fetch_plans_with_emails' fonksiyonu, check_time parametresi alıyor.
     const { data: plans, error } = await supabase.rpc("fetch_plans_with_emails", { check_time: now.toISOString() });
 
     if (error) {
@@ -67,7 +87,6 @@ async function checkAndNotify() {
 
     console.log(`Found ${plans.length} plans to process`);
 
-    // Setup SMTP client
     const client = new SMTPClient({
       connection: {
         hostname: "smtp.gmail.com",
@@ -82,7 +101,6 @@ async function checkAndNotify() {
 
     const results: Array<{ id: number; title: string; email: string; status: string }> = [];
 
-    // Process each plan
     for (const plan of plans as Array<any>) {
       console.log(`Processing plan: ${plan.title}`);
       const startTime = new Date(plan.start_time);
@@ -92,7 +110,6 @@ async function checkAndNotify() {
       if (now >= notifyTime && now < startTime) {
         console.log(`Time to notify for plan: ${plan.id}`);
 
-        // Format time using the user's time zone; 24-hour format
         const formattedTime = startTime.toLocaleString("en-GB", {
           month: "long",
           day: "numeric",
@@ -111,7 +128,6 @@ async function checkAndNotify() {
             html: emailTemplate(plan.title, formattedTime),
           });
 
-          // Mark as notified
           const { error: updateError } = await supabase
             .from("plans")
             .update({ notification_sent: true })
