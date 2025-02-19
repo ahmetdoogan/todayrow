@@ -1,4 +1,4 @@
-/// <reference lib="deno.ns" />
+// supabase/functions/check-plans/index.ts
 
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.1.0";
@@ -33,15 +33,13 @@ const emailTemplate = (title: string, startTime: string) => `
     </h1>
     
     <div style="color: #64748b; font-size: 16px; line-height: 24px; margin: 0 0 32px; text-align: center;">
-      <p style="margin: 24px 0;">
-        Your plan "${title}" is scheduled to start at ${startTime}.
-      </p>
+      <p>Your plan "${title}" is scheduled to start at ${startTime}.</p>
     </div>
 
     <div style="text-align: center;">
       <a href="https://todayrow.app/dashboard" 
          style="display: inline-block; background-color: #000; color: #fff; font-size: 16px; font-weight: 500; text-decoration: none; padding: 12px 32px; border-radius: 12px;">
-        View Dashboard
+        View Plans
       </a>
     </div>
   </div>
@@ -83,60 +81,59 @@ async function checkAndNotify() {
     const results: Array<{ id: number; title: string; email: string; status: string }> = [];
 
     // Process each plan
-for (const plan of plans as Array<any>) {
-  console.log(`Processing plan: ${plan.title}`);
-  const startTime = new Date(plan.start_time);
-  // Güncellendi: notify_before değeri varsa onu kullan, yoksa notify_before_minutes, yine yoksa 10
-  const minutesBefore = plan.notify_before || plan.notify_before_minutes || 10;
-  const notifyTime = new Date(startTime.getTime() - minutesBefore * 60000);
+    for (const plan of plans as Array<any>) {
+      console.log(`Processing plan: ${plan.title}`);
+      const startTime = new Date(plan.start_time);
+      // Fix: Kullanıcının seçtiği notify_before değerini kullan
+      const minutesBefore = plan.notify_before_minutes;
+      const notifyTime = new Date(startTime.getTime() - minutesBefore * 60000);
 
-  if (now >= notifyTime && now < startTime) {
-    console.log(`Time to notify for plan: ${plan.id}`);
+      if (now >= notifyTime && now < startTime) {
+        console.log(`Time to notify for plan: ${plan.id}`);
 
-    const formattedTime = startTime.toLocaleString("en-GB", {
-      month: "long",
-      day: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
-      timeZone: plan.user_time_zone || "UTC",
-      hour12: false,
-    });
-
-    try {
-      console.log(`Sending email for plan ${plan.id} to ${plan.user_email}`);
-      await client.send({
-        from: Deno.env.get("SMTP_USER") || "",
-        to: plan.user_email,
-        subject: `Plan Reminder: ${plan.title}`,
-        html: emailTemplate(plan.title, formattedTime),
-      });
-
-      const { error: updateError } = await supabase
-        .from("plans")
-        .update({ notification_sent: true })
-        .eq("id", plan.id);
-
-      if (updateError) {
-        console.error(`Error updating plan ${plan.id}:`, updateError);
-      } else {
-        results.push({
-          id: plan.id,
-          title: plan.title,
-          email: plan.user_email,
-          status: "notified",
+        const formattedTime = startTime.toLocaleString("en-GB", {
+          month: "long",
+          day: "numeric",
+          hour: "2-digit",
+          minute: "2-digit",
+          timeZone: plan.user_time_zone || "UTC",
+          hour12: false,
         });
-        console.log(`Notification sent for plan: ${plan.id}`);
-      }
-    } catch (err) {
-      const error = err as Error;
-      console.error(`Error sending email for plan ${plan.id}:`, error);
-      console.error("Detailed error:", error.stack);
-    }
-  } else {
-    console.log(`Not time to notify yet for plan ${plan.id}`);
-  }
-}
 
+        try {
+          console.log(`Sending email for plan ${plan.id} to ${plan.user_email}`);
+          await client.send({
+            from: Deno.env.get("SMTP_USER") || "",
+            to: plan.user_email,
+            subject: `Plan Reminder: ${plan.title}`,
+            html: emailTemplate(plan.title, formattedTime),
+          });
+
+          const { error: updateError } = await supabase
+            .from("plans")
+            .update({ notification_sent: true })
+            .eq("id", plan.id);
+
+          if (updateError) {
+            console.error(`Error updating plan ${plan.id}:`, updateError);
+          } else {
+            results.push({
+              id: plan.id,
+              title: plan.title,
+              email: plan.user_email,
+              status: "notified",
+            });
+            console.log(`Notification sent for plan: ${plan.id}`);
+          }
+        } catch (err) {
+          const error = err as Error;
+          console.error(`Error sending email for plan ${plan.id}:`, error);
+          console.error("Detailed error:", error.stack);
+        }
+      } else {
+        console.log(`Not time to notify yet for plan ${plan.id}`);
+      }
+    }
 
     await client.close();
 
