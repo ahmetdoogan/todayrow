@@ -69,13 +69,16 @@ async function checkAndNotify() {
     const client = new SMTPClient({
       connection: {
         hostname: "smtp.gmail.com",
-        port: 465,
-        tls: true,
+        port: 587,
+        tls: false,
         auth: {
           username: Deno.env.get("SMTP_USER") || "",
           password: Deno.env.get("SMTP_PASSWORD") || "",
         },
       },
+      pool: true,
+      maxConnections: 5,
+      maxMessages: 100,
     });
 
     const results: Array<{ id: number; title: string; email: string; status: string }> = [];
