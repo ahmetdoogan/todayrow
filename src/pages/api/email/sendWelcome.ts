@@ -28,37 +28,78 @@ const welcomeTemplate = `
     </div>
     
     <h1 style="color: #1e293b; font-size: 24px; font-weight: 600; text-align: center; margin: 0 0 16px;">
-      Todayrow'a Hoş Geldiniz!
+      Welcome to Todayrow!
     </h1>
     
-    <div style="color: #64748b; font-size: 16px; line-height: 24px; margin: 0 0 32px;">
-      <p style="margin-bottom: 16px;">
-        LinkedIn içerik planlamanızı kolaylaştırmak için buradayız. İşte Todayrow ile yapabilecekleriniz:
+    <!-- Main Feature Card -->
+    <div style="background-color: #f1f5f9; border-radius: 12px; padding: 24px; margin-bottom: 32px;">
+      <div style="background-color: #000; padding: 8px 16px; border-radius: 20px; margin: 0 auto 16px; width: fit-content;">
+        <span style="color: #fff; font-size: 14px; font-weight: 500;">
+          Plan your daily activities
+        </span>
+      </div>
+      <p style="color: #64748b; font-size: 16px; line-height: 24px; text-align: center; margin: 0;">
+        Create and manage your plans with our intuitive tools.
       </p>
-      
-      <div style="margin-left: 24px; margin-bottom: 24px;">
-        • İçeriklerinizi takvim üzerinde planlayın<br/>
-        • Notlarınızı organize edin<br/>
-        • İçerik fikirlerinizi kaydedin<br/>
-        • Otomatik hatırlatmalar alın
+    </div>
+
+    <!-- Feature Cards -->
+    <div style="margin-bottom: 32px;">
+      <!-- Plans -->
+      <div style="border: 1px solid #e2e8f0; border-radius: 12px; padding: 16px; margin-bottom: 16px;">
+        <div style="display: flex; gap: 12px; margin-bottom: 8px;">
+          <span style="background-color: #f8fafc; border-radius: 8px; padding: 8px;">🎯</span>
+          <div>
+            <h3 style="color: #1e293b; font-size: 16px; font-weight: 600; margin: 0 0 4px;">
+              Smart Planning
+            </h3>
+            <p style="color: #64748b; font-size: 14px; line-height: 20px; margin: 0;">
+              Create plans easily, set email reminders, and drag & drop quick plans to your schedule.
+            </p>
+          </div>
+        </div>
       </div>
 
-      <p style="margin-bottom: 16px;">
-        <strong>Başlamak için önerilerimiz:</strong>
-      </p>
-      
-      <div style="margin-left: 24px;">
-        1. Profilinizi güncelleyin<br/>
-        2. İlk içerik planınızı oluşturun<br/>
-        3. LinkedIn profilinizi bağlayın
+      <!-- Notes -->
+      <div style="border: 1px solid #e2e8f0; border-radius: 12px; padding: 16px; margin-bottom: 16px;">
+        <div style="display: flex; gap: 12px; margin-bottom: 8px;">
+          <span style="background-color: #f8fafc; border-radius: 8px; padding: 8px;">📝</span>
+          <div>
+            <h3 style="color: #1e293b; font-size: 16px; font-weight: 600; margin: 0 0 4px;">
+              Organized Notes
+            </h3>
+            <p style="color: #64748b; font-size: 14px; line-height: 20px; margin: 0;">
+              Take notes and organize your ideas. Pin important notes for quick access.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Content Management -->
+      <div style="border: 1px solid #e2e8f0; border-radius: 12px; padding: 16px;">
+        <div style="display: flex; gap: 12px; margin-bottom: 8px;">
+          <span style="background-color: #f8fafc; border-radius: 8px; padding: 8px;">🔔</span>
+          <div>
+            <h3 style="color: #1e293b; font-size: 16px; font-weight: 600; margin: 0 0 4px;">
+              Smart Notifications
+            </h3>
+            <p style="color: #64748b; font-size: 14px; line-height: 20px; margin: 0;">
+              Get email notifications before your plans start. Choose from 10, 30, or 60-minute reminders.
+            </p>
+          </div>
+        </div>
       </div>
     </div>
 
+    <!-- CTA -->
     <div style="text-align: center;">
       <a href="https://todayrow.app/dashboard" 
-         style="display: inline-block; background-color: #000; color: #fff; font-size: 16px; font-weight: 500; text-decoration: none; padding: 12px 32px; border-radius: 12px;">
-        Uygulamayı Aç
+         style="display: inline-block; background-color: #000; color: #fff; font-size: 16px; font-weight: 500; text-decoration: none; padding: 12px 32px; border-radius: 12px; margin-bottom: 16px;">
+        Start Planning
       </a>
+      <p style="color: #64748b; font-size: 14px; margin: 0;">
+        Need help? Contact us at <a href="mailto:help@todayrow.app" style="color: #000; text-decoration: none;">help@todayrow.app</a>
+      </p>
     </div>
   </div>
 </div>`;
@@ -108,7 +149,7 @@ export default async function handler(
     await transporter.sendMail({
       from: '"Todayrow" <hello@todayrow.app>',
       to: email,
-      subject: "Todayrow'a Hoş Geldiniz!",
+      subject: "Welcome to Todayrow!",
       html: welcomeTemplate,
     });
 
