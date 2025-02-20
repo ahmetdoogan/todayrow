@@ -282,7 +282,7 @@ const PlanList: React.FC<Props> = ({ isPricingModalOpen, setIsPricingModalOpen }
 
   const [{ isOver }, dropRef] = useDrop(() => ({
     accept: [ItemTypes.QUICK_PLAN, ItemTypes.PLAN],
-    canDrop: () => canEdit && !isExpired,
+    canDrop: () => canEdit,
     hover: (item: QuickPlan | Plan, monitor) => {
       if (!canEdit) return;
       const clientOffset = monitor.getClientOffset();
@@ -312,11 +312,8 @@ const PlanList: React.FC<Props> = ({ isPricingModalOpen, setIsPricingModalOpen }
       }
     },
     drop: (item: any) => {
-      if (!selectedTime || !canEdit || isExpired) {
-        if (setIsPricingModalOpen) setIsPricingModalOpen(true);
-        return;
-      }
-
+      if (!selectedTime || !canEdit) return;
+      
       if (item.isDuplicating) {
         const planStartTime = new Date(selectedDate);
         const [hours, minutes] = selectedTime.split(':').map(Number);
@@ -497,13 +494,7 @@ const PlanList: React.FC<Props> = ({ isPricingModalOpen, setIsPricingModalOpen }
                 <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none">
                   <button
                     className="flex items-center gap-1 text-sm text-gray-400 dark:text-gray-500 px-3 py-1 rounded-md bg-gray-100/70 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 pointer-events-auto hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
-                    onClick={() => {
-                      if (isExpired) {
-                        if (setIsPricingModalOpen) setIsPricingModalOpen(true);
-                        return;
-                      }
-                      handleCreatePlanAtHour(hour);
-                    }}
+                    onClick={() => handleCreatePlanAtHour(hour)}
                   >
                     <Plus className="w-4 h-4" />
                     {t('planner.actions.createPlan')}
