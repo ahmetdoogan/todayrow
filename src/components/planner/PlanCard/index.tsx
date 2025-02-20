@@ -4,7 +4,8 @@ import React from 'react';
 import { Clock, Check, Edit2, Trash2, ArrowLeft, Bell, AlertTriangle } from 'lucide-react';
 import { motion } from 'framer-motion';
 import type { Plan } from '@/types/planner';
-import { usePlanner } from '@/context/PlannerContext';  // Eklendi
+import { usePlanner } from '@/context/PlannerContext';
+import { useTranslations } from 'next-intl'; // t için import
 
 interface PlanCardProps {
   plan: Plan;
@@ -25,7 +26,8 @@ const PlanCard = ({
   onIncomplete,
   isReadOnly = false
 }: PlanCardProps) => {
-  const { setSelectedPlan, setIsModalOpen } = usePlanner();  // Eklendi
+  const { setSelectedPlan, setIsModalOpen } = usePlanner();
+  const t = useTranslations(); // t fonksiyonunu tanımladık
 
   const handleEdit = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -47,13 +49,11 @@ const PlanCard = ({
     await onIncomplete();
   };
 
- const handleClick = () => {
+  const handleClick = () => {
     setSelectedPlan(plan);
     setIsModalOpen(true);
-    onClick(plan); // Bunu ekliyoruz
-};
-
-  // ... [Geri kalan her şey aynı kalacak]
+    onClick(plan);
+  };
 
   return (
     <motion.div
@@ -79,7 +79,7 @@ const PlanCard = ({
       <div className="flex-1">
         <div className="flex items-center space-x-4">
           <div className="text-sm font-medium text-gray-600 dark:text-gray-300 shrink-0">
-            {new Date(plan.start_time).toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' })} - 
+            {new Date(plan.start_time).toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' })} -{' '}
             {new Date(plan.end_time).toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' })}
           </div>
 
@@ -93,21 +93,20 @@ const PlanCard = ({
             )}
             
             {/* Priority Badge */}
-{!plan.is_completed && (plan.priority === 'high' || plan.priority === 'medium') && (
-  <span
-    className={`inline-flex items-center rounded-md px-2 py-1 text-xs font-medium
-      ${plan.priority === 'high'
-        ? 'bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-300 ring-red-600/20 dark:ring-red-500/30'
-        : 'bg-yellow-50 dark:bg-yellow-900/20 text-yellow-600 dark:text-yellow-400 ring-yellow-600/20 dark:ring-yellow-500/30'
-      }
-    `}
-  >
-    <AlertTriangle className="w-3 h-3 mr-1" />
-    {plan.priority === 'high' ? t('plannerForm.priorityHigh') : t('plannerForm.priorityMedium')}
-  </span>
-)}
-
-
+            {!plan.is_completed && (plan.priority === 'high' || plan.priority === 'medium') && (
+              <span
+                className={`
+                  inline-flex items-center rounded-md px-2 py-1 text-xs font-medium
+                  ${plan.priority === 'high'
+                    ? 'bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-300 ring-red-600/20 dark:ring-red-500/30'
+                    : 'bg-yellow-50 dark:bg-yellow-900/20 text-yellow-600 dark:text-yellow-400 ring-yellow-600/20 dark:ring-yellow-500/30'
+                  }
+                `}
+              >
+                <AlertTriangle className="w-3 h-3 mr-1" />
+                {plan.priority === 'high' ? t('plannerForm.priorityHigh') : t('plannerForm.priorityMedium')}
+              </span>
+            )}
             
             {/* Notification Badge */}
             {!plan.is_completed && plan.notify && (
