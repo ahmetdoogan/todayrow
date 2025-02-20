@@ -72,7 +72,7 @@ export default function PlanForm() {
     order: 0,
     color: 'bg-blue-500',
     is_completed: false,
-    priority: 'medium',
+    priority: 'low',
     notify: false,
     notify_before: 30,
   });

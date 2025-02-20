@@ -323,23 +323,24 @@ const PlanList: React.FC<Props> = ({ isPricingModalOpen, setIsPricingModalOpen }
         planEndTime.setHours(planEndTime.getHours() + 1);
 
         const newPlan: Plan = {
-          id: 0,
-          title: item.title,
-          details: item.details,
-          start_time: planStartTime.toISOString(),
-          end_time: planEndTime.toISOString(),
-          is_completed: false,
-          color: item.color,
-          plan_type: 'regular',
-          order: 0,
-          user_id: user?.id || 0,
-          created_at: new Date().toISOString(),
-          updated_at: new Date().toISOString(),
-          // Ek alanlar:
-          priority: 'medium',
-          notify: false,
-          notify_before: 30
-        };
+  id: 0,
+  title: item.title,
+  details: item.details,
+  start_time: planStartTime.toISOString(),
+  end_time: planEndTime.toISOString(),
+  is_completed: false,
+  color: item.color,
+  plan_type: 'regular',
+  order: 0,
+  user_id: user?.id || 0,
+  created_at: new Date().toISOString(),
+  updated_at: new Date().toISOString(),
+  // Ek alanlar:
+  priority: 'low',  // Varsayılan olarak low
+  notify: false,
+  notify_before: 30
+};
+
 
         setSelectedPlan(newPlan);
         setIsModalOpen(true);

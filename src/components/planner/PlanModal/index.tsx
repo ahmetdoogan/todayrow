@@ -27,7 +27,7 @@ const PlanModal = () => {
     completePlan 
   } = usePlanner();
 
-  const [priority, setPriority] = useState<"high" | "medium" | "low">(selectedPlan?.priority || 'medium');
+  const [priority, setPriority] = useState<"high" | "medium" | "low">(selectedPlan?.priority || 'low');
   const [notify, setNotify] = useState(selectedPlan?.notify || false);
   const [notifyBefore, setNotifyBefore] = useState(selectedPlan?.notify_before || 30);
 
