@@ -12,6 +12,8 @@ const AuthGuard = ({ children }: { children: React.ReactNode }) => {
   const router = useRouter();
 
   useEffect(() => {
+    if (!pathname) return;
+    
     // Public routes
     const publicRoutes = ['/', '/auth/login', '/auth/signup', '/legal/privacy', '/legal/terms'];
     const isPublicRoute = publicRoutes.includes(pathname);
