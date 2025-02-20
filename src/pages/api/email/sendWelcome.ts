@@ -98,7 +98,7 @@ const welcomeTemplate = `
         Start Planning
       </a>
       <p style="color: #64748b; font-size: 14px; margin: 0;">
-        Need help? Contact us at <a href="mailto:help@todayrow.app" style="color: #000; text-decoration: none;">help@todayrow.app</a>
+        Need help? Contact us at <a href="mailto:hello@todayrow.app" style="color: #000; text-decoration: none;">hello@todayrow.app</a>
       </p>
     </div>
   </div>
