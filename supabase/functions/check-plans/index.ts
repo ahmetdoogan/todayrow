@@ -85,8 +85,8 @@ async function checkAndNotify() {
       console.log(`Processing plan: ${plan.title}`);
       const startTime = new Date(plan.start_time);
       console.log(`Plan start time: ${startTime}`);
-      // Fix: Kullanıcının seçtiği notify_before değerini kullan
-      const minutesBefore = plan.notify_before_minutes;
+      // Kullanıcının seçtiği bildirim süresini kullan (notify_before_minutes veya notify_before)
+      const minutesBefore = plan.notify_before_minutes || plan.notify_before || 10;
       console.log(`Minutes before: ${minutesBefore}`);
       const notifyTime = new Date(startTime.getTime() - minutesBefore * 60000);
       console.log(`Notify time: ${notifyTime}`);
@@ -95,14 +95,20 @@ async function checkAndNotify() {
       if (now >= notifyTime && now < startTime) {
         console.log(`Time to notify for plan: ${plan.id}`);
 
-        const formattedTime = startTime.toLocaleString("en-GB", {
+        const formattedDate = startTime.toLocaleString("en-GB", {
           month: "long",
           day: "numeric",
+          timeZone: plan.time_zone || "UTC",
+        });
+        
+        const formattedTime = startTime.toLocaleString("en-GB", {
           hour: "2-digit",
           minute: "2-digit",
-          timeZone: plan.user_time_zone || "UTC",
+          timeZone: plan.time_zone || "UTC",
           hour12: false,
         });
+        
+        const fullFormattedTime = `${formattedDate} at ${formattedTime}`;
 
         try {
           console.log(`Sending email for plan ${plan.id} to ${plan.user_email}`);
@@ -110,7 +116,7 @@ async function checkAndNotify() {
             from: Deno.env.get("SMTP_USER") || "",
             to: plan.user_email,
             subject: `Plan Reminder: ${plan.title}`,
-            html: emailTemplate(plan.title, formattedTime),
+            html: emailTemplate(plan.title, fullFormattedTime),
           });
 
           const { error: updateError } = await supabase
