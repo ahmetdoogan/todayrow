@@ -20,35 +20,7 @@ const corsHeaders = {
 
 // Email HTML template
 function emailTemplate(title: string, startTime: string) {
-  return `
-<div style="background-color: #f8fafc; padding: 40px 0;">
-  <div style="max-width: 600px; margin: 0 auto; background-color: #ffffff; border-radius: 16px; padding: 40px; box-shadow: 0 4px 6px rgba(0,0,0,0.05);">
-    <div style="text-align: center; margin-bottom: 32px; padding: 16px;">
-      <img 
-        alt="Todayrow"
-        width="200"
-        height="40"
-        style="display: block; margin: 0 auto; object-fit: contain; max-width: 100%;"
-        src="https://todayrow.app/images/logo_dark.png"
-      >
-    </div>
-    
-    <h1 style="color: #1e293b; font-size: 24px; font-weight: 600; text-align: center; margin: 0 0 16px;">
-      Plan Reminder
-    </h1>
-    
-    <div style="color: #64748b; font-size: 16px; line-height: 24px; margin: 0 0 32px; text-align: center;">
-      <p>Your plan "${title}" is scheduled to start at ${startTime}.</p>
-    </div>
-
-    <div style="text-align: center;">
-      <a href="https://todayrow.app/dashboard" 
-         style="display: inline-block; background-color: #000; color: #fff; font-size: 16px; font-weight: 500; text-decoration: none; padding: 12px 32px; border-radius: 12px;">
-        View Plans
-      </a>
-    </div>
-  </div>
-</div>`;
+  return `<div style="background-color: #f8fafc; padding: 40px 0;"><div style="max-width: 600px; margin: 0 auto; background-color: #ffffff; border-radius: 16px; padding: 40px; box-shadow: 0 4px 6px rgba(0,0,0,0.05);"><div style="text-align: center; margin-bottom: 32px; padding: 16px;"><img alt="Todayrow" width="200" height="40" style="display: block; margin: 0 auto; object-fit: contain; max-width: 100%;" src="https://todayrow.app/images/logo_dark.png"></div><h1 style="color: #1e293b; font-size: 24px; font-weight: 600; text-align: center; margin: 0 0 16px;">Plan Reminder</h1><div style="color: #64748b; font-size: 16px; line-height: 24px; margin: 0 0 32px; text-align: center;"><p>Your plan "${title}" is scheduled to start at ${startTime}.</p></div><div style="text-align: center;"><a href="https://todayrow.app/dashboard" style="display: inline-block; background-color: #000; color: #fff; font-size: 16px; font-weight: 500; text-decoration: none; padding: 12px 32px; border-radius: 12px;">View Plans</a></div></div></div>`;
 }
 
 async function checkAndNotify() {
@@ -137,7 +109,7 @@ async function checkAndNotify() {
           console.log(`Sending email for plan ${plan.id} to ${plan.user_email}`);
 
           await client.send({
-            from: Deno.env.get("SMTP_USER") || "",
+            from: '"Todayrow" <hello@todayrow.app>',
             to: plan.user_email,
             subject: `Plan Reminder: ${plan.title}`,
             html: emailTemplate(plan.title, fullFormattedTime),
