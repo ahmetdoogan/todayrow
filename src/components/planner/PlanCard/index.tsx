@@ -95,17 +95,18 @@ const PlanCard = ({
             {/* Priority Badge */}
 {!plan.is_completed && (plan.priority === 'high' || plan.priority === 'medium') && (
   <span
-    className={`px-2 py-0.5 text-xs font-medium rounded-full flex items-center gap-1
+    className={`inline-flex items-center rounded-md px-2 py-1 text-xs font-medium
       ${plan.priority === 'high'
-        ? 'bg-red-50 text-red-600 dark:bg-red-900/20 dark:text-red-400'
-        : 'bg-yellow-50 text-yellow-600 dark:bg-yellow-900/20 dark:text-yellow-400'
+        ? 'bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-300 ring-red-600/20 dark:ring-red-500/30'
+        : 'bg-yellow-50 dark:bg-yellow-900/20 text-yellow-600 dark:text-yellow-400 ring-yellow-600/20 dark:ring-yellow-500/30'
       }
     `}
   >
-    <AlertTriangle className="w-3 h-3" />
-    {plan.priority === 'high' ? 'Yüksek' : 'Orta'}
+    <AlertTriangle className="w-3 h-3 mr-1" />
+    {plan.priority === 'high' ? t('plannerForm.priorityHigh') : t('plannerForm.priorityMedium')}
   </span>
 )}
+
 
             
             {/* Notification Badge */}
