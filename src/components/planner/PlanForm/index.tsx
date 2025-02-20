@@ -85,28 +85,21 @@ export default function PlanForm() {
 
   useEffect(() => {
     setError('');
-
     if (selectedPlan && selectedPlan.id !== 0) {
-      // 1) Mevcut planı düzenle
+      // Düzenleme
       const st = new Date(selectedPlan.start_time);
       const et = new Date(selectedPlan.end_time);
 
       setFormData({
         title: selectedPlan.title,
         details: selectedPlan.details || '',
-        start_time: `${st.getHours().toString().padStart(2, '0')}:${st
-          .getMinutes()
-          .toString()
-          .padStart(2, '0')}`,
-        end_time: `${et.getHours().toString().padStart(2, '0')}:${et
-          .getMinutes()
-          .toString()
-          .padStart(2, '0')}`,
+        start_time: `${st.getHours().toString().padStart(2, '0')}:${st.getMinutes().toString().padStart(2, '0')}`,
+        end_time: `${et.getHours().toString().padStart(2, '0')}:${et.getMinutes().toString().padStart(2, '0')}`,
         plan_type: selectedPlan.plan_type as 'custom' | 'predefined' | 'regular' | 'quick',
         order: selectedPlan.order,
         color: selectedPlan.color || 'bg-violet-500',
         is_completed: selectedPlan.is_completed,
-        priority: selectedPlan.priority || 'medium',
+        priority: selectedPlan.priority || 'low',
         notify: selectedPlan.notify || false,
         notify_before: selectedPlan.notify_before || 30,
       });
@@ -114,130 +107,64 @@ export default function PlanForm() {
       setInitialFormData({
         title: selectedPlan.title,
         details: selectedPlan.details || '',
-        start_time: `${st.getHours().toString().padStart(2, '0')}:${st
-          .getMinutes()
-          .toString()
-          .padStart(2, '0')}`,
-        end_time: `${et.getHours().toString().padStart(2, '0')}:${et
-          .getMinutes()
-          .toString()
-          .padStart(2, '0')}`,
+        start_time: `${st.getHours().toString().padStart(2, '0')}:${st.getMinutes().toString().padStart(2, '0')}`,
+        end_time: `${et.getHours().toString().padStart(2, '0')}:${et.getMinutes().toString().padStart(2, '0')}`,
         plan_type: selectedPlan.plan_type as 'custom' | 'predefined' | 'regular' | 'quick',
         order: selectedPlan.order,
         color: selectedPlan.color || 'bg-violet-500',
         is_completed: selectedPlan.is_completed,
-        priority: selectedPlan.priority || 'medium',
+        priority: selectedPlan.priority || 'low',
         notify: selectedPlan.notify || false,
         notify_before: selectedPlan.notify_before || 30,
       });
 
-      if (compareDate(new Date(selectedPlan.start_time), today)) {
-        setSelectedDay('today');
-      } else {
-        setSelectedDay('tomorrow');
-      }
+      setSelectedDay(compareDate(new Date(selectedPlan.start_time), today) ? 'today' : 'tomorrow');
     } else if (draggedPlan) {
-      // 2) DraggedPlan'dan gelen veriler (hazır plan)
+      // DraggedPlan'dan
       const [h, m] = draggedPlan.dropTime.split(':').map(Number);
       const endH = (h + 1) % 24;
-
       setFormData({
         title: draggedPlan.quickPlan.title,
         details: '',
         start_time: draggedPlan.dropTime,
-        end_time: `${endH.toString().padStart(2, '0')}:${m
-          .toString()
-          .padStart(2, '0')}`,
+        end_time: `${endH.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}`,
         plan_type: 'predefined',
         order: 0,
         color: draggedPlan.quickPlan.color || 'bg-violet-500',
         is_completed: false,
-        priority: 'medium',
+        priority: 'low',
         notify: false,
         notify_before: 30,
       });
-
-      setInitialFormData({
-        title: draggedPlan.quickPlan.title,
-        details: '',
-        start_time: draggedPlan.dropTime,
-        end_time: `${endH.toString().padStart(2, '0')}:${m
-          .toString()
-          .padStart(2, '0')}`,
-        plan_type: 'predefined',
-        order: 0,
-        color: draggedPlan.quickPlan.color || 'bg-violet-500',
-        is_completed: false,
-        priority: 'medium',
-        notify: false,
-        notify_before: 30,
-      });
-
+      setInitialFormData({ ...formData });
       setSelectedDay(isToday ? 'today' : 'tomorrow');
     } else if (selectedPlan && selectedPlan.id === 0) {
-      // 3) Yeni plan (selectedPlan.id === 0)
+      // Yeni plan (seçili ama boş)
       const st = new Date(selectedPlan.start_time);
       const et = new Date(selectedPlan.end_time);
-
       setFormData({
         title: '',
         details: '',
-        start_time: `${st.getHours().toString().padStart(2, '0')}:${st
-          .getMinutes()
-          .toString()
-          .padStart(2, '0')}`,
-        end_time: `${et.getHours().toString().padStart(2, '0')}:${et
-          .getMinutes()
-          .toString()
-          .padStart(2, '0')}`,
+        start_time: `${st.getHours().toString().padStart(2, '0')}:${st.getMinutes().toString().padStart(2, '0')}`,
+        end_time: `${et.getHours().toString().padStart(2, '0')}:${et.getMinutes().toString().padStart(2, '0')}`,
         plan_type: 'custom',
         order: 0,
         color: 'bg-violet-500',
         is_completed: false,
-        priority: 'medium',
+        priority: 'low',
         notify: false,
         notify_before: 30,
       });
-
-      setInitialFormData({
-        title: '',
-        details: '',
-        start_time: `${st.getHours().toString().padStart(2, '0')}:${st
-          .getMinutes()
-          .toString()
-          .padStart(2, '0')}`,
-        end_time: `${et.getHours().toString().padStart(2, '0')}:${et
-          .getMinutes()
-          .toString()
-          .padStart(2, '0')}`,
-        plan_type: 'custom',
-        order: 0,
-        color: 'bg-violet-500',
-        is_completed: false,
-        priority: 'medium',
-        notify: false,
-        notify_before: 30,
-      });
-
+      setInitialFormData({ ...formData });
       setSelectedDay(isToday ? 'today' : 'tomorrow');
     } else {
-      // 4) Sıfırdan form
+      // Sıfırdan form
       const now = new Date();
-      const defaultStart = `${now.getHours().toString().padStart(2, '0')}:${(
-        Math.floor(now.getMinutes() / 30) * 30
-      )
-        .toString()
-        .padStart(2, '0')}`;
+      const defaultStart = `${now.getHours().toString().padStart(2, '0')}:${(Math.floor(now.getMinutes() / 30) * 30)
+        .toString().padStart(2, '0')}`;
       const eTime = new Date(now.getTime() + 60 * 60 * 1000);
-      const defaultEnd = `${eTime
-        .getHours()
-        .toString()
-        .padStart(2, '0')}:${(
-        Math.floor(eTime.getMinutes() / 30) * 30
-      )
-        .toString()
-        .padStart(2, '0')}`;
-
+      const defaultEnd = `${eTime.getHours().toString().padStart(2, '0')}:${(Math.floor(eTime.getMinutes() / 30) * 30)
+        .toString().padStart(2, '0')}`;
       setFormData({
         title: '',
         details: '',
@@ -247,25 +174,11 @@ export default function PlanForm() {
         order: 0,
         color: 'bg-violet-500',
         is_completed: false,
-        priority: 'medium',
+        priority: 'low',
         notify: false,
         notify_before: 30,
       });
-
-      setInitialFormData({
-        title: '',
-        details: '',
-        start_time: defaultStart,
-        end_time: defaultEnd,
-        plan_type: 'custom',
-        order: 0,
-        color: 'bg-violet-500',
-        is_completed: false,
-        priority: 'medium',
-        notify: false,
-        notify_before: 30,
-      });
-
+      setInitialFormData({ ...formData });
       setSelectedDay(isToday ? 'today' : 'tomorrow');
     }
   }, [selectedPlan, draggedPlan, isToday, isTomorrow, today]);
@@ -283,7 +196,6 @@ export default function PlanForm() {
   }
 
   const handleAttemptClose = () => {
-    // Eğer formda değişiklik yapıldıysa onay iste
     if (
       formData.title !== initialFormData.title ||
       formData.details !== initialFormData.details ||
@@ -316,7 +228,6 @@ export default function PlanForm() {
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError('');
-
     if (isExpired) {
       setIsPricingModalOpen(true);
       return;
@@ -325,17 +236,13 @@ export default function PlanForm() {
       setError(tCommon('plannerForm.validationError'));
       return;
     }
-
     const dayDate = selectedDay === 'today' ? today : tomorrow;
     const [sh, sm] = formData.start_time.split(':').map(Number);
     const [eh, em] = formData.end_time.split(':').map(Number);
-
     const startDate = new Date(dayDate);
     startDate.setHours(sh, sm, 0, 0);
-
     const endDate = new Date(dayDate);
     endDate.setHours(eh, em, 0, 0);
-
     const planData = {
       ...formData,
       start_time: startDate.toISOString(),
@@ -343,13 +250,10 @@ export default function PlanForm() {
       user_id: user?.id || 0,
       color: formData.color || 'bg-violet-500'
     };
-
     try {
       if (selectedPlan && selectedPlan.id && selectedPlan.id !== 0) {
-        // Güncelle
         await updatePlan(selectedPlan.id, planData);
       } else {
-        // Yeni plan
         await createPlan(planData);
       }
       handleClose();
@@ -380,201 +284,183 @@ export default function PlanForm() {
             transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
             onClick={(e) => e.stopPropagation()}
           >
-          {/* Modal içeriği burada devam ediyor */}
-          <div className="flex justify-between items-center px-6 py-4 border-b border-gray-200 dark:border-gray-800">
-            <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
-              {isEditingPlan ? tCommon('plannerForm.editPlan') : tCommon('plannerForm.newPlan')}
-            </h2>
-            <button
-              onClick={handleAttemptClose}
-              className="p-1 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
-            >
-              <X className="w-5 h-5 text-gray-500 dark:text-gray-400" />
-            </button>
-          </div>
-
-          <form onSubmit={handleSubmit} className="p-6">
-            {/* Form içeriği burada devam ediyor */}
-            {!isEditingPlan && (
-              <div className="mb-6">
-                <div className="flex p-1 bg-gray-100 dark:bg-gray-800 rounded-lg w-fit gap-1">
-                  <button
-                    type="button"
-                    onClick={() => setSelectedDay('today')}
-                    className={`px-4 py-2 rounded-md text-sm font-medium transition-all ${
-                      selectedDay === 'today'
-                        ? 'bg-white dark:bg-gray-700 text-gray-900 dark:text-white shadow-sm'
-                        : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200'
-                    }`}
-                  >
-                    {tCommon('plannerForm.today')}
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setSelectedDay('tomorrow')}
-                    className={`px-4 py-2 rounded-md text-sm font-medium transition-all ${
-                      selectedDay === 'tomorrow'
-                        ? 'bg-white dark:bg-gray-700 text-gray-900 dark:text-white shadow-sm'
-                        : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200'
-                    }`}
-                  >
-                    {tCommon('plannerForm.tomorrow')}
-                  </button>
-                </div>
-              </div>
-            )}
-
-            <div className="mb-6">
-              <input
-                type="text"
-                value={formData.title}
-                onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                placeholder={tCommon('plannerForm.titlePlaceholder')}
-                className="w-full px-4 py-3 text-base bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl 
-                  focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all
-                  placeholder:text-gray-400 dark:placeholder:text-gray-500"
-                required
-              />
+            <div className="flex justify-between items-center px-6 py-4 border-b border-gray-200 dark:border-gray-800">
+              <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+                {isEditingPlan ? tCommon('plannerForm.editPlan') : tCommon('plannerForm.newPlan')}
+              </h2>
+              <button
+                onClick={handleAttemptClose}
+                className="p-1 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+              >
+                <X className="w-5 h-5 text-gray-500 dark:text-gray-400" />
+              </button>
             </div>
 
-            <div className="mb-6 grid grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                  {tCommon('plannerForm.startTime')}
-                </label>
-                <div className="relative">
-                  <Clock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-                  <input
-                    type="time"
-                    value={formData.start_time}
-                    onChange={(e) =>
-                      setFormData({ ...formData, start_time: e.target.value })
-                    }
-                    className="w-full pl-10 pr-4 py-2 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg
-                      focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all"
-                    required
-                  />
-                </div>
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                  {tCommon('plannerForm.endTime')}
-                </label>
-                <div className="relative">
-                  <Clock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-                  <input
-                    type="time"
-                    value={formData.end_time}
-                    onChange={(e) =>
-                      setFormData({ ...formData, end_time: e.target.value })
-                    }
-                    className="w-full pl-10 pr-4 py-2 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg
-                      focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all"
-                    required
-                  />
-                </div>
-              </div>
-            </div>
-
-            {error && (
-              <div className="mb-4 px-4 py-2 bg-red-50 dark:bg-red-900/30 text-red-600 dark:text-red-400 text-sm rounded-lg">
-                {error}
-              </div>
-            )}
-
-            <div className="mb-6">
-              <textarea
-                value={formData.details}
-                onChange={(e) => setFormData({ ...formData, details: e.target.value })}
-                placeholder={tCommon('plannerForm.detailsPlaceholder')}
-                rows={3}
-                className="w-full px-4 py-3 text-base bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl
-                  focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all
-                  placeholder:text-gray-400 dark:placeholder:text-gray-500 resize-none"
-              />
-            </div>
-
-            {/* Priority & Notification Settings */}
-            <div className="mb-6 space-y-4">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <AlertTriangle className="w-4 h-4 text-gray-400" />
-                  <span className="text-sm text-gray-700 dark:text-gray-300">
-                    {tCommon('plannerForm.priority')}
-                  </span>
-                </div>
-                <select
-                  value={formData.priority}
-                  onChange={(e) => setFormData({ ...formData, priority: e.target.value as 'high' | 'medium' | 'low' })}
-                  className="bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg text-sm px-3 py-1.5"
-                >
-                  <option value="low">{tCommon('plannerForm.priorityLow')}</option>
-                  <option value="medium">{tCommon('plannerForm.priorityMedium')}</option>
-                  <option value="high">{tCommon('plannerForm.priorityHigh')}</option>
-                </select>
-              </div>
-
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <Bell className="w-4 h-4 text-gray-400" />
-                  <span className="text-sm text-gray-700 dark:text-gray-300">
-                    {tCommon('plannerForm.notification')}
-                  </span>
-                </div>
-                <button
-                  type="button"
-                  onClick={() => setFormData({ ...formData, notify: !formData.notify })}
-                  className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${formData.notify ? 'bg-gray-900 dark:bg-gray-700' : 'bg-gray-200 dark:bg-gray-700'}`}
-                >
-                  <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${formData.notify ? 'translate-x-6' : 'translate-x-1'}`} />
-                </button>
-              </div>
-
-              {formData.notify && (
-                <div className="flex items-center justify-between pl-6">
-                  <span className="text-sm text-gray-700 dark:text-gray-300">
-                    {tCommon('plannerForm.notifyBefore')}
-                  </span>
-                  <select
-                    value={formData.notify_before}
-                    onChange={(e) => setFormData({ ...formData, notify_before: Number(e.target.value) })}
-                    className="bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg text-sm px-3 py-1.5"
-                  >
-                    <option value="10">{tCommon('plannerForm.notifyBefore10')}</option>
-                    <option value="30">{tCommon('plannerForm.notifyBefore30')}</option>
-                    <option value="60">{tCommon('plannerForm.notifyBefore60')}</option>
-                  </select>
+            <form onSubmit={handleSubmit} className="p-6">
+              {!isEditingPlan && (
+                <div className="mb-6">
+                  <div className="flex p-1 bg-gray-100 dark:bg-gray-800 rounded-lg w-fit gap-1">
+                    <button
+                      type="button"
+                      onClick={() => setSelectedDay('today')}
+                      className={`px-4 py-2 rounded-md text-sm font-medium transition-all ${
+                        selectedDay === 'today'
+                          ? 'bg-white dark:bg-gray-700 text-gray-900 dark:text-white shadow-sm'
+                          : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200'
+                      }`}
+                    >
+                      {tCommon('plannerForm.today')}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setSelectedDay('tomorrow')}
+                      className={`px-4 py-2 rounded-md text-sm font-medium transition-all ${
+                        selectedDay === 'tomorrow'
+                          ? 'bg-white dark:bg-gray-700 text-gray-900 dark:text-white shadow-sm'
+                          : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200'
+                      }`}
+                    >
+                      {tCommon('plannerForm.tomorrow')}
+                    </button>
+                  </div>
                 </div>
               )}
-            </div>
 
-            <div className="flex justify-end gap-3">
-              <button
-                type="button"
-                onClick={handleAttemptClose}
-                className="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-800 
-                  rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
-              >
-                {tCommon('cancel')}
-              </button>
-              <button
-                type="submit"
-                className="px-4 py-2 text-sm font-medium text-white bg-zinc-900 rounded-lg hover:bg-zinc-700 dark:bg-zinc-700 dark:hover:bg-zinc-600 transition-colors"
-              >
-                {isEditingPlan ? tCommon('plannerForm.updatePlan') : tCommon('plannerForm.createPlan')}
-              </button>
-            </div>
-          </form>
+              <div className="mb-6">
+                <input
+                  type="text"
+                  value={formData.title}
+                  onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                  placeholder={tCommon('plannerForm.titlePlaceholder')}
+                  className="w-full px-4 py-3 text-base bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl 
+                    focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all
+                    placeholder:text-gray-400 dark:placeholder:text-gray-500"
+                  required
+                />
+              </div>
+
+              <div className="mb-6 grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    {tCommon('plannerForm.startTime')}
+                  </label>
+                  <div className="relative">
+                    <Clock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                    <input
+                      type="time"
+                      value={formData.start_time}
+                      onChange={(e) => setFormData({ ...formData, start_time: e.target.value })}
+                      className="w-full pl-10 pr-4 py-2 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg
+                        focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all"
+                      required
+                    />
+                  </div>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    {tCommon('plannerForm.endTime')}
+                  </label>
+                  <div className="relative">
+                    <Clock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                    <input
+                      type="time"
+                      value={formData.end_time}
+                      onChange={(e) => setFormData({ ...formData, end_time: e.target.value })}
+                      className="w-full pl-10 pr-4 py-2 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg
+                        focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all"
+                      required
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {error && (
+                <div className="mb-4 px-4 py-2 bg-red-50 dark:bg-red-900/30 text-red-600 dark:text-red-400 text-sm rounded-lg">
+                  {error}
+                </div>
+              )}
+
+              <div className="mb-6 space-y-4">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <AlertTriangle className="w-4 h-4 text-gray-400" />
+                    <span className="text-sm text-gray-700 dark:text-gray-300">
+                      {tCommon('plannerForm.priority')}
+                    </span>
+                  </div>
+                  <select
+                    value={formData.priority}
+                    onChange={(e) => setFormData({ ...formData, priority: e.target.value as 'high' | 'medium' | 'low' })}
+                    className="bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg text-sm px-3 py-1.5"
+                  >
+                    <option value="low">{tCommon('plannerForm.priorityLow')}</option>
+                    <option value="medium">{tCommon('plannerForm.priorityMedium')}</option>
+                    <option value="high">{tCommon('plannerForm.priorityHigh')}</option>
+                  </select>
+                </div>
+
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <Bell className="w-4 h-4 text-gray-400" />
+                    <span className="text-sm text-gray-700 dark:text-gray-300">
+                      {tCommon('plannerForm.notification')}
+                    </span>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setFormData({ ...formData, notify: !formData.notify })}
+                    className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${formData.notify ? 'bg-gray-900 dark:bg-gray-700' : 'bg-gray-200 dark:bg-gray-700'}`}
+                  >
+                    <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${formData.notify ? 'translate-x-6' : 'translate-x-1'}`} />
+                  </button>
+                </div>
+
+                {formData.notify && (
+                  <div className="flex items-center justify-between pl-6">
+                    <span className="text-sm text-gray-700 dark:text-gray-300">
+                      {tCommon('plannerForm.notifyBefore')}
+                    </span>
+                    <select
+                      value={formData.notify_before}
+                      onChange={(e) => setFormData({ ...formData, notify_before: Number(e.target.value) })}
+                      className="bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg text-sm px-3 py-1.5"
+                    >
+                      <option value="10">{tCommon('plannerForm.notifyBefore10')}</option>
+                      <option value="30">{tCommon('plannerForm.notifyBefore30')}</option>
+                      <option value="60">{tCommon('plannerForm.notifyBefore60')}</option>
+                    </select>
+                  </div>
+                )}
+              </div>
+
+              <div className="flex justify-end gap-3">
+                <button
+                  type="button"
+                  onClick={handleAttemptClose}
+                  className="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-800 
+                    rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
+                >
+                  {tCommon('cancel')}
+                </button>
+                <button
+                  type="submit"
+                  className="px-4 py-2 text-sm font-medium text-white bg-zinc-900 rounded-lg hover:bg-zinc-700 dark:bg-zinc-700 dark:hover:bg-zinc-600 transition-colors"
+                >
+                  {isEditingPlan ? tCommon('plannerForm.updatePlan') : tCommon('plannerForm.createPlan')}
+                </button>
+              </div>
+            </form>
           </motion.div>
-      </motion.div>
-    )}
+        </motion.div>
+      )}
+      <ConfirmModal
+        isOpen={isConfirmModalOpen}
+        onClose={handleCancelClose}
+        onConfirm={handleConfirmClose}
+        message={tCommon('confirmCloseMessage')}
+      />
+    </AnimatePresence>
+  );
+}
 
-    {/* ConfirmModal'ı ekleyin */}
-    <ConfirmModal
-      isOpen={isConfirmModalOpen}
-      onClose={handleCancelClose}
-      onConfirm={handleConfirmClose}
-      message={tCommon('confirmCloseMessage')}
-    />
-  </AnimatePresence>
-);}
+export default PlanForm;

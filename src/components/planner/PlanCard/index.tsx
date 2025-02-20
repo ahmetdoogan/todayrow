@@ -5,7 +5,7 @@ import { Clock, Check, Edit2, Trash2, ArrowLeft, Bell, AlertTriangle } from 'luc
 import { motion } from 'framer-motion';
 import type { Plan } from '@/types/planner';
 import { usePlanner } from '@/context/PlannerContext';
-import { useTranslations } from 'next-intl'; // t için import
+import { useTranslations } from 'next-intl';
 
 interface PlanCardProps {
   plan: Plan;
@@ -27,7 +27,7 @@ const PlanCard = ({
   isReadOnly = false
 }: PlanCardProps) => {
   const { setSelectedPlan, setIsModalOpen } = usePlanner();
-  const t = useTranslations(); // t fonksiyonunu tanımladık
+  const t = useTranslations();
 
   const handleEdit = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -143,7 +143,7 @@ const PlanCard = ({
         )}
       </div>
 
-      {/* Aksiyon Butonları - Dün sayfasında gösterilmeyecek */}
+      {/* Aksiyon Butonları */}
       {!isReadOnly && (
         <div className="flex items-center space-x-2 opacity-0 group-hover:opacity-100 transition-opacity">
           {!plan.is_completed ? (

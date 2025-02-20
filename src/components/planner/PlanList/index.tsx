@@ -109,10 +109,17 @@ const DraggablePlanCard = React.forwardRef<HTMLDivElement, DraggablePlanCardProp
                 {t('content.status.completed')}
               </span>
             )}
-            {!plan.is_completed && plan.priority === 'high' && (
-              <span className="inline-flex items-center rounded-md bg-red-50 dark:bg-red-900/20 px-2 py-1 text-xs font-medium text-red-700 dark:text-red-300 ring-1 ring-inset ring-red-600/20 dark:ring-red-500/30">
+            {/* Updated Priority Badge: high or medium */}
+            {!plan.is_completed && (plan.priority === 'high' || plan.priority === 'medium') && (
+              <span className={`
+                  inline-flex items-center rounded-md px-2 py-1 text-xs font-medium
+                  ${plan.priority === 'high'
+                    ? 'bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-300 ring-red-600/20 dark:ring-red-500/30'
+                    : 'bg-yellow-50 dark:bg-yellow-900/20 text-yellow-600 dark:text-yellow-400 ring-yellow-600/20 dark:ring-yellow-500/30'
+                  }
+                `}>
                 <AlertTriangle className="w-3 h-3 mr-1" />
-                {t('plannerForm.priorityHigh')}
+                {plan.priority === 'high' ? t('plannerForm.priorityHigh') : t('plannerForm.priorityMedium')}
               </span>
             )}
             {!plan.is_completed && plan.notify && (
@@ -191,16 +198,7 @@ const DraggablePlanCard = React.forwardRef<HTMLDivElement, DraggablePlanCardProp
 
 DraggablePlanCard.displayName = "DraggablePlanCard";
 
-// -----------------------------------------------------------------
-// PlanList bileşeninin ana kısmı
-// -----------------------------------------------------------------
-
-interface Props {
-  isPricingModalOpen?: boolean;
-  setIsPricingModalOpen?: (open: boolean) => void;
-}
-
-const PlanList: React.FC<Props> = ({ isPricingModalOpen, setIsPricingModalOpen }) => {
+const PlanList: React.FC<{ isPricingModalOpen?: boolean; setIsPricingModalOpen?: (open: boolean) => void; }> = ({ isPricingModalOpen, setIsPricingModalOpen }) => {
   const {
     plans,
     deletePlan,
@@ -222,23 +220,19 @@ const PlanList: React.FC<Props> = ({ isPricingModalOpen, setIsPricingModalOpen }
   const [isDuplicateMode, setIsDuplicateMode] = useState(false);
   const t = useTranslations('common');
 
-  // Klavye olaylarıyla duplicate mod kontrolü
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.metaKey || e.ctrlKey) {
         setIsDuplicateMode(true);
       }
     };
-
     const handleKeyUp = (e: KeyboardEvent) => {
       if (!e.metaKey && !e.ctrlKey) {
         setIsDuplicateMode(false);
       }
     };
-
     window.addEventListener('keydown', handleKeyDown);
     window.addEventListener('keyup', handleKeyUp);
-
     return () => {
       window.removeEventListener('keydown', handleKeyDown);
       window.removeEventListener('keyup', handleKeyUp);
@@ -268,13 +262,10 @@ const PlanList: React.FC<Props> = ({ isPricingModalOpen, setIsPricingModalOpen }
       return [startH, endH];
     })
     .flat();
-
   const earliestHourInPlans = allHours.length > 0 ? Math.min(...allHours) : 6;
   const latestHourInPlans = allHours.length > 0 ? Math.max(...allHours) : 23;
-
   const startHour = Math.min(earliestHourInPlans, 6);
   const endHour = Math.min(Math.max(latestHourInPlans + 1, 24), 24);
-
   const HOUR_BLOCKS: number[] = [];
   for (let h = startHour; h < endHour; h++) {
     HOUR_BLOCKS.push(h);
@@ -292,56 +283,42 @@ const PlanList: React.FC<Props> = ({ isPricingModalOpen, setIsPricingModalOpen }
           const rect = dropTarget.getBoundingClientRect();
           const relativeY = clientOffset.y - rect.top;
           const totalHeight = rect.height;
-
           let minutes = Math.floor((relativeY / totalHeight) * 24 * 60);
           let hours = Math.floor(minutes / 60);
           minutes = minutes % 60;
           minutes = Math.round(minutes / 30) * 30;
-          if (minutes === 60) {
-            hours += 1;
-            minutes = 0;
-          }
-          if (hours === 24) {
-            hours = 0;
-          }
-          const timeString = `${hours.toString().padStart(2, '0')}:${minutes
-            .toString()
-            .padStart(2, '0')}`;
+          if (minutes === 60) { hours += 1; minutes = 0; }
+          if (hours === 24) { hours = 0; }
+          const timeString = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
           setSelectedTime(timeString);
         }
       }
     },
     drop: (item: any) => {
       if (!selectedTime || !canEdit) return;
-      
       if (item.isDuplicating) {
         const planStartTime = new Date(selectedDate);
         const [hours, minutes] = selectedTime.split(':').map(Number);
         planStartTime.setHours(hours, minutes, 0, 0);
-
         const planEndTime = new Date(planStartTime);
         planEndTime.setHours(planEndTime.getHours() + 1);
-
         const newPlan: Plan = {
-  id: 0,
-  title: item.title,
-  details: item.details,
-  start_time: planStartTime.toISOString(),
-  end_time: planEndTime.toISOString(),
-  is_completed: false,
-  color: item.color,
-  plan_type: 'regular',
-  order: 0,
-  user_id: user?.id || 0,
-  created_at: new Date().toISOString(),
-  updated_at: new Date().toISOString(),
-  // Ek alanlar:
-  priority: 'low',  // Varsayılan olarak low
-  notify: false,
-  notify_before: 30
-};
-
-
+          id: 0,
+          title: item.title,
+          details: item.details,
+          start_time: planStartTime.toISOString(),
+          end_time: planEndTime.toISOString(),
+          is_completed: false,
+          color: item.color,
+          plan_type: 'regular',
+          order: 0,
+          user_id: user?.id || 0,
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
+          priority: 'low',
+          notify: false,
+          notify_before: 30
+        };
         setSelectedPlan(newPlan);
         setIsModalOpen(true);
       } else {
@@ -360,13 +337,10 @@ const PlanList: React.FC<Props> = ({ isPricingModalOpen, setIsPricingModalOpen }
       if (setIsPricingModalOpen) setIsPricingModalOpen(true);
       return;
     }
-
     const planStartTime = new Date(selectedDate);
     planStartTime.setHours(hour, 0, 0, 0);
-
     const planEndTime = new Date(planStartTime);
     planEndTime.setHours(planEndTime.getHours() + 1);
-
     setSelectedPlan({
       id: 0,
       title: '',
@@ -380,12 +354,10 @@ const PlanList: React.FC<Props> = ({ isPricingModalOpen, setIsPricingModalOpen }
       user_id: user?.id || 0,
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString(),
-      // Ek alanlar:
-      priority: 'medium',
+      priority: 'low',
       notify: false,
       notify_before: 30
     });
-
     setIsEditingPlan(false);
     setIsModalOpen(true);
   };
@@ -452,13 +424,11 @@ const PlanList: React.FC<Props> = ({ isPricingModalOpen, setIsPricingModalOpen }
     const timeString = `${hour.toString().padStart(2, '0')}:00`;
     const hourPlans = plansByHour[hour] || [];
     const isEmptySlot = hourPlans.length === 0;
-
     return (
       <div key={hour} className="group relative">
         <div className="absolute -left-14 md:-left-16 top-0 w-12 md:w-14 text-xs md:text-sm text-gray-400 dark:text-gray-500 font-medium">
           {timeString}
         </div>
-
         <div className="relative pl-4 border-l border-gray-200 dark:border-gray-700 min-h-[64px]">
           {hourPlans.length > 0 ? (
             <AnimatePresence mode="popLayout">
@@ -540,7 +510,6 @@ const PlanList: React.FC<Props> = ({ isPricingModalOpen, setIsPricingModalOpen }
             </div>
           )}
         </motion.div>
-
         {isYesterday ? (
           <p className="text-gray-500 dark:text-gray-400">
             {t('planner.emptyStates.yesterdayEmpty')}
@@ -564,7 +533,6 @@ const PlanList: React.FC<Props> = ({ isPricingModalOpen, setIsPricingModalOpen }
                   planStartTime.setHours(now.getHours(), now.getMinutes(), 0, 0);
                   const planEndTime = new Date(planStartTime);
                   planEndTime.setHours(planEndTime.getHours() + 1);
-
                   const newPlan: Plan = {
                     id: 0,
                     title: '',
@@ -578,11 +546,10 @@ const PlanList: React.FC<Props> = ({ isPricingModalOpen, setIsPricingModalOpen }
                     color: '#000000',
                     created_at: new Date().toISOString(),
                     updated_at: new Date().toISOString(),
-                    priority: 'medium',
+                    priority: 'medium', // Eğer bu eski planlar varsa; yeni planlar oluştururken yukarıdaki create fonksiyonunda "low" kullanılmalı
                     notify: false,
                     notify_before: 30
                   };
-
                   setSelectedPlan(newPlan);
                   setIsEditingPlan(false);
                   setIsModalOpen(true);
@@ -606,7 +573,6 @@ const PlanList: React.FC<Props> = ({ isPricingModalOpen, setIsPricingModalOpen }
       className="relative pl-16 pr-4 md:pr-6 lg:pr-8 py-4 space-y-2 min-h-screen"
     >
       {HOUR_BLOCKS.map((hour) => renderHourBlock(hour))}
-
       <AnimatePresence>
         {isOver && selectedTime && (
           <motion.div
