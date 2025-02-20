@@ -89,7 +89,6 @@ export default function PlanForm() {
       // Düzenleme
       const st = new Date(selectedPlan.start_time);
       const et = new Date(selectedPlan.end_time);
-
       setFormData({
         title: selectedPlan.title,
         details: selectedPlan.details || '',
@@ -103,7 +102,6 @@ export default function PlanForm() {
         notify: selectedPlan.notify || false,
         notify_before: selectedPlan.notify_before || 30,
       });
-
       setInitialFormData({
         title: selectedPlan.title,
         details: selectedPlan.details || '',
@@ -117,7 +115,6 @@ export default function PlanForm() {
         notify: selectedPlan.notify || false,
         notify_before: selectedPlan.notify_before || 30,
       });
-
       setSelectedDay(compareDate(new Date(selectedPlan.start_time), today) ? 'today' : 'tomorrow');
     } else if (draggedPlan) {
       // DraggedPlan'dan
@@ -136,7 +133,19 @@ export default function PlanForm() {
         notify: false,
         notify_before: 30,
       });
-      setInitialFormData({ ...formData });
+      setInitialFormData({
+        title: draggedPlan.quickPlan.title,
+        details: '',
+        start_time: draggedPlan.dropTime,
+        end_time: `${endH.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}`,
+        plan_type: 'predefined',
+        order: 0,
+        color: draggedPlan.quickPlan.color || 'bg-violet-500',
+        is_completed: false,
+        priority: 'low',
+        notify: false,
+        notify_before: 30,
+      });
       setSelectedDay(isToday ? 'today' : 'tomorrow');
     } else if (selectedPlan && selectedPlan.id === 0) {
       // Yeni plan (seçili ama boş)
@@ -155,16 +164,26 @@ export default function PlanForm() {
         notify: false,
         notify_before: 30,
       });
-      setInitialFormData({ ...formData });
+      setInitialFormData({
+        title: '',
+        details: '',
+        start_time: `${st.getHours().toString().padStart(2, '0')}:${st.getMinutes().toString().padStart(2, '0')}`,
+        end_time: `${et.getHours().toString().padStart(2, '0')}:${et.getMinutes().toString().padStart(2, '0')}`,
+        plan_type: 'custom',
+        order: 0,
+        color: 'bg-violet-500',
+        is_completed: false,
+        priority: 'low',
+        notify: false,
+        notify_before: 30,
+      });
       setSelectedDay(isToday ? 'today' : 'tomorrow');
     } else {
       // Sıfırdan form
       const now = new Date();
-      const defaultStart = `${now.getHours().toString().padStart(2, '0')}:${(Math.floor(now.getMinutes() / 30) * 30)
-        .toString().padStart(2, '0')}`;
+      const defaultStart = `${now.getHours().toString().padStart(2, '0')}:${(Math.floor(now.getMinutes() / 30) * 30).toString().padStart(2, '0')}`;
       const eTime = new Date(now.getTime() + 60 * 60 * 1000);
-      const defaultEnd = `${eTime.getHours().toString().padStart(2, '0')}:${(Math.floor(eTime.getMinutes() / 30) * 30)
-        .toString().padStart(2, '0')}`;
+      const defaultEnd = `${eTime.getHours().toString().padStart(2, '0')}:${(Math.floor(eTime.getMinutes() / 30) * 30).toString().padStart(2, '0')}`;
       setFormData({
         title: '',
         details: '',
@@ -178,7 +197,19 @@ export default function PlanForm() {
         notify: false,
         notify_before: 30,
       });
-      setInitialFormData({ ...formData });
+      setInitialFormData({
+        title: '',
+        details: '',
+        start_time: defaultStart,
+        end_time: defaultEnd,
+        plan_type: 'custom',
+        order: 0,
+        color: 'bg-violet-500',
+        is_completed: false,
+        priority: 'low',
+        notify: false,
+        notify_before: 30,
+      });
       setSelectedDay(isToday ? 'today' : 'tomorrow');
     }
   }, [selectedPlan, draggedPlan, isToday, isTomorrow, today]);
@@ -437,8 +468,7 @@ export default function PlanForm() {
                 <button
                   type="button"
                   onClick={handleAttemptClose}
-                  className="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-800 
-                    rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
+                  className="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-800 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
                 >
                   {tCommon('cancel')}
                 </button>
@@ -462,5 +492,3 @@ export default function PlanForm() {
     </AnimatePresence>
   );
 }
-
-export default PlanForm;
