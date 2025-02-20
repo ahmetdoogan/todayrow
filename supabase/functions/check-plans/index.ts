@@ -1,21 +1,26 @@
-// supabase/functions/check-plans/index.ts
+/// <reference lib="deno.ns" />
 
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.1.0";
 import { SMTPClient } from "https://deno.land/x/denomailer@1.3.0/mod.ts";
 
+// Supabase env
 const SUPABASE_URL = Deno.env.get("SUPABASE_URL") ?? "";
 const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "";
 
+// Initialize client
 const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
 
+// CORS headers
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
   "Access-Control-Allow-Methods": "POST, OPTIONS",
 };
 
-const emailTemplate = (title: string, startTime: string) => `
+// Email HTML template
+function emailTemplate(title: string, startTime: string) {
+  return `
 <div style="background-color: #f8fafc; padding: 40px 0;">
   <div style="max-width: 600px; margin: 0 auto; background-color: #ffffff; border-radius: 16px; padding: 40px; box-shadow: 0 4px 6px rgba(0,0,0,0.05);">
     <div style="text-align: center; margin-bottom: 32px; padding: 16px;">
@@ -44,14 +49,17 @@ const emailTemplate = (title: string, startTime: string) => `
     </div>
   </div>
 </div>`;
+}
 
 async function checkAndNotify() {
   console.log("Starting plan notifications check...");
+
   try {
     const now = new Date();
 
-    // Get plans and user emails (via our SQL function)
-    const { data: plans, error } = await supabase.rpc("fetch_plans_with_emails", { check_time: now.toISOString() });
+    // 1) RPC: fetch_plans_with_emails fonksiyonunu çağır
+    const { data: plans, error } = await supabase
+      .rpc("fetch_plans_with_emails", { check_time: now.toISOString() });
 
     if (error) {
       console.error("Error fetching plans:", error);
@@ -65,7 +73,7 @@ async function checkAndNotify() {
 
     console.log(`Found ${plans.length} plans to process`);
 
-    // Setup SMTP client
+    // 2) SMTP client ayarları (TLS 465)
     const client = new SMTPClient({
       connection: {
         hostname: "smtp.gmail.com",
@@ -78,40 +86,56 @@ async function checkAndNotify() {
       },
     });
 
-    const results: Array<{ id: number; title: string; email: string; status: string }> = [];
+    const results: Array<{
+      id: number;
+      title: string;
+      email: string;
+      status: string;
+    }> = [];
 
-    // Process each plan
+    // 3) Planları işle
     for (const plan of plans as Array<any>) {
       console.log(`Processing plan: ${plan.title}`);
+
       const startTime = new Date(plan.start_time);
       console.log(`Plan start time: ${startTime}`);
-      // Kullanıcının seçtiği bildirim süresini kullan (notify_before_minutes veya notify_before)
-      const minutesBefore = plan.notify_before_minutes || plan.notify_before || 10;
+
+      // Kullanıcının seçtiği bildirim süresini tercih et:
+      //  - notify_before (örn. 30, 60) veya
+      //  - notify_before_minutes (örn. 10) 
+      //  - yoksa 10
+      const minutesBefore = plan.notify_before ?? plan.notify_before_minutes ?? 10;
       console.log(`Minutes before: ${minutesBefore}`);
+
       const notifyTime = new Date(startTime.getTime() - minutesBefore * 60000);
       console.log(`Notify time: ${notifyTime}`);
       console.log(`Current time: ${now}`);
 
+      // 4) Şu an notifyTime ile startTime arasında mıyız?
       if (now >= notifyTime && now < startTime) {
         console.log(`Time to notify for plan: ${plan.id}`);
 
+        // Zaman dilimini (profiles.time_zone) kullanalım
+        // "Europe/Istanbul" veya "UTC" vs.
+        const userTimeZone = plan.time_zone || "UTC";
+
+        // Tarih ve saat parçası ayrı formatlayıp birleştiriyoruz
         const formattedDate = startTime.toLocaleString("en-GB", {
           month: "long",
           day: "numeric",
-          timeZone: plan.time_zone || "UTC",
+          timeZone: userTimeZone,
         });
-        
-        const formattedTime = startTime.toLocaleString("en-GB", {
+        const formattedClock = startTime.toLocaleString("en-GB", {
           hour: "2-digit",
           minute: "2-digit",
-          timeZone: plan.time_zone || "UTC",
+          timeZone: userTimeZone,
           hour12: false,
         });
-        
-        const fullFormattedTime = `${formattedDate} at ${formattedTime}`;
+        const fullFormattedTime = `${formattedDate} at ${formattedClock}`;
 
         try {
           console.log(`Sending email for plan ${plan.id} to ${plan.user_email}`);
+
           await client.send({
             from: Deno.env.get("SMTP_USER") || "",
             to: plan.user_email,
@@ -119,6 +143,7 @@ async function checkAndNotify() {
             html: emailTemplate(plan.title, fullFormattedTime),
           });
 
+          // 5) notification_sent = true
           const { error: updateError } = await supabase
             .from("plans")
             .update({ notification_sent: true })
