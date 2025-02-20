@@ -69,16 +69,13 @@ async function checkAndNotify() {
     const client = new SMTPClient({
       connection: {
         hostname: "smtp.gmail.com",
-        port: 587,
-        tls: false,
+        port: 465,
+        tls: true,
         auth: {
           username: Deno.env.get("SMTP_USER") || "",
           password: Deno.env.get("SMTP_PASSWORD") || "",
         },
       },
-      pool: true,
-      maxConnections: 5,
-      maxMessages: 100,
     });
 
     const results: Array<{ id: number; title: string; email: string; status: string }> = [];
@@ -87,9 +84,13 @@ async function checkAndNotify() {
     for (const plan of plans as Array<any>) {
       console.log(`Processing plan: ${plan.title}`);
       const startTime = new Date(plan.start_time);
+      console.log(`Plan start time: ${startTime}`);
       // Fix: Kullanıcının seçtiği notify_before değerini kullan
       const minutesBefore = plan.notify_before_minutes;
+      console.log(`Minutes before: ${minutesBefore}`);
       const notifyTime = new Date(startTime.getTime() - minutesBefore * 60000);
+      console.log(`Notify time: ${notifyTime}`);
+      console.log(`Current time: ${now}`);
 
       if (now >= notifyTime && now < startTime) {
         console.log(`Time to notify for plan: ${plan.id}`);
