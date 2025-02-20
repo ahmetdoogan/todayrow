@@ -19,17 +19,25 @@ const proStartedTemplate = `
     </div>
     
     <h1 style="color: #1e293b; font-size: 24px; font-weight: 600; text-align: center; margin: 0 0 16px;">
-      Pro Üyeliğiniz Başladı!
+      Welcome to Todayrow Pro!
     </h1>
     
-    <p style="color: #64748b; font-size: 16px; line-height: 24px; text-align: center; margin: 0 0 32px;">
-      Todayrow Pro'ya hoş geldiniz! Artık tüm premium özelliklere erişebilirsiniz. Planlamalarınızı yapmaya hemen başlayın.
-    </p>
+    <div style="background-color: #f1f5f9; border-radius: 12px; padding: 24px; margin-bottom: 32px; text-align: center;">
+      <span style="background-color: #000; color: #fff; font-size: 14px; padding: 6px 12px; border-radius: 20px; display: inline-block; margin-bottom: 12px;">
+        ⭐️ Pro Member
+      </span>
+      <p style="color: #64748b; font-size: 16px; line-height: 24px; margin: 0;">
+        You now have access to all premium features. Start planning your success!
+      </p>
+    </div>
 
     <div style="text-align: center;">
-      <a href="https://todayrow.app/dashboard" style="display: inline-block; background-color: #000; color: #fff; font-size: 16px; font-weight: 500; text-decoration: none; padding: 12px 32px; border-radius: 12px;">
-        Uygulamayı Aç
+      <a href="https://todayrow.app/dashboard" style="display: inline-block; background-color: #000; color: #fff; font-size: 16px; font-weight: 500; text-decoration: none; padding: 12px 32px; border-radius: 12px; margin-bottom: 16px;">
+        Open Dashboard
       </a>
+      <p style="color: #64748b; font-size: 14px; margin: 0;">
+        Need help? Contact us at <a href="mailto:hello@todayrow.app" style="color: #000; text-decoration: none;">hello@todayrow.app</a>
+      </p>
     </div>
   </div>
 </div>`;
@@ -45,7 +53,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     await transporter.sendMail({
       from: '"Todayrow" <noreply@todayrow.app>',
       to: email,
-      subject: "Pro Üyeliğiniz Başladı!",
+      subject: "Welcome to Todayrow Pro!",
       html: proStartedTemplate,
     });
 

@@ -19,17 +19,25 @@ const trialWarningTemplate = `
     </div>
     
     <h1 style="color: #1e293b; font-size: 24px; font-weight: 600; text-align: center; margin: 0 0 16px;">
-      Deneme Süreniz Yakında Sona Eriyor
+      Your Trial Period Is Ending Soon
     </h1>
     
-    <p style="color: #64748b; font-size: 16px; line-height: 24px; text-align: center; margin: 0 0 32px;">
-      Deneme sürenizin bitmesine {{daysLeft}} gün kaldı. Pro üyeliğe geçerek tüm özelliklere erişmeye devam edebilirsiniz.
-    </p>
+    <div style="background-color: #f1f5f9; border-radius: 12px; padding: 24px; margin-bottom: 32px; text-align: center;">
+      <span style="background-color: #000; color: #fff; font-size: 14px; padding: 6px 12px; border-radius: 20px; display: inline-block; margin-bottom: 12px;">
+        {{daysLeft}} days remaining
+      </span>
+      <p style="color: #64748b; font-size: 16px; line-height: 24px; margin: 0;">
+        Upgrade to Pro to keep using all features of Todayrow.
+      </p>
+    </div>
 
     <div style="text-align: center;">
-      <a href="https://todayrow.app/upgrade" style="display: inline-block; background-color: #000; color: #fff; font-size: 16px; font-weight: 500; text-decoration: none; padding: 12px 32px; border-radius: 12px;">
-        Pro'ya Geç
+      <a href="https://todayrow.app/upgrade" style="display: inline-block; background-color: #000; color: #fff; font-size: 16px; font-weight: 500; text-decoration: none; padding: 12px 32px; border-radius: 12px; margin-bottom: 16px;">
+        Upgrade to Pro
       </a>
+      <p style="color: #64748b; font-size: 14px; margin: 0;">
+        Need help? Contact us at <a href="mailto:hello@todayrow.app" style="color: #000; text-decoration: none;">hello@todayrow.app</a>
+      </p>
     </div>
   </div>
 </div>`;
@@ -45,7 +53,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     await transporter.sendMail({
       from: '"Todayrow" <noreply@todayrow.app>',
       to: email,
-      subject: `Deneme Süreniz Bitmek Üzere (${daysLeft} gün kaldı)`,
+      subject: `Trial Ending Soon (${daysLeft} days left)`,
       html: trialWarningTemplate.replace('{{daysLeft}}', daysLeft),
     });
 

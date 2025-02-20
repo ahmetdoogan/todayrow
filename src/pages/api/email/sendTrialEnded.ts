@@ -19,17 +19,22 @@ const trialEndedTemplate = `
     </div>
     
     <h1 style="color: #1e293b; font-size: 24px; font-weight: 600; text-align: center; margin: 0 0 16px;">
-      Deneme Süreniz Sona Erdi
+      Your Trial Has Ended
     </h1>
     
-    <p style="color: #64748b; font-size: 16px; line-height: 24px; text-align: center; margin: 0 0 32px;">
-      Pro üyeliğe geçerek Todayrow'un tüm özelliklerinden yararlanmaya devam edebilirsiniz.
-    </p>
+    <div style="background-color: #f1f5f9; border-radius: 12px; padding: 24px; margin-bottom: 32px; text-align: center;">
+      <p style="color: #64748b; font-size: 16px; line-height: 24px; margin: 0;">
+        Continue enjoying all features of Todayrow by upgrading to Pro today.
+      </p>
+    </div>
 
     <div style="text-align: center;">
-      <a href="https://todayrow.app/upgrade" style="display: inline-block; background-color: #000; color: #fff; font-size: 16px; font-weight: 500; text-decoration: none; padding: 12px 32px; border-radius: 12px;">
-        Pro'ya Geç
+      <a href="https://todayrow.app/upgrade" style="display: inline-block; background-color: #000; color: #fff; font-size: 16px; font-weight: 500; text-decoration: none; padding: 12px 32px; border-radius: 12px; margin-bottom: 16px;">
+        Upgrade to Pro
       </a>
+      <p style="color: #64748b; font-size: 14px; margin: 0;">
+        Need help? Contact us at <a href="mailto:hello@todayrow.app" style="color: #000; text-decoration: none;">hello@todayrow.app</a>
+      </p>
     </div>
   </div>
 </div>`;
@@ -45,7 +50,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     await transporter.sendMail({
       from: '"Todayrow" <noreply@todayrow.app>',
       to: email,
-      subject: "Deneme Süreniz Sona Erdi",
+      subject: "Your Trial Has Ended",
       html: trialEndedTemplate,
     });
 
