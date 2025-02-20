@@ -6,8 +6,8 @@ import { X, Clock, Bell, AlertTriangle } from 'lucide-react';
 import { usePlanner } from '@/context/PlannerContext';
 import { useTranslations } from 'next-intl';
 import { toast } from 'react-toastify';
-import { useAuth } from '@/context/AuthContext';
-import ConfirmModal from '@/components/modals/ConfirmModal';
+import { useSubscription } from '@/hooks/useSubscription';
+import PricingModal from '@/components/modals/PricingModal';
 
 export default function PlanForm() {
   const { user } = useAuth();
@@ -77,7 +77,8 @@ export default function PlanForm() {
 
   const [initialFormData, setInitialFormData] = useState(formData);
   const [error, setError] = useState('');
-  const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
+  const { isExpired } = useSubscription();
+  const [isPricingModalOpen, setIsPricingModalOpen] = useState(false);
 
   useEffect(() => {
     setError('');
@@ -313,6 +314,10 @@ export default function PlanForm() {
     e.preventDefault();
     setError('');
 
+    if (isExpired) {
+      setIsPricingModalOpen(true);
+      return;
+    }
     if (!validateTimes(formData.start_time, formData.end_time)) {
       setError(tCommon('plannerForm.validationError'));
       return;

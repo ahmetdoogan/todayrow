@@ -563,6 +563,10 @@ const PlanList: React.FC<Props> = ({ isPricingModalOpen, setIsPricingModalOpen }
               </p>
               <button
                 onClick={() => {
+                  if (isExpired) {
+                    if (setIsPricingModalOpen) setIsPricingModalOpen(true);
+                    return;
+                  }
                   const now = new Date();
                   const planStartTime = new Date(selectedDate);
                   planStartTime.setHours(now.getHours(), now.getMinutes(), 0, 0);
