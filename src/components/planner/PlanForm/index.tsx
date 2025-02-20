@@ -8,6 +8,8 @@ import { useTranslations } from 'next-intl';
 import { toast } from 'react-toastify';
 import { useSubscription } from '@/hooks/useSubscription';
 import PricingModal from '@/components/modals/PricingModal';
+import { useAuth } from '@/context/AuthContext';
+import ConfirmModal from '@/components/modals/ConfirmModal';
 
 export default function PlanForm() {
   const { user } = useAuth();
@@ -79,6 +81,7 @@ export default function PlanForm() {
   const [error, setError] = useState('');
   const { isExpired } = useSubscription();
   const [isPricingModalOpen, setIsPricingModalOpen] = useState(false);
+  const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
 
   useEffect(() => {
     setError('');
