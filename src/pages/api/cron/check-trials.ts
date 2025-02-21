@@ -9,7 +9,7 @@ const supabase = createClient(
 interface SubscriptionUser {
   user_id: string;
   trial_end: string;
-  email: string | null; // Kolon boş olabilir, o yüzden null olabilir
+  email: string;
 }
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
@@ -34,7 +34,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     // 1) 7 gün içinde bitecek trial kullanıcılarını buluyoruz
     const { data: users, error } = await supabase
       .from('subscriptions')
-      .select('user_id, trial_end, email') // <-- Artık 'auth:users!inner(email)' yerine 'email' var
+      .select('subscriptions.user_id, subscriptions.trial_end, auth.users.email').join('auth.users', 'subscriptions.user_id', 'users.id') // <-- Artık 'auth:users!inner(email)' yerine 'email' var
       .eq('status', 'free_trial')
       .gt('trial_end', now.toISOString())
       .lt('trial_end', sevenDaysLater.toISOString());
@@ -72,7 +72,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     // 3) Trial bitenler (trial_end < now)
     const { data: expiredUsers, error: expiredError } = await supabase
       .from('subscriptions')
-      .select('user_id, trial_end, email')
+      .select('subscriptions.user_id, subscriptions.trial_end, auth.users.email')
+      .join('auth.users', 'subscriptions.user_id', 'users.id')
       .eq('status', 'free_trial')
       .lt('trial_end', now.toISOString());
 

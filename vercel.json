@@ -1,7 +1,7 @@
 {
   "crons": [
     {
-      "path": "/api/cron/check-trial",
+      "path": "/api/cron/check-trials",
       "schedule": "0 9 * * *"
     },
     {
