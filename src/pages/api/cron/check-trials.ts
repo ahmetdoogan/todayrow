@@ -6,6 +6,14 @@ const supabase = createClient(
   process.env.SUPABASE_SERVICE_ROLE_KEY!
 );
 
+interface DbSubscription {
+  user_id: string;
+  trial_end: string;
+  users: {
+    email: string;
+  };
+}
+
 interface SubscriptionUser {
   user_id: string;
   trial_end: string;
@@ -13,7 +21,6 @@ interface SubscriptionUser {
 }
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-
   console.log("DEBUG: process.env.CRON_SECRET =", process.env.CRON_SECRET);
   console.log("DEBUG: req.headers.authorization =", req.headers.authorization);
 
@@ -32,19 +39,25 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const sevenDaysLater = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000);
 
     // 1) 7 gün içinde bitecek trial kullanıcılarını buluyoruz
-    const { data: users, error } = await supabase
+    const { data: trialUsers, error } = await supabase
       .from('subscriptions')
-      .select('user_id, trial_end, auth.users!inner(email)') // <-- Artık 'auth:users!inner(email)' yerine 'email' var
+      .select('user_id, trial_end, users:auth.users(email)')
       .eq('status', 'free_trial')
       .gt('trial_end', now.toISOString())
-      .lt('trial_end', sevenDaysLater.toISOString());
+      .lt('trial_end', sevenDaysLater.toISOString()) as { data: DbSubscription[] | null, error: any };
 
     if (error) throw error;
 
+    const users = (trialUsers || []).map(user => ({
+      user_id: user.user_id,
+      trial_end: user.trial_end,
+      email: user.users?.email || ''
+    }));
+
+    let warningsSent = 0;
     // 2) Her kullanıcı için daysLeft hesapla ve mail gönder
-    for (const user of (users as SubscriptionUser[])) {
+    for (const user of users) {
       if (!user.email) {
-        // Eposta boşsa mail gönderemeyiz
         console.log("No email found for user_id:", user.user_id);
         continue;
       }
@@ -59,6 +72,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ email: user.email, daysLeft })
         });
+        warningsSent++;
       } else if (daysLeft <= 1) {
         // 1 günden az kaldı => Warning (1 gün kaldı)
         await fetch('https://todayrow.app/api/email/sendTrialWarning', {
@@ -66,19 +80,28 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ email: user.email, daysLeft: 1 })
         });
+        warningsSent++;
       }
     }
 
     // 3) Trial bitenler (trial_end < now)
-    const { data: expiredUsers, error: expiredError } = await supabase
-      .select('user_id, trial_end, auth.users!inner(email)')
+    const { data: expiredData, error: expiredError } = await supabase
+      .from('subscriptions')
+      .select('user_id, trial_end, users:auth.users(email)')
       .eq('status', 'free_trial')
-      .lt('trial_end', now.toISOString());
+      .lt('trial_end', now.toISOString()) as { data: DbSubscription[] | null, error: any };
 
     if (expiredError) throw expiredError;
 
-    for (const user of (expiredUsers as SubscriptionUser[])) {
-      if (!user.email) continue; // yine email kontrolü
+    const expiredUsers = (expiredData || []).map(user => ({
+      user_id: user.user_id,
+      trial_end: user.trial_end,
+      email: user.users?.email || ''
+    }));
+
+    let expiredProcessed = 0;
+    for (const user of expiredUsers) {
+      if (!user.email) continue;
 
       await fetch('https://todayrow.app/api/email/sendTrialEnded', {
         method: 'POST',
@@ -95,6 +118,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           updated_at: now.toISOString()
         })
         .eq('user_id', user.user_id);
+      
+      expiredProcessed++;
     }
 
     // Loglama
@@ -104,15 +129,15 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         job_name: 'check-trials',
         execution_time: new Date().toISOString(),
         details: {
-          warningsSent: users.length,
-          expiredProcessed: expiredUsers.length
+          warningsSent,
+          expiredProcessed
         }
       });
 
     return res.status(200).json({ 
       message: 'Trial checks completed',
-      warningsSent: (users as SubscriptionUser[]).length,
-      expiredProcessed: (expiredUsers as SubscriptionUser[]).length
+      warningsSent,
+      expiredProcessed
     });
 
   } catch (error) {
