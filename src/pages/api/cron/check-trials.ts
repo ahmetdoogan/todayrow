@@ -34,7 +34,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     // 1) 7 gün içinde bitecek trial kullanıcılarını buluyoruz
     const { data: users, error } = await supabase
       .from('subscriptions')
-      .select('subscriptions.user_id, subscriptions.trial_end, auth.users.email').join('auth.users', 'subscriptions.user_id', 'users.id') // <-- Artık 'auth:users!inner(email)' yerine 'email' var
+      .select('user_id, trial_end, auth.users!inner(email)') // <-- Artık 'auth:users!inner(email)' yerine 'email' var
       .eq('status', 'free_trial')
       .gt('trial_end', now.toISOString())
       .lt('trial_end', sevenDaysLater.toISOString());
@@ -71,9 +71,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     // 3) Trial bitenler (trial_end < now)
     const { data: expiredUsers, error: expiredError } = await supabase
-      .from('subscriptions')
-      .select('subscriptions.user_id, subscriptions.trial_end, auth.users.email')
-      .join('auth.users', 'subscriptions.user_id', 'users.id')
+      .select('user_id, trial_end, auth.users!inner(email)')
       .eq('status', 'free_trial')
       .lt('trial_end', now.toISOString());
 
