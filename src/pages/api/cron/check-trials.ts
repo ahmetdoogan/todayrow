@@ -6,18 +6,14 @@ const supabase = createClient(
   process.env.SUPABASE_SERVICE_ROLE_KEY!
 );
 
+interface DbUser {
+  email: string;
+}
+
 interface DbSubscription {
   user_id: string;
   trial_end: string;
-  users: {
-    email: string;
-  };
-}
-
-interface SubscriptionUser {
-  user_id: string;
-  trial_end: string;
-  email: string;
+  users: DbUser;
 }
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
@@ -41,23 +37,17 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     // 1) 7 gün içinde bitecek trial kullanıcılarını buluyoruz
     const { data: trialUsers, error } = await supabase
       .from('subscriptions')
-      .select('user_id, trial_end, users:auth.users(email)')
+      .select('*, users:auth.users(email)')
       .eq('status', 'free_trial')
       .gt('trial_end', now.toISOString())
       .lt('trial_end', sevenDaysLater.toISOString()) as { data: DbSubscription[] | null, error: any };
 
     if (error) throw error;
 
-    const users = (trialUsers || []).map(user => ({
-      user_id: user.user_id,
-      trial_end: user.trial_end,
-      email: user.users?.email || ''
-    }));
-
     let warningsSent = 0;
     // 2) Her kullanıcı için daysLeft hesapla ve mail gönder
-    for (const user of users) {
-      if (!user.email) {
+    for (const user of (trialUsers || [])) {
+      if (!user.users?.email) {
         console.log("No email found for user_id:", user.user_id);
         continue;
       }
@@ -70,7 +60,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         await fetch('https://todayrow.app/api/email/sendTrialWarning', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email: user.email, daysLeft })
+          body: JSON.stringify({ email: user.users.email, daysLeft })
         });
         warningsSent++;
       } else if (daysLeft <= 1) {
@@ -78,7 +68,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         await fetch('https://todayrow.app/api/email/sendTrialWarning', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email: user.email, daysLeft: 1 })
+          body: JSON.stringify({ email: user.users.email, daysLeft: 1 })
         });
         warningsSent++;
       }
@@ -87,26 +77,20 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     // 3) Trial bitenler (trial_end < now)
     const { data: expiredData, error: expiredError } = await supabase
       .from('subscriptions')
-      .select('user_id, trial_end, users:auth.users(email)')
+      .select('*, users:auth.users(email)')
       .eq('status', 'free_trial')
       .lt('trial_end', now.toISOString()) as { data: DbSubscription[] | null, error: any };
 
     if (expiredError) throw expiredError;
 
-    const expiredUsers = (expiredData || []).map(user => ({
-      user_id: user.user_id,
-      trial_end: user.trial_end,
-      email: user.users?.email || ''
-    }));
-
     let expiredProcessed = 0;
-    for (const user of expiredUsers) {
-      if (!user.email) continue;
+    for (const user of (expiredData || [])) {
+      if (!user.users?.email) continue;
 
       await fetch('https://todayrow.app/api/email/sendTrialEnded', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: user.email })
+        body: JSON.stringify({ email: user.users.email })
       });
 
       // status = expired
