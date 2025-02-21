@@ -119,14 +119,23 @@ const QuickPlans: React.FC<QuickPlansProps> = ({ onClose, onDragStart, onDragEnd
           onDragStart?.();
           return plan;
         },
-        end: (_, monitor) => {
+        end: (item, monitor) => {
+          if (!monitor.didDrop()) {
+            console.log('Drop cancelled or failed');
+          }
+          
           onDragEnd?.();
+          
+          setTimeout(() => {
+            document.body.style.pointerEvents = '';
+          }, 100);
         },
+        canDrag: () => !editMode,
         collect: (monitor) => ({
           isDragging: monitor.isDragging(),
         }),
       }),
-      [plan, onDragStart, onDragEnd]
+      [plan, onDragStart, onDragEnd, isExpired, editMode]
     );
 
     return (

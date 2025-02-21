@@ -276,55 +276,86 @@ const PlanList: React.FC<{ isPricingModalOpen?: boolean; setIsPricingModalOpen?:
     canDrop: () => canEdit,
     hover: (item: QuickPlan | Plan, monitor) => {
       if (!canEdit) return;
+      
       const clientOffset = monitor.getClientOffset();
-      if (clientOffset) {
-        const dropTarget = document.getElementById('plan-list-container');
-        if (dropTarget) {
-          const rect = dropTarget.getBoundingClientRect();
-          const relativeY = clientOffset.y - rect.top;
-          const totalHeight = rect.height;
-          let minutes = Math.floor((relativeY / totalHeight) * 24 * 60);
-          let hours = Math.floor(minutes / 60);
-          minutes = minutes % 60;
-          minutes = Math.round(minutes / 30) * 30;
-          if (minutes === 60) { hours += 1; minutes = 0; }
-          if (hours === 24) { hours = 0; }
-          const timeString = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
-          setSelectedTime(timeString);
-        }
+      const initialClientOffset = monitor.getInitialClientOffset();
+      
+      if (!clientOffset || !initialClientOffset) return;
+      
+      const dropTarget = document.getElementById('plan-list-container');
+      if (!dropTarget) return;
+      
+      const rect = dropTarget.getBoundingClientRect();
+      const relativeY = clientOffset.y - rect.top;
+      
+      const scrollTop = dropTarget.scrollTop || document.documentElement.scrollTop;
+      const adjustedY = relativeY + scrollTop;
+      
+      const totalHeight = rect.height;
+      let minutes = Math.floor((adjustedY / totalHeight) * 24 * 60);
+      let hours = Math.floor(minutes / 60);
+      minutes = minutes % 60;
+      minutes = Math.round(minutes / 30) * 30;
+      
+      if (minutes === 60) { 
+        hours += 1; 
+        minutes = 0; 
       }
+      if (hours >= 24) { 
+        hours = 23;
+        minutes = 30;
+      }
+      if (hours < 0) {
+        hours = 0;
+        minutes = 0;
+      }
+      
+      const timeString = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
+      setSelectedTime(timeString);
     },
-    drop: (item: any) => {
+    drop: (item: any, monitor) => {
       if (!selectedTime || !canEdit) return;
-      if (item.isDuplicating) {
-        const planStartTime = new Date(selectedDate);
-        const [hours, minutes] = selectedTime.split(':').map(Number);
-        planStartTime.setHours(hours, minutes, 0, 0);
-        const planEndTime = new Date(planStartTime);
-        planEndTime.setHours(planEndTime.getHours() + 1);
-        const newPlan: Plan = {
-          id: 0,
-          title: item.title,
-          details: item.details,
-          start_time: planStartTime.toISOString(),
-          end_time: planEndTime.toISOString(),
-          is_completed: false,
-          color: item.color,
-          plan_type: 'regular',
-          order: 0,
-          user_id: user?.id || 0,
-          created_at: new Date().toISOString(),
-          updated_at: new Date().toISOString(),
-          priority: 'low',
-          notify: false,
-          notify_before: 30
-        };
-        setSelectedPlan(newPlan);
-        setIsModalOpen(true);
-      } else {
-        handleQuickPlanDrop(item, selectedTime);
+      
+      try {
+        if (item.isDuplicating) {
+          const planStartTime = new Date(selectedDate);
+          const [hours, minutes] = selectedTime.split(':').map(Number);
+          planStartTime.setHours(hours, minutes, 0, 0);
+          const planEndTime = new Date(planStartTime);
+          planEndTime.setHours(planEndTime.getHours() + 1);
+          
+          const newPlan: Plan = {
+            id: 0,
+            title: item.title,
+            details: item.details,
+            start_time: planStartTime.toISOString(),
+            end_time: planEndTime.toISOString(),
+            is_completed: false,
+            color: item.color,
+            plan_type: 'regular',
+            order: 0,
+            user_id: user?.id || 0,
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString(),
+            priority: 'low',
+            notify: false,
+            notify_before: 30
+          };
+          setSelectedPlan(newPlan);
+          setIsModalOpen(true);
+        } else {
+          handleQuickPlanDrop(item, selectedTime);
+        }
+      } catch (error) {
+        console.error('Drop handling error:', error);
+      } finally {
+        setSelectedTime(null);
+        setTimeout(() => {
+          document.body.style.pointerEvents = '';
+        }, 100);
       }
-      setSelectedTime(null);
+      
+      return undefined;
     },
     collect: (monitor) => ({
       isOver: monitor.isOver() && canEdit,
