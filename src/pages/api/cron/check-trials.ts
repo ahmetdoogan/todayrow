@@ -17,15 +17,11 @@ interface DbSubscription {
 }
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  console.log("DEBUG: process.env.CRON_SECRET =", process.env.CRON_SECRET);
-  console.log("DEBUG: req.headers.authorization =", req.headers.authorization);
-
   if (req.method !== 'GET') {
     return res.status(405).json({ message: 'Method not allowed' });
   }
 
   try {
-    // API token kontrolü
     const authHeader = req.headers.authorization;
     if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
       return res.status(401).json({ message: 'Unauthorized' });
@@ -37,7 +33,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     // 1) 7 gün içinde bitecek trial kullanıcılarını buluyoruz
     const { data: trialUsers, error } = await supabase
       .from('subscriptions')
-      .select('user_id, trial_end, users:auth.users!inner(email)')
+      .select(`
+        subscriptions.user_id,
+        subscriptions.trial_end,
+        auth.users (
+          email
+        )
+      `)
       .eq('status', 'free_trial')
       .gt('trial_end', now.toISOString())
       .lt('trial_end', sevenDaysLater.toISOString()) as { data: DbSubscription[] | null, error: any };
@@ -45,7 +47,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     if (error) throw error;
 
     let warningsSent = 0;
-    // 2) Her kullanıcı için daysLeft hesapla ve mail gönder
     for (const user of (trialUsers || [])) {
       if (!user.users?.email) {
         console.log("No email found for user_id:", user.user_id);
@@ -56,7 +57,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       const daysLeft = Math.ceil((trialEnd.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
 
       if (daysLeft <= 7 && daysLeft > 1) {
-        // 7 günden az, 1 günden fazla kaldı => Trial Warning
         await fetch('https://todayrow.app/api/email/sendTrialWarning', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -64,7 +64,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         });
         warningsSent++;
       } else if (daysLeft <= 1) {
-        // 1 günden az kaldı => Warning (1 gün kaldı)
         await fetch('https://todayrow.app/api/email/sendTrialWarning', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -74,10 +73,16 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       }
     }
 
-    // 3) Trial bitenler (trial_end < now)
+    // 2) Trial bitenler (trial_end < now)
     const { data: expiredData, error: expiredError } = await supabase
       .from('subscriptions')
-      .select('user_id, trial_end, users:auth.users!inner(email)')
+      .select(`
+        subscriptions.user_id,
+        subscriptions.trial_end,
+        auth.users (
+          email
+        )
+      `)
       .eq('status', 'free_trial')
       .lt('trial_end', now.toISOString()) as { data: DbSubscription[] | null, error: any };
 
@@ -93,7 +98,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         body: JSON.stringify({ email: user.users.email })
       });
 
-      // status = expired
       await supabase
         .from('subscriptions')
         .update({ 
@@ -106,7 +110,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       expiredProcessed++;
     }
 
-    // Loglama
     await supabase
       .from('cron_logs')
       .insert({
