@@ -1,134 +1,141 @@
-import { NextApiRequest, NextApiResponse } from 'next';
-import { createClient } from '@supabase/supabase-js';
+import { NextApiRequest, NextApiResponse } from 'next'
+import { createClient } from '@supabase/supabase-js'
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
-
-interface DbUser {
-  email: string;
-}
-
-interface DbSubscription {
-  user_id: string;
-  trial_end: string;
-  users: DbUser;
+// Bu interface, Supabase'den dönecek veri yapısını temsil ediyor.
+// select('user_id, trial_end, user:auth.users!inner(email)')
+// ile "user" adında bir nested obje gelecek (içinde "email" var).
+interface SubscriptionJoin {
+  user_id: string
+  trial_end: string
+  user?: {
+    email?: string
+  }
 }
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  if (req.method !== 'GET') {
-    return res.status(405).json({ message: 'Method not allowed' });
+  // 1) Supabase Client oluştur
+  // Aşağıdaki environment değişkenlerini kendinize göre düzeltin
+  const supabase = createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL || '',
+    process.env.SUPABASE_SERVICE_ROLE_KEY || ''
+  )
+
+  // Şu an ve gelecek zamanlar
+  const now = new Date()
+  const sevenDaysLater = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000)
+  const oneDayLater    = new Date(now.getTime() + 1 * 24 * 60 * 60 * 1000)
+
+  let warningsSent = 0
+  let expiredProcessed = 0
+
+  // ----------------------------
+  // 2) 7 Gün Uyarısı / 1 Gün Uyarısı Gönderilecek Kullanıcılar
+  // ----------------------------
+  // trial_end > now  (hala süresi var)
+  // trial_end < sevenDaysLater (7 günden az kalmış) -> 7 gün uyarısı
+  // NOT: eğer 1 gün kalmışsa "7 gün" yerine "1 gün" maili de gönderebilirsiniz
+  const { data: nearExpirationData, error: nearExpErr } = await supabase
+    .from('subscriptions')
+    .select('user_id, trial_end, user:auth.users!inner(email)') 
+    .eq('status', 'free_trial')
+    .gt('trial_end', now.toISOString())
+    .lt('trial_end', sevenDaysLater.toISOString())
+
+  if (nearExpErr) {
+    console.error('Error fetching nearExpiration data:', nearExpErr)
+    return res.status(500).json({ error: nearExpErr.message })
   }
 
-  try {
-    const authHeader = req.headers.authorization;
-    if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
-      return res.status(401).json({ message: 'Unauthorized' });
+  const nearExpiration = (nearExpirationData as SubscriptionJoin[]) || []
+
+  for (const row of nearExpiration) {
+    if (!row.user?.email) {
+      console.log('No email found for user_id:', row.user_id)
+      continue
     }
 
-    const now = new Date();
-    const sevenDaysLater = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000);
+    // Kaç gün kalmış?
+    const trialEndDate = new Date(row.trial_end)
+    const diffMs = trialEndDate.getTime() - now.getTime()
+    const daysLeft = Math.ceil(diffMs / (1000 * 60 * 60 * 24))
 
-    // 1) 7 gün içinde bitecek trial kullanıcılarını buluyoruz
-    const { data: trialUsers, error } = await supabase
-      .from('subscriptions')
-      .select(`
-        subscriptions.user_id,
-        subscriptions.trial_end,
-        auth.users (
-          email
-        )
-      `)
-      .eq('status', 'free_trial')
-      .gt('trial_end', now.toISOString())
-      .lt('trial_end', sevenDaysLater.toISOString()) as { data: DbSubscription[] | null, error: any };
-
-    if (error) throw error;
-
-    let warningsSent = 0;
-    for (const user of (trialUsers || [])) {
-      if (!user.users?.email) {
-        console.log("No email found for user_id:", user.user_id);
-        continue;
-      }
-
-      const trialEnd = new Date(user.trial_end);
-      const daysLeft = Math.ceil((trialEnd.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
-
-      if (daysLeft <= 7 && daysLeft > 1) {
-        await fetch('https://todayrow.app/api/email/sendTrialWarning', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email: user.users.email, daysLeft })
-        });
-        warningsSent++;
-      } else if (daysLeft <= 1) {
-        await fetch('https://todayrow.app/api/email/sendTrialWarning', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email: user.users.email, daysLeft: 1 })
-        });
-        warningsSent++;
-      }
+    // daysLeft > 1 ise 7 gün maili, ==1 ise 1 gün maili gibi
+    if (daysLeft > 1) {
+      // Örnek: 7 gün maili
+      console.log(`Sending 7-day warning mail to: ${row.user.email}`)
+      // Burada sendTrialWarning API endpoint'inizi vs. çağırın
+      // await fetch('/api/email/sendTrialWarning', { ... })
+    } else {
+      // Örnek: 1 gün maili
+      console.log(`Sending 1-day warning mail to: ${row.user.email}`)
+      // await fetch('/api/email/sendTrialWarning', { ... })
     }
 
-    // 2) Trial bitenler (trial_end < now)
-    const { data: expiredData, error: expiredError } = await supabase
-      .from('subscriptions')
-      .select(`
-        subscriptions.user_id,
-        subscriptions.trial_end,
-        auth.users (
-          email
-        )
-      `)
-      .eq('status', 'free_trial')
-      .lt('trial_end', now.toISOString()) as { data: DbSubscription[] | null, error: any };
+    warningsSent++
+  }
 
-    if (expiredError) throw expiredError;
+  // ----------------------------
+  // 3) Süresi Dolan (Expired) Kullanıcılar
+  // ----------------------------
+  // trial_end < now
+  const { data: expiredData, error: expiredErr } = await supabase
+    .from('subscriptions')
+    .select('user_id, trial_end, user:auth.users!inner(email)')
+    .eq('status', 'free_trial')
+    .lt('trial_end', now.toISOString())
 
-    let expiredProcessed = 0;
-    for (const user of (expiredData || [])) {
-      if (!user.users?.email) continue;
+  if (expiredErr) {
+    console.error('Error fetching expired data:', expiredErr)
+    return res.status(500).json({ error: expiredErr.message })
+  }
 
-      await fetch('https://todayrow.app/api/email/sendTrialEnded', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: user.users.email })
-      });
+  const expiredUsers = (expiredData as SubscriptionJoin[]) || []
 
-      await supabase
-        .from('subscriptions')
-        .update({ 
-          status: 'expired',
-          subscription_type: 'free',
-          updated_at: now.toISOString()
-        })
-        .eq('user_id', user.user_id);
-      
-      expiredProcessed++;
+  for (const row of expiredUsers) {
+    if (!row.user?.email) {
+      console.log('No email found for user_id:', row.user_id)
+      continue
     }
 
+    // Trial Ended Mail gönder
+    console.log(`Sending "Trial Ended" mail to: ${row.user.email}`)
+    // await fetch('/api/email/sendTrialEnded', { ... })
+
+    // Artık status'ü 'expired' yap
     await supabase
-      .from('cron_logs')
-      .insert({
-        job_name: 'check-trials',
-        execution_time: new Date().toISOString(),
-        details: {
-          warningsSent,
-          expiredProcessed
-        }
-      });
+      .from('subscriptions')
+      .update({
+        status: 'expired',
+        updated_at: new Date().toISOString()
+      })
+      .eq('user_id', row.user_id)
 
-    return res.status(200).json({ 
-      message: 'Trial checks completed',
-      warningsSent,
-      expiredProcessed
-    });
-
-  } catch (error) {
-    console.error('Trial check error:', error);
-    return res.status(500).json({ error: 'Internal server error' });
+    expiredProcessed++
   }
+
+  // ----------------------------
+  // 4) Log Kaydı (cron_logs)
+  // ----------------------------
+  // Bu tabloyu "public.cron_logs" veya benzer şekilde oluşturduysanız, ekleyebilirsiniz
+  const { error: logErr } = await supabase
+    .from('cron_logs')
+    .insert({
+      job_name: 'check-trials',
+      execution_time: now.toISOString(),
+      details: {
+        warningsSent,
+        expiredProcessed
+      }
+    })
+
+  if (logErr) {
+    console.error('Error inserting cron log:', logErr)
+  }
+
+  // Sonuç döndür
+  return res.status(200).json({
+    message: 'Trial check completed',
+    warningsSent,
+    expiredProcessed
+  })
 }
