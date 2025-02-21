@@ -2,19 +2,16 @@ import { NextApiRequest, NextApiResponse } from 'next'
 import { createClient } from '@supabase/supabase-js'
 
 /**
- * 1) Subscriptions tablonuzdaki her kaydı temsil edecek arayüz.
- *    - user_id: hangi kullanıcının kaydı
- *    - trial_end: trial bitiş tarihi
+ * 1) Subscriptions tablonuzdaki her kaydı temsil eden arayüz.
  */
 interface SubscriptionRecord {
   user_id: string
-  trial_end: string  // string formatında tarih
+  trial_end: string  // tarih stringi
   status: string
 }
 
 /**
- * 2) auth.users tablonuzdaki kullanıcılar. 
- *    - email bilgisini almak yeterli.
+ * 2) auth.users tablosundaki kullanıcılar (email bilgisini almak için).
  */
 interface UserRecord {
   id: string
@@ -22,13 +19,12 @@ interface UserRecord {
 }
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  // Supabase client oluştur
+  // Supabase client
   const supabase = createClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL || '',
     process.env.SUPABASE_SERVICE_ROLE_KEY || ''
   )
 
-  // Şu an, 7 gün sonrası, 1 gün sonrası
   const now = new Date()
   const sevenDaysLater = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000)
   const oneDayLater = new Date(now.getTime() + 1 * 24 * 60 * 60 * 1000)
@@ -37,8 +33,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   let expiredProcessed = 0
 
   // ----------------------------------------------------------------------------
-  // 1) 7 gün uyarısı veya 1 gün uyarısı gönderilecek kullanıcıları al (free_trial)
-  //    trial_end > now AND trial_end < 7 gün sonrası
+  // 1) trial_end > now AND < 7 gün sonrası → 7/1 gün maili gönderilecek free_trial'lar
   // ----------------------------------------------------------------------------
   const { data: nearExpSubs, error: nearExpError } = await supabase
     .from('subscriptions')
@@ -51,14 +46,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     console.error('Error fetching near-expiration subscriptions:', nearExpError)
     return res.status(500).json({ error: nearExpError.message })
   }
-
-  // nearExpSubs bir SubscriptionRecord dizisi olmalı
   const nearExpiration = (nearExpSubs as SubscriptionRecord[]) || []
 
   for (const sub of nearExpiration) {
-    // Kullanıcının email adresini çekmek için ikinci sorgu:
+    // auth.users tablosundan email çek
     const { data: userData, error: userError } = await supabase
-      .from('users')    // dikkat: auth.users tablosu "users" ismiyle tanımlıysa
+      .from('auth.users')  // <-- Önemli düzeltme: public.users değil
       .select('id, email')
       .eq('id', sub.user_id)
       .single()
@@ -67,35 +60,31 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       console.error('Error fetching user record:', userError)
       continue
     }
-    const user = userData as UserRecord | null
 
+    const user = userData as UserRecord | null
     if (!user || !user.email) {
       console.log('No email found for user_id:', sub.user_id)
       continue
     }
 
-    // Gün farkını hesaplayalım
+    // Gün farkını hesapla
     const trialEndDate = new Date(sub.trial_end)
     const diffMs = trialEndDate.getTime() - now.getTime()
     const daysLeft = Math.ceil(diffMs / (1000 * 60 * 60 * 24))
 
     if (daysLeft > 1) {
-      // Örnek: 7 gün maili
       console.log(`(Trial) Sending 7-day warning mail to: ${user.email}`)
-      // Burada gerçek mail fonksiyonunuzu çağırabilirsiniz:
       // await fetch('/api/email/sendTrialWarning', { ... })
     } else {
-      // Örnek: 1 gün maili
       console.log(`(Trial) Sending 1-day warning mail to: ${user.email}`)
-      // Benzer şekilde mail endpointini çağırın
+      // await fetch('/api/email/sendTrialWarning', { ... })
     }
 
     warningsSent++
   }
 
   // ----------------------------------------------------------------------------
-  // 2) Süresi dolan (expired) kullanıcıları al (free_trial)
-  //    trial_end < now
+  // 2) trial_end < now → Süresi dolan (expired) free_trial'lar
   // ----------------------------------------------------------------------------
   const { data: expiredSubs, error: expiredError } = await supabase
     .from('subscriptions')
@@ -107,14 +96,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     console.error('Error fetching expired subscriptions:', expiredError)
     return res.status(500).json({ error: expiredError.message })
   }
-
-  // expiredSubs da SubscriptionRecord dizisi
   const expiredUsers = (expiredSubs as SubscriptionRecord[]) || []
 
   for (const sub of expiredUsers) {
-    // Kullanıcı bilgisi:
+    // auth.users tablosundan email çek
     const { data: userData, error: userError } = await supabase
-      .from('users') // auth.users tablonuzu burada "users" olarak çektiyseniz
+      .from('auth.users')
       .select('id, email')
       .eq('id', sub.user_id)
       .single()
@@ -123,18 +110,18 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       console.error('Error fetching user record (expired):', userError)
       continue
     }
-    const user = userData as UserRecord | null
 
+    const user = userData as UserRecord | null
     if (!user || !user.email) {
       console.log('No email found for user_id (expired):', sub.user_id)
       continue
     }
 
-    // "Trial Ended" maili gönder
+    // Trial ended maili
     console.log(`Sending "Trial Ended" mail to: ${user.email}`)
     // await fetch('/api/email/sendTrialEnded', { ... })
 
-    // Status'ü "expired" yap
+    // Artık subscriptions tablosunda status='expired'
     await supabase
       .from('subscriptions')
       .update({ status: 'expired' })
@@ -144,7 +131,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   }
 
   // ----------------------------------------------------------------------------
-  // 3) cron_logs tablosuna log yaz (isteğe bağlı)
+  // 3) cron_logs tablosuna log (opsiyonel)
   // ----------------------------------------------------------------------------
   const { error: logErr } = await supabase
     .from('cron_logs')
@@ -158,10 +145,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     })
   if (logErr) {
     console.error('Error inserting cron log:', logErr)
-    // Devam et, fatal değildir
   }
 
-  // Bitti
   return res.status(200).json({
     message: 'Trial check completed',
     warningsSent,
