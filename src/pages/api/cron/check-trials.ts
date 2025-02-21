@@ -41,8 +41,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   const nearExpiration = (nearExpSubs as SubscriptionRecord[]) || []
 
   for (const sub of nearExpiration) {
-    // 'profiles' tablosunda e-posta arıyoruz. 
-    // Burada 'profiles'.'id' = 'subscriptions'.'user_id' olması gerektiğini varsayıyoruz.
+    // 'profiles' tablosundan e-posta al
     const { data: profileData, error: profileErr } = await supabase
       .from('profiles')
       .select('id, email')
@@ -60,17 +59,31 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       continue
     }
 
-    // Gün farkını hesapla
+    // Kaç gün kalmış?
     const trialEndDate = new Date(sub.trial_end)
     const diffMs = trialEndDate.getTime() - now.getTime()
     const daysLeft = Math.ceil(diffMs / (1000 * 60 * 60 * 24))
 
     if (daysLeft > 1) {
       console.log(`(Trial) Sending 7-day warning mail to: ${profile.email}`)
-      // await fetch('/api/email/sendTrialWarning', {...})
+      await fetch(`${process.env.NEXT_PUBLIC_APP_URL || 'https://todayrow.app'}/api/email/sendTrialWarning`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          email: profile.email,
+          daysLeft
+        })
+      })
     } else {
       console.log(`(Trial) Sending 1-day warning mail to: ${profile.email}`)
-      // await fetch('/api/email/sendTrialWarning', {...})
+      await fetch(`${process.env.NEXT_PUBLIC_APP_URL || 'https://todayrow.app'}/api/email/sendTrialWarning`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          email: profile.email,
+          daysLeft: 1
+        })
+      })
     }
 
     warningsSent++
@@ -92,7 +105,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   const expiredUsers = (expiredSubs as SubscriptionRecord[]) || []
 
   for (const sub of expiredUsers) {
-    // Yine 'profiles' tablosundan mail çekiyoruz
     const { data: profileData, error: profileErr } = await supabase
       .from('profiles')
       .select('id, email')
@@ -110,14 +122,19 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       continue
     }
 
-    // Trial ended mail
     console.log(`Sending "Trial Ended" mail to: ${profile.email}`)
-    // await fetch('/api/email/sendTrialEnded', {...})
+    await fetch(`${process.env.NEXT_PUBLIC_APP_URL || 'https://todayrow.app'}/api/email/sendTrialEnded`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        email: profile.email
+      })
+    })
 
-    // Abonelik statüsünü "expired" yap
+    // status='expired'
     await supabase
       .from('subscriptions')
-      .update({ status: 'expired' })
+      .update({ status: 'expired', updated_at: now.toISOString() })
       .eq('user_id', sub.user_id)
 
     expiredProcessed++
