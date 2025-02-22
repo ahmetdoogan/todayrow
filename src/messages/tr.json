@@ -171,7 +171,8 @@
           "free_trial": "Deneme",
           "active": "Aktif",
           "cancel_scheduled": "İptal Planlandı",
-          "expired": "Süresi Doldu"
+          "expired": "Süresi Doldu",
+          "pro": "Pro"
         }
       }
     },
