@@ -41,20 +41,20 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   const nearExpiration = (nearExpSubs as SubscriptionRecord[]) || []
 
   for (const sub of nearExpiration) {
-    // 'profiles' tablosundan e-posta al
-    const { data: profileData, error: profileErr } = await supabase
-      .from('profiles')
+    // auth.users tablosundan e-posta al
+    const { data: userData, error: userErr } = await supabase
+      .from('users_view')
       .select('id, email')
       .eq('id', sub.user_id)
       .single()
 
-    if (profileErr) {
-      console.error('Error fetching profile (near-exp):', profileErr)
+    if (userErr) {
+      console.error('Error fetching user (near-exp):', userErr)
       continue
     }
 
-    const profile = profileData as ProfileRecord | null
-    if (!profile || !profile.email) {
+    const user = userData as ProfileRecord | null
+    if (!user || !user.email) {
       console.log('No email found for user_id:', sub.user_id)
       continue
     }
@@ -65,22 +65,22 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const daysLeft = Math.ceil(diffMs / (1000 * 60 * 60 * 24))
 
     if (daysLeft > 1) {
-      console.log(`(Trial) Sending 7-day warning mail to: ${profile.email}`)
+      console.log(`(Trial) Sending 7-day warning mail to: ${user.email}`)
       await fetch(`${process.env.NEXT_PUBLIC_APP_URL || 'https://todayrow.app'}/api/email/sendTrialWarning`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          email: profile.email,
+          email: user.email,
           daysLeft
         })
       })
     } else {
-      console.log(`(Trial) Sending 1-day warning mail to: ${profile.email}`)
+      console.log(`(Trial) Sending 1-day warning mail to: ${user.email}`)
       await fetch(`${process.env.NEXT_PUBLIC_APP_URL || 'https://todayrow.app'}/api/email/sendTrialWarning`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          email: profile.email,
+          email: user.email,
           daysLeft: 1
         })
       })
@@ -105,24 +105,24 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   const expiredUsers = (expiredSubs as SubscriptionRecord[]) || []
 
   for (const sub of expiredUsers) {
-    const { data: profileData, error: profileErr } = await supabase
-      .from('profiles')
+    const { data: userData, error: userErr } = await supabase
+      .from('users_view')
       .select('id, email')
       .eq('id', sub.user_id)
       .single()
 
-    if (profileErr) {
-      console.error('Error fetching profile (expired):', profileErr)
+    if (userErr) {
+      console.error('Error fetching user (expired):', userErr)
       continue
     }
 
-    const profile = profileData as ProfileRecord | null
-    if (!profile || !profile.email) {
+    const user = userData as ProfileRecord | null
+    if (!user || !user.email) {
       console.log('No email found for user_id (expired):', sub.user_id)
       continue
     }
 
-    console.log(`Sending "Trial Ended" mail to: ${profile.email}`)
+    console.log(`Sending "Trial Ended" mail to: ${user.email}`)
     await fetch(`${process.env.NEXT_PUBLIC_APP_URL || 'https://todayrow.app'}/api/email/sendTrialEnded`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
