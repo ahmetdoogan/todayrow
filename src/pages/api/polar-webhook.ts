@@ -1,5 +1,4 @@
 // src/pages/api/webhooks/polar.ts
-
 import { NextApiRequest, NextApiResponse } from 'next';
 import { createClient } from '@supabase/supabase-js';
 
@@ -9,11 +8,11 @@ export const config = {
     bodyParser: true,
     externalResolver: true
   },
-}
+};
 
 const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
+  process.env.NEXT_PUBLIC_SUPABASE_URL || '',
+  process.env.SUPABASE_SERVICE_ROLE_KEY || ''
 );
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
@@ -23,19 +22,18 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   try {
     console.log('=========== START: POLAR WEBHOOK ===========');
-    console.log('Incoming Webhook Details:');
     console.log('Headers:', JSON.stringify(req.headers, null, 2));
     console.log('Body:', JSON.stringify(req.body, null, 2));
 
     const payload = req.body;
     const { type, data } = payload;
     console.log('Event Type:', type);
-    console.log('Event Data:', JSON.stringify(data, null, 2));
 
+    // user_id
     let userIdFromMeta = data?.metadata?.user_id || data?.user_id || null;
     console.log('User ID:', userIdFromMeta);
 
-    // Ödeme planını kontrol et
+    // planType = 'monthly' or 'yearly'
     let planType = data?.metadata?.plan || 'monthly';
     console.log('Plan Type:', planType);
 
@@ -46,23 +44,23 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     switch (type) {
       case 'subscription.created':
-      case 'subscription.active':
+      case 'subscription.active': {
         console.log('Processing subscription creation/activation');
         const polarSubId = data.id;
         const currentDate = new Date().toISOString();
-        
-        // Bitiş tarihini hesapla
+
+        // Aboneliğin yenilenme tarihini hesapla
         const subscriptionEnd = new Date();
         if (planType === 'yearly') {
           subscriptionEnd.setFullYear(subscriptionEnd.getFullYear() + 1);
         } else {
+          // monthly
           subscriptionEnd.setMonth(subscriptionEnd.getMonth() + 1);
         }
 
         const updateData = {
-          // ÖNEMLİ: "active" yerine "pro" diyoruz ki check-subscription bunu yakalasın
           status: 'pro',
-          subscription_type: 'pro',
+          subscription_type: planType === 'yearly' ? 'yearly' : 'monthly',
           subscription_start: currentDate,
           subscription_end: subscriptionEnd.toISOString(),
           polar_sub_id: polarSubId,
@@ -86,7 +84,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         }
 
         // Pro başladı maili gönder
-        // NOT: data.email varsa buradan alıyoruz, yoksa userId'den profiles'ı bulabilirsin
         await fetch('https://todayrow.app/api/email/sendProStarted', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -113,12 +110,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           console.log('Successfully updated subscription:', updated);
         }
         break;
+      }
 
-      case 'subscription.canceled':
+      case 'subscription.canceled': {
         console.log('Processing subscription cancellation');
         const cancelDate = new Date().toISOString();
 
-        // ÖNEMLİ: "expired" yerine "cancelled" dedik
         const { error: cancelErr } = await supabase
           .from('subscriptions')
           .update({
@@ -140,6 +137,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           body: JSON.stringify({ email: data.email })
         }).catch(console.error);
         break;
+      }
 
       default:
         console.log('Unhandled webhook type:', type);
@@ -148,7 +146,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     console.log('=========== END: POLAR WEBHOOK ===========');
     return res.status(200).json({ success: true });
-
   } catch (error) {
     console.error('Webhook Error:', error);
     return res.status(500).json({ error: 'Internal Server Error' });

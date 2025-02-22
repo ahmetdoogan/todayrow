@@ -1,9 +1,10 @@
+// src/pages/api/cron/check-subscription.ts
 import { NextApiRequest, NextApiResponse } from 'next';
 import { createClient } from '@supabase/supabase-js';
 
 const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
+  process.env.NEXT_PUBLIC_SUPABASE_URL || '',
+  process.env.SUPABASE_SERVICE_ROLE_KEY || ''
 );
 
 interface SubscriptionItem {
@@ -23,7 +24,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   }
 
   try {
-    // Güvenlik kontrolü
+    // Basit güvenlik
     const authHeader = req.headers.authorization;
     if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
       return res.status(401).json({ message: 'Unauthorized' });
@@ -34,7 +35,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       .from('subscriptions')
       .select('user_id, email, updated_at, status, subscription_type')
       .eq('status', 'pro')
-      .eq('subscription_type', 'pro')
+      .in('subscription_type', ['monthly', 'yearly'])
       .gt('updated_at', new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString());
 
     if (newProError) throw newProError;

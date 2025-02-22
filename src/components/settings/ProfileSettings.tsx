@@ -16,9 +16,15 @@ import { SubscriptionBadge } from '@/components/subscription/SubscriptionBadge';
 const ProfileSettings = () => {
   const { session: authSession } = useAuth();
   const { formData, setFormData, loading: profileLoading, setLoading, errors, validateForm } = useProfile();
-  const { subscription, status, isPro, loading: subscriptionLoading, isTrialing, isVerifiedUser } = useSubscription();
+  const {
+    subscription,
+    status,
+    isPro,
+    loading: subscriptionLoading,
+    isTrialing,
+    isVerifiedUser
+  } = useSubscription();
 
-  // Eklenen yeni state: hesabı sil modalı
   const [isPricingOpen, setIsPricingOpen] = useState(false);
   const [showCancelModal, setShowCancelModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -27,7 +33,7 @@ const ProfileSettings = () => {
   const supabase = useSupabaseClient();
   const t = useTranslations('common.profile');
 
-  // 1) Profil verisini çekme
+  // 1) Profil verisini çek
   useEffect(() => {
     const fetchProfile = async () => {
       if (!authSession?.user?.id) return;
@@ -68,7 +74,7 @@ const ProfileSettings = () => {
     fetchProfile();
   }, [authSession, supabase, setFormData]);
 
-  // 2) Profili kaydetme
+  // 2) Profil kaydetme
   const saveProfile = async () => {
     if (!authSession?.user?.id) {
       toast.error(t('messages.saveError'));
@@ -113,7 +119,7 @@ const ProfileSettings = () => {
     if (!result.success) return;
   };
 
-  // 3) Abonelik portalını açma (cancel subscription vb.)
+  // 3) Abonelik portalını açma
   const handleOpenPortal = async () => {
     if (!authSession?.access_token) {
       console.error('No session found');
@@ -137,7 +143,7 @@ const ProfileSettings = () => {
     }
   };
 
-  // 4) Hesabı silme (delete-account API çağrısı)
+  // 4) Hesabı sil
   const handleDeleteAccount = async () => {
     try {
       if (!session?.access_token) {
@@ -181,7 +187,7 @@ const ProfileSettings = () => {
           className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-4"
         >
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-            {/* Avatar + Ad Soyad */}
+            {/* Avatar */}
             <div className="flex items-center gap-4">
               <div className="relative">
                 {authSession?.user?.user_metadata?.avatar_url ? (
@@ -225,7 +231,7 @@ const ProfileSettings = () => {
               </div>
             </div>
 
-            {/* Üyelik Durumu + Upgrade Butonu */}
+            {/* Üyelik Durumu + Upgrade */}
             <div className="flex items-center gap-3">
               <SubscriptionBadge />
               {isTrialing && (
@@ -248,36 +254,43 @@ const ProfileSettings = () => {
         {subscription && (
           <div className="p-4 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl">
             <p className="text-sm text-slate-600 dark:text-slate-300">
-              <strong>{t('subscription.planType')}:</strong> {' '}
+              <strong>{t('subscription.planType')}:</strong>{' '}
               {t(`subscription.types.${subscription.subscription_type}`)}
             </p>
+
             <p className="text-sm text-slate-600 dark:text-slate-300">
-              <strong>{t('subscription.status')}:</strong> {' '}
+              <strong>{t('subscription.status')}:</strong>{' '}
               {t(`subscription.statuses.${subscription.status}`)}
-              {subscription.subscription_end && subscription.status === "cancel_scheduled" && (
-                <span className="ml-2 text-yellow-600">
-                  ({t('subscription.cancelUntil', { 
-                    date: new Date(subscription.subscription_end).toLocaleDateString() 
-                  })})
-                </span>
-              )}
             </p>
+
+            {/* TRIAL ENDS */}
             {subscription.status === 'free_trial' && subscription.trial_end && (
               <p className="text-sm text-slate-600 dark:text-slate-300">
-                <strong>{t('subscription.trialEnds')}:</strong> {' '}
+                <strong>{t('subscription.trialEnds')}:</strong>{' '}
                 {new Date(subscription.trial_end).toLocaleString()}
               </p>
             )}
-            {subscription.status === 'active' && subscription.subscription_end && (
+
+            {/* RENEWS AT (STATUS = PRO) */}
+            {subscription.status === 'pro' && subscription.subscription_end && (
               <p className="text-sm text-slate-600 dark:text-slate-300">
-                <strong>{t('subscription.renewsAt')}:</strong> {' '}
+                <strong>{t('subscription.renewsAt')}:</strong>{' '}
                 {new Date(subscription.subscription_end).toLocaleString()}
               </p>
+            )}
+
+            {/* CANCEL_SCHEDULED örneği */}
+            {subscription.subscription_end && subscription.status === "cancel_scheduled" && (
+              <span className="ml-2 text-yellow-600">
+                ({t('subscription.cancelUntil', { 
+                  date: new Date(subscription.subscription_end).toLocaleDateString() 
+                })})
+              </span>
             )}
           </div>
         )}
 
-        {/* Profil Formu Alanları */}
+        {/* Profil Form Alanları (ESKİ KOD GERİ EKLENDİ) */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {/* first_name */}
           <motion.div
@@ -428,32 +441,32 @@ const ProfileSettings = () => {
               <p className="mt-1 text-xs text-red-500">{errors.website}</p>
             )}
           </motion.div>
-        </div>
 
-        {/* Bio */}
-        <motion.div
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.2, delay: 0.3 }}
-          className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-4"
-        >
-          <div className="flex items-center gap-3 mb-3">
-            <BookText className="w-5 h-5 text-slate-700 dark:text-slate-400" />
-            <span className="text-sm text-slate-700 dark:text-slate-300">
-              {t('fields.bio.label')}
-            </span>
-          </div>
-          <textarea
-            value={formData.bio}
-            onChange={(e) => setFormData(prev => ({ ...prev, bio: e.target.value }))}
-            placeholder={t('fields.bio.placeholder')}
-            rows={4}
-            className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-sm text-slate-700 dark:text-slate-300 placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-violet-500/20 resize-none"
-          />
-          {errors.bio && (
-            <p className="mt-1 text-xs text-red-500">{errors.bio}</p>
-          )}
-        </motion.div>
+          {/* Bio */}
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.2, delay: 0.3 }}
+            className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-4"
+          >
+            <div className="flex items-center gap-3 mb-3">
+              <BookText className="w-5 h-5 text-slate-700 dark:text-slate-400" />
+              <span className="text-sm text-slate-700 dark:text-slate-300">
+                {t('fields.bio.label')}
+              </span>
+            </div>
+            <textarea
+              value={formData.bio}
+              onChange={(e) => setFormData(prev => ({ ...prev, bio: e.target.value }))}
+              placeholder={t('fields.bio.placeholder')}
+              rows={4}
+              className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-sm text-slate-700 dark:text-slate-300 placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-violet-500/20 resize-none"
+            />
+            {errors.bio && (
+              <p className="mt-1 text-xs text-red-500">{errors.bio}</p>
+            )}
+          </motion.div>
+        </div>
 
         {/* Save + Cancel Subscription */}
         <motion.div
@@ -482,12 +495,11 @@ const ProfileSettings = () => {
         {/* Hesabımı Sil Butonu */}
         <div className="mt-2">
           <button
-  onClick={() => setShowDeleteModal(true)}
-  className="text-sm text-red-600 dark:text-red-500 underline underline-offset-4"
->
-  {t('deleteAccount.button')}
-</button>
-
+            onClick={() => setShowDeleteModal(true)}
+            className="text-sm text-red-600 dark:text-red-500 underline underline-offset-4"
+          >
+            {t('deleteAccount.button')}
+          </button>
         </div>
       </div>
 
@@ -520,20 +532,19 @@ const ProfileSettings = () => {
       {showDeleteModal && (
         <div className="fixed inset-0 flex items-center justify-center z-50 bg-black/50">
           <div className="bg-white dark:bg-slate-800 p-6 rounded shadow w-80">
-           <p className="text-sm text-slate-700 dark:text-slate-300 mb-4">
-  {t('deleteAccount.modal.title')}
-  <br />
-  <strong>{t('deleteAccount.modal.warning')}</strong>
-</p>
-<div className="flex justify-end gap-2">
-  <Button variant="outline" onClick={() => setShowDeleteModal(false)}>
-    {t('deleteAccount.modal.cancel')}
-  </Button>
-  <Button variant="destructive" onClick={handleDeleteAccount}>
-    {t('deleteAccount.modal.confirm')}
-  </Button>
-</div>
-
+            <p className="text-sm text-slate-700 dark:text-slate-300 mb-4">
+              {t('deleteAccount.modal.title')}
+              <br />
+              <strong>{t('deleteAccount.modal.warning')}</strong>
+            </p>
+            <div className="flex justify-end gap-2">
+              <Button variant="outline" onClick={() => setShowDeleteModal(false)}>
+                {t('deleteAccount.modal.cancel')}
+              </Button>
+              <Button variant="destructive" onClick={handleDeleteAccount}>
+                {t('deleteAccount.modal.confirm')}
+              </Button>
+            </div>
           </div>
         </div>
       )}
