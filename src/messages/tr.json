@@ -168,11 +168,11 @@
           "free": "Ücretsiz"
         },
         "statuses": {
+          "pro": "Pro",
           "free_trial": "Deneme",
           "active": "Aktif",
           "cancel_scheduled": "İptal Planlandı",
-          "expired": "Süresi Doldu",
-          "pro": "Pro"
+          "expired": "Süresi Doldu"
         }
       }
     },

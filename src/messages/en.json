@@ -161,6 +161,7 @@
           "free": "Free"
         },
         "statuses": {
+          "pro": "Pro",
           "free_trial": "Trial",
           "active": "Active",
           "cancel_scheduled": "Cancellation Scheduled",
