@@ -33,25 +33,24 @@ export function useSubscription() {
         if (data) {
           setSubscription(data);
         } else {
-          // Eğer subscriptions tablosunda kaydı yoksa, 
-          // default “free_trial” + “free” gibi bir durum atayabilirsin.
+          // Eğer subscriptions tablosunda kaydı yoksa (yeni user)
           setSubscription({
-            id: 0,
+            id: "",  // uuid stub
             user_id: user.id,
-            status: 'free_trial',
-            subscription_type: 'free',
+            status: "free_trial",
+            subscription_type: "free",
             trial_start: null,
             trial_end: null,
             subscription_start: null,
             subscription_end: null,
             polar_sub_id: null,
-            polar_customer_id: null,
+            polar_customer_id: null,  // <-- Artık arayüzde tanımlı
             created_at: null,
             updated_at: null
           });
         }
       } catch (err) {
-        console.error('Error fetching subscription:', err);
+        console.error("Error fetching subscription:", err);
       } finally {
         setLoading(false);
       }
@@ -60,7 +59,7 @@ export function useSubscription() {
     fetchSubscription();
   }, [user, supabase]);
 
-  // Henüz subscription veya user yoksa...
+  // Eğer subscription hâlâ null ise
   if (!subscription) {
     return {
       subscription: null,
@@ -69,7 +68,7 @@ export function useSubscription() {
       isExpired: false,
       isTrialing: false,
       trialDaysLeft: 0,
-      status: 'free_trial',
+      status: "free_trial",
       isVerifiedUser: false
     };
   }
@@ -79,28 +78,28 @@ export function useSubscription() {
   let trialDaysLeft = 0;
 
   // TRIAL durumu & kalan gün hesaplama
-  if (subscription.status === 'free_trial' && subscription.trial_end) {
+  if (subscription.status === "free_trial" && subscription.trial_end) {
     const diff = new Date(subscription.trial_end).getTime() - Date.now();
     if (diff <= 0) {
-      derivedStatus = 'expired';
+      derivedStatus = "expired";
     } else {
       trialDaysLeft = Math.ceil(diff / (1000 * 60 * 60 * 24));
     }
   }
 
-  // Pro mu? => status='pro' ve subscription_type='monthly'|'yearly'
-  const isPro = (
-    derivedStatus === 'pro' &&
-    (subscription.subscription_type === 'monthly' || subscription.subscription_type === 'yearly')
-  );
+  // Pro mu? => status='pro' & subscription_type ∈ ['monthly','yearly']
+  const isPro =
+    derivedStatus === "pro" &&
+    (subscription.subscription_type === "monthly" ||
+      subscription.subscription_type === "yearly");
 
   // Expired mi?
-  const isExpired = (derivedStatus === 'expired');
+  const isExpired = derivedStatus === "expired";
 
   // Trialing mi?
-  const isTrialing = (derivedStatus === 'free_trial');
+  const isTrialing = derivedStatus === "free_trial";
 
-  // polar_sub_id varsa “isVerifiedUser” gibi düşünebilirsin
+  // polar_sub_id varsa isVerifiedUser
   const isVerifiedUser = Boolean(subscription.polar_sub_id);
 
   return {

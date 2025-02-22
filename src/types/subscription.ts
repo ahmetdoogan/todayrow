@@ -1,11 +1,11 @@
 export type SubscriptionStatus =
-  | 'free_trial'
-  | 'pro'
-  | 'expired'
-  | 'active'
-  | 'cancel_scheduled';
+  | "free_trial"
+  | "pro"
+  | "expired"
+  | "active"
+  | "cancel_scheduled";
 
-export type SubscriptionType = 'monthly' | 'yearly' | 'free';
+export type SubscriptionType = "monthly" | "yearly" | "free";
 
 export interface Subscription {
   id?: string;
@@ -17,6 +17,8 @@ export interface Subscription {
   subscription_end?: string | null;
   subscription_type?: SubscriptionType;
   polar_sub_id?: string | null;
+  polar_customer_id?: string | null;
+
   created_at?: string | null;
   updated_at?: string | null;
 }
