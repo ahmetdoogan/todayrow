@@ -174,7 +174,7 @@ export default function Sidebar({
   // -------------------------------
   const handlePlanCreate = () => {
     // Soft paywall check => eğer expired/free/… ise PricingModal
-    if (!isPro) {
+    if (!isPro && !isTrialing) {
       setIsPricingOpen(true);
       return;
     }
