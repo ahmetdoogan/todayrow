@@ -60,7 +60,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         }
 
         const updateData = {
-          status: 'active',
+          // ÖNEMLİ: "active" yerine "pro" diyoruz ki check-subscription bunu yakalasın
+          status: 'pro',
           subscription_type: 'pro',
           subscription_start: currentDate,
           subscription_end: subscriptionEnd.toISOString(),
@@ -85,10 +86,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         }
 
         // Pro başladı maili gönder
+        // NOT: data.email varsa buradan alıyoruz, yoksa userId'den profiles'ı bulabilirsin
         await fetch('https://todayrow.app/api/email/sendProStarted', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email: data.email }) // 'user' yerine 'data' kullanıldı
+          body: JSON.stringify({ email: data.email })
         }).catch(console.error);
 
         if (!updated || updated.length === 0) {
@@ -116,10 +118,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         console.log('Processing subscription cancellation');
         const cancelDate = new Date().toISOString();
 
+        // ÖNEMLİ: "expired" yerine "cancelled" dedik
         const { error: cancelErr } = await supabase
           .from('subscriptions')
           .update({
-            status: 'expired', subscription_type: 'free',
+            status: 'cancelled',
+            subscription_type: 'free',
             updated_at: cancelDate,
           })
           .eq('user_id', userIdFromMeta);
@@ -133,7 +137,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         await fetch('https://todayrow.app/api/email/sendProCancelled', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email: data.email }) // 'user' yerine 'data' kullanıldı
+          body: JSON.stringify({ email: data.email })
         }).catch(console.error);
         break;
 
