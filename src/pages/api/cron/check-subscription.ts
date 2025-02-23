@@ -7,12 +7,14 @@ const supabase = createClient(
   process.env.SUPABASE_SERVICE_ROLE_KEY || ''
 );
 
+// Join ile dönen veri artık profiles!inner(email) şeklinde gelecek
 interface SubscriptionItem {
   user_id: string;
   updated_at: string;
   status: string;
   subscription_type: string;
-  users_view: { email: string }[]; // Join sonucu gelen email'ler, dizi olarak
+  // profiles tablosundaki email alanı bir dizi olarak dönecek
+  profiles: { email: string }[];
 }
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
@@ -33,7 +35,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     // 1) Pro'ya yeni geçenler (son 24 saat)
     const { data: newProUsers, error: newProError } = await supabase
       .from('subscriptions')
-      .select('user_id, updated_at, status, subscription_type, users_view!inner(email)')
+      .select('user_id, updated_at, status, subscription_type, profiles!inner(email)')
       .eq('status', 'pro')
       .in('subscription_type', ['monthly', 'yearly'])
       .gt('updated_at', new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString());
@@ -41,11 +43,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     if (newProError) throw newProError;
 
     for (const user of (newProUsers as SubscriptionItem[])) {
-      const email = user.users_view?.[0]?.email;
+      // profiles dizisinden email'i al
+      const email = user.profiles?.[0]?.email;
       if (!email) {
         console.log("No email for user_id:", user.user_id);
         continue;
       }
+      // Pro Started maili gönder
       await fetch('https://todayrow.app/api/email/sendProStarted', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -56,7 +60,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     // 2) Pro iptal edenler (son 24 saat)
     const { data: cancelledUsers, error: cancelledError } = await supabase
       .from('subscriptions')
-      .select('user_id, updated_at, status, subscription_type, users_view!inner(email)')
+      .select('user_id, updated_at, status, subscription_type, profiles!inner(email)')
       .eq('status', 'cancelled')
       .eq('subscription_type', 'free')
       .gt('updated_at', new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString());
@@ -64,8 +68,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     if (cancelledError) throw cancelledError;
 
     for (const user of (cancelledUsers as SubscriptionItem[])) {
-      const email = user.users_view?.[0]?.email;
-      if (!email) continue;
+      const email = user.profiles?.[0]?.email;
+      if (!email) {
+        console.log("No email for user_id:", user.user_id);
+        continue;
+      }
+      // Pro Cancelled maili gönder
       await fetch('https://todayrow.app/api/email/sendProCancelled', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
