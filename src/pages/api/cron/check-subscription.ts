@@ -41,9 +41,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     let newProEmailsSent = 0;
 
-    // Her Pro kaydı için profiles tablosundan email'i alıp mail gönderelim
     for (const sub of (newProUsers as SubscriptionRecord[])) {
-      // 1. Adım: profiles tablosunda email’i bul
       const { data: profileData, error: profileErr } = await supabase
         .from('profiles')
         .select('email')
@@ -59,7 +57,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         continue;
       }
 
-      // 2. Adım: pro started mailini gönder
       await fetch(`${process.env.NEXT_PUBLIC_APP_URL || 'https://todayrow.app'}/api/email/sendProStarted`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -96,7 +93,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         continue;
       }
 
-      // pro cancelled mailini gönder
       await fetch(`${process.env.NEXT_PUBLIC_APP_URL || 'https://todayrow.app'}/api/email/sendProCancelled`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -105,10 +101,23 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       cancelledEmailsSent++;
     }
 
+    // 3) Cancel_scheduled kontrolü ve expired'a geçiş
+    const { data: expiredSubscriptions, error: expiredError } = await supabase
+      .from('subscriptions')
+      .update({ status: 'expired', subscription_type: 'free', updated_at: new Date().toISOString() })
+      .eq('status', 'cancel_scheduled')
+      .lte('subscription_end', new Date().toISOString())
+      .select('user_id');
+
+    if (expiredError) throw expiredError;
+
+    let expiredCount = expiredSubscriptions ? expiredSubscriptions.length : 0;
+
     return res.status(200).json({
       message: 'Subscription checks completed',
       newProEmails: newProEmailsSent,
-      cancelledEmails: cancelledEmailsSent
+      cancelledEmails: cancelledEmailsSent,
+      expiredSubscriptions: expiredCount
     });
 
   } catch (error) {
