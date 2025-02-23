@@ -32,11 +32,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     // 1) Pro'ya yeni geçenler (son 24 saat)
     const { data: newProUsers, error: newProError } = await supabase
-      .from('subscriptions')
-      .select('user_id, email, updated_at, status, subscription_type')
-      .eq('status', 'pro')
-      .in('subscription_type', ['monthly', 'yearly'])
-      .gt('updated_at', new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString());
+  .from('subscriptions')
+  .select('user_id, updated_at, status, subscription_type, users_view!inner(email)')
+  .eq('status', 'pro')
+  .in('subscription_type', ['monthly', 'yearly'])
+  .gt('updated_at', new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString());
+
 
     if (newProError) throw newProError;
 
