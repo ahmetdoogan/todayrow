@@ -119,8 +119,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         const { error: cancelErr } = await supabase
           .from('subscriptions')
           .update({
-            status: 'cancelled',
-            subscription_type: 'free',
+            status: 'cancel_scheduled',
+            // subscription_type değişmiyor - pro haklarını korumak için
             updated_at: cancelDate,
           })
           .eq('user_id', userIdFromMeta);
