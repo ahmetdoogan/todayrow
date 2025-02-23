@@ -165,7 +165,6 @@
           "pro": "Pro",
           "monthly": "Aylık",
           "yearly": "Yıllık",
-          "cancelled": "İptal edildi",
           "free": "Ücretsiz"
         },
         "statuses": {
@@ -173,6 +172,7 @@
           "free_trial": "Deneme",
           "active": "Aktif",
           "cancel_scheduled": "İptal Planlandı",
+          "cancelled": "İptal edildi",
           "expired": "Süresi Doldu"
         }
       }
