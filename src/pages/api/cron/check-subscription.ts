@@ -32,32 +32,31 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     // 1) Pro'ya yeni geçenler (son 24 saat)
     const { data: newProUsers, error: newProError } = await supabase
-  .from('subscriptions')
-  .select('user_id, updated_at, status, subscription_type, users_view!inner(email)')
-  .eq('status', 'pro')
-  .in('subscription_type', ['monthly', 'yearly'])
-  .gt('updated_at', new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString());
-
+      .from('subscriptions')
+      .select('user_id, updated_at, status, subscription_type, users_view!inner(email)')
+      .eq('status', 'pro')
+      .in('subscription_type', ['monthly', 'yearly'])
+      .gt('updated_at', new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString());
 
     if (newProError) throw newProError;
 
     for (const user of (newProUsers as SubscriptionItem[])) {
-  const email = user.users_view?.[0]?.email;
-  if (!email) {
-    console.log("No email for user_id:", user.user_id);
-    continue;
-  }
-  await fetch('https://todayrow.app/api/email/sendProStarted', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ email })
-  });
-}
+      const email = user.users_view?.[0]?.email;
+      if (!email) {
+        console.log("No email for user_id:", user.user_id);
+        continue;
+      }
+      await fetch('https://todayrow.app/api/email/sendProStarted', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email })
+      });
+    }
 
     // 2) Pro iptal edenler (son 24 saat)
     const { data: cancelledUsers, error: cancelledError } = await supabase
       .from('subscriptions')
-      .select('user_id, email, updated_at, status, subscription_type')
+      .select('user_id, updated_at, status, subscription_type, users_view!inner(email)')
       .eq('status', 'cancelled')
       .eq('subscription_type', 'free')
       .gt('updated_at', new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString());
@@ -65,11 +64,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     if (cancelledError) throw cancelledError;
 
     for (const user of (cancelledUsers as SubscriptionItem[])) {
-      if (!user.email) continue;
+      const email = user.users_view?.[0]?.email;
+      if (!email) continue;
       await fetch('https://todayrow.app/api/email/sendProCancelled', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: user.email })
+        body: JSON.stringify({ email })
       });
     }
 
