@@ -23,13 +23,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   }
 
   try {
-    // Basit güvenlik
     const authHeader = req.headers.authorization;
     if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
       return res.status(401).json({ message: 'Unauthorized' });
     }
 
-    // 1) Pro'ya yeni geçenler (son 24 saat)
     const { data: newProUsers, error: newProError } = await supabase
       .from('subscriptions')
       .select('user_id, updated_at, status, subscription_type')
@@ -65,7 +63,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       newProEmailsSent++;
     }
 
-    // 2) Pro iptal edenler (son 24 saat)
     const { data: cancelledUsers, error: cancelledError } = await supabase
       .from('subscriptions')
       .select('user_id, updated_at, status, subscription_type')
@@ -101,10 +98,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       cancelledEmailsSent++;
     }
 
-    // 3) Cancel_scheduled kontrolü ve expired'a geçiş
+    // Değişiklik burada: expired yerine cancelled
     const { data: expiredSubscriptions, error: expiredError } = await supabase
       .from('subscriptions')
-      .update({ status: 'expired', subscription_type: 'free', updated_at: new Date().toISOString() })
+      .update({ status: 'cancelled', subscription_type: 'free', updated_at: new Date().toISOString() })
       .eq('status', 'cancel_scheduled')
       .lte('subscription_end', new Date().toISOString())
       .select('user_id');
