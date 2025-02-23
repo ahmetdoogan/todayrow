@@ -4,7 +4,7 @@ import { Badge } from '@/components/ui/badge';
 import { useTranslations } from 'next-intl';
 
 export const SubscriptionBadge = () => {
-  const { isTrialing, isPro, trialDaysLeft, isExpired } = useSubscription();
+  const { isTrialing, isPro, trialDaysLeft, isExpired, status } = useSubscription(); // status ekledik
   const t = useTranslations('common.sidebar.trial');
 
   if (isExpired) {
@@ -31,5 +31,13 @@ export const SubscriptionBadge = () => {
     );
   }
 
-  return null;
+  if (status === 'cancelled') { // Yeni eklenen kısım
+    return (
+      <Badge variant="destructive" className="bg-red-500 text-white">
+        Cancelled
+      </Badge>
+    );
+  }
+
+  return null; // Free için badge göstermiyoruz
 };
