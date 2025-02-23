@@ -7,14 +7,11 @@ const supabase = createClient(
   process.env.SUPABASE_SERVICE_ROLE_KEY || ''
 );
 
-// Join ile dönen veri artık profiles!inner(email) şeklinde gelecek
-interface SubscriptionItem {
+interface SubscriptionRecord {
   user_id: string;
   updated_at: string;
   status: string;
   subscription_type: string;
-  // profiles tablosundaki email alanı bir dizi olarak dönecek
-  profiles: { email: string }[];
 }
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
@@ -35,56 +32,83 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     // 1) Pro'ya yeni geçenler (son 24 saat)
     const { data: newProUsers, error: newProError } = await supabase
       .from('subscriptions')
-      .select('user_id, updated_at, status, subscription_type, profiles!inner(email)')
+      .select('user_id, updated_at, status, subscription_type')
       .eq('status', 'pro')
       .in('subscription_type', ['monthly', 'yearly'])
       .gt('updated_at', new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString());
 
     if (newProError) throw newProError;
 
-    for (const user of (newProUsers as SubscriptionItem[])) {
-      // profiles dizisinden email'i al
-      const email = user.profiles?.[0]?.email;
-      if (!email) {
-        console.log("No email for user_id:", user.user_id);
+    let newProEmailsSent = 0;
+
+    // Her Pro kaydı için profiles tablosundan email'i alıp mail gönderelim
+    for (const sub of (newProUsers as SubscriptionRecord[])) {
+      // 1. Adım: profiles tablosunda email’i bul
+      const { data: profileData, error: profileErr } = await supabase
+        .from('profiles')
+        .select('email')
+        .eq('id', sub.user_id)
+        .maybeSingle();
+
+      if (profileErr) {
+        console.error("Error fetching profile (pro started):", profileErr);
         continue;
       }
-      // Pro Started maili gönder
-      await fetch('https://todayrow.app/api/email/sendProStarted', {
+      if (!profileData?.email) {
+        console.log('No email found for user_id (pro):', sub.user_id);
+        continue;
+      }
+
+      // 2. Adım: pro started mailini gönder
+      await fetch(`${process.env.NEXT_PUBLIC_APP_URL || 'https://todayrow.app'}/api/email/sendProStarted`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email })
+        body: JSON.stringify({ email: profileData.email })
       });
+      newProEmailsSent++;
     }
 
     // 2) Pro iptal edenler (son 24 saat)
     const { data: cancelledUsers, error: cancelledError } = await supabase
       .from('subscriptions')
-      .select('user_id, updated_at, status, subscription_type, profiles!inner(email)')
+      .select('user_id, updated_at, status, subscription_type')
       .eq('status', 'cancelled')
       .eq('subscription_type', 'free')
       .gt('updated_at', new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString());
 
     if (cancelledError) throw cancelledError;
 
-    for (const user of (cancelledUsers as SubscriptionItem[])) {
-      const email = user.profiles?.[0]?.email;
-      if (!email) {
-        console.log("No email for user_id:", user.user_id);
+    let cancelledEmailsSent = 0;
+
+    for (const sub of (cancelledUsers as SubscriptionRecord[])) {
+      const { data: profileData, error: profileErr } = await supabase
+        .from('profiles')
+        .select('email')
+        .eq('id', sub.user_id)
+        .maybeSingle();
+
+      if (profileErr) {
+        console.error("Error fetching profile (cancelled):", profileErr);
         continue;
       }
-      // Pro Cancelled maili gönder
-      await fetch('https://todayrow.app/api/email/sendProCancelled', {
+      if (!profileData?.email) {
+        console.log('No email found for user_id (cancelled):', sub.user_id);
+        continue;
+      }
+
+      // pro cancelled mailini gönder
+      await fetch(`${process.env.NEXT_PUBLIC_APP_URL || 'https://todayrow.app'}/api/email/sendProCancelled`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email })
+        body: JSON.stringify({ email: profileData.email })
       });
+      cancelledEmailsSent++;
     }
 
     return res.status(200).json({
       message: 'Subscription checks completed',
-      newProEmails: (newProUsers as SubscriptionItem[]).length,
-      cancelledEmails: (cancelledUsers as SubscriptionItem[]).length
+      newProEmails: newProEmailsSent,
+      cancelledEmails: cancelledEmailsSent
     });
 
   } catch (error) {
