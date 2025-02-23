@@ -9,10 +9,10 @@ const supabase = createClient(
 
 interface SubscriptionItem {
   user_id: string;
-  email: string | null;
   updated_at: string;
   status: string;
   subscription_type: string;
+  users_view: { email: string }[]; // Join sonucu gelen email'ler, dizi olarak
 }
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
@@ -42,16 +42,17 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     if (newProError) throw newProError;
 
     for (const user of (newProUsers as SubscriptionItem[])) {
-      if (!user.email) {
-        console.log("No email for user_id:", user.user_id);
-        continue;
-      }
-      await fetch('https://todayrow.app/api/email/sendProStarted', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: user.email })
-      });
-    }
+  const email = user.users_view?.[0]?.email;
+  if (!email) {
+    console.log("No email for user_id:", user.user_id);
+    continue;
+  }
+  await fetch('https://todayrow.app/api/email/sendProStarted', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email })
+  });
+}
 
     // 2) Pro iptal edenler (son 24 saat)
     const { data: cancelledUsers, error: cancelledError } = await supabase
