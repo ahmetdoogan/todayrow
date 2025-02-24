@@ -3,7 +3,8 @@ export type SubscriptionStatus =
   | "pro"
   | "expired"
   | "active"
-  | "cancel_scheduled";
+  | "cancel_scheduled"
+  | "cancelled";
 
 export type SubscriptionType = "monthly" | "yearly" | "free";
 
