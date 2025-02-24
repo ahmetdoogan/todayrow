@@ -248,6 +248,7 @@
       },
       "trial": {
         "badge": "Trial",
+        "cancelled": "İptal edildi",
         "daysLeft": "{days} gün kaldı",
         "ended": "Deneme sona erdi",
         "upgrade": "Yükselt"

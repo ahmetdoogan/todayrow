@@ -38,7 +38,7 @@ export default function NotesPage() {
     toggleNotePin
   } = useNotes();
   
-  const { isExpired } = useSubscription();
+  const { isPro, isTrialing, status } = useSubscription(); // Güncellendi
   const [isPricingModalOpen, setIsPricingModalOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isSelectionMode, setIsSelectionMode] = useState(false);
@@ -185,7 +185,7 @@ export default function NotesPage() {
             <div className="absolute inset-0 border-2 border-dashed border-gray-300 dark:border-gray-700 rounded-xl transition-all group-hover:border-indigo-500" />
             <button
               onClick={() => {
-                if (isExpired) {
+                if (!isPro && !isTrialing && ['expired', 'cancelled'].includes(status || '')) {
                   setIsPricingModalOpen(true);
                   return;
                 }
@@ -248,11 +248,10 @@ export default function NotesPage() {
         initialNote={selectedNote || undefined}
       />
 
-      {/* Modals */}
       <PricingModal
         isOpen={isPricingModalOpen}
         onClose={() => setIsPricingModalOpen(false)}
-        isTrialEnded={isExpired}
+        isTrialEnded={true}
       />
 
       <DeleteConfirmModal

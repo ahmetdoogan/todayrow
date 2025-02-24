@@ -25,19 +25,16 @@ interface PlannerContextType {
   hiddenSystemPlans: number[];
   toggleSystemPlanVisibility: (planId: number) => void;
 
-  // CRUD
   createPlan: (data: NewPlanData) => Promise<void>;
   updatePlan: (id: number, data: PlanUpdateData) => Promise<void>;
   deletePlan: (id: number) => Promise<void>;
   completePlan: (id: number) => Promise<void>;
   markPlanAsIncomplete: (id: number) => Promise<void>;
   
-  // QuickPlans
   createQuickPlan: (data: NewQuickPlanData) => Promise<void>;
   deleteQuickPlan: (id: number) => Promise<void>;
   handleQuickPlanDrop: (quickPlan: QuickPlan, dropTime: string) => Promise<void>;
 
-  // UI
   setSelectedDate: (date: Date) => void;
   setSelectedPlan: (plan: Plan | null) => void;
   setIsModalOpen: (isOpen: boolean) => void;
@@ -61,7 +58,7 @@ const compareDate = (d1: Date, d2: Date) =>
 
 export function PlannerProvider({ children }: { children: React.ReactNode }) {
   const { user } = useAuth();
-  const { isExpired } = useSubscription();
+  const { isPro, isTrialing, status } = useSubscription();
   const t = useTranslations('common.planner.notifications');
   const [plans, setPlans] = useState<Plan[]>([]);
   const [quickPlans, setQuickPlans] = useState<QuickPlan[]>([]);
@@ -181,7 +178,7 @@ export function PlannerProvider({ children }: { children: React.ReactNode }) {
 
   const createPlan = async (data: NewPlanData) => {
     if (!user || !canEdit) return;
-    if (isExpired) {
+    if (!isPro && !isTrialing && ['expired', 'cancelled'].includes(status || '')) {
       setIsPricingModalOpen(true);
       return;
     }
@@ -261,6 +258,10 @@ export function PlannerProvider({ children }: { children: React.ReactNode }) {
 
   const createQuickPlan = async (data: NewQuickPlanData) => {
     if (!user) return;
+    if (!isPro && !isTrialing && ['expired', 'cancelled'].includes(status || '')) {
+      setIsPricingModalOpen(true);
+      return;
+    }
     try {
       await plannerService.createQuickPlan(data, user.id);
       toast.success(t('createSuccess'));
@@ -303,7 +304,7 @@ export function PlannerProvider({ children }: { children: React.ReactNode }) {
 
   const handleQuickPlanDrop = async (quickPlan: QuickPlan, dropTime: string) => {
     if (!user || !canEdit) return;
-    if (isExpired) {
+    if (!isPro && !isTrialing && ['expired', 'cancelled'].includes(status || '')) {
       setIsPricingModalOpen(true);
       return;
     }
@@ -330,7 +331,6 @@ export function PlannerProvider({ children }: { children: React.ReactNode }) {
         user_id: user.id,
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString(),
-        // Eklenen alanlar:
         priority: 'medium',
         notify: false,
         notify_before: 30

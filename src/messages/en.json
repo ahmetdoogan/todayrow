@@ -165,6 +165,7 @@
           "free_trial": "Trial",
           "active": "Active",
           "cancel_scheduled": "Cancellation Scheduled",
+          "cancelled": "Cancelled",
           "expired": "Expired"
         }
       }
@@ -240,6 +241,7 @@
       },
       "trial": {
         "badge": "Trial",
+        "cancelled": "Cancelled",
         "daysLeft": "{days} days left", 
         "ended": "Trial ended",
         "upgrade": "Upgrade"

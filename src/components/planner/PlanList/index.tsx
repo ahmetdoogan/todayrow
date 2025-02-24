@@ -109,7 +109,6 @@ const DraggablePlanCard = React.forwardRef<HTMLDivElement, DraggablePlanCardProp
                 {t('content.status.completed')}
               </span>
             )}
-            {/* Updated Priority Badge: high or medium */}
             {!plan.is_completed && (plan.priority === 'high' || plan.priority === 'medium') && (
               <span className={`
                   inline-flex items-center rounded-md px-2 py-1 text-xs font-medium
@@ -215,7 +214,7 @@ const PlanList: React.FC<{ isPricingModalOpen?: boolean; setIsPricingModalOpen?:
   } = usePlanner();
 
   const { user } = useAuth();
-  const { isExpired } = useSubscription();
+  const { isPro, isTrialing, status } = useSubscription();
   const [selectedTime, setSelectedTime] = useState<string | null>(null);
   const [isDuplicateMode, setIsDuplicateMode] = useState(false);
   const t = useTranslations('common');
@@ -315,7 +314,11 @@ const PlanList: React.FC<{ isPricingModalOpen?: boolean; setIsPricingModalOpen?:
     },
     drop: (item: any, monitor) => {
       if (!selectedTime || !canEdit) return;
-      
+      if (!isPro && !isTrialing && ['expired', 'cancelled'].includes(status || '')) {
+        if (setIsPricingModalOpen) setIsPricingModalOpen(true);
+        return;
+      }
+
       try {
         if (item.isDuplicating) {
           const planStartTime = new Date(selectedDate);
@@ -364,7 +367,7 @@ const PlanList: React.FC<{ isPricingModalOpen?: boolean; setIsPricingModalOpen?:
 
   const handleCreatePlanAtHour = (hour: number) => {
     if (!canEdit) return;
-    if (isExpired) {
+    if (!isPro && !isTrialing && ['expired', 'cancelled'].includes(status || '')) {
       if (setIsPricingModalOpen) setIsPricingModalOpen(true);
       return;
     }
@@ -413,7 +416,7 @@ const PlanList: React.FC<{ isPricingModalOpen?: boolean; setIsPricingModalOpen?:
 
   const handlePlanClick = (plan: Plan) => {
     if (!canEdit) return;
-    if (isExpired) {
+    if (!isPro && !isTrialing && ['expired', 'cancelled'].includes(status || '')) {
       if (setIsPricingModalOpen) setIsPricingModalOpen(true);
       return;
     }
@@ -555,7 +558,7 @@ const PlanList: React.FC<{ isPricingModalOpen?: boolean; setIsPricingModalOpen?:
               </p>
               <button
                 onClick={() => {
-                  if (isExpired) {
+                  if (!isPro && !isTrialing && ['expired', 'cancelled'].includes(status || '')) {
                     if (setIsPricingModalOpen) setIsPricingModalOpen(true);
                     return;
                   }
@@ -577,7 +580,7 @@ const PlanList: React.FC<{ isPricingModalOpen?: boolean; setIsPricingModalOpen?:
                     color: '#000000',
                     created_at: new Date().toISOString(),
                     updated_at: new Date().toISOString(),
-                    priority: 'medium', // Eğer bu eski planlar varsa; yeni planlar oluştururken yukarıdaki create fonksiyonunda "low" kullanılmalı
+                    priority: 'medium',
                     notify: false,
                     notify_before: 30
                   };

@@ -19,7 +19,7 @@ export default function ContentsPage() {
   const [isPricingModalOpen, setIsPricingModalOpen] = useState(false);
   const [view, setView] = useState<'grid' | 'list'>('grid');
   const { filteredContents, selectedContent, setSelectedContent } = useContent();
-  const { isExpired } = useSubscription();
+  const { isPro, isTrialing, status } = useSubscription(); // Güncellendi
   const t = useTranslations();
 
   const contentContainerClasses = view === 'grid'
@@ -65,26 +65,26 @@ export default function ContentsPage() {
     </div>
 
     {/* İçerik yoksa gösterilecek alan */}
-{filteredContents.length === 0 ? (
-  <div className="flex flex-col items-center justify-center flex-1 min-h-[60vh] py-8">
-    <p className="text-gray-500 dark:text-gray-400 mb-4">
-      {t('common.content.emptyState')}
-    </p>
-    <button
-      onClick={() => {
-        if (isExpired) {
-          setIsPricingModalOpen(true);
-          return;
-        }
-        setIsModalOpen(true);
-      }}
-      className="flex items-center gap-2 px-4 py-2 bg-zinc-900 hover:bg-black/70 text-white dark:bg-zinc-700 dark:hover:bg-zinc-600 rounded-xl transition-all duration-200 font-medium text-sm"
-    >
-      <PlusCircle className="w-4 h-4" />
-      <span>{t('common.sidebar.newContent')}</span>
-    </button>
-  </div>
-) : (
+    {filteredContents.length === 0 ? (
+      <div className="flex flex-col items-center justify-center flex-1 min-h-[60vh] py-8">
+        <p className="text-gray-500 dark:text-gray-400 mb-4">
+          {t('common.content.emptyState')}
+        </p>
+        <button
+          onClick={() => {
+            if (!isPro && !isTrialing && ['expired', 'cancelled'].includes(status || '')) {
+              setIsPricingModalOpen(true);
+              return;
+            }
+            setIsModalOpen(true);
+          }}
+          className="flex items-center gap-2 px-4 py-2 bg-zinc-900 hover:bg-black/70 text-white dark:bg-zinc-700 dark:hover:bg-zinc-600 rounded-xl transition-all duration-200 font-medium text-sm"
+        >
+          <PlusCircle className="w-4 h-4" />
+          <span>{t('common.sidebar.newContent')}</span>
+        </button>
+      </div>
+    ) : (
       <div 
         id="content-container"
         className={`${contentContainerClasses} px-4 md:px-6 lg:px-8`}
@@ -123,8 +123,8 @@ export default function ContentsPage() {
     <PricingModal
       isOpen={isPricingModalOpen}
       onClose={() => setIsPricingModalOpen(false)}
-      isTrialEnded={isExpired}
+      isTrialEnded={true}
     />
   </>
-);
+  );
 }

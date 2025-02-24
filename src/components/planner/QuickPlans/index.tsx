@@ -26,10 +26,15 @@ const QuickPlans: React.FC<QuickPlansProps> = ({ onClose, onDragStart, onDragEnd
     setIsQuickPlanModalOpen,
     hiddenSystemPlans,
     toggleSystemPlanVisibility,
-    user  // user'ı ekledik
-} = usePlanner();
+    user
+  } = usePlanner();
 
   const t = useTranslations('common.quickPlansSection');
+  const { isPro, isTrialing, status } = useSubscription();
+  const [isPricingModalOpen, setIsPricingModalOpen] = useState(false);
+  const [editMode, setEditMode] = useState(false);
+  const [planToDelete, setPlanToDelete] = useState<QuickPlan | null>(null);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
   const defaultQuickPlans: QuickPlan[] = [
     { 
@@ -37,7 +42,7 @@ const QuickPlans: React.FC<QuickPlansProps> = ({ onClose, onDragStart, onDragEnd
       title: t('defaultPlans.meeting'), 
       color: "bg-blue-500", 
       is_system: true,
-      user_id: user?.id || '',  // user'ı usePlanner'dan alalım
+      user_id: user?.id || '',
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString()
     },
@@ -79,19 +84,13 @@ const QuickPlans: React.FC<QuickPlansProps> = ({ onClose, onDragStart, onDragEnd
     },
   ];
 
-  const { isExpired } = useSubscription();
-  const [isPricingModalOpen, setIsPricingModalOpen] = useState(false);
-  const [editMode, setEditMode] = useState(false);
-  const [planToDelete, setPlanToDelete] = useState<QuickPlan | null>(null);
-  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
-
   const allQuickPlans = [
-  ...defaultQuickPlans.map(plan => ({
-    ...plan,
-    isHidden: hiddenSystemPlans.includes(plan.id)
-  })).filter(plan => !plan.isHidden || editMode),  // Eğer edit modundaysa gizli planları da göster
-  ...quickPlans
-];
+    ...defaultQuickPlans.map(plan => ({
+      ...plan,
+      isHidden: hiddenSystemPlans.includes(plan.id)
+    })).filter(plan => !plan.isHidden || editMode),
+    ...quickPlans
+  ];
 
   const handleDeleteClick = (plan: QuickPlan) => {
     setPlanToDelete(plan);
@@ -111,8 +110,7 @@ const QuickPlans: React.FC<QuickPlansProps> = ({ onClose, onDragStart, onDragEnd
       () => ({
         type: ItemTypes.QUICK_PLAN,
         item: () => {
-          console.log('QuickPlan drag started - isExpired:', isExpired);
-          if (isExpired) {
+          if (!isPro && !isTrialing && ['expired', 'cancelled'].includes(status || '')) {
             setIsPricingModalOpen(true);
             return;
           }
@@ -123,9 +121,7 @@ const QuickPlans: React.FC<QuickPlansProps> = ({ onClose, onDragStart, onDragEnd
           if (!monitor.didDrop()) {
             console.log('Drop cancelled or failed');
           }
-          
           onDragEnd?.();
-          
           setTimeout(() => {
             document.body.style.pointerEvents = '';
           }, 100);
@@ -135,7 +131,7 @@ const QuickPlans: React.FC<QuickPlansProps> = ({ onClose, onDragStart, onDragEnd
           isDragging: monitor.isDragging(),
         }),
       }),
-      [plan, onDragStart, onDragEnd, isExpired, editMode]
+      [plan, onDragStart, onDragEnd, editMode, isPro, isTrialing, status]
     );
 
     return (
@@ -147,18 +143,18 @@ const QuickPlans: React.FC<QuickPlansProps> = ({ onClose, onDragStart, onDragEnd
         className="relative"
       >
         <div
-  ref={!editMode ? drag : undefined}
-  className={`
-    flex items-center gap-2 p-2.5 rounded-lg
-    bg-white dark:bg-gray-900/50
-    border border-gray-100 dark:border-gray-800 
-    ${!editMode ? "cursor-move hover:bg-gray-50 dark:hover:bg-gray-800/50" : ""}
-    transition-all duration-200 ease-in-out
-    ${isDragging ? "opacity-50 scale-95" : "opacity-100"}
-    ${editMode && plan.isHidden ? "opacity-50" : ""} // Gizli planları soluk göster
-    group shadow-sm hover:shadow-md
-  `}
->
+          ref={!editMode ? drag : undefined}
+          className={`
+            flex items-center gap-2 p-2.5 rounded-lg
+            bg-white dark:bg-gray-900/50
+            border border-gray-100 dark:border-gray-800 
+            ${!editMode ? "cursor-move hover:bg-gray-50 dark:hover:bg-gray-800/50" : ""}
+            transition-all duration-200 ease-in-out
+            ${isDragging ? "opacity-50 scale-95" : "opacity-100"}
+            ${editMode && plan.isHidden ? "opacity-50" : ""} // Gizli planları soluk göster
+            group shadow-sm hover:shadow-md
+          `}
+        >
           {!editMode && (
             <GripVertical className="text-gray-400 flex-shrink-0" size={16} />
           )}
@@ -245,7 +241,7 @@ const QuickPlans: React.FC<QuickPlansProps> = ({ onClose, onDragStart, onDragEnd
 
         <button
           onClick={() => {
-            if (isExpired) {
+            if (!isPro && !isTrialing && ['expired', 'cancelled'].includes(status || '')) {
               setIsPricingModalOpen(true);
               return;
             }

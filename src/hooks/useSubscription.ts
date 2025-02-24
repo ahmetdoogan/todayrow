@@ -87,17 +87,28 @@ export function useSubscription() {
     }
   }
 
+  // CANCEL_SCHEDULED durumu & süresi dolmuşsa EXPIRIED yap
+  if (subscription.status === "cancel_scheduled" && subscription.subscription_end) {
+    const diff = new Date(subscription.subscription_end).getTime() - Date.now();
+    if (diff <= 0) {
+      derivedStatus = "cancelled"; // Süresi dolmuşsa cancelled'e çevir
+    }
+  }
+
   // Pro mu? => status='pro' & subscription_type ∈ ['monthly','yearly']
   const isPro =
     derivedStatus === "pro" &&
     (subscription.subscription_type === "monthly" ||
       subscription.subscription_type === "yearly");
 
-  // Expired mi?
+  // Expired mi? (trial bittiğinde veya cancel_scheduled süresi dolmuşsa)
   const isExpired = derivedStatus === "expired";
 
   // Trialing mi?
   const isTrialing = derivedStatus === "free_trial";
+
+  // Cancelled mi?
+  const isCancelled = derivedStatus === "cancelled";
 
   // polar_sub_id varsa isVerifiedUser
   const isVerifiedUser = Boolean(subscription.polar_sub_id);
@@ -108,6 +119,7 @@ export function useSubscription() {
     isPro,
     isExpired,
     isTrialing,
+    isCancelled, // Yeni eklenen field
     trialDaysLeft,
     status: derivedStatus,
     isVerifiedUser
