@@ -27,10 +27,13 @@ export default function ForgotPasswordPage() {
 
     try {
       // Otomatik yönlendirmeyi önlemek için bir güvenlik ekleyeceğiz
+      // URL parametrelerini oluştur
       const resetOptions = {
         redirectTo: `${window.location.origin}/auth/reset-password`,
         captchaToken: undefined // null değil undefined kullanıyoruz (TypeCheck uyumluluğu için)
       };
+      
+      console.log('Reset password options:', resetOptions); // Debug için log ekledik
       
       // supabase için uzun işlem
       const { error } = await supabase.auth.resetPasswordForEmail(email, resetOptions);

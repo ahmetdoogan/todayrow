@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Lock, Eye, EyeOff } from "lucide-react";
@@ -14,6 +14,7 @@ export default function ResetPasswordPage() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [isProcessingToken, setIsProcessingToken] = useState(true);
   const router = useRouter();
   const t = useTranslations();
 
@@ -41,6 +42,64 @@ export default function ResetPasswordPage() {
       setLoading(false);
     }
   };
+
+  // Token kontrolü için useEffect hook'u
+  useEffect(() => {
+    const handleRecoveryToken = async () => {
+      try {
+        // Sayfa yüklendiğinde URL parametrelerinde hash kontrolü yap
+        const hash = window.location.hash;
+        
+        if (hash && hash.includes('type=recovery')) {
+          // Burada token ve type parametre değerlerini çıkarıyoruz
+          const hashParams = new URLSearchParams(hash.substring(1));
+          const accessToken = hashParams.get('access_token');
+          
+          if (accessToken) {
+            // Token varsa zaten oturum açmış demektir ve şifreyi güncelleyebilir
+            console.log('Recovery token found, user can reset password');
+            setIsProcessingToken(false);
+            return; // Token bulundu, işlem başarılı
+          }
+        }
+        
+        // Otomatik token doğrulama yapmayı dene
+        const { data: { session }, error } = await supabase.auth.getSession();
+        if (error) {
+          console.error('Error getting session:', error);
+          // Session yoksa login'e yönlendirilmeyi engelliyoruz
+          // Kullanıcı bu sayfada kalabilir ve belki manuel giriş yaparak şifresini sıfırlayabilir
+          setIsProcessingToken(false);
+          return;
+        }
+        
+        if (session) {
+          // Oturum varsa şifreyi güncelleyebilir
+          console.log('Session found, user is authenticated');
+          setIsProcessingToken(false);
+          return;
+        } else {
+          // Session yok ama otomatik yönlendirmeyi engelliyoruz
+          // Bu sayede kullanıcı sayfada kalabilir
+          setIsProcessingToken(false);
+        }
+      } catch (error) {
+        console.error('Error in reset password process:', error);
+        setIsProcessingToken(false);
+      }
+    };
+
+    handleRecoveryToken();
+  }, [router]);
+
+  // Token işlemi devam ediyorsa yükleme ekranı göster
+  if (isProcessingToken) {
+    return (
+      <div className="fixed inset-0 w-full h-full bg-gradient-to-b from-rose-50/80 via-violet-50/80 to-white dark:from-slate-950 dark:via-violet-950/50 dark:to-slate-950 flex items-center justify-center">
+        <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-violet-500"></div>
+      </div>
+    );
+  }
 
   return (
     <div className="fixed inset-0 w-full h-full bg-gradient-to-b from-rose-50/80 via-violet-50/80 to-white dark:from-slate-950 dark:via-violet-950/50 dark:to-slate-950">
