@@ -25,8 +25,7 @@ const PlannerHeader = () => {
   const formatDate = (date: Date) => {
     return new Date(date).toLocaleDateString(t('common.locales.dateFormat'), {
       day: 'numeric',
-      month: 'long',
-      year: 'numeric'
+      month: 'short'
     });
   };
 
