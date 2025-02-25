@@ -81,8 +81,13 @@ const ContentDetailPopup: React.FC<Props> = ({ isOpen, onClose, selectedContent:
   // Düzenleme moduna geçildiğinde, orijinal içerikten kopyalanmış bir kopya oluştur
   const startEditing = () => {
     try {
-      // İçerik bilgilerini kopyala
-      const copiedContent = { ...selectedContent };
+      if (!selectedContent) return;
+      
+      // İçerik bilgilerini kopyala ve id'nin mutlaka olmasını sağla
+      const copiedContent = { 
+        ...selectedContent,
+        id: selectedContent.id // id'nin Content tipine uygun olmasını sağla
+      };
       
       // Tarih ve saati düzgün formatta ayarla
       console.log('Düzenlemeye başlarken tarih/saat:', copiedContent.date, copiedContent.timeFrame);
