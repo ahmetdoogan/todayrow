@@ -57,7 +57,7 @@ export default function ResetPasswordPage() {
   // Sayfa açılır açılmaz çalışacak - herhangi bir yönlendirmeden önce
   useLayoutEffect(() => {
     // Yönlendirme işlemini engellemek için history'yi değiştir
-    const preventDefault = (e) => {
+    const preventDefault = (e: PopStateEvent) => {
       e.preventDefault();
       window.history.pushState(null, '', window.location.href);
     };
