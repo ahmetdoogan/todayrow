@@ -27,9 +27,9 @@ export default function ForgotPasswordPage() {
 
     try {
       // Otomatik yönlendirmeyi önlemek için bir güvenlik ekleyeceğiz
-      // URL parametrelerini oluştur
+      // URL parametrelerini oluştur (hash parametresi ekleyerek)
       const resetOptions = {
-        redirectTo: `${window.location.origin}/auth/reset-password`,
+        redirectTo: `${window.location.origin}/auth/reset-password#recovery=true`,
         captchaToken: undefined // null değil undefined kullanıyoruz (TypeCheck uyumluluğu için)
       };
       

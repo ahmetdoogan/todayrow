@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useLayoutEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Lock, Eye, EyeOff } from "lucide-react";
@@ -15,6 +15,7 @@ export default function ResetPasswordPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [isProcessingToken, setIsProcessingToken] = useState(true);
+  const [isTokenValid, setIsTokenValid] = useState(false);
   const router = useRouter();
   const t = useTranslations();
 
@@ -28,63 +29,109 @@ export default function ResetPasswordPage() {
     setLoading(true);
 
     try {
+      // Supabase ile şifre güncelleme
+      console.log('Trying to update password...');
       const { error } = await supabase.auth.updateUser({
         password: password
       });
 
-      if (error) throw error;
+      if (error) {
+        console.error('Password update error:', error);
+        throw error;
+      }
 
       toast.success(t('auth.resetPassword.success'));
-      router.push('/auth/login');
+      
+      // Başarılı güncellemeden sonra 2 saniye bekleyip login sayfasına yönlendir
+      setTimeout(() => {
+        router.push('/auth/login');
+      }, 2000);
     } catch (error: any) {
       toast.error(t('auth.resetPassword.error'));
+      console.error('Password update catch block error:', error);
     } finally {
       setLoading(false);
     }
   };
 
+  // Sayfa açılır açılmaz çalışacak - herhangi bir yönlendirmeden önce
+  useLayoutEffect(() => {
+    // Yönlendirme işlemini engellemek için history'yi değiştir
+    const preventDefault = (e) => {
+      e.preventDefault();
+      window.history.pushState(null, '', window.location.href);
+    };
+    window.addEventListener('popstate', preventDefault);
+    return () => window.removeEventListener('popstate', preventDefault);
+  }, []);
+  
   // Token kontrolü için useEffect hook'u
   useEffect(() => {
     const handleRecoveryToken = async () => {
       try {
-        // Sayfa yüklendiğinde URL parametrelerinde hash kontrolü yap
+        console.log('*** RESET PASSWORD SAYFASI YÜKLENDi ***');
+        console.log('URL:', window.location.href);
+        console.log('Hash:', window.location.hash);
+        console.log('Pathname:', window.location.pathname);
+
+        // URL'den hash veya query parametrelerini kontrol et
         const hash = window.location.hash;
+        const urlParams = new URLSearchParams(window.location.search);
+        const urlToken = urlParams.get('token');
         
-        if (hash && hash.includes('type=recovery')) {
+        console.log('URL Token:', urlToken);
+        
+        // 1. Yol: Doğrudan URL'deki token'ı al
+        if (urlToken) {
+          console.log('URL Token bulundu, şifre sıfırlama işlemi yapılabilir');
+          setIsTokenValid(true);
+          setIsProcessingToken(false);
+          return;
+        }
+        
+        // 2. Yol: Hash içinde token veya recovery parametresi kontrol et
+        if (hash && (hash.includes('type=recovery') || hash.includes('access_token') || hash.includes('recovery=true'))) {
+          console.log('Hash içinde token bilgisi bulundu');
           // Burada token ve type parametre değerlerini çıkarıyoruz
           const hashParams = new URLSearchParams(hash.substring(1));
           const accessToken = hashParams.get('access_token');
+          const recoveryParam = hashParams.get('recovery');
           
-          if (accessToken) {
-            // Token varsa zaten oturum açmış demektir ve şifreyi güncelleyebilir
-            console.log('Recovery token found, user can reset password');
+          if (accessToken || recoveryParam === 'true') {
+            console.log('Token/Recovery parametresi bulundu, şifre sıfırlama yapılabilir');
+            setIsTokenValid(true);
             setIsProcessingToken(false);
             return; // Token bulundu, işlem başarılı
           }
         }
         
-        // Otomatik token doğrulama yapmayı dene
-        const { data: { session }, error } = await supabase.auth.getSession();
-        if (error) {
-          console.error('Error getting session:', error);
-          // Session yoksa login'e yönlendirilmeyi engelliyoruz
-          // Kullanıcı bu sayfada kalabilir ve belki manuel giriş yaparak şifresini sıfırlayabilir
+        // 3. Yol: Session ile kontrol etmeyi dene
+        try {
+          console.log('Oturum kontrolü yapılıyor...');
+          const { data } = await supabase.auth.getSession();
+          
+          if (data?.session) {
+            console.log('Aktif oturum bulundu');
+            setIsTokenValid(true);
+            setIsProcessingToken(false);
+          } else {
+            // Her durumda sayfada kalıyor ve şifre sıfırlamanın devam edebilmesini sağlıyoruz
+            console.log('Oturum bulunamadı, ancak kullanıcıyı sayfada tutuyoruz');
+            
+            // Eğer recovery parametresi varsa, token olmasa bile kullanıcı şifre sıfırlama yapabilir
+            if (hash && hash.includes('recovery=true')) {
+              setIsTokenValid(true);  
+            }
+            
+            setIsProcessingToken(false);
+          }
+        } catch (sessionError) {
+          console.error('Session kontrol hatası:', sessionError);
           setIsProcessingToken(false);
-          return;
         }
-        
-        if (session) {
-          // Oturum varsa şifreyi güncelleyebilir
-          console.log('Session found, user is authenticated');
-          setIsProcessingToken(false);
-          return;
-        } else {
-          // Session yok ama otomatik yönlendirmeyi engelliyoruz
-          // Bu sayede kullanıcı sayfada kalabilir
-          setIsProcessingToken(false);
-        }
+
       } catch (error) {
-        console.error('Error in reset password process:', error);
+        console.error('Token işleme hatası:', error);
         setIsProcessingToken(false);
       }
     };
@@ -96,7 +143,43 @@ export default function ResetPasswordPage() {
   if (isProcessingToken) {
     return (
       <div className="fixed inset-0 w-full h-full bg-gradient-to-b from-rose-50/80 via-violet-50/80 to-white dark:from-slate-950 dark:via-violet-950/50 dark:to-slate-950 flex items-center justify-center">
-        <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-violet-500"></div>
+        <div>
+          <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-violet-500 mb-4 mx-auto"></div>
+          <p className="text-center text-gray-700 dark:text-gray-300">Şifre sıfırlama işlemi yapılıyor...</p>
+        </div>
+      </div>
+    );
+  }
+  
+  // Token geçersiz ama sayfa açılmışsa bilgilendirici mesaj göster
+  if (!isProcessingToken && !isTokenValid) {
+    return (
+      <div className="fixed inset-0 w-full h-full bg-gradient-to-b from-rose-50/80 via-violet-50/80 to-white dark:from-slate-950 dark:via-violet-950/50 dark:to-slate-950 flex items-center justify-center">
+        <div className="bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl rounded-3xl p-8 shadow-xl border border-slate-200/50 dark:border-slate-700/50 max-w-md w-full">
+          <div className="text-center mb-6">
+            <div className="flex justify-center mb-4">
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12 text-amber-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+              </svg>
+            </div>
+            <h2 className="text-xl font-semibold text-slate-900 dark:text-white mb-2">
+              {t('auth.resetPassword.tokenInvalid')}
+            </h2>
+            <p className="text-slate-600 dark:text-slate-400">
+              {t('auth.resetPassword.tokenExpired')}
+            </p>
+          </div>
+          
+          <div className="space-y-4">
+            <Link href="/auth/forgot-password" className="block w-full py-3 bg-slate-900 dark:bg-white/10 text-white text-center rounded-2xl hover:bg-slate-800 dark:hover:bg-white/20 transition-colors">
+              {t('auth.resetPassword.requestNewLink')}
+            </Link>
+            
+            <Link href="/auth/login" className="block w-full py-3 text-center text-violet-600 dark:text-violet-400 hover:underline">
+              {t('common.navigation.backToLogin')}
+            </Link>
+          </div>
+        </div>
       </div>
     );
   }
