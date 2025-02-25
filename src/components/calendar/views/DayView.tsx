@@ -48,7 +48,10 @@ const DayView: React.FC<DayViewProps> = ({ selectedDate }) => {
   // Günün içeriklerini filtrele
   const getDayContents = (hour: number) => {
   return contents.filter(content => {
+    // Tarih string'inden oluşturulan Date nesnesi otomatik olarak yerel zamana çevrilir
     const contentDate = new Date(content.date);
+    
+    // Gün karşılaştırması + saat kontrolü
     return (
       isSameDay(contentDate, selectedDate) &&
       contentDate.getHours() === hour

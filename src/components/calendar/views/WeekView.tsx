@@ -67,7 +67,10 @@ const WeekView: React.FC<WeekViewProps> = ({ selectedDate }) => {
   currentDate.setDate(weekStart.getDate() + dayOffset);
 
   return contents.filter(content => {
+    // Tarih string'inden oluşturulan Date nesnesi otomatik olarak yerel zamana çevrilir
     const cDate = new Date(content.date);
+    
+    // Gün karşılaştırması + saat kontrolü
     return (
       isSameDay(cDate, currentDate) &&
       cDate.getHours() === hour

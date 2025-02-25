@@ -99,30 +99,32 @@ useEffect(() => {
       setDetails(content.details);
       setFormat(content.format);
       setType(content.type);
-      // Tarih: İçerikteki date değerinin ilk 10 karakteri, yani YYYY-MM-DD kısmı.
+      
       if (content.date) {
-        setDate(content.date.substring(0, 10));
+        // ISO tarih formatından (UTC) yerel tarihe çevirme
+        const contentDate = new Date(content.date);
+        
+        // YYYY-MM-DD formatında tarih ayarla
+        setDate(toDateInputValue(contentDate));
+        
+        // HH:MM formatında saat ayarla
+        setTimeFrame(toTimeInputValue(contentDate));
       }
-      // Zaman: content.timeFrame değeri varsa; eğer nokta içermiyorsa ":00" ekleyin.
-      if (content.timeFrame) {
-        const tframe = content.timeFrame.toString();
-        setTimeFrame(tframe.includes(':') ? tframe : `${tframe}:00`);
-      }
+      
       setTags(content.tags || "");
       setSelectedPlatforms(content.platforms || ["LINKEDIN"]);
       setUrl(content.url || "");
       setNormalizedUrl(content.url || "");
-setMetadata(
-  content.preview_data
-    ? {
-        title: content.preview_data.title ?? "",
-        description: content.preview_data.description ?? "",
-        image: content.preview_data.image ?? "",
-        site_name: content.preview_data.site_name ?? "",
-      }
-    : null
-);
-
+      setMetadata(
+        content.preview_data
+          ? {
+              title: content.preview_data.title ?? "",
+              description: content.preview_data.description ?? "",
+              image: content.preview_data.image ?? "",
+              site_name: content.preview_data.site_name ?? "",
+            }
+          : null
+      );
     }
   }
 }, [isOpen, contentId, contents]);
