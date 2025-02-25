@@ -90,30 +90,73 @@ async function checkAndNotify() {
         // Zaman dilimini (profiles.time_zone) kullanalım
         // "Europe/Istanbul" veya "UTC" vs.
         const userTimeZone = plan.time_zone || "UTC";
+        console.log(`User timezone: ${userTimeZone}`);
 
         // Tarih ve saat parçası ayrı formatlayıp birleştiriyoruz
-        const formattedDate = startTime.toLocaleString("en-GB", {
-          month: "long",
-          day: "numeric",
-          timeZone: userTimeZone,
-        });
-        const formattedClock = startTime.toLocaleString("en-GB", {
-          hour: "2-digit",
-          minute: "2-digit",
-          timeZone: userTimeZone,
-          hour12: false,
-        });
-        const fullFormattedTime = `${formattedDate} at ${formattedClock}`;
+        // Kullanıcının zaman dilimine göre tarih/saat formatlanıyor
+        try {
+          const formattedDate = startTime.toLocaleString("en-GB", {
+            month: "long",
+            day: "numeric",
+            timeZone: userTimeZone,
+          });
+          const formattedClock = startTime.toLocaleString("en-GB", {
+            hour: "2-digit",
+            minute: "2-digit",
+            timeZone: userTimeZone,
+            hour12: false,
+          });
+          const fullFormattedTime = `${formattedDate} at ${formattedClock}`;
+          console.log(`Formatted time for user: ${fullFormattedTime} (timezone: ${userTimeZone})`);
+        } catch (tzError) {
+          console.error(`Error formatting time with timezone ${userTimeZone}:`, tzError);
+          // Hata durumunda UTC'ye düş
+          const formattedDate = startTime.toLocaleString("en-GB", {
+            month: "long",
+            day: "numeric",
+            timeZone: "UTC",
+          });
+          const formattedClock = startTime.toLocaleString("en-GB", {
+            hour: "2-digit",
+            minute: "2-digit",
+            timeZone: "UTC",
+            hour12: false,
+          });
+          const fullFormattedTime = `${formattedDate} at ${formattedClock} (UTC)`;
+          console.log(`Fallback to UTC time: ${fullFormattedTime}`);
+        }
 
         try {
           console.log(`Sending email for plan ${plan.id} to ${plan.user_email}`);
 
-          await client.send({
-            from: '"Todayrow" <hello@todayrow.app>',
-            to: plan.user_email,
-            subject: `Plan Reminder: ${plan.title}`,
-            html: emailTemplate(plan.title, fullFormattedTime),
-          });
+          // SMTP bağlantı hatalarına karşı yeniden deneme mekanizması
+          const maxRetries = 3;
+          let retryCount = 0;
+          let emailSent = false;
+          
+          while (!emailSent && retryCount < maxRetries) {
+            try {
+              await client.send({
+                from: '"Todayrow" <hello@todayrow.app>',
+                to: plan.user_email,
+                subject: `Plan Reminder: ${plan.title}`,
+                html: emailTemplate(plan.title, fullFormattedTime),
+              });
+              emailSent = true;
+              console.log(`Email sent successfully for plan ${plan.id} (attempt ${retryCount + 1})`);
+            } catch (emailErr) {
+              retryCount++;
+              console.error(`SMTP error on attempt ${retryCount}:`, emailErr);
+              
+              if (retryCount < maxRetries) {
+                console.log(`Retrying email send for plan ${plan.id}...`);
+                // Her denemede biraz daha bekle (exponential backoff)
+                await new Promise(resolve => setTimeout(resolve, 1000 * Math.pow(2, retryCount)));
+              } else {
+                throw emailErr; // Son deneme de başarısız oldu, hatayı yeniden fırlat
+              }
+            }
+          }
 
           // 5) notification_sent = true
           const { error: updateError } = await supabase

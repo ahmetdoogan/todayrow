@@ -99,12 +99,15 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     }
 
     // Değişiklik burada: expired yerine cancelled
+    // cancel_scheduled durumundaki abonelikler süresi dolunca cancelled'a çevrilir
     const { data: expiredSubscriptions, error: expiredError } = await supabase
       .from('subscriptions')
       .update({ status: 'cancelled', subscription_type: 'free', updated_at: new Date().toISOString() })
       .eq('status', 'cancel_scheduled')
       .lte('subscription_end', new Date().toISOString())
       .select('user_id');
+      
+    console.log(`${expiredSubscriptions?.length || 0} subscriptions changed from cancel_scheduled to cancelled`);
 
     if (expiredError) throw expiredError;
 

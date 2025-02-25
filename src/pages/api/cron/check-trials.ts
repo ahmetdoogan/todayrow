@@ -63,8 +63,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const trialEndDate = new Date(sub.trial_end)
     const diffMs = trialEndDate.getTime() - now.getTime()
     const daysLeft = Math.ceil(diffMs / (1000 * 60 * 60 * 24))
-
-    if (daysLeft > 1) {
+    
+    // Sadece 7 gün ve 1 gün kalmışsa mail gönder
+    if (daysLeft === 7) {
       console.log(`(Trial) Sending 7-day warning mail to: ${profile.email}`)
       await fetch(`${process.env.NEXT_PUBLIC_APP_URL || 'https://todayrow.app'}/api/email/sendTrialWarning`, {
         method: 'POST',
@@ -74,7 +75,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           daysLeft
         })
       })
-    } else {
+    } else if (daysLeft === 1) {
       console.log(`(Trial) Sending 1-day warning mail to: ${profile.email}`)
       await fetch(`${process.env.NEXT_PUBLIC_APP_URL || 'https://todayrow.app'}/api/email/sendTrialWarning`, {
         method: 'POST',
@@ -84,6 +85,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           daysLeft: 1
         })
       })
+    } else {
+      console.log(`(Trial) Skipping email for ${profile.email} - ${daysLeft} days left (not a notification day)`)
     }
 
     warningsSent++

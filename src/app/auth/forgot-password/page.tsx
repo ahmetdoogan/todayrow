@@ -16,18 +16,31 @@ export default function ForgotPasswordPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // Boş email kontrolü
+    if (!email.trim()) {
+      toast.error(t('auth.resetPassword.emailRequired'));
+      return;
+    }
+    
     setLoading(true);
 
     try {
+      // supabase için uzun işlem
       const { error } = await supabase.auth.resetPasswordForEmail(email, {
         redirectTo: `${window.location.origin}/auth/reset-password`,
       });
 
-      if (error) throw error;
+      if (error) {
+        console.error('Password reset error:', error);
+        throw error;
+      }
 
+      // Başarılı olduğunda
       setSubmitted(true);
       toast.success(t('auth.resetPassword.emailSent'));
     } catch (error: any) {
+      console.error('Password reset catch block error:', error);
       toast.error(t('auth.resetPassword.error'));
     } finally {
       setLoading(false);
