@@ -378,7 +378,16 @@ export function ContentProvider({ children }: { children: React.ReactNode }) {
     const mostProductiveDay = Object.entries(dayCount)
       .sort(([, a], [, b]) => b - a)[0] || [0, 0];
 
-    const days = ['Pazar', 'Pazartesi', 'Salı', 'Çarşamba', 'Perşembe', 'Cuma', 'Cumartesi'];
+    // Günleri çeviri kullanarak al
+    const days = [
+      t('calendar.days.sunday'),
+      t('calendar.days.monday'),
+      t('calendar.days.tuesday'),
+      t('calendar.days.wednesday'),
+      t('calendar.days.thursday'),
+      t('calendar.days.friday'),
+      t('calendar.days.saturday')
+    ];
     
     const formatCount = contents.reduce((acc, content) => {
       acc[content.format] = (acc[content.format] || 0) + 1;
