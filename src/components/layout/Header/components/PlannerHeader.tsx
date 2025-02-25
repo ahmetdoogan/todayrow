@@ -180,38 +180,39 @@ const PlannerHeader = () => {
             </div>
           </>
         }
-      rightContent={
-        isSelectionMode && selectedPlanIds.length > 0 ? (
-          <div className="flex items-center gap-2">
-            <button
-              onClick={() => bulkDeletePlans(selectedPlanIds)}
-              className="flex items-center gap-1 px-2 py-1 md:px-4 md:py-2 
-                       bg-stone-800 hover:bg-stone-900 dark:bg-stone-700 dark:hover:bg-stone-600 
-                       text-white text-sm rounded-lg"
-              title={t('common.planner.deleteSelected')}
-            >
-              <Trash2 className="w-4 h-4" />
-              <span className="hidden md:inline">{t('common.planner.deleteButton')}</span>
-              <span>({selectedPlanIds.length})</span>
-            </button>
-            
-            <button
-              onClick={() => bulkCompletePlans(selectedPlanIds)}
-              className="flex items-center gap-1 px-2 py-1 md:px-4 md:py-2 
-                       bg-stone-800 hover:bg-stone-900 dark:bg-stone-700 dark:hover:bg-stone-600 
-                       text-white text-sm rounded-lg"
-              title={t('common.planner.completeSelected')}
-            >
-              <Check className="w-4 h-4" />
-              <span className="hidden md:inline">{t('common.planner.completeButton')}</span>
-            </button>
-          </div>
-        ) : null
-      }
-      className="bg-stone-50 dark:bg-gray-900"
-      noPadding
-      showThemeToggle={true}
-    />
+        rightContent={
+          isSelectionMode && selectedPlanIds.length > 0 ? (
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => bulkDeletePlans(selectedPlanIds)}
+                className="flex items-center gap-1 px-2 py-1 md:px-4 md:py-2 
+                         bg-stone-800 hover:bg-stone-900 dark:bg-stone-700 dark:hover:bg-stone-600 
+                         text-white text-sm rounded-lg"
+                title={t('common.planner.deleteSelected')}
+              >
+                <Trash2 className="w-4 h-4" />
+                <span className="hidden md:inline">{t('common.planner.deleteButton')}</span>
+                <span>({selectedPlanIds.length})</span>
+              </button>
+              
+              <button
+                onClick={() => bulkCompletePlans(selectedPlanIds)}
+                className="flex items-center gap-1 px-2 py-1 md:px-4 md:py-2 
+                         bg-stone-800 hover:bg-stone-900 dark:bg-stone-700 dark:hover:bg-stone-600 
+                         text-white text-sm rounded-lg"
+                title={t('common.planner.completeSelected')}
+              >
+                <Check className="w-4 h-4" />
+                <span className="hidden md:inline">{t('common.planner.completeButton')}</span>
+              </button>
+            </div>
+          ) : null
+        }
+        className="bg-stone-50 dark:bg-gray-900"
+        noPadding
+        showThemeToggle={true}
+      />
+    </>
   );
 };
 
