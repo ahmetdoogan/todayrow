@@ -447,19 +447,35 @@ export default function PlanForm() {
                 </div>
 
                 {formData.notify && (
-                  <div className="flex items-center justify-between pl-6">
-                    <span className="text-sm text-gray-700 dark:text-gray-300">
-                      {tCommon('plannerForm.notifyBefore')}
-                    </span>
-                    <select
-                      value={formData.notify_before}
-                      onChange={(e) => setFormData({ ...formData, notify_before: Number(e.target.value) })}
-                      className="bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg text-sm px-3 py-1.5"
-                    >
-                      <option value="10">{tCommon('plannerForm.notifyBefore10')}</option>
-                      <option value="30">{tCommon('plannerForm.notifyBefore30')}</option>
-                      <option value="60">{tCommon('plannerForm.notifyBefore60')}</option>
-                    </select>
+                  <div className="space-y-2">
+                    <div className="flex items-center justify-between pl-6">
+                      <span className="text-sm text-gray-700 dark:text-gray-300">
+                        {tCommon('plannerForm.notifyBefore')}
+                      </span>
+                      <select
+                        value={formData.notify_before}
+                        onChange={(e) => setFormData({ ...formData, notify_before: Number(e.target.value) })}
+                        className="bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg text-sm px-3 py-1.5"
+                      >
+                        <option value="10">{tCommon('plannerForm.notifyBefore10')}</option>
+                        <option value="30">{tCommon('plannerForm.notifyBefore30')}</option>
+                        <option value="60">{tCommon('plannerForm.notifyBefore60')}</option>
+                      </select>
+                    </div>
+                    
+                    {/* Bildirim zamanı açıklaması */}
+                    <div className="pl-6 text-xs text-gray-500 dark:text-gray-400 bg-gray-50 dark:bg-gray-800/50 p-2 rounded-lg">
+                      <div className="flex items-start">
+                        <Bell className="w-3 h-3 mt-0.5 mr-1 text-blue-500 dark:text-blue-400" />
+                        <span>
+                          {tCommon('plannerForm.notificationExplanation', {
+                            minutes: formData.notify_before,
+                            date: selectedDay === 'today' ? tCommon('plannerForm.today') : tCommon('plannerForm.tomorrow'),
+                            time: formData.start_time
+                          })}
+                        </span>
+                      </div>
+                    </div>
                   </div>
                 )}
               </div>

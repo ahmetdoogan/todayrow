@@ -25,7 +25,8 @@ const PlannerHeader = () => {
   const formatDate = (date: Date) => {
     return new Date(date).toLocaleDateString(t('common.locales.dateFormat'), {
       day: 'numeric',
-      month: 'long'
+      month: 'long',
+      year: 'numeric'
     });
   };
 
@@ -47,11 +48,24 @@ const PlannerHeader = () => {
   };
 
   const getDateLabel = (date: Date) => {
-    if (isToday(date)) return t('common.planner.dates.today');
-    if (isTomorrow(date)) return t('common.planner.dates.tomorrow');
-    if (isYesterday(date)) return t('common.planner.dates.yesterday');
+    if (isToday(date)) return `${t('common.planner.dates.today')} (${formatDate(date)})`;
+    if (isTomorrow(date)) return `${t('common.planner.dates.tomorrow')} (${formatDate(date)})`;
+    if (isYesterday(date)) return `${t('common.planner.dates.yesterday')} (${formatDate(date)})`;
     return formatDate(date);
   };
+  
+  // Gece yarısı sonrası uyarı kontrolü
+  const isAfterMidnight = () => {
+    const now = new Date();
+    return now.getHours() >= 0 && now.getHours() < 6;
+  };
+  
+  const [showMidnightWarning, setShowMidnightWarning] = React.useState(isAfterMidnight());
+  
+  React.useEffect(() => {
+    // Sadece başlangıçta kontrol et
+    setShowMidnightWarning(isAfterMidnight());
+  }, []);
 
   const dates = React.useMemo(() => {
     const today = new Date();
@@ -129,35 +143,43 @@ const PlannerHeader = () => {
   );
 
   return (
-    <BaseHeader
-      leftContent={
-        <button
-          onClick={() => setIsSelectionMode(!isSelectionMode)}
-          className={`
-            group flex items-center justify-center transition-colors rounded-lg
-            w-8 h-8 md:w-auto md:h-auto md:px-4 md:py-2
-            border border-gray-200 dark:border-gray-700
-            hover:bg-gray-50 dark:hover:bg-gray-700 
-            ${isSelectionMode ? "bg-gray-100 dark:bg-gray-700" : ""}
-          `}
-          title={isSelectionMode ? t('common.planner.cancelSelection') : t('common.planner.multiSelect')}
-        >
-          <CheckSquare className="w-4 h-4 md:mr-2" />
-          <span className="hidden md:inline text-sm">
-            {isSelectionMode ? t('common.planner.cancelSelection') : t('common.planner.multiSelect')}
+    <>
+      {showMidnightWarning && (
+        <div className="bg-amber-50 dark:bg-amber-900/20 border-b border-amber-100 dark:border-amber-800/30 text-amber-700 dark:text-amber-400 px-4 py-2 text-sm text-center">
+          <span>
+            {t('common.planner.midnightWarning', { date: formatDate(new Date()) })}
           </span>
-        </button>
-      }
-      middleContent={
-        <>
-          <div className="hidden md:block">
-            <DesktopDateNavigation />
-          </div>
-          <div className="md:hidden">
-            <MobileDateNavigation />
-          </div>
-        </>
-      }
+        </div>
+      )}
+      <BaseHeader
+        leftContent={
+          <button
+            onClick={() => setIsSelectionMode(!isSelectionMode)}
+            className={`
+              group flex items-center justify-center transition-colors rounded-lg
+              w-8 h-8 md:w-auto md:h-auto md:px-4 md:py-2
+              border border-gray-200 dark:border-gray-700
+              hover:bg-gray-50 dark:hover:bg-gray-700 
+              ${isSelectionMode ? "bg-gray-100 dark:bg-gray-700" : ""}
+            `}
+            title={isSelectionMode ? t('common.planner.cancelSelection') : t('common.planner.multiSelect')}
+          >
+            <CheckSquare className="w-4 h-4 md:mr-2" />
+            <span className="hidden md:inline text-sm">
+              {isSelectionMode ? t('common.planner.cancelSelection') : t('common.planner.multiSelect')}
+            </span>
+          </button>
+        }
+        middleContent={
+          <>
+            <div className="hidden md:block">
+              <DesktopDateNavigation />
+            </div>
+            <div className="md:hidden">
+              <MobileDateNavigation />
+            </div>
+          </>
+        }
       rightContent={
         isSelectionMode && selectedPlanIds.length > 0 ? (
           <div className="flex items-center gap-2">

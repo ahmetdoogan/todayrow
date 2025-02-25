@@ -45,18 +45,33 @@ async function checkAndNotify() {
 
     console.log(`Found ${plans.length} plans to process`);
 
-    // 2) SMTP client ayarları (TLS 465)
-    const client = new SMTPClient({
-      connection: {
-        hostname: "smtp.gmail.com",
-        port: 465,
-        tls: true,
-        auth: {
-          username: Deno.env.get("SMTP_USER") || "",
-          password: Deno.env.get("SMTP_PASSWORD") || "",
-        },
+    // 2) SMTP client ayarları (TLS 465) - Daha sağlam bir yapılandırma
+    const smtpConnConfig = {
+      hostname: "smtp.gmail.com",
+      port: 465,
+      tls: true,
+      auth: {
+        username: Deno.env.get("SMTP_USER") || "",
+        password: Deno.env.get("SMTP_PASSWORD") || "",
       },
+      // Zaman aşımı ayarları
+      timeout: 30000, // 30 saniye bağlantı zaman aşımı
+    };
+    
+    console.log("Creating SMTP client with configuration...");
+    const client = new SMTPClient({
+      connection: smtpConnConfig,
     });
+    
+    // SMTP bağlantısını test et
+    try {
+      console.log("Testing SMTP connection...");
+      await client.connect();
+      console.log("SMTP connection successful");
+    } catch (connErr) {
+      console.error("SMTP connection test failed:", connErr);
+      // Bağlantı hatası durumunda da devam et, gönderim sırasında yeniden denenecek
+    }
 
     const results: Array<{
       id: number;
@@ -87,44 +102,17 @@ async function checkAndNotify() {
       if (now >= notifyTime && now < startTime) {
         console.log(`Time to notify for plan: ${plan.id}`);
 
-        // Zaman dilimini (profiles.time_zone) kullanalım
+                // Zaman dilimini (profiles.time_zone) kullanalım
         // "Europe/Istanbul" veya "UTC" vs.
         const userTimeZone = plan.time_zone || "UTC";
         console.log(`User timezone: ${userTimeZone}`);
-
-        // Tarih ve saat parçası ayrı formatlayıp birleştiriyoruz
-        // Kullanıcının zaman dilimine göre tarih/saat formatlanıyor
-        try {
-          const formattedDate = startTime.toLocaleString("en-GB", {
-            month: "long",
-            day: "numeric",
-            timeZone: userTimeZone,
-          });
-          const formattedClock = startTime.toLocaleString("en-GB", {
-            hour: "2-digit",
-            minute: "2-digit",
-            timeZone: userTimeZone,
-            hour12: false,
-          });
-          const fullFormattedTime = `${formattedDate} at ${formattedClock}`;
-          console.log(`Formatted time for user: ${fullFormattedTime} (timezone: ${userTimeZone})`);
-        } catch (tzError) {
-          console.error(`Error formatting time with timezone ${userTimeZone}:`, tzError);
-          // Hata durumunda UTC'ye düş
-          const formattedDate = startTime.toLocaleString("en-GB", {
-            month: "long",
-            day: "numeric",
-            timeZone: "UTC",
-          });
-          const formattedClock = startTime.toLocaleString("en-GB", {
-            hour: "2-digit",
-            minute: "2-digit",
-            timeZone: "UTC",
-            hour12: false,
-          });
-          const fullFormattedTime = `${formattedDate} at ${formattedClock} (UTC)`;
-          console.log(`Fallback to UTC time: ${fullFormattedTime}`);
-        }
+        
+        // Yeni yardımcı fonksiyonu kullanarak formatlı tarih/saat bilgisi oluştur
+        const fullFormattedTime = formatDateWithTimezone(startTime, userTimeZone);
+        console.log(`Formatted time for plan ${plan.id}: ${fullFormattedTime}`);
+        
+        // Kullanıcının zaman dilimini doğrulamak için UTC saati de göster
+        console.log(`UTC time for reference: ${startTime.toUTCString()}`);
 
         try {
           console.log(`Sending email for plan ${plan.id} to ${plan.user_email}`);
@@ -136,26 +124,48 @@ async function checkAndNotify() {
           
           while (!emailSent && retryCount < maxRetries) {
             try {
-              await client.send({
-                from: '"Todayrow" <hello@todayrow.app>',
-                to: plan.user_email,
-                subject: `Plan Reminder: ${plan.title}`,
-                html: emailTemplate(plan.title, fullFormattedTime),
-              });
-              emailSent = true;
-              console.log(`Email sent successfully for plan ${plan.id} (attempt ${retryCount + 1})`);
-            } catch (emailErr) {
-              retryCount++;
-              console.error(`SMTP error on attempt ${retryCount}:`, emailErr);
-              
-              if (retryCount < maxRetries) {
-                console.log(`Retrying email send for plan ${plan.id}...`);
-                // Her denemede biraz daha bekle (exponential backoff)
-                await new Promise(resolve => setTimeout(resolve, 1000 * Math.pow(2, retryCount)));
-              } else {
-                throw emailErr; // Son deneme de başarısız oldu, hatayı yeniden fırlat
+            // Daha fazla log
+            console.log(`Attempting to send email (${retryCount + 1}/${maxRetries}) to ${plan.user_email}`);
+            
+            // Bağlantı kopmuş olabilir, yeniden bağlanmayı dene
+            if (retryCount > 0) {
+              try {
+                console.log(`Reconnecting to SMTP server...`);
+                await client.connect();
+                  console.log(`SMTP reconnection successful`);
+              } catch (reconnectErr) {
+                console.error(`SMTP reconnection failed:`, reconnectErr);
+                // Devam et, gönderim işleminde yine deneyeceğiz
               }
             }
+            
+            // E-posta gönderimi
+            await client.send({
+            from: '"Todayrow" <hello@todayrow.app>',
+              to: plan.user_email,
+                subject: `Plan Reminder: ${plan.title}`,
+              html: emailTemplate(plan.title, fullFormattedTime),
+              // Gönderim zaman aşımını artır
+              timeout: 20000, // 20 saniye
+            });
+            
+            emailSent = true;
+            console.log(`Email successfully sent for plan ${plan.id} (attempt ${retryCount + 1})`);
+          } catch (emailErr) {
+            retryCount++;
+            console.error(`SMTP error on attempt ${retryCount}:`, emailErr);
+            console.error(`Error details: ${JSON.stringify(emailErr)}`);
+            
+            if (retryCount < maxRetries) {
+              console.log(`Retrying email send for plan ${plan.id} in ${1000 * Math.pow(2, retryCount)}ms...`);
+              // Her denemede biraz daha bekle (exponential backoff)
+              await new Promise(resolve => setTimeout(resolve, 1000 * Math.pow(2, retryCount)));
+            } else {
+              console.error(`All ${maxRetries} attempts failed for plan ${plan.id}. Giving up.`);
+              // Son deneme de başarısız oldu. Hata fırlatmak yerine sadece log yazalım ve devam edelim
+              // Bu şekilde bir e-postanın başarısız olması diğerlerini engellemez
+            }
+          }
           }
 
           // 5) notification_sent = true
@@ -205,8 +215,21 @@ serve(async (req: Request) => {
 
   try {
     console.log("Starting Edge Function execution...");
-    const result = await checkAndNotify();
-    console.log("Function completed:", result);
+    
+    // Zaman aşımı için bir Promise ve timeout ekleyelim
+    const timeoutPromise = new Promise((_, reject) => {
+      setTimeout(() => {
+        reject(new Error("Function execution timed out after 50 seconds"));
+      }, 50000); // 50 saniye timeout
+    });
+    
+    // Promise.race ile ya işlem tamamlanır ya da timeout olur
+    const result = await Promise.race([
+      checkAndNotify(),
+      timeoutPromise
+    ]) as any;
+    
+    console.log("Function completed successfully:", result);
     return new Response(JSON.stringify(result), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
       status: 200,
@@ -214,11 +237,14 @@ serve(async (req: Request) => {
   } catch (err) {
     const error = err as Error;
     console.error("Function error:", error);
+    
+    // Hata detaylarını güvenli biçimde döndür
     return new Response(
       JSON.stringify({
         error: error.message,
         errorName: error.name,
         errorStack: error.stack,
+        timestamp: new Date().toISOString(),
       }),
       {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
