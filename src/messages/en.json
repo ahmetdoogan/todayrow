@@ -591,6 +591,10 @@
         },
         "fields": {
           "platforms": "Platforms",
+          "title": {
+            "label": "Title",
+            "placeholder": "Enter title..."
+          },
           "url": {
             "label": "URL (Optional)",
             "placeholder": "E.g: bestlifeturkey.com"
@@ -627,7 +631,7 @@
           "date": "Date",
           "time": {
             "label": "Time",
-            "placeholder": "E.g: Morning 10:00"
+            "placeholder": "E.g: 10:00"
           },
           "tags": {
             "label": "Tags",
@@ -647,7 +651,9 @@
           "undo": "Undo"
         },
         "messages": {
-          "updateError": "An error occurred while updating."
+          "updateError": "An error occurred while updating",
+          "dateError": "Date format error, current date was used instead",
+          "confirmCloseMessage": "Changes will not be saved. Are you sure?"
         }
       },
       "references": {

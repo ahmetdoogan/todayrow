@@ -67,14 +67,28 @@ const WeekView: React.FC<WeekViewProps> = ({ selectedDate }) => {
   currentDate.setDate(weekStart.getDate() + dayOffset);
 
   return contents.filter(content => {
-    // Tarih string'inden oluşturulan Date nesnesi otomatik olarak yerel zamana çevrilir
-    const cDate = new Date(content.date);
+    // Tarih kontrolü - içerik yoksa filtrele
+    if (!content.date) return false;
     
-    // Gün karşılaştırması + saat kontrolü
-    return (
-      isSameDay(cDate, currentDate) &&
-      cDate.getHours() === hour
-    );
+    try {
+      // Tarih string'inden oluşturulan Date nesnesi otomatik olarak yerel zamana çevrilir
+      const cDate = new Date(content.date);
+      
+      // Hafta görünümünde gün ve saat karşılaştırması
+      const sameDay = isSameDay(cDate, currentDate);
+      const sameHour = cDate.getHours() === hour;
+      
+      // Debug için: 
+      if (sameDay && sameHour) {
+        const dayName = displayDays[dayOffset];
+        console.log(`İçerik '${content.title}' ${dayName} günü ${hour}:00 saatinde görüntüleniyor. Tarih:`, content.date);
+      }
+      
+      return sameDay && sameHour;
+    } catch (err) {
+      console.error('Tarih işlenirken hata:', err);
+      return false;
+    }
   });
 };
 

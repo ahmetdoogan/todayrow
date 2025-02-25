@@ -23,6 +23,20 @@ interface Props {
   onContentUpdated?: () => void;
 }
 
+// Tarih formatını date input (yyyy-mm-dd) formatına çevirir
+const formatDateForInput = (dateString: string): string => {
+  try {
+    const date = new Date(dateString);
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  } catch (err) {
+    console.error('Tarih input formatına çevirilirken hata:', err);
+    return '';
+  }
+};
+
 const ContentDetailPopup: React.FC<Props> = ({ isOpen, onClose, selectedContent: initialContent, onContentUpdated }) => {
   const t = useTranslations('common.content.detail');
   const {
@@ -42,6 +56,46 @@ const ContentDetailPopup: React.FC<Props> = ({ isOpen, onClose, selectedContent:
 
   const [isEditing, setIsEditing] = useState(false);
   const [editData, setEditData] = useState<Content | null>(selectedContent);
+  const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
+
+  // İçerikte değişiklik var mı kontrol et
+  const hasChanges = () => {
+    if (!editData || !selectedContent) return false;
+    
+    // İçeriğin farklı alanlarını karşılaştır
+    if (editData.title !== selectedContent.title) return true;
+    if (editData.details !== selectedContent.details) return true;
+    if (editData.type !== selectedContent.type) return true;
+    if (editData.format !== selectedContent.format) return true;
+    if (editData.timeFrame !== selectedContent.timeFrame) return true;
+    if (editData.tags !== selectedContent.tags) return true;
+    if (editData.url !== selectedContent.url) return true;
+    
+    // Platformları karşılaştır
+    if (JSON.stringify(editData.platforms) !== JSON.stringify(selectedContent.platforms)) return true;
+    
+    // Değişiklik yok
+    return false;
+  };
+  
+  // Düzenleme moduna geçildiğinde, orijinal içerikten kopyalanmış bir kopya oluştur
+  const startEditing = () => {
+    try {
+      // İçerik bilgilerini kopyala
+      const copiedContent = { ...selectedContent };
+      
+      // Tarih ve saati düzgün formatta ayarla
+      console.log('Düzenlemeye başlarken tarih/saat:', copiedContent.date, copiedContent.timeFrame);
+      
+      // EditData state'ini güncelle
+      setEditData(copiedContent);
+      
+      // Düzenleme modunu aç
+      setIsEditing(true);
+    } catch (err) {
+      console.error('Düzenleme başlatılırken hata:', err);
+    }
+  };
 
   if (!selectedContent) return null;
 
@@ -92,13 +146,69 @@ const ContentDetailPopup: React.FC<Props> = ({ isOpen, onClose, selectedContent:
     if (!editData || !selectedContent) return;
 
     try {
+      console.log('Güncellenecek tarih/saat bilgileri:', editData.date, editData.timeFrame);
+      
+      // Tarih ve saat düzenlemelerini işle
+      let updatedDate = editData.date;
+      
+      try {
+        // Tarih formatını kontrol et ve işle
+        if (typeof editData.date === 'string') {
+          let localDate;
+          
+          if (editData.date.includes('-')) {
+            // "YYYY-MM-DD" formatındaki metni işle
+            const [year, month, day] = editData.date.split('-').map(Number);
+            
+            // Saat bilgisini kontrol et ve işle
+            let hours = 0;
+            let minutes = 0;
+            
+            if (editData.timeFrame && typeof editData.timeFrame === 'string') {
+              if (editData.timeFrame.includes(':')) {
+                [hours, minutes] = editData.timeFrame.split(':').map(Number);
+              } else {
+                // Saat bilgisi yoksa 12:00 olarak ayarla
+                hours = 12;
+              }
+            }
+            
+            // Geçerli bir tarih oluştur
+            if (isNaN(year) || isNaN(month) || isNaN(day) || 
+                year < 2000 || year > 2100 || month < 1 || month > 12 || day < 1 || day > 31) {
+              throw new Error('Geçersiz tarih değerleri');
+            }
+            
+            // Yerel zamanı oluştur
+            localDate = new Date(year, month - 1, day, hours, minutes, 0, 0);
+          } else {
+            // Eğer tarih input formatında değilse, orijinal tarihi kullan
+            localDate = new Date(editData.date);
+          }
+          
+          // Tarih geçerli mi kontrol et
+          if (isNaN(localDate.getTime())) {
+            throw new Error('Geçersiz tarih');
+          }
+          
+          // Güvenli ve geçerli bir ISO string oluştur
+          updatedDate = localDate.toISOString();
+          console.log('Oluşturulan ISO tarih:', updatedDate);
+        }
+      } catch (dateError) {
+        console.error('Tarih işleme hatası:', dateError);
+        // Varsayılan olarak şu anki tarihi kullan
+        updatedDate = new Date().toISOString();
+        toast.error(t('messages.dateError'));
+      }
+
       const updateData = {
         title: editData.title,
         details: editData.details,
         type: editData.type as ContentType,
         format: editData.format as ContentFormat,
         timeFrame: editData.timeFrame,
-        date: editData.date,
+        date: updatedDate, // Güncellenmiş tarih
         tags: editData.tags,
         platforms: editData.platforms,
         url: editData.url,
@@ -142,10 +252,15 @@ const ContentDetailPopup: React.FC<Props> = ({ isOpen, onClose, selectedContent:
         className="fixed inset-0 z-50 flex items-center justify-center bg-black/20 dark:bg-black/40 backdrop-blur-sm"
         style={{ zIndex: 50 + modalStack.length }}
         onClick={(e: React.MouseEvent) => {
-          if (modalStack.length > 0) {
-            popFromModalStack();
+          e.stopPropagation();
+          if (isEditing && hasChanges()) {
+            setIsConfirmModalOpen(true);
           } else {
-            clearModalStack();
+            if (modalStack.length > 0) {
+              popFromModalStack();
+            } else {
+              clearModalStack();
+            }
           }
         }}
       >
@@ -175,15 +290,15 @@ const ContentDetailPopup: React.FC<Props> = ({ isOpen, onClose, selectedContent:
                   />
                 </div>
 
-                <input
-                  type="text"
-                  value={editData?.title || ''}
-                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => 
-                    setEditData(prev => prev ? { ...prev, title: e.target.value } : prev)
-                  }
-                  className="w-full px-4 py-2.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg text-sm focus:ring-2 focus:ring-slate-900 dark:focus:ring-slate-600 focus:border-transparent"
-                  placeholder={t('fields.title.placeholder')}
-                />
+                  <input
+                    type="text"
+                    value={editData?.title || ''}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => 
+                      setEditData(prev => prev ? { ...prev, title: e.target.value } : prev)
+                    }
+                    className="w-full px-4 py-2.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg text-sm focus:ring-2 focus:ring-slate-900 dark:focus:ring-slate-600 focus:border-transparent"
+                    placeholder={t('fields.title.placeholder')}
+                  />
 
                 <div>
                   <label className="text-sm text-slate-700 dark:text-slate-300 mb-2 block">
@@ -253,7 +368,7 @@ const ContentDetailPopup: React.FC<Props> = ({ isOpen, onClose, selectedContent:
                     </label>
                     <input
                       type="date"
-                      value={editData?.date || ''}
+                      value={editData?.date ? formatDateForInput(editData.date) : ''}
                       onChange={(e: React.ChangeEvent<HTMLInputElement>) => 
                         setEditData(prev => prev ? { ...prev, date: e.target.value } : prev)
                       }
@@ -266,13 +381,14 @@ const ContentDetailPopup: React.FC<Props> = ({ isOpen, onClose, selectedContent:
                       {t('fields.time.label')}
                     </label>
                     <input
-                      type="text"
+                      type="time"
                       value={editData?.timeFrame || ''}
                       onChange={(e: React.ChangeEvent<HTMLInputElement>) => 
                         setEditData(prev => prev ? { ...prev, timeFrame: e.target.value } : prev)
                       }
                       className="w-full px-4 py-2.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg text-sm focus:ring-2 focus:ring-slate-900 dark:focus:ring-slate-600 focus:border-transparent"
-                      placeholder={t('fields.time.placeholder')}
+                      placeholder="HH:MM"
+                      pattern="[0-9]{2}:[0-9]{2}"
                     />
                   </div>
                 </div>
@@ -308,7 +424,7 @@ const ContentDetailPopup: React.FC<Props> = ({ isOpen, onClose, selectedContent:
 
                 <div className="flex gap-3 justify-end">
                   <button
-                    onClick={() => setIsEditing(false)}
+                    onClick={() => setIsConfirmModalOpen(true)}
                     className="px-5 py-2.5 text-sm font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors"
                   >
                     {t('buttons.cancel')}
@@ -342,10 +458,14 @@ const ContentDetailPopup: React.FC<Props> = ({ isOpen, onClose, selectedContent:
                     <button
                       onClick={(e) => {
                         e.stopPropagation();
-                        if (modalStack.length > 0) {
-                          popFromModalStack();
+                        if (isEditing && hasChanges()) {
+                          setIsConfirmModalOpen(true);
                         } else {
-                          clearModalStack();
+                          if (modalStack.length > 0) {
+                            popFromModalStack();
+                          } else {
+                            clearModalStack();
+                          }
                         }
                       }}
                       className="p-1.5 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors"
@@ -402,7 +522,7 @@ const ContentDetailPopup: React.FC<Props> = ({ isOpen, onClose, selectedContent:
 
                 <div className="flex gap-3">
                   <button
-                    onClick={() => setIsEditing(true)}
+                    onClick={() => startEditing()}
                     className="flex items-center justify-center gap-2 px-5 py-2.5 text-sm font-medium bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors flex-1"
                   >
                     <Pencil className="w-4 h-4" />
@@ -439,10 +559,13 @@ const ContentDetailPopup: React.FC<Props> = ({ isOpen, onClose, selectedContent:
         </motion.div>
       </motion.div>
       <ConfirmModal
-        isOpen={false}
-        onClose={() => {}}
-        onConfirm={() => {}}
-        message={t('confirmCloseMessage')}
+        isOpen={isConfirmModalOpen}
+        onClose={() => setIsConfirmModalOpen(false)}
+        onConfirm={() => {
+          setIsConfirmModalOpen(false);
+          setIsEditing(false);
+        }}
+        message={t('messages.confirmCloseMessage')}
       />
     </>
   );

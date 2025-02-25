@@ -555,7 +555,7 @@
     "notifyBefore10": "10 dakika önce",
     "notifyBefore30": "30 dakika önce",
     "notifyBefore60": "1 saat önce",
-      "notificationExplanation": "Planınızdan {minutes} dakika önce, {date} günü saat {time} için e-posta bildirimi alacaksınız."
+      "notificationExplanation": "Planınızın başlama saatinden {minutes} dakika önce, {date} için saat {time} hakkında e-posta bildirimi alacaksınız."
     },
     "tagInput": {
       "folderPlaceholder": "Klasör oluştur veya seç",
@@ -598,6 +598,10 @@
         },
         "fields": {
           "platforms": "Platformlar",
+          "title": {
+            "label": "Başlık",
+            "placeholder": "Başlık girin..."
+          },
           "url": {
             "label": "URL (Opsiyonel)",
             "placeholder": "Örn: bestlifeturkey.com"
@@ -634,7 +638,7 @@
           "date": "Tarih",
           "time": {
             "label": "Zaman",
-            "placeholder": "Örn: Sabah 10:00"
+            "placeholder": "Örn: 10:00"
           },
           "tags": {
             "label": "Etiketler",
@@ -654,7 +658,9 @@
           "undo": "Geri Al"
         },
         "messages": {
-          "updateError": "Güncelleme sırasında bir hata oluştu."
+          "updateError": "Güncelleme sırasında bir hata oluştu",
+          "dateError": "Tarih formatı hatası nedeniyle şu anki tarih kullanıldı",
+          "confirmCloseMessage": "Değişiklikler kaydedilmeyecek. Emin misiniz?"
         }
       },
       "references": {

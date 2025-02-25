@@ -48,14 +48,31 @@ const DayView: React.FC<DayViewProps> = ({ selectedDate }) => {
   // Günün içeriklerini filtrele
   const getDayContents = (hour: number) => {
   return contents.filter(content => {
-    // Tarih string'inden oluşturulan Date nesnesi otomatik olarak yerel zamana çevrilir
-    const contentDate = new Date(content.date);
+    // Tarih kontrolü - içerik yoksa filtrele
+    if (!content.date) return false;
     
-    // Gün karşılaştırması + saat kontrolü
-    return (
-      isSameDay(contentDate, selectedDate) &&
-      contentDate.getHours() === hour
-    );
+    try {
+      // Burada önemli olan, içeriğin tarihini takvimde gösterilecek doğru saate çevirmektir
+      const contentDate = new Date(content.date);
+      
+      // Takvimde görüntülemek için, içeriğin saatini (UTC'den) yerel zamana çeviriyoruz
+      // content.timeFrame varsa ve "HH:MM" formatındaysa bunu da kullanabiliriz
+      // Ancak burada sadece content.date değerini kullanmamız yeterli
+      
+      // Gün ve saat karşılaştırması
+      const sameDay = isSameDay(contentDate, selectedDate);
+      const sameHour = contentDate.getHours() === hour;
+      
+      // Debug için:
+      if (sameDay && sameHour) {
+        console.log(`İçerik '${content.title}', ${hour}:00 saatinde görüntüleniyor. DB Tarihi:`, content.date);
+      }
+      
+      return sameDay && sameHour;
+    } catch (err) {
+      console.error('Tarih işlenirken hata:', err);
+      return false;
+    }
   });
 };
 

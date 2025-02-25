@@ -39,17 +39,31 @@ const normalizeUrl = (url: string): string => {
 
 // Yardımcı: Date input (yyyy-mm-dd) formatına çevirir
 const toDateInputValue = (date: Date): string => {
-  const yyyy = date.getFullYear();
-  const mm = String(date.getMonth() + 1).padStart(2, '0');
-  const dd = String(date.getDate()).padStart(2, '0');
-  return `${yyyy}-${mm}-${dd}`;
+  try {
+    const yyyy = date.getFullYear();
+    const mm = String(date.getMonth() + 1).padStart(2, '0');
+    const dd = String(date.getDate()).padStart(2, '0');
+    return `${yyyy}-${mm}-${dd}`;
+  } catch (err) {
+    console.error('Tarih formatına çevirirken hata:', err);
+    // Bugünün tarihini varsayılan olarak döndür
+    const today = new Date();
+    return `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
+  }
 };
 
 // Yardımcı: Time input (HH:mm) formatına çevirir
 const toTimeInputValue = (date: Date): string => {
-  const hh = String(date.getHours()).padStart(2, '0');
-  const mm = String(date.getMinutes()).padStart(2, '0');
-  return `${hh}:${mm}`;
+  try {
+    const hh = String(date.getHours()).padStart(2, '0');
+    const mm = String(date.getMinutes()).padStart(2, '0');
+    return `${hh}:${mm}`;
+  } catch (err) {
+    console.error('Saat formatına çevirirken hata:', err);
+    // Şu anki saati varsayılan olarak döndür
+    const now = new Date();
+    return `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+  }
 };
 
 const ContentModal: React.FC<ContentModalProps> = ({
@@ -101,14 +115,26 @@ useEffect(() => {
       setType(content.type);
       
       if (content.date) {
-        // ISO tarih formatından (UTC) yerel tarihe çevirme
-        const contentDate = new Date(content.date);
-        
-        // YYYY-MM-DD formatında tarih ayarla
-        setDate(toDateInputValue(contentDate));
-        
-        // HH:MM formatında saat ayarla
-        setTimeFrame(toTimeInputValue(contentDate));
+        try {
+          // ISO tarih formatından (UTC) yerel tarihe çevirme
+          const contentDate = new Date(content.date);
+          console.log('Düzenlenen içeriğin tarihi (UTC):', content.date);
+          console.log('Yerel tarihe çevrildi:', contentDate);
+          
+          // YYYY-MM-DD formatında tarih ayarla
+          const dateValue = toDateInputValue(contentDate);
+          console.log('Form için tarih değeri:', dateValue);
+          setDate(dateValue);
+          
+          // HH:MM formatında saat ayarla
+          const timeValue = toTimeInputValue(contentDate);
+          console.log('Form için saat değeri:', timeValue);
+          setTimeFrame(timeValue);
+        } catch (err) {
+          console.error('Tarih çevirme hatası:', err);
+        }
+      } else {
+        console.error('Content.date boş veya null!');
       }
       
       setTags(content.tags || "");
@@ -247,15 +273,52 @@ useEffect(() => {
     return;
   }
 
-  // "YYYY-MM-DD" formatındaki date string'ini ve "HH:mm" formatındaki timeFrame string'ini parçalayalım.
+  // Tarih ve saat işleme
+  let parsedHours = 0;
+  let parsedMinutes = 0;
+  
+  // Saat formatını kontrol et
+  if (timeFrame && timeFrame.includes(':')) {
+    // Normal HH:MM formatı
+    [parsedHours, parsedMinutes] = timeFrame.split(':').map(num => parseInt(num) || 0);
+  } else {
+    // Metin formatında veya geçersiz bir saat girilmiş
+    // Burada basit bir metin analizi yapabiliriz
+    const timeText = timeFrame.toLowerCase();
+    
+    // Sayısal değerleri çıkar
+    const numberMatch = timeText.match(/\d+/);
+    if (numberMatch) {
+      parsedHours = parseInt(numberMatch[0]);
+    }
+    
+    // "saat sekiz" gibi metinleri işle
+    if (timeText.includes('sekiz')) parsedHours = 8;
+    if (timeText.includes('dokuz')) parsedHours = 9;
+    if (timeText.includes('on') && !timeText.includes('onbir') && !timeText.includes('oniki')) parsedHours = 10;
+    if (timeText.includes('onbir')) parsedHours = 11;
+    if (timeText.includes('oniki') || timeText.includes('on iki')) parsedHours = 12;
+    
+    // Geçersiz değerler için varsayılan 12:00 kullan
+    if (parsedHours < 0 || parsedHours > 23) parsedHours = 12;
+  }
+  
+  // "YYYY-MM-DD" formatındaki date string'ini parçala
   const [year, month, day] = date.split('-').map(Number);
-  const [hrs, mins] = timeFrame.split(':').map(Number);
   
-  // Yerel zaman olarak yeni bir Date nesnesi oluşturuyoruz.
-  const localTimestamp = new Date(year, month - 1, day, hrs || 0, mins || 0, 0, 0);
+  // Yerel zaman olarak yeni bir Date nesnesi oluştur
+  const localTimestamp = new Date(year, month - 1, day, parsedHours, parsedMinutes, 0, 0);
   
-  // localTimestamp.toISOString() UTC zamanını üretir.
+  // ISO string ile UTC formatına çevir
   const isoDate = localTimestamp.toISOString();
+  
+  // Debug bilgileri
+  console.log('Lütfen kontrol ediniz:');
+  console.log('Seçilen Tarih:', date);
+  console.log('Seçilen Saat Metni:', timeFrame);
+  console.log('Oluşturulan Date Nesnesi:', localTimestamp);
+  console.log('Oluşturulan ISO Tarih:', isoDate);
+  console.log('İşlenen Saat:', parsedHours + ':' + parsedMinutes);
 
   // Benzersiz slug oluşturma
 const baseSlug = createSlug(title);
@@ -268,13 +331,17 @@ const { data: existingSlugs } = await supabase
 const slug = makeUniqueSlug(baseSlug, existingSlugs?.map(c => c.slug) || []);
 
 const now = new Date().toISOString();
+
+// Saat bilgisini standart formatına çevir
+const formattedTimeFrame = `${String(parsedHours).padStart(2, '0')}:${String(parsedMinutes).padStart(2, '0')}`;
+
 const contentData = {
   title,
   details,
   format,
   type,
-  timeFrame,
-  date: isoDate,
+  timeFrame: formattedTimeFrame, // Standart formatta saat bilgisi kaydediyoruz
+  date: isoDate,  // ISO formatında UTC tarih/saat
   platforms: selectedPlatforms,
   url: normalizedUrl || null,
   preview_data: metadata || {},
@@ -480,6 +547,7 @@ const contentData = {
                     onChange={(e) => setDate(e.target.value)}
                     className="w-full px-4 py-2.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg text-sm focus:ring-2 focus:ring-slate-900 dark:focus:ring-slate-600 focus:border-transparent"
                     required
+                    placeholder="YYYY-MM-DD"
                   />
                 </div>
                 <div>
@@ -491,7 +559,8 @@ const contentData = {
                     value={timeFrame}
                     onChange={(e) => setTimeFrame(e.target.value)}
                     className="w-full px-4 py-2.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg text-sm focus:ring-2 focus:ring-slate-900 dark:focus:ring-slate-600 focus:border-transparent"
-                    placeholder={t('timePlaceholder')}
+                    placeholder="HH:MM"
+                    pattern="[0-9]{2}:[0-9]{2}"
                     required
                   />
                 </div>
