@@ -26,10 +26,14 @@ export default function ForgotPasswordPage() {
     setLoading(true);
 
     try {
-      // supabase için uzun işlem
-      const { error } = await supabase.auth.resetPasswordForEmail(email, {
+      // Otomatik yönlendirmeyi önlemek için bir güvenlik ekleyeceğiz
+      const resetOptions = {
         redirectTo: `${window.location.origin}/auth/reset-password`,
-      });
+        captchaToken: undefined // null değil undefined kullanıyoruz (TypeCheck uyumluluğu için)
+      };
+      
+      // supabase için uzun işlem
+      const { error } = await supabase.auth.resetPasswordForEmail(email, resetOptions);
 
       if (error) {
         console.error('Password reset error:', error);
@@ -46,6 +50,21 @@ export default function ForgotPasswordPage() {
       setLoading(false);
     }
   };
+
+  // useEffect kullanılarak sayfa açıldığında herhangi bir otomatik yönlendirmeyi engellemek
+  React.useEffect(() => {
+    const preventSubmission = (e: BeforeUnloadEvent) => {
+      if (loading) {
+        e.preventDefault();
+        e.returnValue = '';
+      }
+    };
+
+    window.addEventListener('beforeunload', preventSubmission);
+    return () => {
+      window.removeEventListener('beforeunload', preventSubmission);
+    };
+  }, [loading]);
 
   return (
     <div className="fixed inset-0 w-full h-full bg-gradient-to-b from-rose-50/80 via-violet-50/80 to-white dark:from-slate-950 dark:via-violet-950/50 dark:to-slate-950">
@@ -91,13 +110,15 @@ export default function ForgotPasswordPage() {
                         placeholder={t('auth.placeholders.email')}
                         className="w-full pl-12 pr-4 py-3 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl focus:ring-2 focus:ring-violet-500 dark:focus:ring-violet-400 focus:border-transparent transition-colors dark:text-white"
                         required
+                        autoComplete="email"
                       />
                       <Mail className="w-5 h-5 absolute left-4 top-3.5 text-slate-400" />
                     </div>
                   </div>
 
                   <button
-                    type="submit"
+                    type="button" /* Otomatik form gönderimini engellemek için submit yerine button tipi */
+                    onClick={handleSubmit}
                     disabled={loading}
                     className="w-full py-3 bg-slate-900 dark:bg-white/10 text-white rounded-2xl hover:bg-slate-800 dark:hover:bg-white/20 transition-colors disabled:opacity-50"
                   >

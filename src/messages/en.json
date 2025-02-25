@@ -317,6 +317,7 @@
       "cancelSelection": "Cancel Selection",
       "deleteButton": "Delete",
       "pinButton": "Pin",
+      "pin": "Pin",
       "deleteSelected": "Delete Selected",
       "pinSelected": "Pin Selected",
       "hint": "You can create a new folder or label with the Enter key.",

@@ -324,6 +324,7 @@
       "cancelSelection": "Seçimi İptal Et",
       "deleteButton": "Sil",
       "pinButton": "Sabitle",
+      "pin": "Sabitle",
       "deleteSelected": "Seçilenleri Sil",
       "pinSelected": "Seçilenleri Sabitle",
       "hint": "Enter tuşuyla yeni klasör veya etiket oluşturabilirsiniz.",
