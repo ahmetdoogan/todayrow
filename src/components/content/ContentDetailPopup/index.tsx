@@ -371,14 +371,16 @@ const ContentDetailPopup: React.FC<Props> = ({ isOpen, onClose, selectedContent:
                       <Calendar className="w-4 h-4" />
                       {t('fields.date')}
                     </label>
-                    <input
-                      type="date"
-                      value={editData?.date ? formatDateForInput(editData.date) : ''}
-                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => 
-                        setEditData(prev => prev ? { ...prev, date: e.target.value } : prev)
-                      }
-                      className="w-full px-4 py-2.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg text-sm focus:ring-2 focus:ring-slate-900 dark:focus:ring-slate-600 focus:border-transparent"
-                    />
+                    <div className="relative">
+                      <input
+                        type="date"
+                        value={editData?.date ? formatDateForInput(editData.date) : ''}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => 
+                          setEditData(prev => prev ? { ...prev, date: e.target.value } : prev)
+                        }
+                        className="w-full px-4 py-2.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg text-sm focus:ring-2 focus:ring-slate-900 dark:focus:ring-slate-600 focus:border-transparent"
+                      />
+                    </div>
                   </div>
 
                   <div>

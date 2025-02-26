@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { usePlanner } from '@/context/PlannerContext';
-import { motion } from 'framer-motion';
+import { AnimatePresence, motion } from 'framer-motion';
 import BaseHeader from '@/components/layout/Header/components/BaseHeader';
 import { useLanguage } from '@/components/providers/LanguageProvider';
 import { useTranslations } from 'next-intl';
@@ -47,24 +47,39 @@ const PlannerHeader = () => {
   };
 
   const getDateLabel = (date: Date) => {
-    if (isToday(date)) return `${t('common.planner.dates.today')} (${formatDate(date)})`;
-    if (isTomorrow(date)) return `${t('common.planner.dates.tomorrow')} (${formatDate(date)})`;
-    if (isYesterday(date)) return `${t('common.planner.dates.yesterday')} (${formatDate(date)})`;
+    if (isToday(date)) return t('common.planner.dates.today');
+    if (isTomorrow(date)) return t('common.planner.dates.tomorrow');
+    if (isYesterday(date)) return t('common.planner.dates.yesterday');
     return formatDate(date);
   };
   
-  // Gece yarısı sonrası uyarı kontrolü
-  const isAfterMidnight = () => {
+  // Gece yarısı uyarısını kontrol et
+  const shouldShowMidnightWarning = () => {
     const now = new Date();
-    return now.getHours() >= 0 && now.getHours() < 6;
+    // 00:00-06:00 saatleri arasında
+    const isAfterMidnightHours = now.getHours() >= 0 && now.getHours() < 6;
+    // Dün sekmesi seçili değilse ve gece yarısından sonraysa göster
+    return isAfterMidnightHours && !isYesterday(selectedDate);
   };
   
-  const [showMidnightWarning, setShowMidnightWarning] = React.useState(isAfterMidnight());
+  // Uyarı mesajında gösterilecek tarihi seç
+  const getWarningDate = () => {
+    // Yarın sekmesi seçiliyse, yarından sonraki günü göster
+    if (isTomorrow(selectedDate)) {
+      const dayAfterTomorrow = new Date();
+      dayAfterTomorrow.setDate(dayAfterTomorrow.getDate() + 2);
+      return formatDate(dayAfterTomorrow);
+    }
+    // Bugün seçiliyse bugünü göster
+    return formatDate(selectedDate);
+  };
+  
+  const [showMidnightWarning, setShowMidnightWarning] = React.useState(shouldShowMidnightWarning());
   
   React.useEffect(() => {
-    // Sadece başlangıçta kontrol et
-    setShowMidnightWarning(isAfterMidnight());
-  }, []);
+    // Seçilen tarih değiştiğinde uyarı görünürlüğünü güncelle
+    setShowMidnightWarning(shouldShowMidnightWarning());
+  }, [selectedDate]);
 
   const dates = React.useMemo(() => {
     const today = new Date();
@@ -143,13 +158,21 @@ const PlannerHeader = () => {
 
   return (
     <>
-      {showMidnightWarning && (
-        <div className="bg-amber-50 dark:bg-amber-900/20 border-b border-amber-100 dark:border-amber-800/30 text-amber-700 dark:text-amber-400 px-4 py-2 text-sm text-center">
-          <span>
-            {t('common.planner.midnightWarning', { date: formatDate(new Date()) })}
-          </span>
-        </div>
-      )}
+      <AnimatePresence>
+        {showMidnightWarning && (
+          <motion.div 
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: 'auto' }}
+            exit={{ opacity: 0, height: 0 }}
+            transition={{ duration: 0.3 }}
+            className="bg-amber-50 dark:bg-amber-900/20 border-b border-amber-100 dark:border-amber-800/30 text-amber-700 dark:text-amber-400 px-4 py-2 text-sm text-center overflow-hidden"
+          >
+            <span>
+              {t('common.planner.midnightWarning', { date: getWarningDate() })}
+            </span>
+          </motion.div>
+        )}
+      </AnimatePresence>
       <BaseHeader
         leftContent={
           <button
