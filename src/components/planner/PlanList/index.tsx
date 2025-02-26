@@ -42,6 +42,7 @@ const DraggablePlanCard = React.forwardRef<HTMLDivElement, DraggablePlanCardProp
     handleEditClick,
     handleDeleteClick,
   } = props;
+  const { isQuickPlanModalOpen } = usePlanner(); // isQuickPlansOpen yerine isQuickPlanModalOpen
 
   const [{ isDragging }, drag] = useDrag(
     () => ({
@@ -53,8 +54,9 @@ const DraggablePlanCard = React.forwardRef<HTMLDivElement, DraggablePlanCardProp
       collect: (monitor) => ({
         isDragging: monitor.isDragging(),
       }),
+      canDrag: () => canEdit && !isQuickPlanModalOpen, // isQuickPlansOpen yerine isQuickPlanModalOpen
     }),
-    [plan, isDuplicateMode]
+    [plan, isDuplicateMode, canEdit, isQuickPlanModalOpen]
   );
 
   const dragRef = (el: HTMLDivElement) => {
@@ -110,7 +112,8 @@ const DraggablePlanCard = React.forwardRef<HTMLDivElement, DraggablePlanCardProp
               </span>
             )}
             {!plan.is_completed && (plan.priority === 'high' || plan.priority === 'medium') && (
-              <span className={`
+              <span
+                className={`
                   inline-flex items-center rounded-md px-2 py-1 text-xs font-medium
                   ${plan.priority === 'high'
                     ? 'bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-300 ring-red-600/20 dark:ring-red-500/30'
@@ -210,7 +213,8 @@ const PlanList: React.FC<{ isPricingModalOpen?: boolean; setIsPricingModalOpen?:
     setIsEditingPlan,
     isSelectionMode,
     selectedPlanIds,
-    togglePlanSelection
+    togglePlanSelection,
+    isQuickPlanModalOpen, // isQuickPlansOpen yerine isQuickPlanModalOpen
   } = usePlanner();
 
   const { user } = useAuth();
@@ -271,7 +275,7 @@ const PlanList: React.FC<{ isPricingModalOpen?: boolean; setIsPricingModalOpen?:
   }
 
   const [{ isOver }, dropRef] = useDrop(() => ({
-    accept: [ItemTypes.QUICK_PLAN, ItemTypes.PLAN],
+    accept: [ItemTypes.QUICK_PLAN, ItemTypes.PLAN], // Hem QUICK_PLAN hem PLAN kabul ediliyor
     canDrop: () => canEdit,
     hover: (item: QuickPlan | Plan, monitor) => {
       if (!canEdit) return;
@@ -312,7 +316,7 @@ const PlanList: React.FC<{ isPricingModalOpen?: boolean; setIsPricingModalOpen?:
       const timeString = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
       setSelectedTime(timeString);
     },
-    drop: (item: any, monitor) => {
+    drop: (item: QuickPlan | Plan, monitor) => {
       if (!selectedTime || !canEdit) return;
       if (!isPro && !isTrialing && ['expired', 'cancelled'].includes(status || '')) {
         if (setIsPricingModalOpen) setIsPricingModalOpen(true);
@@ -320,7 +324,7 @@ const PlanList: React.FC<{ isPricingModalOpen?: boolean; setIsPricingModalOpen?:
       }
 
       try {
-        if (item.isDuplicating) {
+        if ('isDuplicating' in item && item.isDuplicating) {
           const planStartTime = new Date(selectedDate);
           const [hours, minutes] = selectedTime.split(':').map(Number);
           planStartTime.setHours(hours, minutes, 0, 0);
@@ -329,12 +333,12 @@ const PlanList: React.FC<{ isPricingModalOpen?: boolean; setIsPricingModalOpen?:
           
           const newPlan: Plan = {
             id: 0,
-            title: item.title,
-            details: item.details,
+            title: (item as Plan).title || (item as QuickPlan).title,
+            details: (item as Plan).details || '',
             start_time: planStartTime.toISOString(),
             end_time: planEndTime.toISOString(),
             is_completed: false,
-            color: item.color,
+            color: (item as Plan).color || (item as QuickPlan).color || 'bg-blue-500',
             plan_type: 'regular',
             order: 0,
             user_id: user?.id || 0,
@@ -347,15 +351,12 @@ const PlanList: React.FC<{ isPricingModalOpen?: boolean; setIsPricingModalOpen?:
           setSelectedPlan(newPlan);
           setIsModalOpen(true);
         } else {
-          handleQuickPlanDrop(item, selectedTime);
+          handleQuickPlanDrop(item as QuickPlan, selectedTime);
         }
       } catch (error) {
         console.error('Drop handling error:', error);
       } finally {
         setSelectedTime(null);
-        setTimeout(() => {
-          document.body.style.pointerEvents = '';
-        }, 100);
       }
       
       return undefined;

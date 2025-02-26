@@ -118,7 +118,7 @@ export default function DashboardPage() {
   // Drag başlarken tetiklenecek
   const handleDragStart = () => {
     setIsDragging(true);
-    setIsQuickPlansOpen(false);
+    setIsQuickPlansOpen(false); // Modal anında kapanıyor, eski davranış
   };
 
   // Drag bittikten sonra tetiklenecek
@@ -135,7 +135,7 @@ export default function DashboardPage() {
 
   // QuickPlans kapanınca izle
   const handleQuickPlansClose = () => {
-    setIsQuickPlansOpen(false);
+    setIsQuickPlansOpen(false); // Basit kapatma, stil temizleme yok
   };
 
   return (

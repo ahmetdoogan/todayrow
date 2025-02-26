@@ -18,7 +18,7 @@ export function RootProviders({ children }: { children: React.ReactNode }) {
   const messages = language === 'tr' ? trMessages : enMessages;
 
   return (
-    <SessionContextProvider supabaseClient={supabase}> {/* Burada aynı supabase örneğini kullanıyoruz */}
+    <SessionContextProvider supabaseClient={supabase}>
       <NextIntlClientProvider locale={language} messages={messages}>
         <ThemeProvider>
           <ContentProvider>

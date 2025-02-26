@@ -7,9 +7,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { usePlanner } from "@/context/PlannerContext";
 import { ItemTypes } from "@/utils/constants";
 import type { QuickPlan } from "@/types/planner";
-import { useSubscription } from '@/hooks/useSubscription';
 import { useTranslations } from 'next-intl';
-import PricingModal from '@/components/modals/PricingModal';
 import QuickPlanModal from "./QuickPlanModal";
 
 interface QuickPlansProps {
@@ -30,11 +28,6 @@ const QuickPlans: React.FC<QuickPlansProps> = ({ onClose, onDragStart, onDragEnd
   } = usePlanner();
 
   const t = useTranslations('common.quickPlansSection');
-  const { isPro, isTrialing, status } = useSubscription();
-  const [isPricingModalOpen, setIsPricingModalOpen] = useState(false);
-  const [editMode, setEditMode] = useState(false);
-  const [planToDelete, setPlanToDelete] = useState<QuickPlan | null>(null);
-  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
   const defaultQuickPlans: QuickPlan[] = [
     { 
@@ -84,6 +77,11 @@ const QuickPlans: React.FC<QuickPlansProps> = ({ onClose, onDragStart, onDragEnd
     },
   ];
 
+  const [editMode, setEditMode] = useState(false); // State tanımlamasını buraya taşıdık
+  const [planToDelete, setPlanToDelete] = useState<QuickPlan | null>(null);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+
+  // editMode tanımlandıktan sonra allQuickPlans oluştur
   const allQuickPlans = [
     ...defaultQuickPlans.map(plan => ({
       ...plan,
@@ -110,28 +108,17 @@ const QuickPlans: React.FC<QuickPlansProps> = ({ onClose, onDragStart, onDragEnd
       () => ({
         type: ItemTypes.QUICK_PLAN,
         item: () => {
-          if (!isPro && !isTrialing && ['expired', 'cancelled'].includes(status || '')) {
-            setIsPricingModalOpen(true);
-            return;
-          }
           onDragStart?.();
           return plan;
         },
-        end: (item, monitor) => {
-          if (!monitor.didDrop()) {
-            console.log('Drop cancelled or failed');
-          }
+        end: (_, monitor) => {
           onDragEnd?.();
-          setTimeout(() => {
-            document.body.style.pointerEvents = '';
-          }, 100);
         },
-        canDrag: () => !editMode,
         collect: (monitor) => ({
           isDragging: monitor.isDragging(),
         }),
       }),
-      [plan, onDragStart, onDragEnd, editMode, isPro, isTrialing, status]
+      [plan, onDragStart, onDragEnd]
     );
 
     return (
@@ -240,13 +227,7 @@ const QuickPlans: React.FC<QuickPlansProps> = ({ onClose, onDragStart, onDragEnd
         </div>
 
         <button
-          onClick={() => {
-            if (!isPro && !isTrialing && ['expired', 'cancelled'].includes(status || '')) {
-              setIsPricingModalOpen(true);
-              return;
-            }
-            setIsQuickPlanModalOpen(true);
-          }}
+          onClick={() => setIsQuickPlanModalOpen(true)}
           className="w-full p-2.5 rounded-lg border border-dashed border-gray-300 dark:border-gray-700 
                     text-gray-500 hover:border-gray-400 dark:hover:border-gray-600 
                     hover:bg-gray-50 dark:hover:bg-gray-800/50
@@ -307,12 +288,6 @@ const QuickPlans: React.FC<QuickPlansProps> = ({ onClose, onDragStart, onDragEnd
           </motion.div>
         )}
       </AnimatePresence>
-
-      <PricingModal
-        isOpen={isPricingModalOpen}
-        onClose={() => setIsPricingModalOpen(false)}
-        isTrialEnded={true}
-      />
     </div>
   );
 };

@@ -1,5 +1,5 @@
 export const ItemTypes = {
-  NOTE: 'note',
   QUICK_PLAN: 'quick_plan',
-  PLAN: 'plan',
+  NOTE: 'note',
+  PLAN: 'plan', // PLAN tipini geri ekledik
 } as const;

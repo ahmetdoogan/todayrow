@@ -17,7 +17,7 @@ interface PlannerContextType {
   selectedDate: Date;
   selectedPlan: Plan | null;
   isModalOpen: boolean;
-  isQuickPlanModalOpen: boolean;
+  isQuickPlanModalOpen: boolean; // Bu özelliği ekledik
   draggedPlan: { quickPlan: QuickPlan; dropTime: string } | null;
   isEditingPlan: boolean;
   isSelectionMode: boolean;
@@ -356,7 +356,7 @@ export function PlannerProvider({ children }: { children: React.ReactNode }) {
         selectedDate,
         selectedPlan,
         isModalOpen,
-        isQuickPlanModalOpen,
+        isQuickPlanModalOpen, // İsmi zaten bu, uyumlu
         hiddenSystemPlans,
         toggleSystemPlanVisibility,
         draggedPlan,
