@@ -60,7 +60,7 @@
       },
       "info": {
         "active": "Aktif: Karanlık mod",
-        "coming": "Yakında: Yazı tipi ve renk teması seçenekleri",
+        "coming": "Yakında: Renk teması seçenekleri",
         "withAuth": "Auth sistemi ile aktif olacak: Bildirim ve güvenlik ayarları"
       },
       "theme": "Tema",
@@ -575,7 +575,7 @@
       },
       "platforms": {
         "LINKEDIN": "LinkedIn",
-        "TWITTER": "Twitter",
+        "TWITTER": "X",
         "INSTAGRAM": "Instagram",
         "FACEBOOK": "Facebook",
         "YOUTUBE": "YouTube",

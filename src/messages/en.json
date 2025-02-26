@@ -60,7 +60,7 @@
       },
       "info": {
         "active": "Active: Dark mode",
-        "coming": "Coming soon: Font and color theme options",
+        "coming": "Coming soon: Color theme options",
         "withAuth": "Will be active with Auth system: Notifications and security settings"
       },
       "theme": "Theme",
@@ -575,7 +575,7 @@
       },
       "platforms": {
         "LINKEDIN": "LinkedIn",
-        "TWITTER": "Twitter",
+        "TWITTER": "X",
         "INSTAGRAM": "Instagram",
         "FACEBOOK": "Facebook",
         "YOUTUBE": "YouTube",
