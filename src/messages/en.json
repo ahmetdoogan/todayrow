@@ -684,6 +684,7 @@
         "completeSuccess": "Successfully completed!",
         "completeError": "An error occurred.",
         "undoSuccess": "Content restored!",
+        "undoSuccess2": "Action undone.",
         "undoError": "An error occurred, please try again.",
         "updateSuccess": "Content updated successfully!",
         "updateError": "An error occurred during update."
@@ -930,7 +931,7 @@
     "start": "Let's Begin"
   },
   "reopenHint": "You can reopen this from the Settings page later."
-  },
+},
   "auth": {
     "welcome": "Welcome",
     "changePassword": "Change Password",
@@ -1070,7 +1071,11 @@
     "tagDeleted": "The tag was successfully deleted!",
     "tagDeleteError": "An error occurred while deleting the tag.",
     "setFolderColor": "Set folder color"
-    },
+  },
+  "timeUnit": {
+  "minute": "min",
+  "minutes": "min"
+},
   "noteDetailModal": {
     "contentTab": "Content",
     "backlinksTab": "Backlinks",
@@ -1100,7 +1105,6 @@
     },
     "button": "Start Pro Plan"
   },
-  
   "paywall": {
   "titles": {
     "accessRestricted": "Access Restricted",

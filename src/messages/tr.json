@@ -7,13 +7,6 @@
     "settings": {
       "title": "Ayarlar",
       "sections": {
-        "themes": {
-      "default": "Default Theme",
-      "blue": "Blue Theme",
-      "green": "Green Theme",
-      "purple": "Purple Theme",
-      "orange": "Orange Theme"
-    },
         "appearance": {
           "title": "Görünüm Ayarları",
           "colorTheme": {
@@ -1077,7 +1070,6 @@
     "confirmDeleteTag": "Etiketi silmek istediğinize emin misiniz?",
     "tagDeleted": "Etiket başarıyla silindi!",
     "tagDeleteError": "Etiket silinirken bir hata oluştu.",
-
     "setFolderColor": "Klasör rengini ayarla"
   },
   "timeUnit": {
