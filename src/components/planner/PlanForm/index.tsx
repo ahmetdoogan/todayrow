@@ -405,6 +405,20 @@ export default function PlanForm() {
                 </div>
               </div>
 
+              <div className="mb-6">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  {tCommon('plannerForm.details')}
+                </label>
+                <textarea
+                  value={formData.details}
+                  onChange={(e) => setFormData({ ...formData, details: e.target.value })}
+                  placeholder={tCommon('plannerForm.detailsPlaceholder')}
+                  className="w-full px-4 py-3 text-base bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl
+                    focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all
+                    placeholder:text-gray-400 dark:placeholder:text-gray-500 min-h-[100px]"
+                />
+              </div>
+
               {error && (
                 <div className="mb-4 px-4 py-2 bg-red-50 dark:bg-red-900/30 text-red-600 dark:text-red-400 text-sm rounded-lg">
                   {error}
