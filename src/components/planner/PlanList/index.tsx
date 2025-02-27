@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { useDrop, useDrag } from 'react-dnd';
+import { toast } from "react-toastify";
 import { motion, AnimatePresence } from 'framer-motion';
 import { usePlanner } from '@/context/PlannerContext';
 import type { Plan, QuickPlan } from '@/types/planner';
@@ -11,6 +12,7 @@ import { Check, Edit2, Trash2, Plus, CalendarCheck, Bell, AlertTriangle } from '
 import { useTranslations } from 'next-intl';
 import { useSubscription } from '@/hooks/useSubscription';
 import PricingModal from '@/components/modals/PricingModal';
+import ConfirmModal from '@/components/modals/ConfirmModal';
 
 interface DraggablePlanCardProps {
   plan: Plan;
@@ -231,6 +233,10 @@ const PlanList: React.FC<{ isPricingModalOpen?: boolean; setIsPricingModalOpen?:
   const [selectedTime, setSelectedTime] = useState<string | null>(null);
   const [isDuplicateMode, setIsDuplicateMode] = useState(false);
   const t = useTranslations('common');
+  
+  // Delete confirmation modal
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [planToDelete, setPlanToDelete] = useState<Plan | null>(null);
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -409,10 +415,24 @@ const PlanList: React.FC<{ isPricingModalOpen?: boolean; setIsPricingModalOpen?:
   const handleDeleteClick = async (e: React.MouseEvent, plan: Plan) => {
     if (!canEdit) return;
     e.stopPropagation();
+    // Silme onayı için modal'ı aç
+    setPlanToDelete(plan);
+    setIsDeleteModalOpen(true);
+  };
+
+  // Confirm delete action
+  const confirmDelete = async () => {
+    if (!planToDelete) return;
+    
     try {
-      await deletePlan(plan.id);
+      await deletePlan(planToDelete.id);
+      toast.success(t('planner.notifications.deleteSuccess'));
     } catch (error) {
       console.error('Plan silinirken hata:', error);
+      toast.error(t('planner.notifications.deleteError'));
+    } finally {
+      setIsDeleteModalOpen(false);
+      setPlanToDelete(null);
     }
   };
 
@@ -651,6 +671,17 @@ const PlanList: React.FC<{ isPricingModalOpen?: boolean; setIsPricingModalOpen?:
           if (setIsPricingModalOpen) setIsPricingModalOpen(false);
         }}
         isTrialEnded={true}
+      />
+
+      {/* Delete Confirmation Modal */}
+      <ConfirmModal
+        isOpen={isDeleteModalOpen}
+        onClose={() => {
+          setIsDeleteModalOpen(false);
+          setPlanToDelete(null);
+        }}
+        onConfirm={confirmDelete}
+        message={t('planner.deleteConfirmation')}
       />
     </div>
   );

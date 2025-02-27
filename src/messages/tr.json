@@ -398,6 +398,7 @@
         "bulkCompleteError": "Planlar tamamlanırken bir hata oluştu"
       },
       "confirmCloseMessage": "Plan kaydedilmeyecek, emin misiniz?",
+      "deleteConfirmation": "Bu planı silmek istediğinize emin misiniz?",
       "multiSelect": "Çoklu Seç",
       "cancelSelection": "Seçimi İptal Et",
       "deleteButton": "Sil",
@@ -654,7 +655,8 @@
         "messages": {
           "updateError": "Güncelleme sırasında bir hata oluştu",
           "dateError": "Tarih formatı hatası nedeniyle şu anki tarih kullanıldı",
-          "confirmCloseMessage": "Değişiklikler kaydedilmeyecek. Emin misiniz?"
+          "confirmCloseMessage": "Değişiklikler kaydedilmeyecek. Emin misiniz?",
+          "deleteConfirmation": "Bu içeriği silmek istediğinize emin misiniz?"
         }
       },
       "references": {

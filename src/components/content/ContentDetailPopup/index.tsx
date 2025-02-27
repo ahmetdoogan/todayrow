@@ -57,6 +57,7 @@ const ContentDetailPopup: React.FC<Props> = ({ isOpen, onClose, selectedContent:
   const [isEditing, setIsEditing] = useState(false);
   const [editData, setEditData] = useState<Content | null>(selectedContent);
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
   // İçerikte değişiklik var mı kontrol et
   const hasChanges = () => {
@@ -536,7 +537,7 @@ const ContentDetailPopup: React.FC<Props> = ({ isOpen, onClose, selectedContent:
                     <span>{t('buttons.edit')}</span>
                   </button>
                   <button
-                    onClick={() => handleDelete(selectedContent.id)}
+                    onClick={() => setIsDeleteModalOpen(true)}
                     className="flex items-center justify-center gap-2 px-5 py-2.5 text-sm font-medium bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 rounded-lg hover:bg-red-100 dark:hover:bg-red-900/30 transition-colors flex-1"
                   >
                     <Trash2 className="w-4 h-4" />
@@ -573,6 +574,17 @@ const ContentDetailPopup: React.FC<Props> = ({ isOpen, onClose, selectedContent:
           setIsEditing(false);
         }}
         message={t('messages.confirmCloseMessage')}
+      />
+      <ConfirmModal
+        isOpen={isDeleteModalOpen}
+        onClose={() => setIsDeleteModalOpen(false)}
+        onConfirm={() => {
+          if (selectedContent) {
+            handleDelete(selectedContent.id);
+            setIsDeleteModalOpen(false);
+          }
+        }}
+        message={t('messages.deleteConfirmation')}
       />
     </>
   );
