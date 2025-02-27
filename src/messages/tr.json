@@ -377,6 +377,7 @@
     "tomorrow": "Yarın",
     "yesterday": "Dün"
     },
+    "continuedFromPrevious": "Dünden devam ediyor",
     "midnightWarning": "Gece yarısını geçti. Şu anda {date} günü için planlama yapıyorsunuz.",
       "notifications": {
         "createSuccess": "Plan oluşturuldu",

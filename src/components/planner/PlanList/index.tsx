@@ -25,6 +25,7 @@ interface DraggablePlanCardProps {
   handleCompleteClick: (e: React.MouseEvent, plan: Plan) => Promise<void>;
   handleEditClick: (e: React.MouseEvent, plan: Plan) => void;
   handleDeleteClick: (e: React.MouseEvent, plan: Plan) => Promise<void>;
+  isContinuedFromPreviousDay?: boolean;
 }
 
 const DraggablePlanCard = React.forwardRef<HTMLDivElement, DraggablePlanCardProps>((props, ref) => {
@@ -41,6 +42,7 @@ const DraggablePlanCard = React.forwardRef<HTMLDivElement, DraggablePlanCardProp
     handleCompleteClick,
     handleEditClick,
     handleDeleteClick,
+    isContinuedFromPreviousDay = false,
   } = props;
   const { isQuickPlanModalOpen } = usePlanner(); // isQuickPlansOpen yerine isQuickPlanModalOpen
 
@@ -70,26 +72,28 @@ const DraggablePlanCard = React.forwardRef<HTMLDivElement, DraggablePlanCardProp
 
   return (
     <motion.div
-      key={plan.id}
-      ref={dragRef}
-      layout
-      initial={{ opacity: 0, y: -10 }}
-      animate={{ opacity: isDragging ? 0.5 : 1, y: 0 }}
-      exit={{ opacity: 0, y: 10 }}
-      className={`
-        relative mb-2 p-2 md:p-3 rounded-xl border
-        ${plan.is_completed
-          ? 'bg-gray-50/50 dark:bg-gray-800/30 border-gray-200 dark:border-gray-700'
-          : 'bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600'
-        }
-        transition-all cursor-pointer group/card
-        ${isDragging ? 'cursor-grabbing' : ''}
-        ${!canEdit ? 'opacity-75' : ''}
-      `}
-      onClick={() =>
+    key={plan.id}
+    ref={dragRef}
+    layout
+    initial={{ opacity: 0, y: -10 }}
+    animate={{ opacity: isDragging ? 0.5 : 1, y: 0 }}
+    exit={{ opacity: 0, y: 10 }}
+    className={`
+    relative mb-2 p-2 md:p-3 rounded-xl border
+    ${plan.is_completed
+    ? 'bg-gray-50/50 dark:bg-gray-800/30 border-gray-200 dark:border-gray-700'
+    : isContinuedFromPreviousDay
+        ? 'bg-gray-100/80 dark:bg-gray-800/60 border-gray-300 dark:border-gray-600 border-dashed'
+        : 'bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600'
+    }
+    transition-all cursor-pointer group/card
+      ${isDragging ? 'cursor-grabbing' : ''}
+      ${!canEdit ? 'opacity-75' : ''}
+    `}
+    onClick={() =>
         isSelectionMode ? togglePlanSelection(plan.id) : handlePlanClick(plan)
-      }
-    >
+        }
+      >
       <div
         className={`
           absolute left-0 top-0 bottom-0 w-1 rounded-l-xl
@@ -109,6 +113,11 @@ const DraggablePlanCard = React.forwardRef<HTMLDivElement, DraggablePlanCardProp
             {plan.is_completed && (
               <span className="inline-flex items-center rounded-md bg-green-50 dark:bg-green-900/20 px-2 py-1 text-xs font-medium text-green-700 dark:text-green-300 ring-1 ring-inset ring-green-600/20 dark:ring-green-500/30">
                 {t('content.status.completed')}
+              </span>
+            )}
+            {isContinuedFromPreviousDay && (
+              <span className="inline-flex items-center rounded-md bg-gray-50 dark:bg-gray-900/20 px-2 py-1 text-xs font-medium text-gray-500 dark:text-gray-400 ring-1 ring-inset ring-gray-600/20 dark:ring-gray-500/30">
+                {t('planner.continuedFromPrevious')}
               </span>
             )}
             {!plan.is_completed && (plan.priority === 'high' || plan.priority === 'medium') && (
@@ -467,23 +476,32 @@ const PlanList: React.FC<{ isPricingModalOpen?: boolean; setIsPricingModalOpen?:
         <div className="relative pl-4 border-l border-gray-200 dark:border-gray-700 min-h-[64px]">
           {hourPlans.length > 0 ? (
             <AnimatePresence mode="popLayout">
-              {hourPlans.map((plan) => (
-                <DraggablePlanCard
-                  key={plan.id}
-                  plan={plan}
-                  isDuplicateMode={isDuplicateMode}
-                  isSelectionMode={isSelectionMode}
-                  togglePlanSelection={togglePlanSelection}
-                  handlePlanClick={handlePlanClick}
-                  canEdit={canEdit}
-                  selectedPlanIds={selectedPlanIds}
-                  t={t}
-                  handleIncompleteClick={handleIncompleteClick}
-                  handleCompleteClick={handleCompleteClick}
-                  handleEditClick={handleEditClick}
-                  handleDeleteClick={handleDeleteClick}
-                />
-              ))}
+      {hourPlans.map((plan) => {
+        // Önceki günden sarkıp sarkmadığını kontrol et
+        const planStartDate = new Date(plan.start_time);
+        const planStartDay = new Date(planStartDate.getFullYear(), planStartDate.getMonth(), planStartDate.getDate());
+        const selectedDay = new Date(selectedDate.getFullYear(), selectedDate.getMonth(), selectedDate.getDate());
+        const isContinuedFromPreviousDay = planStartDay.getTime() < selectedDay.getTime();
+
+        return (
+          <DraggablePlanCard
+            key={plan.id}
+            plan={plan}
+            isDuplicateMode={isDuplicateMode}
+            isSelectionMode={isSelectionMode}
+            togglePlanSelection={togglePlanSelection}
+            handlePlanClick={handlePlanClick}
+            canEdit={canEdit}
+            selectedPlanIds={selectedPlanIds}
+            t={t}
+            handleIncompleteClick={handleIncompleteClick}
+            handleCompleteClick={handleCompleteClick}
+            handleEditClick={handleEditClick}
+            handleDeleteClick={handleDeleteClick}
+            isContinuedFromPreviousDay={isContinuedFromPreviousDay}
+          />
+        );
+      })}
             </AnimatePresence>
           ) : (
             <motion.div

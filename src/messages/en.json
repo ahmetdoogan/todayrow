@@ -377,6 +377,7 @@
     "tomorrow": "Tomorrow",
     "yesterday": "Yesterday"
     },
+    "continuedFromPrevious": "Continued from previous day",
     "midnightWarning": "It's after midnight. You are now planning for {date}.",
       "notifications": {
         "createSuccess": "Plan created",
