@@ -108,6 +108,9 @@
         "badge": "Trial",
         "daysLeft": "days left",
         "upgrade": "Upgrade",
+        "continue": "Continue Pro",
+        "reactivate": "Reactivate Pro",
+        "renew": "Renew Pro",
         "cancel": "Cancel Subscription"
       },
       "fields": {

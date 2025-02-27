@@ -244,10 +244,10 @@ const ProfileSettings = () => {
                   className="rounded-xl"
                 >
                   {(() => {
-                    if (isTrialing) return t('trial.continue');
-                    if (status === 'expired') return t('trial.reactivate');
-                    if (status === 'cancelled') return t('trial.renew');
-                    return t('trial.upgrade');
+                    if (isTrialing) return t('profile.trial.continue');
+                    if (status === 'expired') return t('profile.trial.reactivate');
+                    if (status === 'cancelled') return t('profile.trial.renew');
+                    return t('profile.trial.upgrade');
                   })()}
                 </Button>
               )}

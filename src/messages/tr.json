@@ -108,6 +108,9 @@
         "badge": "Trial",
         "daysLeft": "gün kaldı",
         "upgrade": "Yükselt",
+        "continue": "Pro'ya Devam Et",
+        "reactivate": "Pro'yu Yeniden Aktifleştir",
+        "renew": "Pro'yu Yenile",
         "cancel": "Üyeliği iptal et"
       },
       "fields": {
