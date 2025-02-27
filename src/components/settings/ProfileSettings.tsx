@@ -243,7 +243,12 @@ const ProfileSettings = () => {
                   onClick={() => setIsPricingOpen(true)}
                   className="rounded-xl"
                 >
-                  {t('trial.upgrade')}
+                  {(() => {
+                    if (isTrialing) return t('trial.continue');
+                    if (status === 'expired') return t('trial.reactivate');
+                    if (status === 'cancelled') return t('trial.renew');
+                    return t('trial.upgrade');
+                  })()}
                 </Button>
               )}
             </div>
@@ -549,7 +554,7 @@ const ProfileSettings = () => {
         </div>
       )}
 
-      <PricingModal isOpen={isPricingOpen} onClose={() => setIsPricingOpen(false)} />
+      <PricingModal isOpen={isPricingOpen} onClose={() => setIsPricingOpen(false)} subscriptionStatus={status} isTrialEnded={status === 'expired'} />
     </>
   );
 };

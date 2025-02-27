@@ -416,7 +416,12 @@ export default function Sidebar({
                 <div className="mb-3">
                   <SubscriptionBadge />
                   <Button variant="default" className="w-full mt-2 rounded-xl" onClick={() => setIsPricingOpen(true)}>
-                    {sidebarT("trial.upgrade")}
+                    {(() => {
+                      if (isTrialing) return sidebarT("trial.continue");
+                      if (status === 'expired') return sidebarT("trial.reactivate");
+                      if (status === 'cancelled') return sidebarT("trial.renew");
+                      return sidebarT("trial.upgrade");
+                    })()}
                   </Button>
                 </div>
               )}
@@ -490,6 +495,7 @@ export default function Sidebar({
         isOpen={isPricingOpen}
         onClose={() => setIsPricingOpen(false)}
         isTrialEnded={isExpired}
+        subscriptionStatus={status}
       />
 
       <div className={`${isMobile ? "w-16" : ""} flex-shrink-0`} />

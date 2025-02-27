@@ -244,7 +244,10 @@
         "cancelled": "İptal edildi",
         "daysLeft": "{days} gün kaldı",
         "ended": "Deneme sona erdi",
-        "upgrade": "Yükselt"
+        "upgrade": "Yükselt",
+        "continue": "Pro'ya Devam Et",
+        "reactivate": "Pro'yu Yeniden Aktifleştir",
+        "renew": "Pro'yu Yenile"
       },
       "menu": {
         "plans": "Planlar",
@@ -1106,7 +1109,10 @@
       "support": "Hedeflerinize daha hızlı ulaşın",
       "noCard": "Deneme için kredi kartı gerekmez"
     },
-    "button": "Pro Planı Başlat"
+    "button": "Pro Planı Başlat",
+    "buttonContinue": "Pro Erişimi Devam Ettir",
+    "buttonReactivate": "Pro Planı Yeniden Etkinleştir",
+    "buttonRenew": "Pro Planı Yenile"
   },
   "paywall": {
   "titles": {

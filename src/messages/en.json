@@ -244,7 +244,10 @@
         "cancelled": "Cancelled",
         "daysLeft": "{days} days left", 
         "ended": "Trial ended",
-        "upgrade": "Upgrade"
+        "upgrade": "Upgrade",
+        "continue": "Continue Pro",
+        "reactivate": "Reactivate Pro",
+        "renew": "Renew Pro"
       },
       "menu": {
         "plans": "Plans",
@@ -1106,7 +1109,10 @@
       "support": "Reach your goals faster",
       "noCard": "No credit card required for trial"
     },
-    "button": "Start Pro Plan"
+    "button": "Start Pro Plan",
+    "buttonContinue": "Continue Pro Access",
+    "buttonReactivate": "Reactivate Pro Plan",
+    "buttonRenew": "Renew Pro Plan"
   },
   "paywall": {
   "titles": {

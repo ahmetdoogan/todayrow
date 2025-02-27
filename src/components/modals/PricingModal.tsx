@@ -7,7 +7,8 @@ import { supabase } from '@/utils/supabaseClient';
 interface Props {
   isOpen: boolean;
   onClose: () => void;
-  isTrialEnded?: boolean; // Bunu ekledik
+  isTrialEnded?: boolean;
+  subscriptionStatus?: string; // Kullanıcının abonelik durumu
 }
 
 const priceChangeKeyframes = `
@@ -27,7 +28,7 @@ const priceChangeKeyframes = `
   }
 `;
 
-const PricingModal = ({ isOpen, onClose, isTrialEnded }: Props) => {
+const PricingModal = ({ isOpen, onClose, isTrialEnded, subscriptionStatus }: Props) => {
   const [loading, setLoading] = useState(false);
   const t = useTranslations('pricing');
   const [billingType, setBillingType] = useState<'monthly' | 'yearly'>('monthly');
@@ -212,7 +213,12 @@ const PricingModal = ({ isOpen, onClose, isTrialEnded }: Props) => {
                       {loading && (
                         <div className="absolute inset-0 bg-white/20 animate-pulse" />
                       )}
-                      {t('button')}
+                      {(() => {
+                        if (subscriptionStatus === 'expired') return t('buttonReactivate');
+                        if (subscriptionStatus === 'cancelled') return t('buttonRenew');
+                        if (subscriptionStatus === 'free_trial') return t('buttonContinue');
+                        return t('button');
+                      })()}
                     </button>
                   </div>
                 </div>
