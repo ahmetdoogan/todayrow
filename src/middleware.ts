@@ -5,44 +5,19 @@ import type { NextRequest } from 'next/server';
 export async function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
   
-  // Eğer zaten tr veya en prefix'i varsa, hiçbir şey yapma
-  if (pathname.startsWith('/tr') || pathname.startsWith('/en')) {
-    return NextResponse.next();
+  // Eğer /en uzantısına gidilmeye çalışılıyorsa ana sayfaya yönlendir
+  if (pathname === '/en' || pathname.startsWith('/en/')) {
+    const newUrl = req.nextUrl.clone();
+    // /en yerine root'a yönlendir
+    newUrl.pathname = pathname.replace(/^\/en(\/|$)/, '/');
+    return NextResponse.redirect(newUrl);
   }
   
-  // Eğer pathname root veya basit bir endpoint ise
-  const newPathname = pathname === '/' ? '' : pathname;
-  
-  // Varsayılan olarak tr kullan (ama kullanıcının dil tercihini kontrol et)
-  let locale = 'tr';
-  
-  // Kullanıcının tarayıcı dilini kontrol et
-  const acceptLanguage = req.headers.get('accept-language');
-  if (acceptLanguage) {
-    const languages = acceptLanguage.split(',').map(lang => lang.split(';')[0].trim().toLowerCase());
-    
-    // Türkçe ve İngilizce dil kodlarını kontrol et
-    const hasTurkish = languages.some(lang => lang.startsWith('tr'));
-    const hasEnglish = languages.some(lang => lang.startsWith('en'));
-    
-    // İngilizce varsa ve Türkçe yoksa, en olarak ayarla
-    if (hasEnglish && !hasTurkish) {
-      locale = 'en';
-    }
-  }
-  
-  // Cookie veya localStorage kontrolü (client-side olduğu için middleware'de yapılamaz)
-  // Bu kısım LanguageProvider tarafından client-side'da halledilecek
-  
-  // İlgili dizine yönlendir ama boş bir alt sayfa oluşturmadan
-  const url = req.nextUrl.clone();
-  url.pathname = newPathname;
-  
-  // Redirect status: true => 307 (geçici yönlendirme), false => 308 (kalıcı yönlendirme)
+  // Diğer tüm URL'ler için normal davranış 
   return NextResponse.next();
 }
 
-// Middleware yalnızca kök sayfa için çalıştır
+// Middleware sadece /en ile başlayan path'ler için çalışsın
 export const config = {
-  matcher: ['/((?!api|_next/static|_next/image|favicon.ico|assets|.*\..*).*)'],
+  matcher: ['/en', '/en/:path*'],
 };
