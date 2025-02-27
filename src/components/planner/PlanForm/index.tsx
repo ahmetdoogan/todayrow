@@ -276,6 +276,7 @@ export default function PlanForm() {
       setError(tCommon('plannerForm.validationError'));
       return;
     }
+    // Planın gerçek tarih/saatlerini ayarla
     const dayDate = selectedDay === 'today' ? today : tomorrow;
     const [sh, sm] = formData.start_time.split(':').map(Number);
     const [eh, em] = formData.end_time.split(':').map(Number);
@@ -287,7 +288,7 @@ export default function PlanForm() {
     // Bitiş tarihini ayarla
     const endDate = new Date(dayDate);
     
-    // Günü aşan durum için kontrol (ej. 23:00 - 01:00)
+    // Günü aşan durum için kontrol (örn. 23:00 - 01:00)
     if (sh > eh || (sh === eh && sm > em)) {
       // Bitiş tarihi bir sonraki gün olmalı
       endDate.setDate(endDate.getDate() + 1);

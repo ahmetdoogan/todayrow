@@ -77,17 +77,45 @@ export const plannerService = {
     
     const endOfDay = new Date(date);
     endOfDay.setHours(23, 59, 59, 999);
-
-    const { data: plans, error } = await supabase
+    
+    // İki sorgu yapalım: bugün başlayan ve bugün biten planlar
+    const { data: plansStartingToday, error: error1 } = await supabase
       .from('plans')
       .select('*')
       .eq('user_id', userId)
       .gte('start_time', startOfDay.toISOString())
-      .lte('end_time', endOfDay.toISOString())
-      .order('start_time', { ascending: true });
+      .lte('start_time', endOfDay.toISOString());
+    
+    if (error1) throw error1;
 
-    if (error) throw error;
-    return plans || [];
+    // Veya bugün içinde bitenler
+    const { data: plansEndingToday, error: error2 } = await supabase
+      .from('plans')
+      .select('*')
+      .eq('user_id', userId)
+      .gte('end_time', startOfDay.toISOString())
+      .lte('end_time', endOfDay.toISOString()); 
+      
+    if (error2) throw error2;
+    
+    // Veya başlangıcı bugünden önce bitişi bugünden sonra olan (bugünü kapsayanlar)
+    const { data: plansSpanningToday, error: error3 } = await supabase
+      .from('plans')
+      .select('*')
+      .eq('user_id', userId)
+      .lt('start_time', startOfDay.toISOString())
+      .gt('end_time', endOfDay.toISOString());
+    
+    if (error3) throw error3;
+    
+    // Tüm planları birleştir, tekrar edenleri çıkar
+    const allPlans = [...(plansStartingToday || []), ...(plansEndingToday || []), ...(plansSpanningToday || [])];
+    const uniquePlans = Array.from(new Map(allPlans.map(plan => [plan.id, plan])).values());
+    
+    // Başlangıç saatine göre sırala
+    return uniquePlans.sort((a, b) => {
+      return new Date(a.start_time).getTime() - new Date(b.start_time).getTime();
+    });
   },
 
   // Hazır plan işlemleri
