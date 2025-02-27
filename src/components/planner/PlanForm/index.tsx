@@ -215,8 +215,17 @@ export default function PlanForm() {
   }, [selectedPlan, draggedPlan, isToday, isTomorrow, today]);
 
   function validateTimes(start: string, end: string) {
+    // Günü aşan durumlara izin vermek için özel kontrol
     const [sh, sm] = start.split(':').map(Number);
     const [eh, em] = end.split(':').map(Number);
+    
+    // Eğer başlangıç saati bitiş saatinden büyükse, bu gönü aşan bir plan olabilir
+    if (sh > eh || (sh === eh && sm > em)) {
+      // Günü aşan plan - geçerli
+      return true;
+    }
+    
+    // Normal durum - bitiş, başlangıçtan sonra olmalı
     return eh * 60 + em > sh * 60 + sm;
   }
 
@@ -270,9 +279,20 @@ export default function PlanForm() {
     const dayDate = selectedDay === 'today' ? today : tomorrow;
     const [sh, sm] = formData.start_time.split(':').map(Number);
     const [eh, em] = formData.end_time.split(':').map(Number);
+    
+    // Başlangıç tarihini ayarla
     const startDate = new Date(dayDate);
     startDate.setHours(sh, sm, 0, 0);
+    
+    // Bitiş tarihini ayarla
     const endDate = new Date(dayDate);
+    
+    // Günü aşan durum için kontrol (ej. 23:00 - 01:00)
+    if (sh > eh || (sh === eh && sm > em)) {
+      // Bitiş tarihi bir sonraki gün olmalı
+      endDate.setDate(endDate.getDate() + 1);
+    }
+    
     endDate.setHours(eh, em, 0, 0);
     const planData = {
       ...formData,

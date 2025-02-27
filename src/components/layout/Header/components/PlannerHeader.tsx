@@ -64,13 +64,7 @@ const PlannerHeader = () => {
   
   // Uyarı mesajında gösterilecek tarihi seç
   const getWarningDate = () => {
-    // Yarın sekmesi seçiliyse, yarından sonraki günü göster
-    if (isTomorrow(selectedDate)) {
-      const dayAfterTomorrow = new Date();
-      dayAfterTomorrow.setDate(dayAfterTomorrow.getDate() + 2);
-      return formatDate(dayAfterTomorrow);
-    }
-    // Bugün seçiliyse bugünü göster
+    // Seçili tarih doğrudan gösterilecek
     return formatDate(selectedDate);
   };
   
