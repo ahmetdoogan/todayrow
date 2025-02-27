@@ -2,10 +2,6 @@
 const nextConfig = {
   reactStrictMode: true,
   transpilePackages: ['@splinetool/react-spline'],
-  i18n: {
-    locales: ['tr', 'en'],
-    defaultLocale: 'tr'
-  },
   images: {
     remotePatterns: [
       {
