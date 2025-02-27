@@ -64,8 +64,8 @@ async function checkAndNotify() {
 
     console.log(`Found ${plans.length} plans to process`);
 
-    // 2) SMTP client ayarları (TLS 465) - Daha sağlam bir yapılandırma
-    const smtpConnConfig = {
+    // 2) SMTP client ayarları (TLS 465) - Deno environment için güncellendi
+    const smtpConfig = {
       hostname: "smtp.gmail.com",
       port: 465,
       tls: true,
@@ -73,24 +73,24 @@ async function checkAndNotify() {
         username: Deno.env.get("SMTP_USER") || "",
         password: Deno.env.get("SMTP_PASSWORD") || "",
       },
-      // Zaman aşımı ayarları
-      timeout: 30000, // 30 saniye bağlantı zaman aşımı
+      // Daha yüksek zaman aşımı
+      timeout: 60000, // 60 saniye bağlantı zaman aşımı
     };
     
     console.log("Creating SMTP client with configuration...");
     let client;
+    
     try {
+      // client = ... şeklinde değil, doğrudan oluştur
       client = new SMTPClient({
-        connection: smtpConnConfig,
+        connection: smtpConfig,
       });
       
-      // SMTP bağlantısını test et
-      console.log("Testing SMTP connection...");
-      await client.connect();
-      console.log("SMTP connection successful");
+      // Bağlantı testi burada gerek yok, gönderim sırasında otomatik bağlanacak
+      console.log("SMTP client created");
     } catch (connErr) {
-      console.error("SMTP connection test failed:", connErr);
-      // Bağlantı hatası durumunda da devam et, gönderim sırasında yeniden denenecek
+      console.error("SMTP client creation failed:", connErr);
+      // Devam et, belki daha sonra düzelir
     }
 
     const results: Array<{
@@ -137,28 +137,16 @@ async function checkAndNotify() {
         try {
           console.log(`Sending email for plan ${plan.id} to ${plan.user_email}`);
 
-            // SMTP bağlantı hatalarına karşı yeniden deneme mekanizması
-            const maxRetries = 3;
+            // SMTP bağlantı hatalarına karşı basitleştirilmiş mekanizma
+            const maxRetries = 2;
             let retryCount = 0;
             let emailSent = false;
           
             while (!emailSent && retryCount < maxRetries) {
               try {
-                // Daha fazla log
                 console.log(`Attempting to send email (${retryCount + 1}/${maxRetries}) to ${plan.user_email}`);
-              
-                // Bağlantı kopmuş olabilir, yeniden bağlanmayı dene
-                if (retryCount > 0) {
-                  try {
-                    console.log(`Reconnecting to SMTP server...`);
-                    await client.connect();
-                    console.log(`SMTP reconnection successful`);
-                  } catch (reconnectErr) {
-                    console.error(`SMTP reconnection failed:`, reconnectErr);
-                    // Devam et, gönderim işleminde yine deneyeceğiz
-                  }
-                }
-              
+                
+                // Bağlanma işlemini client'a bırak - manual connect() çağrısı yapmıyoruz
                 // E-posta gönderimi
                 await client.send({
                   from: '"Todayrow" <hello@todayrow.app>',
@@ -218,10 +206,17 @@ async function checkAndNotify() {
     // Sonuçları dön
     try {
       if (client) {
-        await client.close();
+        // Bağlantıyı nazikçe kapat
+        try {
+          await client.close();
+          console.log("SMTP connection closed successfully");
+        } catch (closeErr) {
+          console.error("Error closing SMTP connection:", closeErr);
+          // Hata olsa bile devam et
+        }
       }
-    } catch (closeErr) {
-      console.error("Error closing SMTP connection:", closeErr);
+    } catch (generalErr) {
+      console.error("Error in cleanup phase:", generalErr);
     }
 
     return {
