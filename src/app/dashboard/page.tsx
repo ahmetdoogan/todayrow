@@ -53,6 +53,14 @@ export default function DashboardPage() {
 
         console.log('User found:', user.email);
 
+        // LocalStorage kontrolü (aynı oturumda birden fazla mail
+        // gönderilmemesi için)
+        const welcomeEmailSent = localStorage.getItem(`welcome_email_sent_${user.id}`);
+        if (welcomeEmailSent === 'true') {
+          console.log('Welcome email already sent in this session');
+          return;
+        }
+
         const { data: profile } = await supabase
           .from('profiles')
           .select('welcome_email_sent')
@@ -82,8 +90,16 @@ export default function DashboardPage() {
               .from('profiles')
               .update({ welcome_email_sent: true })
               .eq('id', user.id);
+            
+            // Ve localStorage'a da kaydet
+            localStorage.setItem(`welcome_email_sent_${user.id}`, 'true');
+            
             console.log('Welcome email sent and profile updated');
           }
+        } else {
+          // Eğer profilde welcome email gönderilmiş olarak işaretliyse
+          // localStorage'a da kaydet
+          localStorage.setItem(`welcome_email_sent_${user.id}`, 'true');
         }
       } catch (error) {
         console.error('Error in welcome email process:', error);

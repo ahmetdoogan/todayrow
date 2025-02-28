@@ -39,32 +39,17 @@ export default function FeatureRequestsPage() {
 
   const handleVote = async (featureId: number) => {
     try {
-      // Oy verme işlemi - güncel oy sayısını döndürüyor
-      const updatedVoteCount = await voteFeature(featureId);
+      // Oy verme işlemi
+      await voteFeature(featureId);
       
-      // Eğer güncel oy sayısı döndüyse feature'ları güncelle
-      if (updatedVoteCount !== undefined) {
-        // Mevcut feature listesini klonla
-        const updatedFeatures = [...features];
-        // Güncellenecek feature'ı bul ve oy sayısını güncelle
-        const featureIndex = updatedFeatures.findIndex(f => f.id === featureId);
-        if (featureIndex !== -1) {
-          updatedFeatures[featureIndex] = {
-            ...updatedFeatures[featureIndex],
-            votes: updatedVoteCount
-          };
-        }
-        
-        // Oy sayısına göre yeniden sırala
-        updatedFeatures.sort((a, b) => b.votes - a.votes);
-        setFeatures(updatedFeatures);
-      }
-      
-      // Kullanıcının oy verdiği feature'ları güncelle
-      const newUserVotes = await getUserVotes();
-      setUserVotes(newUserVotes);
-      
+      // Toast mesajını göster
       toast.success(t('featureRequests.voteSuccess'));
+      
+      // Sayfayı tamamen yenile
+      setTimeout(() => {
+        window.location.reload();
+      }, 500); // Kısa bir gecikme ekleyerek toast mesajının görünmesini sağla
+      
     } catch (error) {
       console.error('Error voting:', error);
       toast.error(t('featureRequests.errors.voteError'));
