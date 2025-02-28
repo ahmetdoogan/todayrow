@@ -17,13 +17,17 @@ export default function FeatureRequestsPage() {
   const { language } = useLanguage();
   const { theme, toggleTheme } = useTheme();
 
+  // Component ilk yüklendiğinde
   useEffect(() => {
     const loadData = async () => {
       try {
+        console.log('Feature requests page loading data...');
         const [featuresData, votesData] = await Promise.all([
           getFeatureRequests(),
           getUserVotes()
         ]);
+        console.log('Loaded features:', featuresData);
+        console.log('Loaded user votes:', votesData);
         setFeatures(featuresData);
         setUserVotes(votesData);
       } catch (error) {
@@ -39,17 +43,22 @@ export default function FeatureRequestsPage() {
 
   const handleVote = async (featureId: number) => {
     try {
-      // Oy verme işlemi
+      console.log('Oy verme işlemi başlıyor, feature id:', featureId);
       await voteFeature(featureId);
+      console.log('Oy verme işlemi tamamlandı, verileri yeniliyorum...');
       
-      // Toast mesajını göster
+      // Verileri yenile
+      const [featuresData, votesData] = await Promise.all([
+        getFeatureRequests(),
+        getUserVotes()
+      ]);
+      console.log('Yeni feature verileri:', featuresData);
+      console.log('Yeni kullanıcı oyları:', votesData);
+      
+      // UI güncelleme
+      setFeatures(featuresData);
+      setUserVotes(votesData);
       toast.success(t('featureRequests.voteSuccess'));
-      
-      // Sayfayı tamamen yenile
-      setTimeout(() => {
-        window.location.reload();
-      }, 500); // Kısa bir gecikme ekleyerek toast mesajının görünmesini sağla
-      
     } catch (error) {
       console.error('Error voting:', error);
       toast.error(t('featureRequests.errors.voteError'));
