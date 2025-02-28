@@ -156,10 +156,20 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           window.location.href = '/auth/login';
           return;
         }
+        
+        // Önce localStorage'ı kontrol et (daha hızlı)
+        const hasSeenLocalStorage = localStorage.getItem('has_seen_welcome') === 'true';
+        
+        // Supabase'den de kontrol et
         const hasSeen = session.user.user_metadata?.has_seen_welcome;
-        if (hasSeen === undefined || hasSeen === false) {
+        
+        // İkisinden biri true ise popup'ı gösterme
+        if (hasSeenLocalStorage || hasSeen === true) {
+          setShowWelcome(false);
+        } else {
           setShowWelcome(true);
         }
+        
         setIsChecking(false);
       } catch (error) {
         console.error('Session check error:', error);
