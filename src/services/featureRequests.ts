@@ -49,22 +49,45 @@ export async function voteFeature(featureId: number) {
     }
   }
 
-  if (existingVote) {
-    // Oyu geri çekmek için DELETE
-    const { error: deleteError } = await supabase
-      .from('user_votes')
-      .delete()
-      .eq('user_id', user.id)
-      .eq('feature_id', featureId);
+  try {
+    if (existingVote) {
+      // Oyu geri çekmek için DELETE
+      const { error: deleteError } = await supabase
+        .from('user_votes')
+        .delete()
+        .eq('user_id', user.id)
+        .eq('feature_id', featureId);
 
-    if (deleteError) throw deleteError;
-  } else {
-    // Oy vermek için INSERT
-    const { error: insertError } = await supabase
-      .from('user_votes')
-      .insert({ user_id: user.id, feature_id: featureId });
+      if (deleteError) throw deleteError;
+    } else {
+      // Oy vermek için INSERT
+      const { error: insertError } = await supabase
+        .from('user_votes')
+        .insert({ user_id: user.id, feature_id: featureId });
 
-    if (insertError) throw insertError;
+      if (insertError) throw insertError;
+    }
+    
+    // Kısa bir bekleme ekleyelim ki trigger çalışsın ve votlar güncellensin
+    await new Promise(resolve => setTimeout(resolve, 300));
+    
+    // Güncel veriyi direkt olarak feature_requests tablosundan çekelim
+    const { data: updatedFeature, error: featureError } = await supabase
+      .from('feature_requests')
+      .select('votes')
+      .eq('id', featureId)
+      .single();
+      
+    if (featureError) {
+      console.error('Error fetching updated votes:', featureError);
+    }
+    
+    // Güncel vote sayısını döndür
+    return updatedFeature?.votes;
+    
+  } catch (error) {
+    console.error('Vote operation error:', error);
+    throw error;
   }
 }
 
