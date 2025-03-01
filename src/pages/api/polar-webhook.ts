@@ -44,7 +44,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     switch (type) {
       case 'subscription.created':
-      case 'subscription.active': {
+      case 'subscription.active':
+      case 'subscription.renewed': {
         console.log('Processing subscription creation/activation');
         const polarSubId = data.id;
         const currentDate = new Date().toISOString();

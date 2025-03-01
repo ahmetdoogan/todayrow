@@ -98,26 +98,67 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       cancelledEmailsSent++;
     }
 
-    // Değişiklik burada: expired yerine cancelled
-    // cancel_scheduled durumundaki abonelikler süresi dolunca cancelled'a çevrilir
-    const { data: expiredSubscriptions, error: expiredError } = await supabase
+    // 1) Cancel_scheduled durumundaki abonelikler süresi dolunca cancelled'a çevrilir
+    const { data: cancelledSubscriptions, error: cancelledError } = await supabase
       .from('subscriptions')
       .update({ status: 'cancelled', subscription_type: 'free', updated_at: new Date().toISOString() })
       .eq('status', 'cancel_scheduled')
       .lte('subscription_end', new Date().toISOString())
       .select('user_id');
       
-    console.log(`${expiredSubscriptions?.length || 0} subscriptions changed from cancel_scheduled to cancelled`);
+    console.log(`${cancelledSubscriptions?.length || 0} subscriptions changed from cancel_scheduled to cancelled`);
 
-    if (expiredError) throw expiredError;
+    if (cancelledError) throw cancelledError;
 
-    let expiredCount = expiredSubscriptions ? expiredSubscriptions.length : 0;
+    let cancelledCount = cancelledSubscriptions ? cancelledSubscriptions.length : 0;
+
+    // 2) Süresi dolan pro abonelikler için 1 günlük grace period sonunda expired yapma
+    // NOT: 1 gün geçmişse ödeme hala yapılmamış demektir
+    const gracePeriod = new Date();
+    gracePeriod.setDate(gracePeriod.getDate() - 1); // 1 gün öncesi
+
+    const { data: expiredProSubscriptions, error: expiredProError } = await supabase
+      .from('subscriptions')
+      .update({ status: 'expired', updated_at: new Date().toISOString() })
+      .eq('status', 'pro')
+      .lt('subscription_end', gracePeriod.toISOString())
+      .select('user_id, subscription_end');
+
+    if (expiredProError) throw expiredProError;
+
+    console.log(`${expiredProSubscriptions?.length || 0} pro subscriptions changed to expired (payment grace period ended)`);
+
+    // 3) Süresi dolan pro abonelikler için expiry email gönderme
+    let expiredProEmailsSent = 0;
+    
+    for (const sub of (expiredProSubscriptions || [])) {
+      const { data: profileData, error: profileErr } = await supabase
+        .from('profiles')
+        .select('email')
+        .eq('id', sub.user_id)
+        .maybeSingle();
+
+      if (profileErr || !profileData?.email) {
+        console.error("Error fetching profile for expired pro:", profileErr || "No email found");
+        continue;
+      }
+
+      await fetch(`${process.env.NEXT_PUBLIC_APP_URL || 'https://todayrow.app'}/api/email/sendSubscriptionExpired`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: profileData.email })
+      }).catch(console.error);
+      
+      expiredProEmailsSent++;
+    }
 
     return res.status(200).json({
       message: 'Subscription checks completed',
       newProEmails: newProEmailsSent,
       cancelledEmails: cancelledEmailsSent,
-      expiredSubscriptions: expiredCount
+      cancelledSubscriptions: cancelledCount,
+      expiredProSubscriptions: expiredProSubscriptions?.length || 0,
+      expiredProEmails: expiredProEmailsSent
     });
 
   } catch (error) {
