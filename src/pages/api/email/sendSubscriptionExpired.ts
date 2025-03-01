@@ -51,7 +51,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   try {
     await transporter.sendMail({
-      from: '"Todayrow" <noreply@todayrow.app>',
+      from: '"Todayrow" <hello@todayrow.app>',
       to: email,
       subject: "Your Todayrow Pro Subscription Has Expired",
       html: subscriptionExpiredTemplate,

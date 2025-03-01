@@ -63,14 +63,14 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       newProEmailsSent++;
     }
 
-    const { data: cancelledUsers, error: cancelledError } = await supabase
+    const { data: cancelledUsers, error: userCancelledError } = await supabase
       .from('subscriptions')
       .select('user_id, updated_at, status, subscription_type')
       .eq('status', 'cancelled')
       .eq('subscription_type', 'free')
       .gt('updated_at', new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString());
 
-    if (cancelledError) throw cancelledError;
+    if (userCancelledError) throw userCancelledError;
 
     let cancelledEmailsSent = 0;
 
