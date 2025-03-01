@@ -57,6 +57,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           // monthly
           subscriptionEnd.setMonth(subscriptionEnd.getMonth() + 1);
         }
+        // Bitiş tarihini günün sonuna ayarla (23:59:59.999)
+        subscriptionEnd.setHours(23, 59, 59, 999);
 
         const updateData = {
           status: 'pro',
