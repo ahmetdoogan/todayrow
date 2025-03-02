@@ -236,6 +236,12 @@ export function ContentProvider({ children }: { children: React.ReactNode }) {
     if (!user) return null;
 
     try {
+      console.log('ContentContext.handleUpdate - Güncelleme verisi:', {
+        title: updatedData.title,
+        date: updatedData.date,
+        timeFrame: updatedData.timeFrame
+      });
+      
       await contentService.updateContent(id, updatedData, user.id);
       const updatedContent = { ...selectedContent, ...updatedData, id } as Content;
       
@@ -248,6 +254,7 @@ export function ContentProvider({ children }: { children: React.ReactNode }) {
       toast.success(t('content.notifications.updateSuccess'));
       return updatedContent;
     } catch (error) {
+      console.error('ContentContext.handleUpdate - Hata:', error);
       toast.error(t('content.notifications.updateError'));
       return null;
     }

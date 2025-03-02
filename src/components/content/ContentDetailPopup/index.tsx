@@ -156,6 +156,7 @@ const ContentDetailPopup: React.FC<Props> = ({ isOpen, onClose, selectedContent:
       
       // Tarih ve saat düzenlemelerini işle
       let updatedDate = editData.date;
+      let updatedTimeFrame = editData.timeFrame;
       
       try {
         // Tarih formatını kontrol et ve işle
@@ -172,12 +173,19 @@ const ContentDetailPopup: React.FC<Props> = ({ isOpen, onClose, selectedContent:
             
             if (editData.timeFrame && typeof editData.timeFrame === 'string') {
               if (editData.timeFrame.includes(':')) {
-                [hours, minutes] = editData.timeFrame.split(':').map(Number);
+                const [hoursStr, minutesStr] = editData.timeFrame.split(':');
+                hours = parseInt(hoursStr) || 0;
+                minutes = parseInt(minutesStr) || 0;
               } else {
-                // Saat bilgisi yoksa 12:00 olarak ayarla
-                hours = 12;
+                // Saat bilgisi yoksa veya geçersizse 12:00 olarak ayarla
+                hours = parseInt(editData.timeFrame) || 12;
+                minutes = 0;
               }
             }
+            
+            // Geçerli değer aralığını zorla
+            hours = Math.max(0, Math.min(23, hours));
+            minutes = Math.max(0, Math.min(59, minutes));
             
             // Geçerli bir tarih oluştur
             if (isNaN(year) || isNaN(month) || isNaN(day) || 
@@ -187,6 +195,9 @@ const ContentDetailPopup: React.FC<Props> = ({ isOpen, onClose, selectedContent:
             
             // Yerel zamanı oluştur
             localDate = new Date(year, month - 1, day, hours, minutes, 0, 0);
+            
+            // Formatlı saat güncelleme
+            updatedTimeFrame = `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}`;
           } else {
             // Eğer tarih input formatında değilse, orijinal tarihi kullan
             localDate = new Date(editData.date);
@@ -203,8 +214,9 @@ const ContentDetailPopup: React.FC<Props> = ({ isOpen, onClose, selectedContent:
         }
       } catch (dateError) {
         console.error('Tarih işleme hatası:', dateError);
-        // Varsayılan olarak şu anki tarihi kullan
-        updatedDate = new Date().toISOString();
+        // Tarih hatası olsa bile içeriğin orijinal tarihini korumaya çalış
+        updatedDate = selectedContent.date;
+        updatedTimeFrame = selectedContent.timeFrame;
         toast.error(t('messages.dateError'));
       }
 
@@ -213,7 +225,7 @@ const ContentDetailPopup: React.FC<Props> = ({ isOpen, onClose, selectedContent:
         details: editData.details,
         type: editData.type as ContentType,
         format: editData.format as ContentFormat,
-        timeFrame: editData.timeFrame,
+        timeFrame: updatedTimeFrame,
         date: updatedDate, // Güncellenmiş tarih
         tags: editData.tags,
         platforms: editData.platforms,
@@ -222,6 +234,8 @@ const ContentDetailPopup: React.FC<Props> = ({ isOpen, onClose, selectedContent:
         is_completed: editData.is_completed,
         is_deleted: editData.is_deleted
       };
+
+      console.log('Gönderilecek güncellenmiş veri:', updateData);
 
       const updated = await handleUpdate(selectedContent.id, updateData);
       if (updated) {

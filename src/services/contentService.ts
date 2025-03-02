@@ -76,6 +76,11 @@ export const contentService = {
   },
 
   updateContent: async (id: number, data: ContentUpdateData, userId: string): Promise<void> => {
+    console.log('contentService.updateContent - Gelen veri:', {
+      date: data.date,
+      timeFrame: data.timeFrame
+    });
+    
     // Sadece gerekli alanları içeren veriyi hazırla
     const updateData = {
       title: data.title,
@@ -85,9 +90,13 @@ export const contentService = {
       platforms: data.platforms,
       timeFrame: data.timeFrame,
       tags: data.tags,
-      date: data.date,
+      date: data.date, // Tarih string olarak gelmeli (ISO format)
+      url: data.url,
+      preview_data: data.preview_data,
       updated_at: new Date().toISOString()
     };
+
+    console.log('contentService.updateContent - Gönderilecek veri:', updateData);
 
     const { error } = await supabase
       .from("Content")
@@ -96,6 +105,7 @@ export const contentService = {
       .eq("user_id", userId);
 
     if (error) {
+      console.error('contentService.updateContent - Hata:', error);
       throw error;
     }
   },

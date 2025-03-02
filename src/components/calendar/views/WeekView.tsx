@@ -74,14 +74,25 @@ const WeekView: React.FC<WeekViewProps> = ({ selectedDate }) => {
       // Tarih string'inden oluşturulan Date nesnesi otomatik olarak yerel zamana çevrilir
       const cDate = new Date(content.date);
       
-      // Hafta görünümünde gün ve saat karşılaştırması
+      // Hafta görünümünde gün karşılaştırması
       const sameDay = isSameDay(cDate, currentDate);
-      const sameHour = cDate.getHours() === hour;
+      
+      // İçerikte timeFrame varsa, ondan saat bilgisini al
+      let contentHour = cDate.getHours();
+      if (content.timeFrame && typeof content.timeFrame === 'string' && content.timeFrame.includes(':')) {
+        const [hoursStr] = content.timeFrame.split(':');
+        const parsedHour = parseInt(hoursStr);
+        if (!isNaN(parsedHour) && parsedHour >= 0 && parsedHour <= 23) {
+          contentHour = parsedHour;
+        }
+      }
+      
+      const sameHour = contentHour === hour;
       
       // Debug için: 
       if (sameDay && sameHour) {
         const dayName = displayDays[dayOffset];
-        console.log(`İçerik '${content.title}' ${dayName} günü ${hour}:00 saatinde görüntüleniyor. Tarih:`, content.date);
+        console.log(`İçerik '${content.title}' ${dayName} günü ${hour}:00 saatinde görüntüleniyor. Tarih:`, content.date, 'TimeFrame:', content.timeFrame);
       }
       
       return sameDay && sameHour;

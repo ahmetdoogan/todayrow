@@ -81,8 +81,15 @@ const MonthView: React.FC<MonthViewProps> = ({ selectedDate }) => {
   // Belirtilen gün için içerikleri filtrele
   const getDayContents = (date: Date) => {
     return contents.filter(content => {
-      const contentDate = new Date(content.date);
-      return isSameDay(contentDate, date);
+      if (!content.date) return false;
+      
+      try {
+        const contentDate = new Date(content.date);
+        return isSameDay(contentDate, date);
+      } catch (err) {
+        console.error('MonthView - Tarih işlenirken hata:', err, 'Content:', content.id, content.title);
+        return false;
+      }
     });
   };
 
@@ -110,9 +117,16 @@ const MonthView: React.FC<MonthViewProps> = ({ selectedDate }) => {
 
   const displayDays = isMobile ? weekDaysShort : weekDays;
   const monthContents = contents.filter(content => {
-    const contentDate = new Date(content.date);
-    return contentDate.getMonth() === selectedDate.getMonth() &&
-           contentDate.getFullYear() === selectedDate.getFullYear();
+    if (!content.date) return false;
+
+    try {
+      const contentDate = new Date(content.date);
+      return contentDate.getMonth() === selectedDate.getMonth() &&
+             contentDate.getFullYear() === selectedDate.getFullYear();
+    } catch (err) {
+      console.error('MonthView - Ay içeriklerini filtreleme hatası:', err);
+      return false;
+    }
   });
 
   return (
