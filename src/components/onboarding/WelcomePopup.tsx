@@ -87,15 +87,9 @@ export default function WelcomePopup({ onClose }: WelcomePopupProps) {
 
   const handleClose = async () => {
     try {
-      // 1. Önce localStorage'a kaydedelim (hemen etki eder)
-      localStorage.setItem('has_seen_welcome', 'true');
-      
-      // 2. Sonra Supabase'e yazma denemesi (başarılı olmasa da popup zaten görünmeyecek)
-      await supabase.auth.updateUser({
-        data: { has_seen_welcome: true }
-      });
+      // localStorage'a state saklamaya gerek yok, sadece WelcomePopup'u kapat
     } catch (error) {
-      console.error('Error updating user metadata:', error);
+      console.error('Error closing welcome popup:', error);
     }
     onClose();
   };

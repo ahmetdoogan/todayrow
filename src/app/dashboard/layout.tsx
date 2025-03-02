@@ -157,33 +157,10 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           return;
         }
         
-        // Önce localStorage'ı kontrol et (daha hızlı)
-        let hasSeenLocalStorage = localStorage.getItem('has_seen_welcome') === 'true';
-        
-        // Yeni kullanıcı girişinde localStorage'ı temizle
-        // Profilden veya oturumdan alınan bilgiler yoksa yeni kullanıcı olarak kabul edelim
-        if (Object.keys(session.user.user_metadata || {}).length <= 3) { // Sadece email, sub gibi temel bilgiler var
-          console.log('New user detected, clearing localStorage welcome flag');
-          localStorage.removeItem('has_seen_welcome');
-          // hasSeenLocalStorage değişkenini güncelle
-          hasSeenLocalStorage = false; // Şimdi false olarak güncelledik
-        }
-        
-        // Supabase'den de kontrol et
-        const hasSeen = session.user.user_metadata?.has_seen_welcome;
-        
-        console.log('Welcome popup debug:', {
-          hasSeenLocalStorage,
-          hasSeenMetadata: hasSeen === true,
-          shouldShow: !(hasSeenLocalStorage || hasSeen === true)
-        });
-
-        // İkisinden biri true ise popup'ı gösterme (VEYA operatörü)
-        if (hasSeenLocalStorage || hasSeen === true) {
-          setShowWelcome(false);
-        } else {
-          setShowWelcome(true);
-        }
+        // BASITLEŞTİRİLMİŞ WELCOME POPUP KONTROLU
+        // localStorage kontrollerini kaldırıyoruz, sadece basit bir yaklaşımla
+        // Popup default olarak açık, kullanıcı kapattığında false olarak ayarlanıyor
+        setShowWelcome(true);
         
         setIsChecking(false);
       } catch (error) {

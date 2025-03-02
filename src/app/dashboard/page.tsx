@@ -36,14 +36,6 @@ export default function DashboardPage() {
   useEffect(() => {
     if (typeof window === 'undefined') return;
 
-    // Sayfa yeniden yüklenirse bu fonksiyon tekrar çağrılmasın diye bir kontrol ekleyelim
-    // FAKAT localstorage kullanalım, sessionStorage çok kısa süreli
-    const userId = localStorage.getItem('welcome_email_user_id');
-    if (userId) {
-      console.log('Welcome email already sent to this user previously');
-      return;
-    }
-    
     const sendWelcomeEmail = async () => {
       try {
         console.log('Welcome email check started...');
@@ -99,16 +91,14 @@ export default function DashboardPage() {
               .update({ welcome_email_sent: true })
               .eq('id', user.id);
             
-            // Ve localStorage'a da kullanıcının ID'sini kaydedelim 
-            // (email gönderildiğine dair kalıcı bir işaret olsun)
-            localStorage.setItem('welcome_email_user_id', user.id);
+            // Ve localStorage'a kullanıcı ID'sini kaydet (gerekli değil artık)
+            // localStorage.setItem('welcome_email_user_id', user.id);
             
             console.log('Welcome email sent and profile updated');
           }
         } else {
-          // Eğer profilde welcome email gönderilmiş olarak işaretliyse de
-          // localStorage'a kullanıcı ID'sini kaydet
-          localStorage.setItem('welcome_email_user_id', user.id);
+          // Eğer profilde welcome email gönderilmiş olarak işaretliyse
+          // Burada da bir şey yapmamıza gerek yok
         }
       } catch (error) {
         console.error('Error in welcome email process:', error);
