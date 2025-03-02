@@ -22,7 +22,8 @@ export async function GET(request: Request) {
           .eq('id', data.user.id)
           .single();
 
-        // Eğer welcome email gönderilmemişse
+        // Burada localStorage'ı kontrol edemiyoruz (server-side kod)
+        // Ancak client-side'da kontrol edip temizleyeceğiz
         if (!profile?.welcome_email_sent) {
           const origin = request.headers.get('origin') || 'https://www.todayrow.app';
           console.log('Welcome email not sent yet, sending now');
