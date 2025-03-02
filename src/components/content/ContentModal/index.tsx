@@ -290,6 +290,8 @@ useEffect(() => {
   // Tarih ve saat işleme - iyileştirilmiş sürüm
   let parsedHours = 0;
   let parsedMinutes = 0;
+  let isoDate = new Date().toISOString(); // Varsayılan değer
+  let formattedTimeFrame = "12:00"; // Varsayılan değer
   
   try {
     // Saat formatını güçlü bir şekilde işle
@@ -324,10 +326,10 @@ useEffect(() => {
     const localTimestamp = new Date(year, month - 1, day, parsedHours, parsedMinutes, 0, 0);
     
     // ISO string ile UTC formatına çevir
-    const isoDate = localTimestamp.toISOString();
+    isoDate = localTimestamp.toISOString();
     
     // Saat bilgisini tutarlı formatta sakla
-    const formattedTimeFrame = `${String(parsedHours).padStart(2, '0')}:${String(parsedMinutes).padStart(2, '0')}`;
+    formattedTimeFrame = `${String(parsedHours).padStart(2, '0')}:${String(parsedMinutes).padStart(2, '0')}`;
     
     // Debug bilgileri
     console.log('Tarih/saat bilgileri:');
@@ -340,12 +342,10 @@ useEffect(() => {
     // Hata durumunda şu anki tarihi kullan
     console.error('Tarih işleme hatası:', error);
     const now = new Date();
-    const isoDate = now.toISOString();
-    const formattedTimeFrame = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+    isoDate = now.toISOString();
+    formattedTimeFrame = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
     
     toast.error(t('errors.dateFormatError'));
-    
-    // Devam et, ama geçerli tarihi kullan
   }
 
   // Benzersiz slug oluşturma
@@ -359,9 +359,6 @@ const { data: existingSlugs } = await supabase
 const slug = makeUniqueSlug(baseSlug, existingSlugs?.map(c => c.slug) || []);
 
 const now = new Date().toISOString();
-
-// Saat bilgisini standart formatına çevir
-let formattedTimeFrame = `${String(parsedHours).padStart(2, '0')}:${String(parsedMinutes).padStart(2, '0')}`;
 
 // Hazırlanan tarih ve zaman bilgilerini contentData'ya ekle
 const contentData = {
