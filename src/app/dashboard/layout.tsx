@@ -163,10 +163,11 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         // Supabase'den de kontrol et
         const hasSeen = session.user.user_metadata?.has_seen_welcome;
         
-        // İkisinden biri true ise popup'ı gösterme
-        if (hasSeenLocalStorage || hasSeen === true) {
+        // Her ikisi de açıkça true ise popup'ı gösterme
+        if (hasSeenLocalStorage && hasSeen === true) {
           setShowWelcome(false);
         } else {
+          // Bu yeni kullanıcı veya henüz welcome popup'ı görmemiş
           setShowWelcome(true);
         }
         

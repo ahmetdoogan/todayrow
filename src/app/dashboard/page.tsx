@@ -36,6 +36,16 @@ export default function DashboardPage() {
   useEffect(() => {
     if (typeof window === 'undefined') return;
 
+    // Sayfa yeniden yüklenirse bu fonksiyon tekrar çağrılmasın diye bir kontrol ekleyelim
+    const welcomeEmailChecked = sessionStorage.getItem('welcome_email_checked');
+    if (welcomeEmailChecked === 'true') {
+      console.log('Welcome email already checked in this session');
+      return;
+    }
+    
+    // Welcome email kontrol işlemini yaptığımızı sessionStorage'a kaydet
+    sessionStorage.setItem('welcome_email_checked', 'true');
+    
     const sendWelcomeEmail = async () => {
       try {
         console.log('Welcome email check started...');
