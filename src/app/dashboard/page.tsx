@@ -37,14 +37,12 @@ export default function DashboardPage() {
     if (typeof window === 'undefined') return;
 
     // Sayfa yeniden yüklenirse bu fonksiyon tekrar çağrılmasın diye bir kontrol ekleyelim
-    const welcomeEmailChecked = sessionStorage.getItem('welcome_email_checked');
-    if (welcomeEmailChecked === 'true') {
-      console.log('Welcome email already checked in this session');
+    // FAKAT localstorage kullanalım, sessionStorage çok kısa süreli
+    const userId = localStorage.getItem('welcome_email_user_id');
+    if (userId) {
+      console.log('Welcome email already sent to this user previously');
       return;
     }
-    
-    // Welcome email kontrol işlemini yaptığımızı sessionStorage'a kaydet
-    sessionStorage.setItem('welcome_email_checked', 'true');
     
     const sendWelcomeEmail = async () => {
       try {
@@ -101,15 +99,16 @@ export default function DashboardPage() {
               .update({ welcome_email_sent: true })
               .eq('id', user.id);
             
-            // Ve localStorage'a da kaydet
-            localStorage.setItem(`welcome_email_sent_${user.id}`, 'true');
+            // Ve localStorage'a da kullanıcının ID'sini kaydedelim 
+            // (email gönderildiğine dair kalıcı bir işaret olsun)
+            localStorage.setItem('welcome_email_user_id', user.id);
             
             console.log('Welcome email sent and profile updated');
           }
         } else {
-          // Eğer profilde welcome email gönderilmiş olarak işaretliyse
-          // localStorage'a da kaydet
-          localStorage.setItem(`welcome_email_sent_${user.id}`, 'true');
+          // Eğer profilde welcome email gönderilmiş olarak işaretliyse de
+          // localStorage'a kullanıcı ID'sini kaydet
+          localStorage.setItem('welcome_email_user_id', user.id);
         }
       } catch (error) {
         console.error('Error in welcome email process:', error);
