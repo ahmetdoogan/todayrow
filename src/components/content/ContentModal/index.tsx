@@ -126,15 +126,29 @@ useEffect(() => {
           console.log('Form için tarih değeri:', dateValue);
           setDate(dateValue);
           
-          // HH:MM formatında saat ayarla
-          const timeValue = toTimeInputValue(contentDate);
-          console.log('Form için saat değeri:', timeValue);
-          setTimeFrame(timeValue);
+          // İçerikte timeFrame alanı varsa onu kullan
+          if (content.timeFrame && typeof content.timeFrame === 'string' && content.timeFrame.includes(':')) {
+            console.log('Kaydedilmiş saat değeri (timeFrame):', content.timeFrame);
+            setTimeFrame(content.timeFrame);
+          } else {
+            // HH:MM formatında saat ayarla - içerik tarihinden
+            const timeValue = toTimeInputValue(contentDate);
+            console.log('Form için hesaplanan saat değeri:', timeValue);
+            setTimeFrame(timeValue);
+          }
         } catch (err) {
           console.error('Tarih çevirme hatası:', err);
+          // Hata durumunda bugünün tarihini kullan
+          const today = new Date();
+          setDate(toDateInputValue(today));
+          setTimeFrame(toTimeInputValue(today));
         }
       } else {
         console.error('Content.date boş veya null!');
+        // Null date durumunda bugünün tarihini göster
+        const today = new Date();
+        setDate(toDateInputValue(today));
+        setTimeFrame(toTimeInputValue(today));
       }
       
       setTags(content.tags || "");
@@ -273,52 +287,66 @@ useEffect(() => {
     return;
   }
 
-  // Tarih ve saat işleme
+  // Tarih ve saat işleme - iyileştirilmiş sürüm
   let parsedHours = 0;
   let parsedMinutes = 0;
   
-  // Saat formatını kontrol et
-  if (timeFrame && timeFrame.includes(':')) {
-    // Normal HH:MM formatı
-    [parsedHours, parsedMinutes] = timeFrame.split(':').map(num => parseInt(num) || 0);
-  } else {
-    // Metin formatında veya geçersiz bir saat girilmiş
-    // Burada basit bir metin analizi yapabiliriz
-    const timeText = timeFrame.toLowerCase();
-    
-    // Sayısal değerleri çıkar
-    const numberMatch = timeText.match(/\d+/);
-    if (numberMatch) {
-      parsedHours = parseInt(numberMatch[0]);
+  try {
+    // Saat formatını güçlü bir şekilde işle
+    if (timeFrame && timeFrame.includes(':')) {
+      // Normal HH:MM formatı
+      const [hoursStr, minutesStr] = timeFrame.split(':');
+      parsedHours = parseInt(hoursStr) || 0;
+      parsedMinutes = parseInt(minutesStr) || 0;
+    } else if (timeFrame) {
+      // Sadece saat girilmiş olabilir
+      parsedHours = parseInt(timeFrame) || 12;
+      parsedMinutes = 0;
+    } else {
+      // Varsayılan zaman 12:00
+      parsedHours = 12;
+      parsedMinutes = 0;
     }
     
-    // "saat sekiz" gibi metinleri işle
-    if (timeText.includes('sekiz')) parsedHours = 8;
-    if (timeText.includes('dokuz')) parsedHours = 9;
-    if (timeText.includes('on') && !timeText.includes('onbir') && !timeText.includes('oniki')) parsedHours = 10;
-    if (timeText.includes('onbir')) parsedHours = 11;
-    if (timeText.includes('oniki') || timeText.includes('on iki')) parsedHours = 12;
+    // Geçerli aralıkta olduğundan emin ol
+    parsedHours = Math.max(0, Math.min(23, parsedHours));
+    parsedMinutes = Math.max(0, Math.min(59, parsedMinutes));
     
-    // Geçersiz değerler için varsayılan 12:00 kullan
-    if (parsedHours < 0 || parsedHours > 23) parsedHours = 12;
+    // YYYY-MM-DD formatını işle ve geçerliliğini kontrol et
+    const [year, month, day] = date.split('-').map(Number);
+    
+    if (isNaN(year) || isNaN(month) || isNaN(day) || 
+        year < 2000 || year > 2100 || month < 1 || month > 12 || day < 1 || day > 31) {
+      throw new Error('Geçersiz tarih değerleri');
+    }
+    
+    // Yerel zaman olarak doğru şekilde Date nesnesi oluştur
+    const localTimestamp = new Date(year, month - 1, day, parsedHours, parsedMinutes, 0, 0);
+    
+    // ISO string ile UTC formatına çevir
+    const isoDate = localTimestamp.toISOString();
+    
+    // Saat bilgisini tutarlı formatta sakla
+    const formattedTimeFrame = `${String(parsedHours).padStart(2, '0')}:${String(parsedMinutes).padStart(2, '0')}`;
+    
+    // Debug bilgileri
+    console.log('Tarih/saat bilgileri:');
+    console.log('Girilen Tarih:', date);
+    console.log('Girilen Saat:', timeFrame);
+    console.log('İşlenen Saat:', formattedTimeFrame);
+    console.log('Yerel Tarih:', localTimestamp.toString());
+    console.log('UTC Tarih:', isoDate);
+  } catch (error) {
+    // Hata durumunda şu anki tarihi kullan
+    console.error('Tarih işleme hatası:', error);
+    const now = new Date();
+    const isoDate = now.toISOString();
+    const formattedTimeFrame = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+    
+    toast.error(t('errors.dateFormatError'));
+    
+    // Devam et, ama geçerli tarihi kullan
   }
-  
-  // "YYYY-MM-DD" formatındaki date string'ini parçala
-  const [year, month, day] = date.split('-').map(Number);
-  
-  // Yerel zaman olarak yeni bir Date nesnesi oluştur
-  const localTimestamp = new Date(year, month - 1, day, parsedHours, parsedMinutes, 0, 0);
-  
-  // ISO string ile UTC formatına çevir
-  const isoDate = localTimestamp.toISOString();
-  
-  // Debug bilgileri
-  console.log('Lütfen kontrol ediniz:');
-  console.log('Seçilen Tarih:', date);
-  console.log('Seçilen Saat Metni:', timeFrame);
-  console.log('Oluşturulan Date Nesnesi:', localTimestamp);
-  console.log('Oluşturulan ISO Tarih:', isoDate);
-  console.log('İşlenen Saat:', parsedHours + ':' + parsedMinutes);
 
   // Benzersiz slug oluşturma
 const baseSlug = createSlug(title);
@@ -333,8 +361,9 @@ const slug = makeUniqueSlug(baseSlug, existingSlugs?.map(c => c.slug) || []);
 const now = new Date().toISOString();
 
 // Saat bilgisini standart formatına çevir
-const formattedTimeFrame = `${String(parsedHours).padStart(2, '0')}:${String(parsedMinutes).padStart(2, '0')}`;
+let formattedTimeFrame = `${String(parsedHours).padStart(2, '0')}:${String(parsedMinutes).padStart(2, '0')}`;
 
+// Hazırlanan tarih ve zaman bilgilerini contentData'ya ekle
 const contentData = {
   title,
   details,
