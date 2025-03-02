@@ -157,10 +157,20 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           return;
         }
         
-        // BASITLEŞTİRİLMİŞ WELCOME POPUP KONTROLU
-        // localStorage kontrollerini kaldırıyoruz, sadece basit bir yaklaşımla
-        // Popup default olarak açık, kullanıcı kapattığında false olarak ayarlanıyor
-        setShowWelcome(true);
+        // Popup gösterim kontrolü
+        // localStorage'da has_seen_welcome var mı kontrol ediyoruz
+        const hasSeenWelcome = localStorage.getItem('has_seen_welcome') === 'true';
+        
+        // Daha önce görülmemişse popup'ı göster
+        if (hasSeenWelcome) {
+          // Kullanıcı daha önce popup'ı görmüş ve kapatmış
+          setShowWelcome(false);
+          console.log('Welcome popup daha önce görülmüş, gösterilmiyor');
+        } else {
+          // Kullanıcı henüz popup'ı görmemiş
+          setShowWelcome(true);
+          console.log('Welcome popup ilk kez gösteriliyor');
+        }
         
         setIsChecking(false);
       } catch (error) {
