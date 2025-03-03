@@ -497,11 +497,25 @@ const contentData = {
                   type="text"
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
-                  className="w-full px-4 py-2.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg text-sm focus:ring-2 focus:ring-slate-900 dark:focus:ring-slate-600 focus:border-transparent"
+                  className="w-full px-4 py-2.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-sm text-slate-800 dark:text-slate-200 focus:ring-2 focus:ring-slate-900 dark:focus:ring-slate-600 focus:border-transparent"
                   placeholder={t('titlePlaceholder')}
                   required
                 />
               </div>
+
+              <div>
+                <label className="text-sm text-slate-700 dark:text-slate-300 mb-2 block">
+                  {t('description')}
+                </label>
+                <ContentEditor
+                  value={details}
+                  onChange={setDetails}
+                  placeholder={t('descriptionPlaceholder')}
+                  className="min-h-[100px]"
+                  required
+                />
+              </div>
+              
               <div>
                 <label className="text-sm text-slate-700 dark:text-slate-300 mb-2 block">
                   {t('urlOptional')}
@@ -510,7 +524,7 @@ const contentData = {
                   type="text"
                   value={url}
                   onChange={handleUrlChange}
-                  className="w-full px-4 py-2.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg text-sm focus:ring-2 focus:ring-slate-900 dark:focus:ring-slate-600 focus:border-transparent"
+                  className="w-full px-4 py-2.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-sm text-slate-800 dark:text-slate-200 focus:ring-2 focus:ring-slate-900 dark:focus:ring-slate-600 focus:border-transparent"
                   placeholder={t('urlPlaceholder')}
                 />
                 {isLoadingMetadata && (
@@ -529,7 +543,7 @@ const contentData = {
                   <select
                     value={type}
                     onChange={(e) => setType(e.target.value)}
-                    className="w-full px-4 py-2.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg text-sm focus:ring-2 focus:ring-slate-900 dark:focus:ring-slate-600 focus:border-transparent"
+                    className="w-full px-4 py-2.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-sm text-slate-800 dark:text-slate-200 focus:ring-2 focus:ring-slate-900 dark:focus:ring-slate-600 focus:border-transparent"
                     required
                   >
                     <option value="GENERAL">{t('types.GENERAL')}</option>
@@ -552,7 +566,7 @@ const contentData = {
                   <select
                     value={format}
                     onChange={(e) => setFormat(e.target.value as ContentFormat)}
-                    className="w-full px-4 py-2.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg text-sm focus:ring-2 focus:ring-slate-900 dark:focus:ring-slate-600 focus:border-transparent"
+                    className="w-full px-4 py-2.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-sm text-slate-800 dark:text-slate-200 focus:ring-2 focus:ring-slate-900 dark:focus:ring-slate-600 focus:border-transparent"
                     required
                   >
                     {availableFormats.map(f => (
@@ -572,7 +586,7 @@ const contentData = {
                       type="date"
                       value={date}
                       onChange={(e) => setDate(e.target.value)}
-                      className="w-full px-4 py-2.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg text-sm focus:ring-2 focus:ring-slate-900 dark:focus:ring-slate-600 focus:border-transparent"
+                      className="w-full px-4 py-2.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-sm text-slate-800 dark:text-slate-200 focus:ring-2 focus:ring-slate-900 dark:focus:ring-slate-600 focus:border-transparent"
                       required
                     />
                   </div>
@@ -585,7 +599,7 @@ const contentData = {
                     type="time"
                     value={timeFrame}
                     onChange={(e) => setTimeFrame(e.target.value)}
-                    className="w-full px-4 py-2.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg text-sm focus:ring-2 focus:ring-slate-900 dark:focus:ring-slate-600 focus:border-transparent"
+                    className="w-full px-4 py-2.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-sm text-slate-800 dark:text-slate-200 focus:ring-2 focus:ring-slate-900 dark:focus:ring-slate-600 focus:border-transparent"
                     placeholder="HH:MM"
                     pattern="[0-9]{2}:[0-9]{2}"
                     required
@@ -601,20 +615,8 @@ const contentData = {
                   type="text"
                   value={tags}
                   onChange={(e) => setTags(e.target.value)}
-                  className="w-full px-4 py-2.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg text-sm focus:ring-2 focus:ring-slate-900 dark:focus:ring-slate-600 focus:border-transparent"
+                  className="w-full px-4 py-2.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-sm text-slate-800 dark:text-slate-200 focus:ring-2 focus:ring-slate-900 dark:focus:ring-slate-600 focus:border-transparent"
                   placeholder={t('tagsPlaceholder')}
-                />
-              </div>
-              <div>
-                <label className="text-sm text-slate-700 dark:text-slate-300 mb-2 block">
-                  {t('description')}
-                </label>
-                <ContentEditor
-                  value={details}
-                  onChange={setDetails}
-                  placeholder={t('descriptionPlaceholder')}
-                  className="min-h-[100px]"
-                  required
                 />
               </div>
             </div>

@@ -117,14 +117,14 @@ const ContentEditor: React.FC<ContentEditorProps> = ({
           value={value}
           onChange={handleInput}
           placeholder={placeholder || t('placeholder')}
-          className={`w-full px-4 py-2.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg text-sm focus:ring-2 focus:ring-slate-900 dark:focus:ring-slate-600 focus:border-transparent ${className}`}
+          className={`w-full px-4 py-2.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-sm text-slate-800 dark:text-slate-200 focus:ring-2 focus:ring-slate-900 dark:focus:ring-slate-600 focus:border-transparent ${className}`}
           required={required}
         />
         <div className="flex flex-col items-center">
           <button
             type="button"
             onClick={insertLinkTemplate}
-            className="flex-shrink-0 p-2 text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-300 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg transition-colors"
+            className="flex-shrink-0 p-2 text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-300 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg transition-colors"
             title={t('toolbarHints.link')}
           >
             <Link className="w-4 h-4" />

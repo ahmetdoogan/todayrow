@@ -316,7 +316,7 @@ const ContentDetailPopup: React.FC<Props> = ({ isOpen, onClose, selectedContent:
                     onChange={(e: React.ChangeEvent<HTMLInputElement>) => 
                       setEditData(prev => prev ? { ...prev, title: e.target.value } : prev)
                     }
-                    className="w-full px-4 py-2.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg text-sm focus:ring-2 focus:ring-slate-900 dark:focus:ring-slate-600 focus:border-transparent"
+                    className="w-full px-4 py-2.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-sm text-slate-800 dark:text-slate-200 focus:ring-2 focus:ring-slate-900 dark:focus:ring-slate-600 focus:border-transparent"
                     placeholder={t('fields.title.placeholder')}
                   />
 
@@ -330,7 +330,7 @@ const ContentDetailPopup: React.FC<Props> = ({ isOpen, onClose, selectedContent:
                     onChange={(e: React.ChangeEvent<HTMLInputElement>) => 
                       setEditData(prev => prev ? { ...prev, url: e.target.value } : prev)
                     }
-                    className="w-full px-4 py-2.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg text-sm focus:ring-2 focus:ring-slate-900 dark:focus:ring-slate-600 focus:border-transparent"
+                    className="w-full px-4 py-2.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-sm text-slate-800 dark:text-slate-200 focus:ring-2 focus:ring-slate-900 dark:focus:ring-slate-600 focus:border-transparent"
                     placeholder={t('fields.url.placeholder')}
                   />
                   {editData?.preview_data && Object.keys(editData.preview_data).length > 0 && (
@@ -349,7 +349,7 @@ const ContentDetailPopup: React.FC<Props> = ({ isOpen, onClose, selectedContent:
                       onChange={(e: React.ChangeEvent<HTMLSelectElement>) => 
                         setEditData(prev => prev ? { ...prev, type: e.target.value as ContentType } : prev)
                       }
-                      className="w-full px-4 py-2.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg text-sm focus:ring-2 focus:ring-slate-900 dark:focus:ring-slate-600 focus:border-transparent"
+                      className="w-full px-4 py-2.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-sm text-slate-800 dark:text-slate-200 focus:ring-2 focus:ring-slate-900 dark:focus:ring-slate-600 focus:border-transparent"
                     >
                       <option value="GENERAL">{t('fields.type.options.GENERAL')}</option>
                       <option value="EXPERIENCE">{t('fields.type.options.EXPERIENCE')}</option>
@@ -374,7 +374,7 @@ const ContentDetailPopup: React.FC<Props> = ({ isOpen, onClose, selectedContent:
                       onChange={(e: React.ChangeEvent<HTMLSelectElement>) => 
                         setEditData(prev => prev ? { ...prev, format: e.target.value as ContentFormat } : prev)
                       }
-                      className="w-full px-4 py-2.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg text-sm focus:ring-2 focus:ring-slate-900 dark:focus:ring-slate-600 focus:border-transparent"
+                      className="w-full px-4 py-2.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-sm text-slate-800 dark:text-slate-200 focus:ring-2 focus:ring-slate-900 dark:focus:ring-slate-600 focus:border-transparent"
                     >
                       <option value="TEXT">{t('fields.format.options.TEXT')}</option>
                       <option value="VIDEO">{t('fields.format.options.VIDEO')}</option>
@@ -393,7 +393,7 @@ const ContentDetailPopup: React.FC<Props> = ({ isOpen, onClose, selectedContent:
                         onChange={(e: React.ChangeEvent<HTMLInputElement>) => 
                           setEditData(prev => prev ? { ...prev, date: e.target.value } : prev)
                         }
-                        className="w-full px-4 py-2.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg text-sm focus:ring-2 focus:ring-slate-900 dark:focus:ring-slate-600 focus:border-transparent"
+                        className="w-full px-4 py-2.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-sm text-slate-800 dark:text-slate-200 focus:ring-2 focus:ring-slate-900 dark:focus:ring-slate-600 focus:border-transparent"
                       />
                     </div>
                   </div>
@@ -408,7 +408,7 @@ const ContentDetailPopup: React.FC<Props> = ({ isOpen, onClose, selectedContent:
                       onChange={(e: React.ChangeEvent<HTMLInputElement>) => 
                         setEditData(prev => prev ? { ...prev, timeFrame: e.target.value } : prev)
                       }
-                      className="w-full px-4 py-2.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg text-sm focus:ring-2 focus:ring-slate-900 dark:focus:ring-slate-600 focus:border-transparent"
+                      className="w-full px-4 py-2.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-sm text-slate-800 dark:text-slate-200 focus:ring-2 focus:ring-slate-900 dark:focus:ring-slate-600 focus:border-transparent"
                       placeholder="HH:MM"
                       pattern="[0-9]{2}:[0-9]{2}"
                     />
@@ -426,7 +426,7 @@ const ContentDetailPopup: React.FC<Props> = ({ isOpen, onClose, selectedContent:
                     onChange={(e: React.ChangeEvent<HTMLInputElement>) => 
                       setEditData(prev => prev ? { ...prev, tags: e.target.value } : prev)
                     }
-                    className="w-full px-4 py-2.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg text-sm focus:ring-2 focus:ring-slate-900 dark:focus:ring-slate-600 focus:border-transparent"
+                    className="w-full px-4 py-2.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-sm text-slate-800 dark:text-slate-200 focus:ring-2 focus:ring-slate-900 dark:focus:ring-slate-600 focus:border-transparent"
                     placeholder={t('fields.tags.placeholder')}
                   />
                 </div>
