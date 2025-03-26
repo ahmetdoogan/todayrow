@@ -169,7 +169,7 @@ export default function LoginPage() {
                   disabled={loading}
                   className="w-full dark:bg-white dark:text-black dark:hover:bg-gray-200"
                 >
-                  {loading ? t('common.loading') : t('signIn')} {/* 'common.' kısmını silin */}
+                  {loading ? t('loading') : t('signIn')} {/* 'common.' kısmını silin */}
                 </Button>
 
                 <p className="text-center text-sm text-slate-600 dark:text-[#a1a1a9]">

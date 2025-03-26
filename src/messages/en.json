@@ -947,6 +947,7 @@
 },
   "auth": {
     "signIn": "Login",
+    "loading": "Logging in",
     "register": "Sign up",
     "backToHome": "Back to Home",
   "termsAcceptance": "you agree to accept",
@@ -1460,6 +1461,7 @@
     "shortBreakComplete": "Short break completed! Ready to start a new pomodoro?",
     "longBreakComplete": "Long break completed! Ready to start a new pomodoro?",
     "taskAdded": "Task added!",
+    "taskDeleted": "Task deleted!",
     "taskCompleted": "Task completed!",
     "taskUpdated": "Task updated!",
     "projectCreated": "Project created!",

@@ -949,6 +949,7 @@
 },
   "auth": {
     "signIn": "Giriş Yap",
+    "loading": "Giriş yapılıyor",
     "register": "Kayıt Ol",
     "backToHome": "Ana Sayfaya Dön",
     "termsAcceptance": "kabul etmiş olursunuz",
@@ -1462,6 +1463,7 @@
     "shortBreakComplete": "Kısa mola tamamlandı! Yeni bir pomodoro başlatmaya hazır mısın?",
     "longBreakComplete": "Uzun mola tamamlandı! Yeni bir pomodoro başlatmaya hazır mısın?",
     "taskAdded": "Görev eklendi!",
+    "taskDeleted": "Görev silindi!",
     "taskCompleted": "Görev tamamlandı!",
     "taskUpdated": "Görev güncellendi!",
     "projectAdded": "Proje eklendi!",
