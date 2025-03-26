@@ -55,6 +55,22 @@ export default function NotesPage() {
   const isDarkMode = theme === 'dark';
   const t = useTranslations('common.notes');
 
+  const filteredNotes = useMemo(() => {
+    return notes.filter(note => {
+      if (filters.folder && note.folder_path !== filters.folder) {
+        return false;
+      }
+      if (filters.tags.length > 0) {
+        const noteTags = note.tags ? note.tags.split(',').map(t => t.trim()) : [];
+        const hasMatchingTag = filters.tags.some(tag => noteTags.includes(tag));
+        if (!hasMatchingTag) {
+          return false;
+        }
+      }
+      return true;
+    });
+  }, [notes, filters]);
+
   useEffect(() => {
     if (!searchParams) return;
     const openNoteId = searchParams.get('openNote');
@@ -73,22 +89,6 @@ export default function NotesPage() {
       </div>
     );
   }
-
-  const filteredNotes = useMemo(() => {
-    return notes.filter(note => {
-      if (filters.folder && note.folder_path !== filters.folder) {
-        return false;
-      }
-      if (filters.tags.length > 0) {
-        const noteTags = note.tags ? note.tags.split(',').map(t => t.trim()) : [];
-        const hasMatchingTag = filters.tags.some(tag => noteTags.includes(tag));
-        if (!hasMatchingTag) {
-          return false;
-        }
-      }
-      return true;
-    });
-  }, [notes, filters]);
 
   const handleSave = async (noteData: Partial<Note>) => {
     try {
