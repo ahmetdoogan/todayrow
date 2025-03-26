@@ -11,17 +11,17 @@ interface SettingsHeaderProps {
   toggleTheme: () => void;
 }
 
-// 2) Bileşeni bu prop’ları alacak şekilde güncelliyoruz
+// 2) Bileşeni bu prop'ları alacak şekilde güncelliyoruz
 const SettingsHeader: React.FC<SettingsHeaderProps> = ({ darkMode, toggleTheme }) => {
   const t = useTranslations();
 
   return (
     <BaseHeader
-      leftContent={
-        <div className="flex items-center gap-2">
-          <Settings className="w-5 h-5" />
-          <span className="text-sm font-medium">{t('common.settings.title')}</span>
-        </div>
+      leftContent={null}
+      middleContent={
+        <h1 className="text-sm font-medium text-black dark:text-white">
+          {t('common.settings.title')}
+        </h1>
       }
       className="bg-stone-50"
       noPadding

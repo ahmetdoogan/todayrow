@@ -1,91 +1,85 @@
 "use client";
+
 import React, { useState } from "react";
 import Link from "next/link";
-import Image from "next/image";
-import { Mail, Lock, Eye, EyeOff } from "lucide-react";
+import { Eye, EyeOff } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 import { toast } from "react-toastify";
 import { motion } from "framer-motion";
-import { Logo } from '@/components/ui/logo';
-import { useTranslations } from 'next-intl';
+import { useTranslations } from "next-intl";
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+  CardContent,
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Logo } from "@/components/ui/logo";
 
 const validateEmail = (email: string) => {
   const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-  if (!emailRegex.test(email)) {
-    return "errors.invalidEmail";
-  }
-  return null;
+  return emailRegex.test(email) ? null : "errors.invalidEmail";
 };
 
 const validatePassword = (password: string) => {
   const errors = [];
-  
-  if (password.length < 8) {
-    errors.push("passwordValidation.minLength");
-  }
-  if (!/[A-Z]/.test(password)) {
-    errors.push("passwordValidation.upperCase");
-  }
-  if (!/[a-z]/.test(password)) {
-    errors.push("passwordValidation.lowerCase");
-  }
-  if (!/[0-9]/.test(password)) {
-    errors.push("passwordValidation.number");
-  }
-  if (!/[!@#$%^&*(),.?":{}|<>]/.test(password)) {
-    errors.push("passwordValidation.special");
-  }
-
+  if (password.length < 8) errors.push("passwordValidation.minLength");
+  if (!/[A-Z]/.test(password)) errors.push("passwordValidation.upperCase");
+  if (!/[a-z]/.test(password)) errors.push("passwordValidation.lowerCase");
+  if (!/[0-9]/.test(password)) errors.push("passwordValidation.number");
+  if (!/[!@#$%^&*(),.?":{}|<>]/.test(password)) errors.push("passwordValidation.special");
   return errors.length ? errors : null;
 };
 
 export default function SignupPage() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
+  const [form, setForm] = useState({
+    email: "",
+    password: "",
+    confirmPassword: ""
+  });
   const [loading, setLoading] = useState(false);
-  const [emailError, setEmailError] = useState<string | null>(null);
-  const [passwordErrors, setPasswordErrors] = useState<string[] | null>(null);
+  const [errors, setErrors] = useState({
+    email: null as string | null,
+    password: null as string[] | null
+  });
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  
   const { signUp, signInWithGoogle } = useAuth();
   const t = useTranslations('auth');
-  const commonT = useTranslations('common'); // common çevirileri için ayrı bir hook
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    const emailValidationError = validateEmail(email);
-    if (emailValidationError) {
-      const errorMessage = t(emailValidationError);
-      toast.error(errorMessage);
-      setEmailError(errorMessage);
+    // Validation
+    const emailError = validateEmail(form.email);
+    const passwordErrors = validatePassword(form.password);
+    
+    if (emailError || passwordErrors) {
+      setErrors({
+        email: emailError ? t(emailError) : null,
+        password: passwordErrors ? passwordErrors.map(e => t(`errors.${e}`)) : null
+      });
+      if (emailError) toast.error(t(emailError));
+      if (passwordErrors) toast.error(t('errors.passwordValidation.requirements'));
       return;
     }
 
-    const passwordValidationErrors = validatePassword(password);
-    if (passwordValidationErrors) {
-      toast.error(t('errors.passwordValidation.requirements'));
-      setPasswordErrors(passwordValidationErrors);
-      return;
-    }
-
-    if (password !== confirmPassword) {
+    if (form.password !== form.confirmPassword) {
       toast.error(t('errors.passwordValidation.noMatch'));
       return;
     }
-    
+
     setLoading(true);
     try {
-      await signUp(email, password);
+      await signUp(form.email, form.password);
       toast.success(t('signup.success'));
     } catch (error: any) {
-      if (error.message?.includes("email")) {
-        toast.error(t('signup.emailInUse'));
-      } else {
-        toast.error(t('signup.failed'));
-      }
-      console.error(error);
+      const errorKey = error.message?.includes("email") ? 'signup.emailInUse' : 'signup.failed';
+      toast.error(t(errorKey));
     } finally {
       setLoading(false);
     }
@@ -99,118 +93,116 @@ export default function SignupPage() {
     }
   };
 
+  const handleChange = (field: keyof typeof form) => (e: React.ChangeEvent<HTMLInputElement>) => {
+    setForm(prev => ({ ...prev, [field]: e.target.value }));
+    if (errors.email && field === 'email') setErrors(prev => ({ ...prev, email: null }));
+    if (errors.password && field === 'password') setErrors(prev => ({ ...prev, password: null }));
+  };
+
   return (
-    <div className="fixed inset-0 w-screen h-screen bg-gradient-to-b from-rose-50/80 via-violet-50/80 to-white dark:from-slate-950 dark:via-violet-950/50 dark:to-slate-950 overflow-auto md:overflow-hidden">
-      <div className="absolute inset-0 w-full h-full">
-        <div className="absolute inset-0 opacity-75 bg-[radial-gradient(circle_at_top_left,rgba(255,228,230,0.3),transparent_40%)]" />
-        <div className="absolute inset-0 opacity-75 bg-[radial-gradient(circle_at_top_right,rgba(238,242,255,0.3),transparent_40%)]" />
-        <div className="absolute inset-0 opacity-75 bg-[radial-gradient(circle_at_bottom,rgba(255,255,255,0.2),transparent_60%)]" />
-        <div className="dark:hidden absolute inset-0 opacity-10 bg-[linear-gradient(to_right,#f0f0f0_1px,transparent_1px),linear-gradient(to_bottom,#f0f0f0_1px,transparent_1px)] bg-[size:4rem_4rem]" />
-        <div className="hidden dark:block absolute inset-0 opacity-10 bg-[linear-gradient(to_right,#ffffff10_1px,transparent_1px),linear-gradient(to_bottom,#ffffff10_1px,transparent_1px)] bg-[size:4rem_4rem]" />
+    <div className="grid min-h-screen lg:grid-cols-2 bg-white dark:bg-[#111111]">
+      {/* Left Column: Background Image */}
+      <div className="relative hidden bg-muted lg:block">
+        <img
+          src="/images/man1white.webp"
+          alt="Signup illustration"
+          className="absolute inset-0 h-full w-full object-cover dark:brightness-[0.2] dark:grayscale"
+        />
+        <img
+          src="/images/man1black.jpg"
+          alt="Signup illustration dark"
+          className="absolute inset-0 h-full w-full object-cover hidden dark:block"
+        />
       </div>
 
-      <div className="relative min-h-screen w-full flex items-center justify-center px-4 py-8 md:p-4">
-        <div className="w-full max-w-md">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl rounded-3xl p-8 shadow-xl border border-slate-200/50 dark:border-slate-700/50"
-          >
-            <div className="text-center mb-8">
-              <Link href="/" className="inline-block mb-4 hover:opacity-80 transition-opacity">
-                <Logo className="h-8 w-auto mx-auto" />
-              </Link>
-              <p className="text-slate-600 dark:text-slate-400 mt-2">{t('signup.subtitle')}</p>
-            </div>
+      {/* Right Column: Form */}
+      <div className="flex flex-col gap-4 p-6 md:p-10 justify-center bg-white dark:bg-[#111111]">
+        <div className="flex justify-center mb-6">
+          <Link href="/" className="hover:opacity-80 transition-opacity">
+            <Logo className="h-8 w-auto" />
+          </Link>
+        </div>
 
-            <div className="space-y-6 w-full">
-              <button
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4 }}
+          className="w-full max-w-md mx-auto"
+        >
+          <Card className="border-gray-200 dark:border-gray-800 dark:bg-black">
+            <CardHeader className="text-center">
+              <CardTitle className="text-xl">{t('signup.title')}</CardTitle>
+              <CardDescription className="text-slate-600 dark:text-[#a1a1a9]">
+                {t('signup.subtitle')}
+              </CardDescription>
+            </CardHeader>
+
+            <CardContent>
+              <Button
                 type="button"
+                variant="outline"
+                className="w-full mb-6 dark:bg-black dark:border-gray-800 dark:text-white dark:hover:bg-gray-900"
                 onClick={handleGoogleSignIn}
-                className="w-full py-3 px-4 border border-slate-200 dark:border-slate-700 rounded-2xl flex items-center justify-center gap-2 text-slate-700 dark:text-slate-300 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors"
               >
-                <Image
+                <img
                   src="https://www.google.com/favicon.ico"
                   alt="Google"
                   width={20}
                   height={20}
-                  className="w-5 h-5"
+                  className="w-5 h-5 mr-2"
                 />
-                <span>{t('continueWithGoogle')}</span>
-              </button>
+                {t('continueWithGoogle')}
+              </Button>
 
-              <div className="relative">
-                <div className="absolute inset-0 flex items-center">
-                  <div className="w-full border-t border-slate-200 dark:border-slate-700"></div>
-                </div>
-                <div className="relative flex justify-center text-sm">
-                  <span className="px-2 bg-white/80 dark:bg-slate-900/80 text-slate-500 dark:text-slate-400">{t('or')}</span>
-                </div>
+              <div className="relative text-center text-sm mb-6 after:absolute after:inset-0 after:top-1/2 after:flex after:items-center after:border-t after:border-border">
+                <span className="relative z-10 bg-background dark:bg-black px-2 text-muted-foreground dark:text-[#a1a1a9]">
+                  {t('or')}
+                </span>
               </div>
 
-              <form onSubmit={handleSubmit} className="space-y-4">
+              <form className="space-y-4" onSubmit={handleSubmit}>
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">
-                    {t('email')}
-                  </label>
-                  <div className="relative">
-                    <input
-                      type="email"
-                      value={email}
-                      onChange={(e) => {
-                        setEmail(e.target.value);
-                        setEmailError(null);
-                      }}
-                      placeholder={t('placeholders.email')}
-                      className={`w-full pl-12 pr-4 py-3 bg-white dark:bg-slate-800 border ${
-                        emailError ? 'border-red-500' : 'border-slate-200 dark:border-slate-700'
-                      } rounded-2xl focus:ring-2 focus:ring-violet-500 dark:focus:ring-violet-400 focus:border-transparent transition-colors dark:text-white`}
-                      required
-                    />
-                    <Mail className="w-5 h-5 absolute left-4 top-3.5 text-slate-400" />
-                  </div>
-                  {emailError && (
-                    <p className="mt-1 text-sm text-red-500">{emailError}</p>
+                  <Label htmlFor="email">{t('email')}</Label>
+                  <Input
+                    id="email"
+                    type="email"
+                    value={form.email}
+                    onChange={handleChange('email')}
+                    placeholder={t('placeholders.email')}
+                    className={`${errors.email ? "border-red-500" : ""} dark:bg-black dark:border-gray-800 dark:text-white dark:placeholder:text-[#a1a1a9]`}
+                    required
+                  />
+                  {errors.email && (
+                    <p className="mt-1 text-sm text-red-500">{errors.email}</p>
                   )}
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">
-                    {t('password')}
-                  </label>
+                  <Label htmlFor="password">{t('password')}</Label>
                   <div className="relative">
-                    <input
+                    <Input
+                      id="password"
                       type={showPassword ? "text" : "password"}
-                      value={password}
-                      onChange={(e) => {
-                        setPassword(e.target.value);
-                        setPasswordErrors(null);
-                      }}
+                      value={form.password}
+                      onChange={handleChange('password')}
                       placeholder={t('placeholders.password')}
-                      className={`w-full pl-12 pr-12 py-3 bg-white dark:bg-slate-800 border ${
-                        passwordErrors ? 'border-red-500' : 'border-slate-200 dark:border-slate-700'
-                      } rounded-2xl focus:ring-2 focus:ring-violet-500 dark:focus:ring-violet-400 focus:border-transparent transition-colors dark:text-white`}
+                      className={`${errors.password ? "border-red-500" : ""} dark:bg-black dark:border-gray-800 dark:text-white dark:placeholder:text-[#a1a1a9]`}
                       required
                     />
-                    <Lock className="w-5 h-5 absolute left-4 top-3.5 text-slate-400" />
                     <button
                       type="button"
                       onClick={() => setShowPassword(!showPassword)}
-                      className="absolute right-4 top-3.5"
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:text-[#a1a1a9] dark:hover:text-gray-400"
                     >
-                      {showPassword ? (
-                        <EyeOff className="w-5 h-5 text-slate-400" />
-                      ) : (
-                        <Eye className="w-5 h-5 text-slate-400" />
-                      )}
+                      {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                     </button>
                   </div>
-                  {passwordErrors && (
+                  {errors.password && (
                     <div className="mt-1 text-sm text-red-500">
                       <p>{t('errors.passwordValidation.title')}</p>
                       <ul className="list-disc list-inside">
-                        {passwordErrors.map((error, index) => (
-                          <li key={index}>{t(`errors.${error}`)}</li>
+                        {errors.password.map((error, i) => (
+                          <li key={i}>{error}</li>
                         ))}
                       </ul>
                     </div>
@@ -218,62 +210,69 @@ export default function SignupPage() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">
-                    {t('confirmPassword')}
-                  </label>
+                  <Label htmlFor="confirmPassword">{t('confirmPassword')}</Label>
                   <div className="relative">
-                    <input
+                    <Input
+                      id="confirmPassword"
                       type={showConfirmPassword ? "text" : "password"}
-                      value={confirmPassword}
-                      onChange={(e) => setConfirmPassword(e.target.value)}
+                      value={form.confirmPassword}
+                      onChange={handleChange('confirmPassword')}
                       placeholder={t('placeholders.confirmPassword')}
-                      className="w-full pl-12 pr-12 py-3 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl focus:ring-2 focus:ring-violet-500 dark:focus:ring-violet-400 focus:border-transparent transition-colors dark:text-white"
+                      className="dark:bg-black dark:border-gray-800 dark:text-white dark:placeholder:text-[#a1a1a9]"
                       required
                     />
-                    <Lock className="w-5 h-5 absolute left-4 top-3.5 text-slate-400" />
                     <button
                       type="button"
                       onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                      className="absolute right-4 top-3.5"
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:text-[#a1a1a9] dark:hover:text-gray-400"
                     >
-                      {showConfirmPassword ? (
-                        <EyeOff className="w-5 h-5 text-slate-400" />
-                      ) : (
-                        <Eye className="w-5 h-5 text-slate-400" />
-                      )}
+                      {showConfirmPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                     </button>
                   </div>
                 </div>
 
-                <button
+                <Button
                   type="submit"
                   disabled={loading}
-                  className="w-full py-3 bg-slate-900 dark:bg-white/10 text-white rounded-2xl hover:bg-slate-800 dark:hover:bg-white/20 transition-colors disabled:opacity-50"
+                  className="w-full mt-2 dark:bg-white dark:text-black dark:hover:bg-gray-200"
                 >
                   {loading ? t('signup.loading') : t('signup.title')}
-                </button>
+                </Button>
               </form>
-            </div>
 
-            <div className="mt-8 text-center">
-              <p className="text-slate-600 dark:text-slate-400">
+              <p className="text-center text-sm text-slate-600 dark:text-[#a1a1a9] mt-4">
                 {t('hasAccount')}{" "}
                 <Link
                   href="/auth/login"
-                  className="text-violet-600 dark:text-violet-400 hover:underline font-medium"
+                  className="hover:underline font-medium text-black dark:text-white"
                 >
                   {t('login.title')}
                 </Link>
               </p>
-              <Link
-                href="/"
-                className="inline-block mt-4 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors"
-              >
-                {commonT('navigation.backToHome')} {/* Burada düzeltme yapıldı */}
-              </Link>
-            </div>
-          </motion.div>
-        </div>
+
+              <div className="mt-4 text-center text-xs text-muted-foreground dark:text-[#a1a1a9]">
+                {t('termsAgreement')}{" "}
+                <Link href="/legal/terms" className="underline underline-offset-4 hover:text-primary dark:text-white dark:hover:text-gray-400">
+                  {t('termsOfService')}
+                </Link>{" "}
+                {t('and')}{" "}
+                <Link href="/legal/privacy" className="underline underline-offset-4 hover:text-primary dark:text-white dark:hover:text-gray-400">
+                  {t('privacyPolicy')}
+                </Link>{" "}
+                {t('termsAcceptance')}
+              </div>
+
+              <div className="mt-6 text-center">
+                <Link
+                  href="/"
+                  className="text-sm text-slate-600 dark:text-[#a1a1a9] hover:underline dark:hover:text-gray-400"
+                >
+                  {t('backToHome')}
+                </Link>
+              </div>
+            </CardContent>
+          </Card>
+        </motion.div>
       </div>
     </div>
   );

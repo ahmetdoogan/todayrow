@@ -19,7 +19,8 @@ import {
   Search,
   PlusCircle,
   MapPin,
-  BadgeCheck
+  BadgeCheck,
+  Clock
 } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 import { useContent } from "@/context/ContentContext";
@@ -87,8 +88,9 @@ export default function Sidebar({
   // Nav Items
   const navItems = [
     { label: t("common.sidebar.menu.plans"), icon: CalendarCheck, href: "/dashboard" },
-    { label: t("common.sidebar.menu.contents"), icon: Layout, href: "/dashboard/contents" },
+    { label: t("common.sidebar.menu.focus", { defaultValue: "Focus" }), icon: Clock, href: "/dashboard/focus" },
     { label: t("common.sidebar.menu.notes"), icon: FileText, href: "/dashboard/notes" },
+    { label: t("common.sidebar.menu.contents"), icon: Layout, href: "/dashboard/contents" },
     { label: t("common.sidebar.menu.settings"), icon: Settings, href: "/dashboard/settings" }
   ];
 
@@ -308,19 +310,19 @@ export default function Sidebar({
 
               <div className={`grid ${isCollapsed ? "grid-rows-2 gap-2" : "grid-cols-2 gap-2"}`}>
                 <button
-                  onClick={handleNewContent} // Güncellendi
-                  className="flex items-center gap-2 px-3 h-10 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-600 dark:text-gray-300 rounded-xl transition-colors text-xs"
-                >
-                  <PlusCircle className="w-4 h-4 flex-shrink-0" />
-                  <span className={isCollapsed ? "hidden" : "block"}>{t("common.sidebar.newContent")}</span>
-                </button>
-
-                <button
                   onClick={handleNewNote} // Güncellendi
                   className="flex items-center gap-2 px-3 h-10 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-600 dark:text-gray-300 rounded-xl transition-colors text-xs"
                 >
                   <FileText className="w-4 h-4 flex-shrink-0" />
                   <span className={isCollapsed ? "hidden" : "block"}>{t("common.sidebar.newNote")}</span>
+                </button>
+
+                <button
+                  onClick={handleNewContent} // Güncellendi
+                  className="flex items-center gap-2 px-3 h-10 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-600 dark:text-gray-300 rounded-xl transition-colors text-xs"
+                >
+                  <PlusCircle className="w-4 h-4 flex-shrink-0" />
+                  <span className={isCollapsed ? "hidden" : "block"}>{t("common.sidebar.newContent")}</span>
                 </button>
               </div>
             </div>

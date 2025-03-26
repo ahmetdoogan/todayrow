@@ -146,7 +146,7 @@ const QuickPlans: React.FC<QuickPlansProps> = ({ onClose, onDragStart, onDragEnd
             <GripVertical className="text-gray-400 flex-shrink-0" size={16} />
           )}
           <div className={`w-2 h-2 rounded-full ${plan.color}`} />
-          <span className="flex-1 text-sm">{plan.title}</span>
+          <span className="flex-1 text-sm text-black dark:text-white">{plan.title}</span>
 
           <AnimatePresence>
             {editMode && (plan.is_system ? (
@@ -185,9 +185,9 @@ const QuickPlans: React.FC<QuickPlansProps> = ({ onClose, onDragStart, onDragEnd
 
   return (
     <div className="relative">
-      <div className="sticky top-0 bg-stone-50 dark:bg-slate-800/50 z-10 p-3 border rounded-r-2xl border-b  dark:border-gray-700">
+      <div className="sticky top-0 bg-stone-50 dark:bg-slate-800/50 z-10 p-3 border rounded-r-2xl border-b dark:border-gray-700 text-black dark:text-white">
         <div className="flex items-center justify-between">
-          <h2 className="text-base font-medium">{t('title')}</h2>
+          <h2 className="text-base font-medium text-black dark:text-white">{t('title')}</h2>
           <div className="flex items-center gap-2">
             <button
               onClick={() => setEditMode(!editMode)}
@@ -214,7 +214,7 @@ const QuickPlans: React.FC<QuickPlansProps> = ({ onClose, onDragStart, onDragEnd
             )}
           </div>
         </div>
-        <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+        <p className="text-xs text-gray-500 dark:text-[#a1a1a9] mt-1">
           {t('description')}
         </p>
       </div>
@@ -229,7 +229,7 @@ const QuickPlans: React.FC<QuickPlansProps> = ({ onClose, onDragStart, onDragEnd
         <button
           onClick={() => setIsQuickPlanModalOpen(true)}
           className="w-full p-2.5 rounded-lg border border-dashed border-gray-300 dark:border-gray-700 
-                    text-gray-500 hover:border-gray-400 dark:hover:border-gray-600 
+                    text-gray-500 dark:text-[#a1a1a9] hover:border-gray-400 dark:hover:border-gray-600 
                     hover:bg-gray-50 dark:hover:bg-gray-800/50
                     mt-4 flex items-center justify-center gap-2
                     transition-all duration-200 text-sm"

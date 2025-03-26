@@ -10,8 +10,30 @@ import LanguageProvider from "@/components/providers/LanguageProvider";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Todayrow",
-  description: "Günlerinizi planlayın.",
+  title: 'Todayrow - Bugüne odaklanın, yarını planlayın',
+  description: 'Todayrow ile karmaşık takvimler yerine bugüne ve yarına odaklanarak verimliliğinizi artırın ve mental yükünüzü azaltın.',
+  robots: 'index, follow',
+  keywords: 'plan, planlama, verimlilik, üretkenlik, bugün, yarın, odak, takvim, zaman yönetimi, hatırlatıcı, not, görev',
+  openGraph: {
+    title: 'Todayrow - Bugüne odaklanın, yarını planlayın',
+    description: 'Todayrow ile karmaşık takvimler yerine bugüne ve yarına odaklanarak verimliliğinizi artırın ve mental yükünüzü azaltın.',
+    type: 'website',
+    url: 'https://todayrow.app',
+    siteName: 'Todayrow',
+    locale: 'tr_TR',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    site: '@todayrow',
+    title: 'Todayrow - Bugüne odaklanın, yarını planlayın',
+    description: 'Todayrow ile karmaşık takvimler yerine bugüne ve yarına odaklanarak verimliliğinizi artırın ve mental yükünüzü azaltın.',
+  },
+  alternates: {
+    languages: {
+      'en': 'https://todayrow.app/en',
+      'tr': 'https://todayrow.app',
+    }
+  }
 };
 
 export default function RootLayout({

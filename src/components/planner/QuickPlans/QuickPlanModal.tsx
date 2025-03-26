@@ -84,7 +84,7 @@ const QuickPlanModal = ({ isOpen, onClose }: QuickPlanModalProps) => {
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-sm font-medium mb-1">
+            <label className="block text-sm font-medium mb-1 text-black dark:text-white">
               {t('createModal.form.title')}
             </label>
             <input
@@ -98,7 +98,7 @@ const QuickPlanModal = ({ isOpen, onClose }: QuickPlanModalProps) => {
           </div>
 
           <div>
-            <label className="block text-sm font-medium mb-2">
+            <label className="block text-sm font-medium mb-2 text-black dark:text-white">
               {t('createModal.form.color')}
             </label>
             <div className="flex gap-2">

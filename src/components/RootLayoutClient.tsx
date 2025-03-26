@@ -15,9 +15,9 @@ const AuthGuard = ({ children }: { children: React.ReactNode }) => {
     if (!pathname) return;
     
     // Public routes
-    const publicRoutes = ['/', '/auth/login', '/auth/signup', '/auth/verify', '/auth/forgot-password', '/auth/reset-password', '/legal/privacy', '/legal/terms'];
+    const publicRoutes = ['/', '/auth/login', '/auth/signup', '/auth/verify', '/auth/forgot-password', '/auth/reset-password', '/legal/privacy', '/legal/terms', '/new-landing', '/auth-new/login', '/auth-new/login-alt', '/auth-new/signup', '/auth-new/verify', '/auth-new/forgot-password', '/auth-new/reset-password'];
     const isPublicRoute = publicRoutes.includes(pathname);
-    const isAuthRoute = pathname.startsWith('/auth/');
+    const isAuthRoute = pathname.startsWith('/auth/') || pathname.startsWith('/auth-new/');
     const isRootRoute = pathname === '/';
 
     // Kullanıcı girişli ve ana sayfada ise

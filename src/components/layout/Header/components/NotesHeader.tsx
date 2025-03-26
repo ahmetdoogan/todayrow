@@ -15,7 +15,7 @@ interface NotesHeaderProps {
   setIsSelectionMode: (value: boolean) => void;
   selectedNotes: number[];
   setSelectedNotes: React.Dispatch<React.SetStateAction<number[]>>;
-  // Type hatasını çözmek için eklediğimiz prop’lar:
+  // Type hatasını çözmek için eklediğimiz prop'lar:
   darkMode: boolean;
   toggleTheme: () => void;
 }
@@ -74,7 +74,7 @@ const NotesHeader: React.FC<NotesHeaderProps> = ({
             className={`
               group flex items-center justify-center transition-colors rounded-lg
               w-8 h-8 md:w-auto md:h-auto md:px-4 md:py-2
-              border border-gray-200 dark:border-gray-700
+              border border-gray-200 dark:border-gray-700 text-black dark:text-white
               hover:bg-gray-50 dark:hover:bg-gray-700
               ${isSelectionMode ? "bg-gray-100 dark:bg-gray-700" : ""}
             `}
@@ -85,7 +85,7 @@ const NotesHeader: React.FC<NotesHeaderProps> = ({
             }
           >
             <CheckSquare className="w-4 h-4 md:mr-2" />
-            <span className="hidden md:inline text-sm">
+            <span className="hidden md:inline text-sm text-black dark:text-white">
               {isSelectionMode
                 ? t('common.notes.cancelSelection')
                 : t('common.notes.multiSelect')}
@@ -119,6 +119,11 @@ const NotesHeader: React.FC<NotesHeaderProps> = ({
             </>
           )}
         </div>
+      }
+      middleContent={
+        <h1 className="text-sm font-medium text-black dark:text-white">
+          {t('common.notes.title', { defaultValue: 'Notes' })}
+        </h1>
       }
       className="bg-stone-50"
       noPadding

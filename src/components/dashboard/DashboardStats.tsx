@@ -18,10 +18,10 @@ const MonthlyTargetSelect = ({ value, onChange }: { value: number; onChange: (va
     <div className="relative" ref={dropdownRef}>
       <div
         onClick={() => setIsOpen(!isOpen)}
-        className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg flex items-center justify-between cursor-pointer"
+        className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg flex items-center justify-between cursor-pointer text-black dark:text-white"
       >
         <span>{value} {t('contentStatus.contents')}</span>
-        <Settings2 className="w-4 h-4 text-gray-500" />
+        <Settings2 className="w-4 h-4 text-gray-500 dark:text-[#a1a1a9]" />
       </div>
       
       {isOpen && (
@@ -29,7 +29,7 @@ const MonthlyTargetSelect = ({ value, onChange }: { value: number; onChange: (va
           {options.map((option) => (
             <div
               key={option}
-              className="px-3 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer text-sm"
+              className="px-3 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer text-sm text-black dark:text-white"
               onClick={() => {
                 onChange(option);
                 setIsOpen(false);
@@ -85,7 +85,7 @@ const DashboardStats = () => {
               <Button 
                 variant="ghost" 
                 size="icon" 
-                className="h-8 w-8" 
+                className="h-8 w-8 text-slate-600 dark:text-white" 
                 onClick={() => setIsDialogOpen(true)}
               >
                 <Settings2 className="h-4 w-4" />
@@ -191,7 +191,7 @@ const DashboardStats = () => {
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
         <DialogContent>
           <DialogHeader>
-            <h2 className="text-lg font-semibold mb-4">{t('contentStatus.setMonthlyTarget')}</h2>
+            <h2 className="text-lg font-semibold mb-4 text-black dark:text-white">{t('contentStatus.setMonthlyTarget')}</h2>
           </DialogHeader>
           <MonthlyTargetSelect
             value={monthlyTarget}

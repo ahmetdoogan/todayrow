@@ -26,26 +26,28 @@ const CalendarHeader: React.FC<CalendarHeaderProps> = ({
   return (
     <BaseHeader
       leftContent={
-        <div className="flex items-center gap-2">
-          <Calendar className="w-5 h-5" />
-          <div className="flex items-center gap-4">
-            <div className="flex items-center gap-2">
-              <button
-                onClick={onPrevMonth}
-                className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
-              >
-                <ChevronLeft className="w-4 h-4" />
-              </button>
-              <span className="text-sm font-medium">{monthName}</span>
-              <button
-                onClick={onNextMonth}
-                className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
-              >
-                <ChevronRight className="w-4 h-4" />
-              </button>
-            </div>
+        <div className="flex items-center gap-4">
+          <div className="flex items-center gap-2">
+            <button
+              onClick={onPrevMonth}
+              className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
+            >
+              <ChevronLeft className="w-4 h-4" />
+            </button>
+            <span className="text-sm font-medium">{monthName}</span>
+            <button
+              onClick={onNextMonth}
+              className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
+            >
+              <ChevronRight className="w-4 h-4" />
+            </button>
           </div>
         </div>
+      }
+      middleContent={
+        <h1 className="text-sm font-medium text-black dark:text-white">
+          {t('common.calendar.title', { defaultValue: 'Calendar' })}
+        </h1>
       }
       className="bg-stone-50"
       noPadding

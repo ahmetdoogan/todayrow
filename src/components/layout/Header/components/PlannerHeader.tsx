@@ -23,10 +23,10 @@ const PlannerHeader = () => {
   const t = useTranslations();
 
   const formatDate = (date: Date) => {
-    return new Date(date).toLocaleDateString(t('common.locales.dateFormat'), {
-      day: 'numeric',
-      month: 'short'
-    });
+    return new Date(date).toLocaleDateString(
+      t('common.locales.dateFormat'),
+      { day: 'numeric', month: 'short' }
+    );
   };
 
   const isToday = (date: Date) => {
@@ -53,28 +53,24 @@ const PlannerHeader = () => {
     return formatDate(date);
   };
   
-  // Gece yarısı uyarısını kontrol et
+  // Gece yarısı (00:00-06:00) uyarısını kontrol et
   const shouldShowMidnightWarning = () => {
     const now = new Date();
-    // 00:00-06:00 saatleri arasında
     const isAfterMidnightHours = now.getHours() >= 0 && now.getHours() < 6;
-    // Dün sekmesi seçili değilse ve gece yarısından sonraysa göster
     return isAfterMidnightHours && !isYesterday(selectedDate);
   };
-  
-  // Uyarı mesajında gösterilecek tarihi seç
+
   const getWarningDate = () => {
-    // Seçili tarih doğrudan gösterilecek
     return formatDate(selectedDate);
   };
   
   const [showMidnightWarning, setShowMidnightWarning] = React.useState(shouldShowMidnightWarning());
-  
+
   React.useEffect(() => {
-    // Seçilen tarih değiştiğinde uyarı görünürlüğünü güncelle
     setShowMidnightWarning(shouldShowMidnightWarning());
   }, [selectedDate]);
 
+  // Dün, bugün, yarın için tarih dizisi
   const dates = React.useMemo(() => {
     const today = new Date();
     return [-1, 0, 1].map(offset => {
@@ -85,41 +81,46 @@ const PlannerHeader = () => {
   }, []);
 
   const navigateDate = (direction: 'prev' | 'next') => {
-    const currentIndex = dates.findIndex(date => date.toDateString() === selectedDate.toDateString());
-    const newDate = dates[direction === 'prev' ? currentIndex - 1 : currentIndex + 1];
+    const currentIndex = dates.findIndex(
+      date => date.toDateString() === selectedDate.toDateString()
+    );
+    const newDate = dates[
+      direction === 'prev' ? currentIndex - 1 : currentIndex + 1
+    ];
     if (newDate) {
       setSelectedDate(newDate);
     }
   };
 
-  // Mobil için Tarih Navigasyonu
+  // Mobil Tarih Navigasyonu
   const MobileDateNavigation = () => (
     <div className="flex items-center gap-2">
       <button 
         onClick={() => navigateDate('prev')}
         disabled={selectedDate.toDateString() === dates[0].toDateString()}
-        className="p-1"
+        className="p-1 text-black dark:text-white"
       >
         <ChevronLeft className="w-4 h-4" />
       </button>
-      <span className="text-sm font-medium">{getDateLabel(selectedDate)}</span>
+      <span className="text-sm font-medium text-black dark:text-white">
+        {getDateLabel(selectedDate)}
+      </span>
       <button 
         onClick={() => navigateDate('next')}
         disabled={selectedDate.toDateString() === dates[2].toDateString()}
-        className="p-1"
+        className="p-1 text-black dark:text-white"
       >
         <ChevronRight className="w-4 h-4" />
       </button>
     </div>
   );
 
-  // Masaüstü için Tarih Navigasyonu
+  // Masaüstü Tarih Navigasyonu
   const DesktopDateNavigation = () => (
     <div className="flex justify-center gap-1 md:gap-2">
       {dates.map((date, index) => {
         const isSelected = selectedDate.toDateString() === date.toDateString();
         const isDisabled = date < dates[0];
-
         return (
           <motion.button
             key={date.toISOString()}
@@ -128,11 +129,10 @@ const PlannerHeader = () => {
             whileTap={!isDisabled ? { scale: 0.98 } : {}}
             className={`
               relative px-2 md:px-4 py-1 md:py-1.5 rounded-lg transition-colors text-sm
-              ${isSelected 
-                ? 'bg-stone-800 text-white dark:bg-zinc-700 dark:text-stone-200' 
-                : index === 1
-                  ? 'hover:bg-gray-100 dark:hover:bg-gray-800'
-                  : 'hover:bg-gray-100 dark:hover:bg-gray-800'
+              ${
+                isSelected
+                  ? 'bg-stone-800 text-white dark:bg-zinc-700 dark:text-stone-200' 
+                  : 'text-black dark:text-white hover:bg-gray-100 dark:hover:bg-gray-800'
               }
               ${isDisabled ? 'opacity-50 cursor-not-allowed' : ''}
               ${index === 1 ? 'font-medium' : ''}
@@ -152,14 +152,24 @@ const PlannerHeader = () => {
 
   return (
     <>
+      {/* Uyarı barı */}
       <AnimatePresence>
         {showMidnightWarning && (
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
             transition={{ duration: 0.3 }}
-            className="bg-amber-50 dark:bg-amber-900/20 border-b border-amber-100 dark:border-amber-800/30 text-amber-700 dark:text-amber-400 px-4 py-2 text-sm text-center overflow-hidden"
+            // Artık absolute değil, normal flow'da
+            className="
+              bg-amber-50 dark:bg-amber-900/20
+              border-b border-amber-100 dark:border-amber-800/30
+              text-amber-700 dark:text-amber-400
+              px-4 py-2 text-sm text-center
+              overflow-hidden
+              mx-4 mt-2 
+              rounded-t-xl
+            "
           >
             <span>
               {t('common.planner.midnightWarning', { date: getWarningDate() })}
@@ -167,6 +177,8 @@ const PlannerHeader = () => {
           </motion.div>
         )}
       </AnimatePresence>
+
+      {/* Header */}
       <BaseHeader
         leftContent={
           <button
@@ -174,15 +186,21 @@ const PlannerHeader = () => {
             className={`
               group flex items-center justify-center transition-colors rounded-lg
               w-8 h-8 md:w-auto md:h-auto md:px-4 md:py-2
-              border border-gray-200 dark:border-gray-700
-              hover:bg-gray-50 dark:hover:bg-gray-700 
+              border border-gray-200 dark:border-gray-700 text-black dark:text-white
+              hover:bg-gray-50 dark:hover:bg-gray-700
               ${isSelectionMode ? "bg-gray-100 dark:bg-gray-700" : ""}
             `}
-            title={isSelectionMode ? t('common.planner.cancelSelection') : t('common.planner.multiSelect')}
+            title={
+              isSelectionMode
+                ? t('common.planner.cancelSelection')
+                : t('common.planner.multiSelect')
+            }
           >
             <CheckSquare className="w-4 h-4 md:mr-2" />
             <span className="hidden md:inline text-sm">
-              {isSelectionMode ? t('common.planner.cancelSelection') : t('common.planner.multiSelect')}
+              {isSelectionMode
+                ? t('common.planner.cancelSelection')
+                : t('common.planner.multiSelect')}
             </span>
           </button>
         }
@@ -197,32 +215,42 @@ const PlannerHeader = () => {
           </>
         }
         rightContent={
-          isSelectionMode && selectedPlanIds.length > 0 ? (
+          isSelectionMode && selectedPlanIds.length > 0 && (
             <div className="flex items-center gap-2">
               <button
                 onClick={() => bulkDeletePlans(selectedPlanIds)}
-                className="flex items-center gap-1 px-2 py-1 md:px-4 md:py-2 
-                         bg-stone-800 hover:bg-stone-900 dark:bg-stone-700 dark:hover:bg-stone-600 
-                         text-white text-sm rounded-lg"
+                className="
+                  flex items-center gap-1 px-2 py-1 md:px-4 md:py-2
+                  bg-stone-800 hover:bg-stone-900 
+                  dark:bg-stone-700 dark:hover:bg-stone-600
+                  text-white text-sm rounded-lg
+                "
                 title={t('common.planner.deleteSelected')}
               >
                 <Trash2 className="w-4 h-4" />
-                <span className="hidden md:inline">{t('common.planner.deleteButton')}</span>
+                <span className="hidden md:inline">
+                  {t('common.planner.deleteButton')}
+                </span>
                 <span>({selectedPlanIds.length})</span>
               </button>
               
               <button
                 onClick={() => bulkCompletePlans(selectedPlanIds)}
-                className="flex items-center gap-1 px-2 py-1 md:px-4 md:py-2 
-                         bg-stone-800 hover:bg-stone-900 dark:bg-stone-700 dark:hover:bg-stone-600 
-                         text-white text-sm rounded-lg"
+                className="
+                  flex items-center gap-1 px-2 py-1 md:px-4 md:py-2
+                  bg-stone-800 hover:bg-stone-900
+                  dark:bg-stone-700 dark:hover:bg-stone-600
+                  text-white text-sm rounded-lg
+                "
                 title={t('common.planner.completeSelected')}
               >
                 <Check className="w-4 h-4" />
-                <span className="hidden md:inline">{t('common.planner.completeButton')}</span>
+                <span className="hidden md:inline">
+                  {t('common.planner.completeButton')}
+                </span>
               </button>
             </div>
-          ) : null
+          )
         }
         className="bg-stone-50 dark:bg-gray-900"
         noPadding

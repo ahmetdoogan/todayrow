@@ -1,45 +1,66 @@
 "use client";
 
-import React, { Suspense, useEffect, useState } from "react";
-import Link from "next/link";
-import Image from "next/image"; // Image bileşenini import ediyoruz
-import { motion } from "framer-motion";
-import { Sun, Moon } from "lucide-react";
-import dynamic from "next/dynamic";
-import { Fraunces } from "next/font/google";
+import React, { useState, useEffect } from "react";
 import { useTheme } from "@/components/providers/ThemeProvider";
 import { useAuth } from "@/context/AuthContext";
-import { Logo } from "@/components/ui/logo";
 import { useTranslations } from "next-intl";
-import GoogleSignInButton from "@/components/auth/GoogleSignInButton";
-import GoogleOneTap from "@/components/auth/GoogleOneTap";
-import LanguageSwitcher from "@/components/providers/LanguageSwitcher"; // Dil değiştirme fonksiyonu
+import { Inter } from "next/font/google";
+import NavBar from "@/components/landing/NavBar";
+import HeroSection from "@/components/landing/HeroSection";
+import FeaturesSection from "@/components/landing/FeaturesSection";
+import TabsSection from "@/components/landing/TabsSection";
+import WhyFocusedPlanningSection from "@/components/landing/WhyFocusedPlanningSection";
+import HowItWorksSection from "@/components/landing/HowItWorksSection";
+import TestimonialsSection from "@/components/landing/TestimonialsSection";
+import CTASection from "@/components/landing/CTASection";
+import FooterSection from "@/components/landing/FooterSection";
 
-const Spline = dynamic(() => import("@splinetool/react-spline"), {
-  ssr: false,
-  loading: () => null,
-});
+// Font imports
+const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 
-const fraunces = Fraunces({ subsets: ["latin"] });
-
-const SPLINE_SCENES = {
-  dark: "https://prod.spline.design/8ma2msMNzQPlUkoV/scene.splinecode",
-  light: `https://prod.spline.design/HBocpLglQGgMEfho/scene.splinecode?t=${Date.now()}`
-};
-
-export default function LandingPage() {
-  const { theme, toggleTheme } = useTheme();
-  const [isSplineReady, setIsSplineReady] = useState(false);
+export default function NewLandingPage() {
+  const { theme } = useTheme();
   const { signInWithGoogle } = useAuth();
   const t = useTranslations();
+  const [activeTab, setActiveTab] = useState("planning");
 
+  // Badge visibility states
+  const [badgeOpacity, setBadgeOpacity] = useState({
+    reminder: 0,
+    plan: 0,
+    tasks: 0,
+    meeting: 0,
+  });
+
+  // Badge'lerin başlangıçta gösterilmesi için useEffect
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setIsSplineReady(true);
-    }, 100);
+    const timer1 = setTimeout(() => {
+      setBadgeOpacity((prev) => ({ ...prev, reminder: 1 }));
+    }, 2000);
+    const timer2 = setTimeout(() => {
+      setBadgeOpacity((prev) => ({ ...prev, plan: 1 }));
+    }, 2300);
+    const timer3 = setTimeout(() => {
+      setBadgeOpacity((prev) => ({ ...prev, tasks: 1 }));
+    }, 2600);
+    const timer4 = setTimeout(() => {
+      setBadgeOpacity((prev) => ({ ...prev, meeting: 1 }));
+    }, 2900);
 
-    return () => clearTimeout(timer);
+    return () => {
+      clearTimeout(timer1);
+      clearTimeout(timer2);
+      clearTimeout(timer3);
+      clearTimeout(timer4);
+    };
   }, []);
+
+  const hideBadge = (badge: keyof typeof badgeOpacity) => {
+    setBadgeOpacity((prev) => ({
+      ...prev,
+      [badge]: 0,
+    }));
+  };
 
   const handleGoogleSignIn = async () => {
     try {
@@ -49,191 +70,156 @@ export default function LandingPage() {
     }
   };
 
+  // Sayfa içeriği
+  const sections = {
+    hero: {
+      title: t("landing.newLanding.hero.title"),
+      subtitle: t("landing.newLanding.hero.subtitle"),
+      description: t("landing.newLanding.hero.description"),
+      ctaMain: t("landing.newLanding.hero.ctaMain"),
+      ctaSecondary: t("landing.newLanding.hero.ctaSecondary"),
+    },
+    features: [
+      {
+        title: t("landing.newLanding.features.minimalPlanning.title"),
+        description: t("landing.newLanding.features.minimalPlanning.description"),
+        icon: "Calendar",
+        iconBg: "from-blue-500/20 to-indigo-500/20",
+      },
+      {
+        title: t("landing.newLanding.features.smartReminders.title"),
+        description: t("landing.newLanding.features.smartReminders.description"),
+        icon: "Bell",
+        iconBg: "from-amber-500/20 to-orange-500/20",
+      },
+      {
+        title: t("landing.newLanding.features.quickNotes.title"),
+        description: t("landing.newLanding.features.quickNotes.description"),
+        icon: "Clipboard",
+        iconBg: "from-emerald-500/20 to-teal-500/20",
+      },
+    ],
+    tabs: [
+      {
+        id: "planning",
+        label: t("landing.newLanding.tabs.planning.title"),
+        content: t("landing.newLanding.tabs.planning.content"),
+      },
+      {
+        id: "focus",
+        label: t("landing.newLanding.tabs.focus.title"),
+        content: t("landing.newLanding.tabs.focus.content"),
+      },
+      {
+        id: "reminders",
+        label: t("landing.newLanding.tabs.reminders.title"),
+        content: t("landing.newLanding.tabs.reminders.content"),
+      },
+      {
+        id: "notes",
+        label: t("landing.newLanding.tabs.notes.title"),
+        content: t("landing.newLanding.tabs.notes.content"),
+      },
+    ],
+    howItWorks: {
+      title: t("landing.newLanding.howItWorks.title"),
+      steps: [
+        {
+          title: t("landing.newLanding.howItWorks.steps.account.title"),
+          description: t("landing.newLanding.howItWorks.steps.account.description"),
+        },
+        {
+          title: t("landing.newLanding.howItWorks.steps.plan.title"),
+          description: t("landing.newLanding.howItWorks.steps.plan.description"),
+        },
+        {
+          title: t("landing.newLanding.howItWorks.steps.productive.title"),
+          description: t("landing.newLanding.howItWorks.steps.productive.description"),
+        },
+      ],
+    },
+  };
+
   return (
-    <div className="fixed inset-0 overflow-hidden">
+    <div
+      className={`min-h-screen bg-white dark:bg-gray-950 ${inter.variable} font-sans overflow-hidden`}
+    >
+      <style jsx global>{`
+        @import url("https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&display=swap");
+        .instrument-serif {
+          font-family: "Instrument Serif", serif !important;
+          font-weight: 400;
+        }
+        .grain-overlay {
+          position: absolute;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+          opacity: 0.12;
+          pointer-events: none;
+          z-index: 1;
+        }
+      `}</style>
 
-      {/* Light mode background */}
-      <div className="absolute inset-0 dark:hidden bg-[#fff7ed]">
-        <div className="absolute -top-40 left-1/3 w-[1000px] h-[1000px] blur-3xl bg-gradient-to-b from-orange-100/40 via-orange-50/20 to-transparent rounded-full" />
-        <div className="absolute top-20 right-1/4 w-[800px] h-[800px] blur-3xl bg-gradient-to-b from-rose-100/30 via-orange-50/20 to-transparent rounded-full" />
-        <div className="absolute bottom-0 right-0 w-full h-[500px] bg-gradient-to-t from-white via-white to-transparent" />
+      {/* Grain effect overlay */}
+      <div className="grain-overlay"></div>
+
+      {/* Background elements - Simple gradients */}
+      <div className="absolute top-0 inset-x-0 h-screen pointer-events-none overflow-hidden z-0">
+        <div className="absolute -top-40 -right-20 w-[900px] h-[900px] opacity-20 bg-gradient-to-bl from-orange-100 via-pink-100/50 to-transparent rounded-full blur-3xl" />
+        <div className="absolute top-60 -left-40 w-[800px] h-[800px] opacity-20 bg-gradient-to-tr from-blue-100 via-indigo-100/30 to-transparent rounded-full blur-3xl" />
       </div>
 
-      {/* Dark mode background */}
-      <div className="absolute inset-0 dark:block hidden">
-        <div className="absolute inset-0 bg-[#0D1117]" />
+      {/* Background elements - Dark mode */}
+      <div className="hidden dark:block absolute inset-0 pointer-events-none overflow-hidden z-0">
+        <div className="absolute -top-40 -right-20 w-[900px] h-[900px] opacity-20 bg-gradient-to-bl from-orange-500/20 via-pink-500/10 to-transparent rounded-full blur-3xl" />
+        <div className="absolute top-60 -left-40 w-[800px] h-[800px] opacity-20 bg-gradient-to-tr from-blue-500/20 via-indigo-500/10 to-transparent rounded-full blur-3xl" />
       </div>
 
-      {/* Spline Scene */}
-      {isSplineReady && (
-        <div
-          id="spline-container"
-          className="fixed inset-0 hidden sm:block transition-opacity duration-300"
-          style={{ zIndex: 1 }}
-        >
-          <div className="absolute inset-0" style={{ width: "100vw", height: "100vh" }}>
-            <Suspense fallback={null}>
-              <Spline
-                scene={theme === "dark" ? SPLINE_SCENES.dark : SPLINE_SCENES.light}
-                style={{
-                  width: "100%",
-                  height: "100%",
-                  pointerEvents: "none",
-                  transform: "none",
-                  transformOrigin: "center center",
-                }}
-              />
-            </Suspense>
+      <NavBar />
+      <HeroSection sections={sections} badgeOpacity={badgeOpacity} hideBadge={hideBadge} />
+      <div className="relative bg-white dark:bg-gray-900 z-20 overflow-hidden">
+        <div className="h-0"></div>
+      </div>
+
+      {/* Why Todayrow? Section */}
+      <section
+        id="features"
+        className="py-24 px-4 bg-gray-50 dark:bg-gray-900 relative z-10"
+      >
+        <div className="max-w-6xl mx-auto">
+          <div className="text-center mb-12">
+            <div className="inline-block px-3 py-1.5 mb-4 rounded-lg bg-gradient-to-r from-orange-100 to-orange-50 dark:from-gray-800/80 dark:to-gray-800/60 text-orange-600 dark:text-gray-200 text-xs font-medium shadow-sm hover:shadow transition-shadow duration-300 border border-orange-200/50 dark:border-gray-700/70">
+              {t("landing.newLanding.features.badge")}
+            </div>
+            <h2 className="text-4xl md:text-5xl font-medium text-gray-900 dark:text-white mb-4">
+              {t("landing.newLanding.features.titleParts.why")}{" "}
+              <span className="instrument-serif italic text-gray-900 dark:text-white">
+                {t("landing.newLanding.features.titleParts.todayrow")}
+              </span>
+            </h2>
+            <p className="text-sm md:text-lg text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
+              {t("landing.newLanding.features.subtitle")}
+            </p>
           </div>
-          <div
-            className={`absolute inset-0 pointer-events-none ${
-              theme === "dark"
-                ? "bg-gradient-to-b from-[#0D1117]/50 via-transparent to-[#0D1117]/50"
-                : "bg-gradient-to-b from-white/50 via-transparent to-white/50"
-            }`}
+
+          {/* FeaturesSection ve TabsSection tek bir kapsayıcıda */}
+          <FeaturesSection features={sections.features} />
+          <TabsSection
+            tabs={sections.tabs}
+            activeTab={activeTab}
+            setActiveTab={setActiveTab}
           />
         </div>
-      )}
+      </section>
 
-      {/* Navigation Bar */}
-      <div className="w-full fixed top-6 left-0 right-0 z-[3] px-4">
-        <nav className="max-w-6xl mx-auto bg-white/70 dark:bg-slate-900/70 backdrop-blur-sm border border-slate-200/50 dark:border-slate-700/50 rounded-[2rem] px-4 py-3 sm:px-6 sm:py-4">
-          <div className="flex items-center justify-between">
-            <Link href="/" className="flex items-center gap-2 group">
-              <Logo className="h-5 w-auto" />
-            </Link>
-
-            <div className="flex items-center gap-3 sm:gap-6">
-              {/* Tema (Dark/Light) Toggle */}
-              <button
-                onClick={toggleTheme}
-                className="p-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-400 transition-colors"
-              >
-                {theme === "dark" ? <Moon size={18} /> : <Sun size={18} />}
-              </button>
-
-              {/* Login / Signup Linkleri */}
-              <Link
-                href="/auth/login"
-                className="text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white font-medium transition-colors whitespace-nowrap text-sm sm:text-base"
-              >
-                {t('common.navigation.login')}
-              </Link>
-              <Link
-                href="/auth/signup"
-                className="px-4 sm:px-6 py-1.5 sm:py-2 bg-slate-900 hover:bg-slate-800 dark:bg-white/10 dark:hover:bg-white/20 text-white rounded-[3rem] font-medium transition-colors text-sm sm:text-base whitespace-nowrap"
-              >
-                {t('common.navigation.start')}
-              </Link>
-            </div>
-          </div>
-        </nav>
-      </div>
-
-      {/* Main Content */}
-      <main className="h-full flex items-center justify-center z-[2] relative">
-        <div className="max-w-5xl mx-auto px-4 text-center space-y-8">
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.8, delay: 0.2 }}
-          >
-            <motion.h1
-              initial={{ y: 20 }}
-              animate={{ y: 0 }}
-              transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-              className={`text-[3.5rem] sm:text-[5rem] lg:text-[6.5rem] leading-[1.1] tracking-tight text-gray-900 dark:text-white ${fraunces.className}`}
-            >
-              {t('landing.title')}
-              <br />
-              {t('landing.subtitle')}
-            </motion.h1>
-          </motion.div>
-
-          <motion.div
-    initial={{ opacity: 0, y: 10 }}
-    animate={{ opacity: 1, y: 0 }}
-    transition={{ duration: 0.8, delay: 0.4 }}
-    className="flex flex-wrap justify-center gap-2 sm:gap-2 text-base sm:text-lg"
->
-    <span className="px-4 sm:px-5 py-2 rounded-full bg-orange-100 dark:bg-white/5 text-gray-600 dark:text-gray-300">
-        {t('landing.features.today')}
-    </span>
-    <span className="px-2 py-2 text-gray-500 dark:text-gray-400">
-        {t('landing.features.yours')}
-    </span>
-    <span className="px-4 sm:px-5 py-2 rounded-full bg-orange-200/50 dark:bg-white/5 text-gray-600 dark:text-gray-300">
-        {t('landing.features.prepare')}
-    </span>
-    <span className="px-2 py-2 text-gray-500 dark:text-gray-400">
-        {t('landing.features.for')}
-    </span>
-    <span className="px-4 sm:px-5 py-2 rounded-full bg-orange-300/50 dark:bg-white/5 text-gray-600 dark:text-gray-300">
-        {t('landing.features.tomorrow')}
-    </span>
-</motion.div>
-
-
-          {/* Google Sign In + Email Sign Up */}
-          <div className="max-w-sm mx-auto flex flex-col items-center gap-3">
-            <button
-              onClick={handleGoogleSignIn}
-              className="w-64 py-2.5 px-4 border border-slate-200 dark:border-slate-700 rounded-2xl flex items-center justify-center gap-2 text-slate-700 dark:text-slate-300 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors"
-            >
-              <Image
-                src="https://www.google.com/favicon.ico"
-                alt="Google"
-                width={20}
-                height={20}
-                className="w-5 h-5"
-              />
-              <span>{t('auth.continueWithGoogle')}</span>
-            </button>
-
-            <div className="w-full flex items-center gap-3">
-              <div className="flex-1 h-px bg-gradient-to-r from-transparent via-gray-200 dark:via-gray-700 to-transparent" />
-              <span className="text-sm text-gray-500 dark:text-gray-400">{t('auth.or')}</span>
-              <div className="flex-1 h-px bg-gradient-to-r from-transparent via-gray-200 dark:via-gray-700 to-transparent" />
-            </div>
-
-            <Link
-              href="/auth/signup"
-              className="w-64 py-2.5 bg-slate-900 hover:bg-slate-700 border border-slate-800/30 dark:bg-orange-900 dark:hover:bg-orange-950 dark:border-orange-800/30 text-white rounded-2xl text-base font-medium transition-colors text-center"
-            >
-              {t('auth.continueWithEmail')}
-            </Link>
-          </div>
-        </div>
-      </main>
-
-      {/* Footer */}
-      <footer className="fixed bottom-4 left-0 right-0 z-[2] px-4">
-        <div className="max-w-6xl mx-auto flex justify-center gap-6 text-sm text-slate-500 dark:text-slate-400">
-          <Link
-            href="/legal/privacy"
-            className="hover:text-slate-900 dark:hover:text-white transition-colors"
-          >
-            {t('common.navigation.privacyPolicy')}
-          </Link>
-          {/* Dil Değiştirici (Bayrak Emojileri) */}
-          <LanguageSwitcher className="flex items-center gap-1">
-            {({ locale, switchLocale }) => (
-              <button
-                onClick={() => switchLocale(locale === "tr" ? "en" : "tr")}
-                className="hover:text-slate-900 dark:hover:text-white transition-colors"
-              >
-                {locale === "tr" ? "🇺🇸" : "🇹🇷"}
-              </button>
-            )}
-          </LanguageSwitcher>
-          <Link
-            href="/legal/terms"
-            className="hover:text-slate-900 dark:hover:text-white transition-colors"
-          >
-            {t('common.navigation.termsOfService')}
-          </Link>
-        </div>
-      </footer>
+      <WhyFocusedPlanningSection />
+      <HowItWorksSection howItWorks={sections.howItWorks} />
+      <TestimonialsSection />
+      <CTASection />
+      <FooterSection />
     </div>
   );
 }

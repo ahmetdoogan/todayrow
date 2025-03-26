@@ -1,23 +1,30 @@
 "use client";
+
 import React, { useEffect } from "react";
 import Link from "next/link";
-import { Mail } from "lucide-react";
 import { useTranslations } from 'next-intl';
 import { useRouter } from "next/navigation";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
+import { motion } from "framer-motion";
+import { Mail, Loader2 } from "lucide-react";
 
-// Bu sayfa: 
-// 1) Ekranda "Lütfen e-postanızı doğrulayın" kutusu gösterir.
-// 2) Aynı anda useEffect içinde "mail doğrulanmış mı?" diye bakar. 
-//    - Doğrulanmışsa => "subscriptions" tablosunda satır var mı yok mu kontrol. 
-//    - Yoksa => ekle. 
-// 3) Ardından /dashboard'a yönlendirir.
+// ShadCN bileşenleri
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+  CardContent,
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Logo } from "@/components/ui/logo";
 
 export default function VerifyPage() {
   const t = useTranslations('auth');
   const commonT = useTranslations('common');
   const router = useRouter();
   const supabase = useSupabaseClient();
+  const [isChecking, setIsChecking] = React.useState(true);
 
   useEffect(() => {
     // 1) user var mı => mail confirmed mı => tablo insert
@@ -70,6 +77,9 @@ export default function VerifyPage() {
           console.log("Subscription row already exists, skipping insert.");
         }
 
+        // İşlemler bitti
+        setIsChecking(false);
+
         // Son olarak dashboard'a at.
         setTimeout(() => {
           router.push("/dashboard");
@@ -77,6 +87,7 @@ export default function VerifyPage() {
 
       } catch (err) {
         console.error("Verify check error:", err);
+        setIsChecking(false);
         router.push("/auth/login");
       }
     };
@@ -85,25 +96,56 @@ export default function VerifyPage() {
   }, [supabase, router]);
 
   return (
-    <div className="bg-white dark:bg-gray-800 p-8 rounded-lg shadow-lg max-w-md mx-auto mt-20">
-      <div className="text-center">
-        <Mail className="w-16 h-16 mx-auto mb-4 text-blue-600" />
-        <h1 className="text-2xl font-bold mb-2">{t('verify.title')}</h1>
-        <p className="text-gray-600 dark:text-gray-400 mb-6">
-          {t('verify.description')}
-        </p>
-        <div className="space-y-4">
-          <p className="text-sm text-gray-500 dark:text-gray-400">
-            {t('verify.checkSpam')}
-          </p>
-          <Link
-            href="/auth/login"
-            className="text-blue-600 hover:underline block"
-          >
-            {commonT('navigation.backToLogin')}
+    <div className="flex min-h-screen items-center justify-center p-6 bg-gray-50 dark:bg-[#111111]">
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4 }}
+        className="w-full max-w-md"
+      >
+        {/* Logo (orta) */}
+        <div className="flex justify-center mb-6">
+          <Link href="/" className="hover:opacity-80 transition-opacity">
+            <Logo className="h-8 w-auto" />
           </Link>
         </div>
-      </div>
+        
+        <Card className="border-gray-200 dark:border-gray-800 dark:bg-black">
+          <CardHeader className="text-center">
+            <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-blue-50 dark:bg-blue-900/20">
+              {isChecking ? (
+                <Loader2 className="h-7 w-7 text-blue-500 animate-spin" />
+              ) : (
+                <Mail className="h-7 w-7 text-blue-500" />
+              )}
+            </div>
+            <CardTitle>{t('verify.title')}</CardTitle>
+            <CardDescription className="text-slate-600 dark:text-[#a1a1a9]">{t('verify.description')}</CardDescription>
+          </CardHeader>
+          <CardContent className="text-center space-y-4">
+            {isChecking ? (
+              <p className="text-sm text-muted-foreground dark:text-[#a1a1a9]">
+                E-posta adresiniz kontrol ediliyor...
+              </p>
+            ) : (
+              <>
+                <p className="text-sm text-muted-foreground dark:text-[#a1a1a9]">
+                  {t('verify.checkSpam')}
+                </p>
+                <Button
+                  variant="outline"
+                  className="mx-auto dark:bg-black dark:border-gray-800 dark:text-white dark:hover:bg-gray-900"
+                  asChild
+                >
+                  <Link href="/auth/login">
+                    {commonT('navigation.backToLogin')}
+                  </Link>
+                </Button>
+              </>
+            )}
+          </CardContent>
+        </Card>
+      </motion.div>
     </div>
   );
 }

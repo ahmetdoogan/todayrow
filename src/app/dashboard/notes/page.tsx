@@ -22,12 +22,12 @@ interface Filters {
 
 export default function NotesPage() {
   const searchParams = useSearchParams();
-  const { 
-    notes, 
-    fetchNotes, 
-    isLoading, 
+  const {
+    notes,
+    fetchNotes,
+    isLoading,
     selectedNote,
-    setSelectedNote, 
+    setSelectedNote,
     setIsEditingNote,
     isEditingNote,
     viewingNote,
@@ -37,8 +37,8 @@ export default function NotesPage() {
     deleteNote,
     toggleNotePin
   } = useNotes();
-  
-  const { isPro, isTrialing, status } = useSubscription(); // Güncellendi
+
+  const { isPro, isTrialing, status } = useSubscription();
   const [isPricingModalOpen, setIsPricingModalOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isSelectionMode, setIsSelectionMode] = useState(false);
@@ -57,7 +57,7 @@ export default function NotesPage() {
 
   useEffect(() => {
     if (!searchParams) return;
-    const openNoteId = searchParams?.get('openNote');
+    const openNoteId = searchParams.get('openNote');
     if (openNoteId) {
       const noteToOpen = notes.find(note => note.id === parseInt(openNoteId));
       if (noteToOpen) {
@@ -65,6 +65,30 @@ export default function NotesPage() {
       }
     }
   }, [searchParams, notes]);
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-[calc(100vh-4rem)]">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900 dark:border-white" />
+      </div>
+    );
+  }
+
+  const filteredNotes = useMemo(() => {
+    return notes.filter(note => {
+      if (filters.folder && note.folder_path !== filters.folder) {
+        return false;
+      }
+      if (filters.tags.length > 0) {
+        const noteTags = note.tags ? note.tags.split(',').map(t => t.trim()) : [];
+        const hasMatchingTag = filters.tags.some(tag => noteTags.includes(tag));
+        if (!hasMatchingTag) {
+          return false;
+        }
+      }
+      return true;
+    });
+  }, [notes, filters]);
 
   const handleSave = async (noteData: Partial<Note>) => {
     try {
@@ -76,7 +100,7 @@ export default function NotesPage() {
       setIsModalOpen(false);
       setIsEditingNote(false);
       setSelectedNote(null);
-    } catch (error: any) {
+    } catch (error) {
       console.error('Error saving note:', error);
     }
   };
@@ -110,16 +134,12 @@ export default function NotesPage() {
     }
   };
 
-  const handleBulkPin = async () => {
-    try {
-      for (const id of selectedNotes) {
-        await toggleNotePin(id, false);
-      }
-      setSelectedNotes([]);
-      setIsSelectionMode(false);
-    } catch (error) {
-      console.error('Error bulk pinning notes:', error);
-    }
+  const confirmDelete = (id: number) => {
+    setDeleteConfirm({ isOpen: true, id, isBulk: false });
+  };
+
+  const confirmBulkDelete = () => {
+    setDeleteConfirm({ isOpen: true, isBulk: true });
   };
 
   const handleNoteSelect = (id: number) => {
@@ -131,38 +151,6 @@ export default function NotesPage() {
       }
     });
   };
-
-  const confirmDelete = (id: number) => {
-    setDeleteConfirm({ isOpen: true, id, isBulk: false });
-  };
-
-  const confirmBulkDelete = () => {
-    setDeleteConfirm({ isOpen: true, isBulk: true });
-  };
-
-  const filteredNotes = useMemo(() => {
-    return notes.filter(note => {
-      if (filters.folder && note.folder_path !== filters.folder) {
-        return false;
-      }
-      if (filters.tags.length > 0) {
-        const noteTags = note.tags ? note.tags.split(',').map(t => t.trim()) : [];
-        const hasMatchingTag = filters.tags.some(tag => noteTags.includes(tag));
-        if (!hasMatchingTag) {
-          return false;
-        }
-      }
-      return true;
-    });
-  }, [notes, filters]);
-
-  if (isLoading) {
-    return (
-      <div className="flex items-center justify-center min-h-[calc(100vh-4rem)]">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900 dark:border-white" />
-      </div>
-    );
-  }
 
   return (
     <div className="h-full">
@@ -177,7 +165,10 @@ export default function NotesPage() {
         toggleTheme={toggleTheme}
       />
 
-      <NotesFilter onFilterChange={setFilters} />
+      {/* Header ile Notlar arasında küçük boşluk */}
+      <div className="mt-8">
+        <NotesFilter onFilterChange={setFilters} />
+      </div>
 
       {filteredNotes.length === 0 ? (
         <div className="flex flex-col items-center justify-center min-h-[60vh] p-4">
@@ -229,7 +220,7 @@ export default function NotesPage() {
         note={viewingNote!}
         isOpen={!!viewingNote}
         onClose={() => setViewingNote(null)}
-        onEdit={(note) => {
+        onEdit={note => {
           setSelectedNote(note);
           setIsEditingNote(true);
           setViewingNote(null);

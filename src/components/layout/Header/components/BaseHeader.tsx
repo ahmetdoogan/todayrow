@@ -12,7 +12,7 @@ interface BaseHeaderProps {
   className?: string;
   showThemeToggle?: boolean;
   noPadding?: boolean;
-  // Type hatasını çözmek için eklediğimiz prop’lar:
+  // Type hatasını çözmek için eklediğimiz prop'lar:
   darkMode?: boolean;
   toggleTheme?: () => void;
 }
@@ -36,24 +36,25 @@ const BaseHeader: React.FC<BaseHeaderProps> = ({
   const handleToggleTheme = toggleTheme ?? contextToggleTheme;
 
   return (
-    <div className="sticky top-0 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 z-10">
-      <div className="py-3">
+    <div className="sticky top-0 z-10">
+      <div>
         <div className={!noPadding ? 'px-4' : ''}>
           <header
             className={`
-              bg-stone-50 dark:bg-slate-800/50 -mt-4 mb-4 shadow-sm 
+              bg-stone-50 dark:bg-slate-800/50 shadow-sm 
               border border-gray-200 dark:border-gray-700
-              rounded-xl
+              rounded-xl text-black dark:text-white
+              min-h-[48px]
               ${noPadding ? 'p-2' : 'p-4'}
               ${className}
             `}
           >
-            <div className="flex justify-between items-center gap-4">
+            <div className="flex justify-between items-center gap-4 relative">
               <div className="flex items-center gap-3">
                 {leftContent}
               </div>
 
-              <div className="flex-1 flex justify-center">
+              <div className="absolute left-1/2 transform -translate-x-1/2">
                 {middleContent}
               </div>
 
@@ -63,13 +64,13 @@ const BaseHeader: React.FC<BaseHeaderProps> = ({
                 {showThemeToggle && (
                   <button
                     onClick={handleToggleTheme}
-                    className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                    className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors text-black dark:text-white"
                     aria-label={
                       isDark ? t('common.theme.toggleLight') : t('common.theme.toggleDark')
                     }
                   >
                     {isDark ? (
-                      <Sun className="h-5 w-5 text-gray-400 hover:text-gray-300" />
+                      <Sun className="h-5 w-5 text-white hover:text-gray-300" />
                     ) : (
                       <Moon className="h-5 w-5 text-gray-600 hover:text-gray-700" />
                     )}

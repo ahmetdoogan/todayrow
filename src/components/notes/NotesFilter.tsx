@@ -143,7 +143,7 @@ export function NotesFilter({ onFilterChange }: NotesFilterProps) {
             className={`flex items-center px-3 py-1.5 text-sm rounded-lg transition-colors
               ${selectedFolder 
                 ? 'bg-gray-900 text-white dark:bg-gray-100 dark:text-gray-900'
-                : 'bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700'}`}
+                : 'bg-gray-100 dark:bg-gray-800 text-black dark:text-white hover:bg-gray-200 dark:hover:bg-gray-700'}`}
           >
             <Folder className="w-4 h-4 mr-2" />
             {selectedFolder || t('folderPlaceholder')}
@@ -164,7 +164,7 @@ export function NotesFilter({ onFilterChange }: NotesFilterProps) {
                       setSelectedFolder(selectedFolder === folder.name ? undefined : folder.name);
                       setShowFolders(false);
                     }}
-                    className="flex items-center gap-2 flex-1"
+                    className="flex items-center gap-2 flex-1 text-black dark:text-white"
                   >
                     <Folder className="w-4 h-4" />
                     <span>{folder.name}</span>
@@ -214,7 +214,7 @@ export function NotesFilter({ onFilterChange }: NotesFilterProps) {
             className={`flex items-center px-3 py-1.5 text-sm rounded-lg transition-colors
               ${selectedTags.length > 0
                 ? 'bg-gray-900 text-white dark:bg-gray-100 dark:text-gray-900'
-                : 'bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700'}`}
+                : 'bg-gray-100 dark:bg-gray-800 text-black dark:text-white hover:bg-gray-200 dark:hover:bg-gray-700'}`}
           >
             <Tag className="w-4 h-4 mr-2" />
             {selectedTags.length > 0 ? t('notes.selectedTags', { count: selectedTags.length }) : t('tagsPlaceholder')}
@@ -238,7 +238,7 @@ export function NotesFilter({ onFilterChange }: NotesFilterProps) {
                           : [...prev, tag.name]
                       );
                     }}
-                    className="flex items-center gap-2 flex-1"
+                    className="flex items-center gap-2 flex-1 text-black dark:text-white"
                   >
                     <span className="flex items-center gap-2">
                       {selectedTags.includes(tag.name) && <Check size={14} />}

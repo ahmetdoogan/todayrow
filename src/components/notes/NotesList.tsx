@@ -19,11 +19,6 @@ interface NotesListProps {
   viewType?: 'grid' | 'list';
 }
 
-/** 
- * DragItem: Sürüklenen nesnenin tipi (bizde { id, is_pinned }).
- * DropResult: Yoksa 'void'.
- * CollectedProps: collect fonksiyonunda dönen tip ({ isOver, canDrop }).
- */
 type DragItem = { id: number; is_pinned: boolean };
 type DropResult = void;
 type CollectedProps = { isOver: boolean; canDrop: boolean };
@@ -36,7 +31,6 @@ interface DropZoneProps {
 }
 
 function DropZone({ isPinned, onTogglePin, children, isSelectionMode }: DropZoneProps) {
-  // useDrop generics:
   const [{ isOver, canDrop }, drop] = useDrop<DragItem, DropResult, CollectedProps>({
     accept: ItemTypes.NOTE,
     canDrop: (item) => item.is_pinned !== isPinned,

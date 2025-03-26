@@ -1,0 +1,7 @@
+User-agent: *
+Disallow: /new-landing/
+Disallow: /auth-new/
+Disallow: /auth-new kopyası/
+Allow: /
+
+Sitemap: https://todayrow.app/sitemap.xml

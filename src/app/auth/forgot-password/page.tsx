@@ -1,12 +1,25 @@
 "use client";
+
 import React, { useState } from "react";
 import Link from "next/link";
-import { Mail } from "lucide-react";
 import { supabase } from "@/utils/supabaseClient";
 import { toast } from "react-toastify";
 import { motion } from "framer-motion";
-import { Logo } from '@/components/ui/logo';
-import { useTranslations } from 'next-intl';
+import { useTranslations } from "next-intl";
+
+// ShadCN bileşenleri
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+  CardContent,
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Logo } from "@/components/ui/logo";
+import { Info } from "lucide-react";
 
 export default function ForgotPasswordPage() {
   const [email, setEmail] = useState("");
@@ -26,16 +39,15 @@ export default function ForgotPasswordPage() {
     setLoading(true);
 
     try {
-      // Otomatik yönlendirmeyi önlemek için bir güvenlik ekleyeceğiz
-      // URL parametrelerini oluştur (hash parametresi ekleyerek)
+      // URL parametrelerini oluştur
       const resetOptions = {
         redirectTo: `${window.location.origin}/auth/reset-password#recovery=true`,
-        captchaToken: undefined // null değil undefined kullanıyoruz (TypeCheck uyumluluğu için)
+        captchaToken: undefined
       };
       
-      console.log('Reset password options:', resetOptions); // Debug için log ekledik
+      console.log('Reset password options:', resetOptions);
       
-      // supabase için uzun işlem
+      // Supabase işlemi
       const { error } = await supabase.auth.resetPasswordForEmail(email, resetOptions);
 
       if (error) {
@@ -54,102 +66,108 @@ export default function ForgotPasswordPage() {
     }
   };
 
-  // useEffect kullanılarak sayfa açıldığında herhangi bir otomatik yönlendirmeyi engellemek
-  React.useEffect(() => {
-    const preventSubmission = (e: BeforeUnloadEvent) => {
-      if (loading) {
-        e.preventDefault();
-        e.returnValue = '';
-      }
-    };
-
-    window.addEventListener('beforeunload', preventSubmission);
-    return () => {
-      window.removeEventListener('beforeunload', preventSubmission);
-    };
-  }, [loading]);
-
   return (
-    <div className="fixed inset-0 w-full h-full bg-gradient-to-b from-rose-50/80 via-violet-50/80 to-white dark:from-slate-950 dark:via-violet-950/50 dark:to-slate-950">
-      <div className="fixed inset-0 w-full h-full">
-        <div className="absolute inset-0 opacity-75 bg-[radial-gradient(circle_at_top_left,rgba(255,228,230,0.3),transparent_40%)]" />
-        <div className="absolute inset-0 opacity-75 bg-[radial-gradient(circle_at_top_right,rgba(238,242,255,0.3),transparent_40%)]" />
-        <div className="absolute inset-0 opacity-75 bg-[radial-gradient(circle_at_bottom,rgba(255,255,255,0.2),transparent_60%)]" />
-        <div className="dark:hidden absolute inset-0 opacity-10 bg-[linear-gradient(to_right,#f0f0f0_1px,transparent_1px),linear-gradient(to_bottom,#f0f0f0_1px,transparent_1px)] bg-[size:4rem_4rem]" />
-        <div className="hidden dark:block absolute inset-0 opacity-10 bg-[linear-gradient(to_right,#ffffff10_1px,transparent_1px),linear-gradient(to_bottom,#ffffff10_1px,transparent_1px)] bg-[size:4rem_4rem]" />
+    <div className="grid min-h-screen lg:grid-cols-2 bg-white dark:bg-[#111111]">
+      {/* SOL SÜTUN: Arka plan resmi */}
+      <div className="relative hidden bg-muted lg:block">
+        <img
+          src="/images/woman6white.png"
+          alt="Signup illustration"
+          className="absolute inset-0 h-full w-full object-cover dark:brightness-[0.2] dark:grayscale"
+        />
+<img
+          src="/images/woman6black.jpg"
+          alt="Login illustration dark"
+          className="absolute inset-0 h-full w-full object-cover hidden dark:block"
+        />
       </div>
 
-      <div className="relative h-full overflow-auto">
-        <div className="min-h-full flex items-center justify-center p-4">
-          <div className="w-full max-w-md">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl rounded-3xl p-8 shadow-xl border border-slate-200/50 dark:border-slate-700/50"
-            >
-              <div className="text-center mb-8">
-                <Link href="/" className="inline-block mb-4 hover:opacity-80 transition-opacity">
-                  <Logo className="h-8 w-auto mx-auto" />
-                </Link>
-                <h2 className="text-xl font-semibold text-slate-900 dark:text-white">
-                  {t('auth.resetPassword.title')}
-                </h2>
-                <p className="text-slate-600 dark:text-slate-400 mt-2">
-                  {t('auth.resetPassword.description')}
-                </p>
-              </div>
+      {/* SAĞ SÜTUN: Kart (Form) */}
+      <div className="flex flex-col gap-4 p-6 md:p-10 justify-center bg-white dark:bg-[#111111]">
+        {/* Logo (orta) */}
+        <div className="flex justify-center mb-6">
+          <Link href="/" className="hover:opacity-80 transition-opacity">
+            <Logo className="h-8 w-auto" />
+          </Link>
+        </div>
 
+        {/* Kart */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4 }}
+          className="w-full max-w-md mx-auto"
+        >
+          <Card className="border-gray-200 dark:border-gray-800 dark:bg-black">
+            <CardHeader className="text-center">
+              <CardTitle className="text-xl">{t('auth.resetPassword.title')}</CardTitle>
+              <CardDescription className="text-slate-600 dark:text-[#a1a1a9]">{t('auth.resetPassword.description')}</CardDescription>
+            </CardHeader>
+            <CardContent>
               {!submitted ? (
-                <form onSubmit={handleSubmit} className="space-y-6">
+                <form className="space-y-6" onSubmit={handleSubmit}>
                   <div>
-                    <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">
-                      {t('auth.email')}
-                    </label>
-                    <div className="relative">
-                      <input
+                    <Label htmlFor="email">{t('auth.email')}</Label>
+                    <div className="mt-1">
+                      <Input
+                        id="email"
                         type="email"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
                         placeholder={t('auth.placeholders.email')}
-                        className="w-full pl-12 pr-4 py-3 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl focus:ring-2 focus:ring-violet-500 dark:focus:ring-violet-400 focus:border-transparent transition-colors dark:text-white"
+                        className="dark:bg-black dark:border-gray-800 dark:text-white dark:placeholder:text-[#a1a1a9]"
                         required
                         autoComplete="email"
                       />
-                      <Mail className="w-5 h-5 absolute left-4 top-3.5 text-slate-400" />
                     </div>
                   </div>
 
-                  <button
-                    type="button" /* Otomatik form gönderimini engellemek için submit yerine button tipi */
-                    onClick={handleSubmit}
+                  <Button
+                    type="submit"
                     disabled={loading}
-                    className="w-full py-3 bg-slate-900 dark:bg-white/10 text-white rounded-2xl hover:bg-slate-800 dark:hover:bg-white/20 transition-colors disabled:opacity-50"
+                    className="w-full dark:bg-white dark:text-black dark:hover:bg-gray-200"
                   >
                     {loading ? t('common.loading') : t('auth.resetPassword.submit')}
-                  </button>
+                  </Button>
+                  
+                  {/* Giriş linki */}
+                  <p className="text-center text-sm text-slate-600 dark:text-[#a1a1a9]">
+                    <Link
+                      href="/auth/login"
+                      className="hover:underline font-medium text-black dark:text-white"
+                    >
+                      {t('common.navigation.backToLogin')}
+                    </Link>
+                  </p>
                 </form>
               ) : (
-                <div className="text-center">
-                  <p className="text-slate-600 dark:text-slate-400 mb-6">
-                    {t('auth.resetPassword.checkEmail')}
-                  </p>
-                  <p className="text-sm text-slate-500 dark:text-slate-500">
-                    {t('auth.resetPassword.checkSpam')}
-                  </p>
+                <div className="text-center space-y-6">
+                  <div className="p-4 rounded-md bg-blue-50 dark:bg-gray-800 border border-blue-200 dark:border-gray-700 flex items-start">
+                    <Info className="w-5 h-5 text-blue-500 dark:text-blue-400 mr-3 mt-0.5 shrink-0" />
+                    <div>
+                      <p className="text-sm text-blue-800 dark:text-[#a1a1a9]">
+                        {t('auth.resetPassword.checkEmail')}
+                      </p>
+                      <p className="text-xs text-blue-600 dark:text-[#a1a1a9] mt-1">
+                        {t('auth.resetPassword.checkSpam')}
+                      </p>
+                    </div>
+                  </div>
+                  
+                  <Button
+                    variant="outline"
+                    className="w-full dark:bg-black dark:border-gray-800 dark:text-white dark:hover:bg-gray-900"
+                    asChild
+                  >
+                    <Link href="/auth/login">
+                      {t('common.navigation.backToLogin')}
+                    </Link>
+                  </Button>
                 </div>
               )}
-
-              <div className="mt-8 text-center">
-                <Link
-                  href="/auth/login"
-                  className="text-violet-600 dark:text-violet-400 hover:underline"
-                >
-                  {t('common.navigation.backToLogin')}
-                </Link>
-              </div>
-            </motion.div>
-          </div>
-        </div>
+            </CardContent>
+          </Card>
+        </motion.div>
       </div>
     </div>
   );

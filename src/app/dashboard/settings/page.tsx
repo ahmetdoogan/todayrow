@@ -15,7 +15,7 @@ export default function SettingsPage() {
         toggleTheme={toggleTheme}
       />
 
-      <div className="max-w-4xl mx-auto">
+      <div className="max-w-4xl mx-auto mt-8">
         <SettingsLayout />
       </div>
     </>

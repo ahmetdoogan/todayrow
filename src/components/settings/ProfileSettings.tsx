@@ -196,10 +196,10 @@ const ProfileSettings = () => {
                     alt={t('photo.title')}
                     width={64}
                     height={64}
-                    className="w-16 h-16 rounded-full object-cover border-2 border-slate-200 dark:border-slate-700"
+                    className="w-16 h-16 min-w-[4rem] min-h-[4rem] rounded-full object-cover border-2 border-slate-200 dark:border-slate-700"
                   />
                 ) : (
-                  <div className="w-16 h-16 rounded-full bg-violet-500 flex items-center justify-center text-white text-xl font-medium border-2 border-slate-200 dark:border-slate-700">
+                  <div className="w-16 h-16 min-w-[4rem] min-h-[4rem] rounded-full bg-violet-500 flex items-center justify-center text-white text-xl font-medium border-2 border-slate-200 dark:border-slate-700">
                     {authSession?.user?.user_metadata?.name 
                       ? authSession.user.user_metadata.name
                           .split(' ')
@@ -225,7 +225,7 @@ const ProfileSettings = () => {
                     ? `${formData.first_name} ${formData.last_name}`.trim()
                     : authSession?.user?.email?.split('@')[0]}
                 </h3>
-                <p className="text-xs text-slate-500 dark:text-slate-400">
+                <p className="text-[0.7rem] sm:text-xs text-slate-500 dark:text-slate-400">
                   {authSession?.user?.email}
                 </p>
               </div>
@@ -259,34 +259,34 @@ const ProfileSettings = () => {
         {subscription && (
           <div className="p-4 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl">
             <p className="text-sm text-slate-600 dark:text-slate-300">
-              <strong>{t('subscription.planType')}:</strong>{' '}
-              {t(`subscription.types.${subscription.subscription_type}`)}
+              <strong className="text-[0.7rem] sm:text-sm">{t('subscription.planType')}:</strong>{' '}
+              <span className="text-[0.7rem] sm:text-sm">{t(`subscription.types.${subscription.subscription_type}`)}</span>
             </p>
 
             <p className="text-sm text-slate-600 dark:text-slate-300">
-              <strong>{t('subscription.status')}:</strong>{' '}
-              {t(`subscription.statuses.${subscription.status}`)}
+              <strong className="text-[0.7rem] sm:text-sm">{t('subscription.status')}:</strong>{' '}
+              <span className="text-[0.7rem] sm:text-sm">{t(`subscription.statuses.${subscription.status}`)}</span>
             </p>
 
             {/* TRIAL ENDS */}
             {subscription.status === 'free_trial' && subscription.trial_end && (
               <p className="text-sm text-slate-600 dark:text-slate-300">
-                <strong>{t('subscription.trialEnds')}:</strong>{' '}
-                {new Date(subscription.trial_end).toLocaleString()}
+                <strong className="text-[0.7rem] sm:text-sm">{t('subscription.trialEnds')}:</strong>{' '}
+                <span className="text-[0.7rem] sm:text-sm">{new Date(subscription.trial_end).toLocaleString()}</span>
               </p>
             )}
 
             {/* RENEWS AT (STATUS = PRO) */}
             {subscription.status === 'pro' && subscription.subscription_end && (
               <p className="text-sm text-slate-600 dark:text-slate-300">
-                <strong>{t('subscription.renewsAt')}:</strong>{' '}
-                {new Date(subscription.subscription_end).toLocaleString()}
+                <strong className="text-[0.7rem] sm:text-sm">{t('subscription.renewsAt')}:</strong>{' '}
+                <span className="text-[0.7rem] sm:text-sm">{new Date(subscription.subscription_end).toLocaleString()}</span>
               </p>
             )}
 
             {/* CANCEL_SCHEDULED örneği */}
             {subscription.subscription_end && subscription.status === "cancel_scheduled" && (
-              <span className="ml-2 text-yellow-600">
+              <span className="ml-2 text-yellow-600 text-[0.7rem] sm:text-sm">
                 ({t('subscription.cancelUntil', { 
                   date: new Date(subscription.subscription_end).toLocaleDateString() 
                 })})

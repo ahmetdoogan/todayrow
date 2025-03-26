@@ -1,6 +1,7 @@
 {
   "common": {
     "todayrow": "Todayrow",
+    "today": "Bugün",  
     "signIn": "Giriş Yap",
     "signOut": "Çıkış Yap",
     "register": "Kayıt Ol",
@@ -184,6 +185,7 @@
       "dateFormat": "tr-TR"
     },
     "calendar": {
+      "title": "Takvim",
       "monthYear": "{month} {year}",
       "time": "Saat",
       "days": {
@@ -255,6 +257,7 @@
       "menu": {
         "plans": "Planlar",
         "contents": "İçerikler",
+        "focus": "Odaklan",
         "notes": "Notlar",
         "calendar": "Takvim",
         "settings": "Ayarlar"
@@ -364,6 +367,8 @@
       "tags": "Etiketler",
       "edit": "Düzenle",
       "delete": "Sil",
+      "save": "Kaydet",
+      "cancel": "İptal",
       "unpin": "Sabitlemeyi Kaldır",
       "create": "Oluştur",
       "titlePlaceholder": "Not başlığını girin",
@@ -566,6 +571,7 @@
       "usage": "kullanım"
     },
     "content": {
+      "title": "İçerikler",
       "emptyState": "Henüz hiç içeriğiniz yok",
       "status": {
         "completed": "Tamamlandı",
@@ -942,7 +948,14 @@
   "reopenHint": "Daha sonra Ayarlar sayfasından tekrar açabilirsiniz."
 },
   "auth": {
-    "welcome": "Hoş Geldiniz",
+    "signIn": "Giriş Yap",
+    "register": "Kayıt Ol",
+    "backToHome": "Ana Sayfaya Dön",
+    "termsAcceptance": "kabul etmiş olursunuz",
+    "termsAgreement": "Devam ederek",
+    "termsOfService": "Kullanım Şartları",
+    "and": "ve",
+    "privacyPolicy": "Gizlilik Politikası",
     "changePassword": "Şifremi Değiştir",
     "currentPassword": "Mevcut Şifre",
     "newPassword": "Yeni Şifre",
@@ -960,7 +973,9 @@
     "confirmCloseMessage": "Değişiklikleriniz kaydedilmedi. Çıkmak istediğinize emin misiniz?",
     "login": {
       "title": "Giriş",
-      "subtitle": "Hesabınıza giriş yapın"
+      "subtitle": "Hesabınıza giriş yapın",
+      "welcomeTitle": "Hoşgeldiniz",
+    "welcomeSubtitle": "Hesabınıza giriş yapın"
     },
     "signup": {
       "title": "Kayıt Ol",
@@ -982,7 +997,11 @@
       "newPassword": "Yeni Şifre Belirle",
       "enterNew": "Lütfen yeni şifrenizi girin",
       "password": "Yeni Şifre",
-      "confirmPassword": "Yeni Şifre (Tekrar)"
+      "confirmPassword": "Yeni Şifre (Tekrar)",
+      "tokenInvalid": "Geçersiz veya Süresi Dolmuş Token",
+      "tokenExpired": "Şifre sıfırlama bağlantınızın süresi dolmuş veya geçersiz.",
+      "requestNewLink": "Yeni Bağlantı İste",
+      "checking": "Şifre sıfırlama işlemi yapılıyor..."
     },
     "verify": {
       "title": "Email Onayı Gerekli",
@@ -1045,13 +1064,437 @@
     "title": "Gelecek",
     "subtitle": "bekleyebilir.",
     "features": {
-        "today": "Bugünü",
-        "yours": "planla,",
-        "prepare": "yarın",
-        "for": "için",
-        "tomorrow": "hazırlan."
-    }
+      "today": "Bugünü",
+      "yours": "planla,",
+      "prepare": "yarın",
+      "for": "için",
+      "tomorrow": "hazırlan."
+    },
+    "newLanding": {
+      "navbar": {
+        "features": "Özellikler",
+        "howItWorks": "Nasıl Çalışır",
+        "getStarted": "Şimdi Başla"
+      },
+      "hero": {
+        "badge": "Gelecek bekleyebilir",
+        "title": "Bugün senin, yarın için hazırlan.",
+        "description": "Bugüne odaklan, yarını planla geleneksel planlama araçlarının karmaşıklığı olmadan.",
+        "ctaMain": "14 gün ücretsiz deneyin",
+        "ctaSecondary": "Kredi kartı gerekmez",
+        "reminderBadge": "Müşteri görüşmesi için hatırlatıcı ayarlandı",
+        "planBadge": "Plan hatırlatıcısı eklendi",
+        "tasksBadge": "Görevler tamamlandı",
+        "meetingBadge": "Yeni toplantı eklendi",
+        "titleParts": {
+          "today": "Bugün",
+          "isYours": "senin,",
+          "prepare": "yarın için",
+          "tomorrow": "hazırlan",
+          "period": "."
+        }
+      },
+      "dashboard": {
+        "logoText": "Todayrow",
+        "todayLabel": "Bugün",
+        "tomorrowLabel": "Yarın",
+        "teamMeetingTitle": "Takım Toplantısı",
+        "teamMeetingTime": "9:00 - 10:00",
+        "teamMeetingDescription": "Tasarım ekibiyle haftalık planlama oturumu",
+        "focusSessionTitle": "Odak Oturumu",
+        "focusSessionTime": "11:00 - 12:30",
+        "focusLabel": "Odak",
+        "clientCallTitle": "Müşteri Görüşmesi",
+        "clientCallTime": "14:00 - 15:00",
+        "clientCallLabel1": "Önemli",
+        "clientCallLabel2": "15 dk hatırlatma",
+        "quickPlansTitle": "Hızlı Planlar",
+        "quickPlanMeeting": "Toplantı",
+        "quickPlanFocusTime": "Odak Zamanı",
+        "quickPlanFollowUp": "Takip",
+        "createPlanButton": "Plan Oluştur"
+      },
+      "features": {
+        "title": "Neden Todayrow?",
+        "subtitle": "Özgün yaklaşımımız şu anda önemli olan şeylere odaklanmanıza yardımcı olur",
+        "badge": "Odaklı Üretkenlik",
+        "titleParts": {
+          "why": "Neden",
+          "todayrow": "Todayrow?"
+        },
+        "minimalPlanning": {
+          "title": "Minimal Planlama",
+          "description": "Sadece bugüne ve yarına odaklanarak zihninizi temizleyin"
+        },
+        "smartReminders": {
+          "title": "Akıllı Hatırlatıcılar",
+          "description": "E-posta ve tarayıcı bildirimleriyle hiçbir görevi kaçırmayın"
+        },
+        "quickNotes": {
+          "title": "Hızlı Notlar",
+          "description": "Fikirlerinizi anında yakalayın ve planlarınızla ilişkilendirin"
+        }
+      },
+      "tabs": {
+        "planning": {
+          "title": "Planlama",
+          "content": "Gerçekten önemli olan şeylere bugün ve yarın odaklanın",
+          "items": {
+            "prioritize": {
+              "title": "Bugün için görevleri önceliklendirin",
+              "description": "En önemli olana odaklanın ve gerisini görmezden gelin"
+            },
+            "planTomorrow": {
+              "title": "Stressiz bir şekilde yarını planlayın",
+              "description": "Bunalmadan gelecek için hazırlanın"
+            },
+            "reduceMental": {
+              "title": "Zihinsel yükü azaltın",
+              "description": "Sadece şu anda önemli olana odaklanarak zihninizi temizleyin"
+            }
+          },
+          "ui": {
+            "today": "Bugün",
+            "date": "Pazartesi, Mart 9",
+            "tomorrow": "Yarın",
+            "finishProject": "Proje teklifini tamamla",
+            "teamMeeting": "Saat 3'te takım toplantısı",
+            "reviewAnalytics": "Analitik raporu incele",
+            "clientPresentation": "Müşteri sunumu",
+            "high": "Yüksek",
+            "medium": "Orta",
+            "low": "Düşük"
+          }
+        },
+        "focus": {
+          "title": "Odak Modu",
+          "content": "Dikkat dağıtıcıları ortadan kaldırın ve konsantrasyonu koruyun",
+          "items": {
+            "interface": {
+              "title": "Dikkat dağıtmayan arayüz",
+              "description": "Karmaşa veya görsel dikkat dağıtıcılar olmadan odaklanın"
+            },
+            "timer": {
+              "title": "Derin çalışma için odak zamanlayıcısı",
+              "description": "Zamanlı oturumlarla üretkenliğinizi optimize edin"
+            },
+            "tracking": {
+              "title": "İlerleme takibi",
+              "description": "Günlük başarılarınızı görün ve motivasyonunuzu koruyun"
+            }
+          },
+          "ui": {
+            "pomodoro": "Pomodoro",
+            "shortBreak": "Kısa Mola",
+            "longBreak": "Uzun Mola",
+            "whatWorking": "Ne üzerinde çalışıyorsun?"
+          }
+        },
+        "reminders": {
+          "title": "Hatırlatıcılar",
+          "content": "Harekete geçme zamanı geldiğinde haberdar olun",
+          "items": {
+            "smart": {
+              "title": "Akıllı bildirimler",
+              "description": "Sadece gerçekten önemli olduğunda e-posta hatırlatıcıları alın"
+            },
+            "browser": {
+              "title": "Anlık tarayıcı uyarıları",
+              "description": "Acil görevler için zamanında uyarılarla yolunuzda kalın"
+            }
+          },
+          "ui": {
+            "teamMeeting": "Saat 3'te takım toplantısı",
+            "clientPresentation": "Müşteri sunumu",
+            "before": " dk önce",
+            "todayTime": "Bugün 15:00",
+            "tomorrowTime": "Yarın 09:30",
+            "setupNotification": "Yeni bildirim ayarla"
+          }
+        },
+        "notes": {
+          "title": "Notlar",
+          "content": "Düşüncelerinizi yakalayın ve organize edin",
+          "items": {
+            "capture": {
+              "title": "Hızlı not alma",
+              "description": "Kesintiye uğramadan çalışırken fikirlerinizi kaydedin"
+            },
+            "connected": {
+              "title": "Bağlantılı notlar",
+              "description": "Daha iyi bağlam için notları belirli görevlere veya planlara bağlayın"
+            }
+            
+          },
+          "ui": {
+            "projectIdeas": "Proje Fikirleri",
+            "projectIdeaContent": "Rekabet analizi araştırması yap ve teklif için taslak hazırla",
+            "meetingAgenda": "Toplantı Gündemi",
+            "meetingAgendaContent": "Saat 3'teki takım toplantısında konuşulacak konular",
+            "project": "Proje",
+            "meeting": "Toplantı",
+            "today": "Bugün",
+            "hoursAgo": "2 saat önce"
+          }
+        }
+      },
+      "whyFocused": {
+        "badge": "Verimliliğin Bilimi",
+        "title": "Neden Odaklanmış Planlama?",
+        "description": "Önemli olanları önceliklendirmek için tüm ayların değil, sadece bugün ve yarına odaklanın",
+        "reasons": {
+          "overload": {
+            "title": "Planlamayı basite indirin",
+            "description": "Aşırı yüklenmeden üretkenliğinizi artırın"
+          },
+          "clarity": {
+            "title": "Zihinsel netlik kazanın",
+            "description": "Yakın görevlere odaklanarak stresi azaltın"
+          },
+          "success": {
+            "title": "Başarı şansını artırın",
+            "description": "Gerçekçi ve ulaşılabilir hedefler belirleyin"
+          }
+        }
+      },
+      "howItWorks": {
+        "simpleProcess": "Basit Süreç",
+        "subtitle": "Sadece dakikalar içinde bugünü ve yarını planlamaya başlayın",
+        "signUpNow": "Şimdi Kaydolun",
+        "tags": {
+          "prioritize": "Önceliklendir",
+          "focus": "Odaklan",
+          "achieve": "Başar"
+        },
+        "title": "Nasıl Çalışır",
+        "steps": {
+          "account": {
+            "title": "Hesabınızı Oluşturun",
+            "description": "Hızlıca kaydolun ve hemen başlayın"
+          },
+          "plan": {
+            "title": "Bugünü ve Yarını Planlayın",
+            "description": "Sadece gerçekten önemli olana odaklanın"
+          },
+          "productive": {
+            "title": "Üretken Kalın",
+            "description": "Hatırlatıcılarla ilerlemeyi takip edin ve ilerleyişinizi izleyin"
+          }
+        }
+      },
+      "footer": {
+        "product": "Ürün",
+        "company": "Şirket",
+        "legal": "Yasal",
+        "description": "Todayrow, sadece bugün ve yarını planlayarak gerçekten önemli olana odaklanmanıza yardımcı olur.",
+        "links": {
+          "features": "Özellikler",
+          "pricing": "Fiyatlandırma",
+          "about": "Hakkımızda",
+          "contact": "İletişim",
+          "blog": "Blog",
+          "privacy": "Gizlilik Politikası",
+          "terms": "Kullanım Şartları",
+          "howItWorks": "Nasıl Çalışır"
+        },
+        "copyright": "© 2025 Todayrow. Tüm hakları saklıdır."
+      },
+      "testimonials": {
+        "label": "Kullanıcılarımız Ne Diyor",
+        "titleHighlight": "Kullanıcı",
+        "title": "Hikayeleri",
+        "subtitle": "Todayrow'un profesyonellerin odaklanmış ve üretken kalmasına nasıl yardımcı olduğunu görün",
+        "testimonial1": {
+          "name": "Murat G.",
+          "position": "Unify'da Büyüme Uzmanı",
+          "badge": "2x üretkenlik artışı",
+          "quote": "Todayrow, işimi 10 kat daha iyi yapmama yardımcı oluyor. Bu kadar çok toplantı ayarlamak ve her şeyi senkronize etmek mümkün olmazdı. Bugüne ve yarına odaklanmak tam da ihtiyacım olan şeydi."
+        },
+        "testimonial2": {
+          "name": "Leyla A.",
+          "position": "Pazarlama Müdürü",
+          "badge": "Yüzde 40 daha az bunalma",
+          "quote": "Sayısız üretkenlik uygulaması denedim, ancak her zaman çok karmaşıktı. Todayrow'un odaklanmış yaklaşımı stres seviyelerimi azaltmama yardımcı olurken daha fazlasını başarmamı sağladı."
+        },
+        "testimonial3": {
+          "name": "Ali Y.",
+          "position": "Yazılım Geliştirici",
+          "badge": "3 sprint önce tamamlandı",
+          "quote": "Bir geliştirici olarak, sürekli farklı görevler arasında geçiş yapıyordum. Bugüne ve yarına odaklanmak, iş akışımı değiştirdi ve özellikleri daha hızlı yayınlamamı sağladı."
+        },
+        "testimonial4": {
+          "name": "Deniz U.",
+          "position": "Kıdemli Müşteri Temsilcisi",
+          "quote": "Todayrow, tek bir yerde ihtiyacınız olan her şeye sahip. Her şeyi düşünmüşler ve bu araca gerçekten aşık oldum."
+        }
+      },
+      "cta": {
+        "title": "Planlı bir hayata adım atın",
+        "description": "Daha organize, daha odaklanmış, daha etkili olun.",
+        "button": "14 gün ücretsiz deneyin",
+        "noCard": "Kredi kartı gerekmez"
+      },
+      "users": {
+        "user1": {
+          "quote": "Todayrow ile günlük planlamam tamamen değişti. Artık sadece önemli olana odaklanıyorum ve daha az stres yaşıyorum.",
+          "name": "Ayşe Y.",
+          "title": "Yazılım Geliştirici"
+        },
+        "user2": {
+          "quote": "Bu uygulama planlama sistemimi tamamen değiştirdi. Sadeliği ve odaklanmış yaklaşımı sayesinde daha fazlasını başarıyorum.",
+          "name": "Mehmet K.",
+          "title": "Proje Yöneticisi"
+        },
+        "user3": {
+          "quote": "Zamanımı daha iyi yönetmeme yardımcı olan en etkili araç. Minimalist yaklaşımı gerçekten işe yarıyor.",
+          "name": "Zeynep B.",
+          "title": "Dijital Pazarlama Uzmanı"
+        }
+      }
+      }
+  },
+ "focus": {
+  "title": "Odak",
+  "tabs": {
+    "pomodoro": "Pomodoro",
+    "shortBreak": "Kısa Mola",
+    "longBreak": "Uzun Mola"
+  },
+  "timeRemaining": "Kalan Süre",
+  "startButton": "Başlat",
+  "pauseButton": "Duraklat",
+  "resetButton": "Sıfırla",
+
+  "taskList": {
+    "title": "Görevler",
+    "addTask": "Görev Ekle",
+    "whatAreYouWorkingOn": "Ne üzerinde çalışıyorsun?",
+    "taskDescription": "Görev hakkında detaylı açıklama (opsiyonel)",
+    "estimatedPomodoros": "Tahmini Pomodoro",
+    "noTasks": "Henüz görev eklenmemiş",
+    "noArchivedTasks": "Arşivlenmiş görev bulunmuyor.",
+    "archivedTasks": "Arşivlenmiş Görevler",
+    "archivedTasksDescription": "Arşivlenmiş görevler burada görüntülenir. Arşivden çıkarmak istediğiniz görevleri seçebilirsiniz.",
+    "showArchived": "Arşivi Göster",
+    "showArchivedShort": "Arşivi Aç",
+    "currentTasks": "Aktif Görevler",
+    "currentTasksShort": "Aktif",
+    "archive": "Arşivle",
+    "unarchive": "Arşivden Çıkar",
+    "archiveCompleted": "Tamamlananları Arşivle",
+    "archiveCompletedShort": "Arşivle",
+    "addNote": "Not Ekle",
+    "addProject": "Proje Ekle",
+    "cancel": "İptal",
+    "save": "Kaydet",
+    "taskComplete": "Tamamlandı",
+    "taskActive": "Aktif",
+    "edit": "Düzenle",
+    "delete": "Sil"
+  },
+
+  "projects": {
+    "title": "Projeler",
+    "none": "Proje yok",
+    "addProject": "Proje Ekle",
+    "description": "Açıklama (Opsiyonel)",
+    "projectDescription": "Proje Açıklaması",
+    "hasDescription": "Açıklama var",
+    "colorNames": {
+      "blue": "Mavi",
+      "green": "Yeşil",
+      "purple": "Mor",
+      "pink": "Pembe",
+      "orange": "Turuncu",
+      "gray": "Gri"
+    },
+    "projectName": "Proje Adı",
+    "projectColor": "Renk",
+    "noProjects": "Henüz proje eklenmemiş",
+    "editProject": "Projeyi düzenle",
+    "deleteConfirm": "Bu projeyi silmek istediğinize emin misiniz?",
+    "projectTasks": "Projeye Ait Görevler",
+    "noTasksInProject": "Bu projeye ait görev bulunmuyor.",
+    "taskCount": "{count} görev"
+  },
+
+  "settings": {
+    "title": "Ayarlar",
+    "pomodoroLength": "Pomodoro Süresi",
+    "shortBreakLength": "Kısa Mola Süresi",
+    "longBreakLength": "Uzun Mola Süresi",
+    "autoStartBreaks": "Molaları otomatik başlat",
+    "autoStartPomodoros": "Pomodoroları otomatik başlat",
+    "minutes": "dakika"
+  },
+
+  "stats": {
+    "daysShort": {
+      "mon": "Pzt",
+      "tue": "Sal",
+      "wed": "Çar",
+      "thu": "Per",
+      "fri": "Cum",
+      "sat": "Cmt",
+      "sun": "Paz"
+    },
+    "title": "İstatistikler",
+    "totalPomodoros": "Pomodoro",
+    "minutes": "Süre",
+    "todayPomodoros": "Pomodoro",
+    "weekPomodoros": "Bu Hafta",
+    "timeTracking": "Zaman Takibi",
+    "taskProgress": "Görev İlerlemesi",
+    "totalLabel": "Toplam",
+    "dailyProgress": "Günlük İlerleme",
+    "completedTasks": "Tamamlanan Görevler",
+    "activeProjects": "Aktif Projeler",
+    "mostActiveProject": "En Aktif Proje",
+    "achievements": "Başarımlar",
+    "firstPomodoro": "İlk Pomodoro",
+    "completed": "Tamamlandı",
+    "threeDayStreak": "3 Gün Seri",
+    "weeklyOverview": "Haftalık Özet"
+  },
+
+  "notifications": {
+    "pomodoroComplete": "Pomodoro tamamlandı!",
+    "shortBreakComplete": "Kısa mola tamamlandı! Yeni bir pomodoro başlatmaya hazır mısın?",
+    "longBreakComplete": "Uzun mola tamamlandı! Yeni bir pomodoro başlatmaya hazır mısın?",
+    "taskAdded": "Görev eklendi!",
+    "taskCompleted": "Görev tamamlandı!",
+    "taskUpdated": "Görev güncellendi!",
+    "projectAdded": "Proje eklendi!",
+    "projectUpdated": "Proje güncellendi!",
+    "projectDeleted": "Proje silindi (inaktif yapıldı)!",
+    "settingsUpdated": "Ayarlar güncellendi!",
+    "taskArchived": "Görev arşivlendi!",
+    "taskUnarchived": "Görev arşivden çıkarıldı!",
+    "completedTasksArchived": "Tamamlanan görevler arşivlendi!"
+  },
+
+  "errors": {
+    "loadingTasks": "Görevler yüklenirken hata oluştu",
+    "loadingArchivedTasks": "Arşivlenmiş görevler yüklenirken hata oluştu",
+    "addingTask": "Görev eklenirken hata oluştu",
+    "updatingTask": "Görev güncellenirken hata oluştu",
+    "toggleTaskCompletion": "Görev durumu değiştirilirken hata oluştu",
+    "incrementPomodoros": "Pomodoro sayısı artırılırken hata oluştu",
+    "deletingTask": "Görev silinirken hata oluştu",
+    "archivingTask": "Görev arşivlenirken hata oluştu",
+    "unarchivingTask": "Görev arşivden çıkarılırken hata oluştu",
+    "archivingCompletedTasks": "Tamamlanmış görevler arşivlenirken hata oluştu",
+    "loadingProjects": "Projeler yüklenirken hata oluştu",
+    "creatingProject": "Proje oluşturulurken hata oluştu",
+    "updatingProject": "Proje güncellenirken hata oluştu",
+    "deletingProject": "Proje silinirken hata oluştu",
+    "startingTimer": "Zamanlayıcı başlatılamadı",
+    "completingTimer": "Zamanlayıcı tamamlanırken hata oluştu",
+    "updatingSettings": "Ayarlar güncellenirken hata oluştu"
+  }
+
 },
+
   "views": {
     "day": {
       "title": "{date}",

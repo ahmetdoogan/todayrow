@@ -157,9 +157,9 @@ export default function DashboardPage() {
     <div className="h-full flex flex-col relative">
       <PlannerHeader />
 
-      <div className="flex-1 overflow-hidden flex">
+      <div className="flex-1 overflow-hidden flex mt-8">
         {/* Sol tarafta PlanList */}
-        <div className="flex-1 overflow-y-auto">
+        <div className="flex-1 overflow-y-auto mt-5">
           <PlanList
             isPricingModalOpen={isPricingModalOpen}
             setIsPricingModalOpen={setIsPricingModalOpen}
