@@ -15,6 +15,23 @@ const supabase = createClient(
   process.env.SUPABASE_SERVICE_ROLE_KEY || ''
 );
 
+// Webhook loglarını kaydetmek için yardımcı fonksiyon
+async function logWebhook(type: string, data: any, error?: any) {
+  try {
+    await supabase
+      .from('webhook_logs')
+      .insert({
+        webhook_type: 'polar',
+        event_type: type,
+        payload: data,
+        error: error ? JSON.stringify(error) : null,
+        created_at: new Date().toISOString()
+      });
+  } catch (err) {
+    console.error('Failed to log webhook:', err);
+  }
+}
+
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'POST') {
     return res.status(405).json({ message: 'Method not allowed' });
@@ -29,6 +46,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const { type, data } = payload;
     console.log('Event Type:', type);
 
+    // Her webhook'u logla
+    await logWebhook(type, payload);
+
     // user_id
     let userIdFromMeta = data?.metadata?.user_id || data?.user_id || null;
     console.log('User ID:', userIdFromMeta);
@@ -39,6 +59,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     if (!userIdFromMeta) {
       console.log('No user_id found in metadata, aborting...');
+      await logWebhook(type, payload, { message: 'No user_id found' });
       return res.status(200).json({ message: 'No user_id found' });
     }
 
@@ -46,7 +67,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       case 'subscription.created':
       case 'subscription.active':
       case 'subscription.renewed': {
-        console.log('Processing subscription creation/activation');
+        console.log('Processing subscription creation/activation/renewal');
         const polarSubId = data.id;
         const currentDate = new Date().toISOString();
 
@@ -75,6 +96,25 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
         console.log('Updating subscription with data:', updateData);
 
+        // Kullanıcının mevcut abonelik durumunu kontrol et
+        const { data: existingData, error: existingErr } = await supabase
+          .from('subscriptions')
+          .select('*')
+          .eq('user_id', userIdFromMeta)
+          .single();
+
+        if (existingErr && existingErr.code !== 'PGRST116') { // PGRST116: No rows found
+          console.error('Failed to check existing subscription:', existingErr);
+          await logWebhook(type, payload, existingErr);
+          return res.status(500).json({ error: existingErr.message });
+        }
+
+        // Eğer kullanıcı expired durumdaysa ve polar_sub_id varsa
+        // Polar aboneliği aktif demektir, statüyü pro yap
+        if (existingData && existingData.status === 'expired' && existingData.polar_sub_id) {
+          console.log('User was expired but has active Polar subscription - reactivating');
+        }
+
         const { data: updated, error: updateErr } = await supabase
           .from('subscriptions')
           .update(updateData)
@@ -83,15 +123,21 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
         if (updateErr) {
           console.error('Failed to update subscription:', updateErr);
+          await logWebhook(type, payload, updateErr);
           return res.status(500).json({ error: updateErr.message });
         }
 
-        // Pro başladı maili gönder
-        await fetch('https://todayrow.app/api/email/sendProStarted', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email: data.email })
-        }).catch(console.error);
+        // Pro başladı maili gönder - yalnızca yeni abonelikler veya yeniden aktifleştirme için
+        if (type === 'subscription.created' || 
+            (existingData && existingData.status !== 'pro')) {
+          await fetch('https://todayrow.app/api/email/sendProStarted', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email: data.email })
+          }).catch(err => {
+            console.error('Failed to send pro started email:', err);
+          });
+        }
 
         if (!updated || updated.length === 0) {
           console.log('No existing subscription found, creating new one');
@@ -105,6 +151,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
           if (insertErr) {
             console.error('Failed to insert subscription:', insertErr);
+            await logWebhook(type, payload, insertErr);
             return res.status(500).json({ error: insertErr.message });
           }
 
@@ -130,6 +177,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
         if (cancelErr) {
           console.error('Failed to process cancellation:', cancelErr);
+          await logWebhook(type, payload, cancelErr);
           return res.status(500).json({ error: cancelErr.message });
         }
 
@@ -138,7 +186,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ email: data.email })
-        }).catch(console.error);
+        }).catch(err => {
+          console.error('Failed to send pro cancelled email:', err);
+        });
         break;
       }
 
@@ -151,6 +201,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     return res.status(200).json({ success: true });
   } catch (error) {
     console.error('Webhook Error:', error);
+    await logWebhook('error', req.body, error);
     return res.status(500).json({ error: 'Internal Server Error' });
   }
 }

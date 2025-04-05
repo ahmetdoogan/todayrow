@@ -53,16 +53,16 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="grid min-h-screen lg:grid-cols-2 bg-white dark:bg-[#111111]">
+    <div className="grid min-h-screen w-full lg:grid-cols-2 bg-white dark:bg-[#111111]">
       {/* Arka Plan Resmi */}
-      <div className="relative hidden bg-muted lg:block">
+      <div className="relative hidden bg-white dark:bg-[#111111] lg:block">
         <img
           src="/images/woman1white.png"
           alt="Login illustration"
           className="absolute inset-0 h-full w-full object-cover dark:brightness-[0.2] dark:grayscale"
         />
         <img
-          src="/images/woman1black.jpg"
+          src="/images/woman1black.png"
           alt="Login illustration dark"
           className="absolute inset-0 h-full w-full object-cover hidden dark:block"
         />

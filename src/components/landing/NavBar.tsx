@@ -27,10 +27,16 @@ export default function NavBar() {
           {t("landing.newLanding.navbar.features")}
           </Link>
           <Link
-          href="#how-it-works"
+          href="/blog"
           className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors font-medium"
           >
-          {t("landing.newLanding.navbar.howItWorks")}
+          {t("common.navigation.blog")}
+          </Link>
+          <Link
+          href="#faq"
+          className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors font-medium"
+          >
+          FAQ
           </Link>
         </div>
 

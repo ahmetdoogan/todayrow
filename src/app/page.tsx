@@ -10,7 +10,8 @@ import HeroSection from "@/components/landing/HeroSection";
 import FeaturesSection from "@/components/landing/FeaturesSection";
 import TabsSection from "@/components/landing/TabsSection";
 import WhyFocusedPlanningSection from "@/components/landing/WhyFocusedPlanningSection";
-import HowItWorksSection from "@/components/landing/HowItWorksSection";
+import BlogSection from "@/components/landing/BlogSection";
+import FAQSection from "@/components/landing/FAQSection";
 import TestimonialsSection from "@/components/landing/TestimonialsSection";
 import CTASection from "@/components/landing/CTASection";
 import FooterSection from "@/components/landing/FooterSection";
@@ -121,23 +122,7 @@ export default function NewLandingPage() {
         content: t("landing.newLanding.tabs.notes.content"),
       },
     ],
-    howItWorks: {
-      title: t("landing.newLanding.howItWorks.title"),
-      steps: [
-        {
-          title: t("landing.newLanding.howItWorks.steps.account.title"),
-          description: t("landing.newLanding.howItWorks.steps.account.description"),
-        },
-        {
-          title: t("landing.newLanding.howItWorks.steps.plan.title"),
-          description: t("landing.newLanding.howItWorks.steps.plan.description"),
-        },
-        {
-          title: t("landing.newLanding.howItWorks.steps.productive.title"),
-          description: t("landing.newLanding.howItWorks.steps.productive.description"),
-        },
-      ],
-    },
+
   };
 
   return (
@@ -150,21 +135,9 @@ export default function NewLandingPage() {
           font-family: "Instrument Serif", serif !important;
           font-weight: 400;
         }
-        .grain-overlay {
-          position: absolute;
-          top: 0;
-          left: 0;
-          width: 100%;
-          height: 100%;
-          background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
-          opacity: 0.12;
-          pointer-events: none;
-          z-index: 1;
-        }
       `}</style>
 
-      {/* Grain effect overlay */}
-      <div className="grain-overlay"></div>
+
 
       {/* Background elements - Simple gradients */}
       <div className="absolute top-0 inset-x-0 h-screen pointer-events-none overflow-hidden z-0">
@@ -180,9 +153,6 @@ export default function NewLandingPage() {
 
       <NavBar />
       <HeroSection sections={sections} badgeOpacity={badgeOpacity} hideBadge={hideBadge} />
-      <div className="relative bg-white dark:bg-gray-900 z-20 overflow-hidden">
-        <div className="h-0"></div>
-      </div>
 
       {/* Why Todayrow? Section */}
       <section
@@ -216,8 +186,9 @@ export default function NewLandingPage() {
       </section>
 
       <WhyFocusedPlanningSection />
-      <HowItWorksSection howItWorks={sections.howItWorks} />
       <TestimonialsSection />
+      <FAQSection />
+      <BlogSection />
       <CTASection />
       <FooterSection />
     </div>

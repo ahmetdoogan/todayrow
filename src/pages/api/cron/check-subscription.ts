@@ -114,6 +114,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     // 2) Süresi dolan pro abonelikler için 1 günlük grace period sonunda expired yapma
     // NOT: 1 gün geçmişse ödeme hala yapılmamış demektir
+    // ANCAK: polar_sub_id değeri olan kullanıcılar için bu kontrol yapılmamalı
+    // Çünkü Polar aboneliği aktif olabilir ancak webhook henüz gelmemiş olabilir
     const gracePeriod = new Date();
     gracePeriod.setDate(gracePeriod.getDate() - 1); // 1 gün öncesi
 
@@ -122,6 +124,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       .update({ status: 'expired', updated_at: new Date().toISOString() })
       .eq('status', 'pro')
       .lt('subscription_end', gracePeriod.toISOString())
+      // Polar entegrasyonu olan kullanıcıları bu güncellemenin dışında bırak
+      .is('polar_sub_id', null) 
       .select('user_id, subscription_end');
 
     if (expiredProError) throw expiredProError;
@@ -152,13 +156,46 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       expiredProEmailsSent++;
     }
 
+    // 4) Polar entegrasyonu olan ve "expired" statüsünde kalan kullanıcıları tekrar "pro" yap
+    const { data: reactivatedUsers, error: reactivationError } = await supabase
+      .from('subscriptions')
+      .update({ 
+        status: 'pro', 
+        updated_at: new Date().toISOString()
+      })
+      .eq('status', 'expired')
+      .not('polar_sub_id', 'is', null)
+      .select('user_id');
+
+    if (reactivationError) throw reactivationError;
+
+    console.log(`${reactivatedUsers?.length || 0} expired polar users reactivated to pro`);
+
+    // 5) Polar entegrasyonu olan kullanıcıların subscription_end tarihi geçmiş ise güncelle
+    const { data: updatedEndDates, error: updateEndError } = await supabase
+      .from('subscriptions')
+      .update({ 
+        subscription_end: new Date(new Date().setMonth(new Date().getMonth() + 1)),
+        updated_at: new Date().toISOString()
+      })
+      .eq('status', 'pro')
+      .not('polar_sub_id', 'is', null)
+      .lt('subscription_end', new Date().toISOString())
+      .select('user_id');
+      
+    if (updateEndError) throw updateEndError;
+    
+    console.log(`${updatedEndDates?.length || 0} pro users with outdated subscription_end updated`);
+
     return res.status(200).json({
       message: 'Subscription checks completed',
       newProEmails: newProEmailsSent,
       cancelledEmails: cancelledEmailsSent,
       cancelledSubscriptions: cancelledCount,
       expiredProSubscriptions: expiredProSubscriptions?.length || 0,
-      expiredProEmails: expiredProEmailsSent
+      expiredProEmails: expiredProEmailsSent,
+      reactivatedUsers: reactivatedUsers?.length || 0,
+      updatedEndDates: updatedEndDates?.length || 0
     });
 
   } catch (error) {

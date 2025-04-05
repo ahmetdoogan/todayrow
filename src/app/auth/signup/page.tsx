@@ -100,11 +100,11 @@ export default function SignupPage() {
   };
 
   return (
-    <div className="grid min-h-screen lg:grid-cols-2 bg-white dark:bg-[#111111]">
+    <div className="grid min-h-screen w-full lg:grid-cols-2 bg-white dark:bg-[#111111]">
       {/* Left Column: Background Image */}
-      <div className="relative hidden bg-muted lg:block">
+      <div className="relative hidden bg-white dark:bg-[#111111] lg:block">
         <img
-          src="/images/man1white.webp"
+          src="/images/man1white.png"
           alt="Signup illustration"
           className="absolute inset-0 h-full w-full object-cover dark:brightness-[0.2] dark:grayscale"
         />

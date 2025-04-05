@@ -87,11 +87,24 @@ export function useSubscription() {
     }
   }
 
-  // CANCEL_SCHEDULED durumu & süresi dolmuşsa EXPIRIED yap
+  // CANCEL_SCHEDULED durumu & süresi dolmuşsa CANCELLED yap
   if (subscription.status === "cancel_scheduled" && subscription.subscription_end) {
     const diff = new Date(subscription.subscription_end).getTime() - Date.now();
     if (diff <= 0) {
       derivedStatus = "cancelled"; // Süresi dolmuşsa cancelled'e çevir
+    }
+  }
+  
+  // EXPIRED durumu & polar_sub_id varsa, grace period tanı (2 gün)
+  // Bu kısım Polar'dan ödeme alınmış ama webhook gelmeden önce expired olmuş durumlar için
+  if (subscription.status === "expired" && subscription.polar_sub_id && subscription.subscription_end) {
+    // Subscription_end'den itibaren 2 günlük grace period
+    const graceEnd = new Date(subscription.subscription_end);
+    graceEnd.setDate(graceEnd.getDate() + 2);
+    
+    // Eğer hala grace period içerisindeyse "pro" statüsünü göster
+    if (Date.now() < graceEnd.getTime()) {
+      derivedStatus = "pro";
     }
   }
 

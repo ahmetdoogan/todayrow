@@ -52,7 +52,7 @@ export default function HeroSection({
 
   return (
     <section
-      className="pt-24 md:pt-32 pb-40 md:pb-48 px-4 relative z-10 overflow-hidden dark:bg-[#111111]"
+      className="pt-24 md:pt-32 pb-40 md:pb-48 px-4 relative z-10 overflow-hidden bg-white dark:bg-[#111111]"
       ref={scrollRef}
     >
       <div className="max-w-6xl mx-auto">
@@ -147,7 +147,7 @@ export default function HeroSection({
                     className="h-28 w-auto object-contain dark:hidden"
                   />
                   <img
-                    src="/images/woman2black.jpg"
+                    src="/images/woman2black.png"
                     alt="Woman illustration dark"
                     className="h-28 w-auto object-contain hidden dark:block"
                   />
@@ -158,12 +158,12 @@ export default function HeroSection({
               <div className="mt-12">
                 <BlurFade delay={0.7}>
                   <img
-                    src="/images/man3white.webp"
+                    src="/images/man3white.png"
                     alt="Man illustration"
                     className="h-28 w-auto object-contain dark:hidden"
                   />
                   <img
-                    src="/images/man3black.jpg"
+                    src="/images/man3black.png"
                     alt="Man illustration dark"
                     className="h-28 w-auto object-contain hidden dark:block"
                   />
@@ -179,7 +179,7 @@ export default function HeroSection({
                     className="h-28 w-auto object-contain dark:hidden"
                   />
                   <img
-                    src="/images/woman6black.jpg"
+                    src="/images/woman6black.png"
                     alt="Woman illustration dark"
                     className="h-28 w-auto object-contain hidden dark:block"
                   />
@@ -190,12 +190,12 @@ export default function HeroSection({
               <div>
                 <BlurFade delay={0.9}>
                   <img
-                    src="/images/man5white.webp"
+                    src="/images/man5white.png"
                     alt="Man illustration"
                     className="h-28 w-auto object-contain dark:hidden"
                   />
                   <img
-                    src="/images/man5black.jpg"
+                    src="/images/man5black.png"
                     alt="Man illustration dark"
                     className="h-28 w-auto object-contain hidden dark:block"
                   />

@@ -67,9 +67,9 @@ export default function ForgotPasswordPage() {
   };
 
   return (
-    <div className="grid min-h-screen lg:grid-cols-2 bg-white dark:bg-[#111111]">
+    <div className="grid min-h-screen w-full lg:grid-cols-2 bg-white dark:bg-[#111111]">
       {/* SOL SÜTUN: Arka plan resmi */}
-      <div className="relative hidden bg-muted lg:block">
+      <div className="relative hidden bg-white dark:bg-[#111111] lg:block">
         <img
           src="/images/woman6white.png"
           alt="Signup illustration"

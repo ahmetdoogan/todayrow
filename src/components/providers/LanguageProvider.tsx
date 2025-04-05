@@ -56,6 +56,72 @@ export default function LanguageProvider({
   const setLanguage = (lang: Language) => {
     setLanguageState(lang);
     localStorage.setItem("language", lang);
+    
+    // Eğer blog sayfasındaysak, URL'yi güncelle
+    if (typeof window !== 'undefined') {
+      const currentPath = window.location.pathname;
+      
+      // Blog post sayfasında mıyız kontrol et
+      if (currentPath.includes('/blog/') && currentPath.includes('/post/')) {
+        // /blog/{locale}/post/{slug} formatını yakalayıp işle
+        const pathParts = currentPath.split('/');
+        
+        if (pathParts.length >= 5) {
+          const currentLocale = pathParts[2]; // şu anki dil
+          const currentSlug = pathParts[4];   // şu anki slug
+          
+          // Önce mevcut sayfadaki çeviri düğmesindeki bağlantıyı bulalım
+          const translationLinks = document.querySelectorAll('a[href*="/blog/"][href*="/post/"]');
+          
+          let translatedSlug = null;
+          
+          // Çeviri bağlantısını bul (sayfadaki türkçe/ingilizce sürüme geç linki)
+          for (const link of Array.from(translationLinks)) {
+            const href = link.getAttribute('href');
+            if (href && href.includes(`/blog/${lang}/post/`)) {
+              translatedSlug = href.split('/').pop(); // Son kısmı (slug) al
+              break;
+            }
+          }
+          
+          if (translatedSlug) {
+            // Çeviri slug'u bulundu, ona yönlendir
+            window.location.href = `/blog/${lang}/post/${translatedSlug}`;
+            return;
+          }
+          
+          // Eğer çeviri bulunamadıysa, API'yi çağırarak slug'ı almayı dene
+          fetch(`/api/blog/translation?locale=${currentLocale}&otherLocale=${lang}&slug=${currentSlug}`)
+            .then(response => response.json())
+            .then(data => {
+              if (data.translatedSlug) {
+                window.location.href = `/blog/${lang}/post/${data.translatedSlug}`;
+              } else {
+                // Çeviri bulunamadı, sadece dili değiştir
+                pathParts[2] = lang;
+                window.location.href = pathParts.join('/');
+              }
+            })
+            .catch(error => {
+              console.error('Error fetching translation:', error);
+              // Hata durumunda sadece dili değiştir
+              pathParts[2] = lang;
+              window.location.href = pathParts.join('/');
+            });
+          return;
+        }
+      } else if (currentPath.startsWith('/blog/')) {
+        // Diğer blog sayfaları (liste, kategori vs) için sadece dil kısmını değiştir
+        const pathParts = currentPath.split('/');
+        if (pathParts.length >= 3) {
+          pathParts[2] = lang;
+          window.location.href = pathParts.join('/');
+          return;
+        }
+      }
+    }
+    
+    // Blog sayfasında değilsek normal yeniden yükleme yap
     window.location.reload();
   };
 

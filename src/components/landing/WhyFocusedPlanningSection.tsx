@@ -102,7 +102,7 @@ export default function WhyFocusedPlanningSection() {
                     className="h-28 w-auto object-contain dark:hidden z-10 relative"
                   />
                   <img
-                    src="/images/woman1black.jpg"
+                    src="/images/woman1black.png"
                     alt="Woman illustration dark"
                     className="h-28 w-auto object-contain hidden dark:block z-10 relative"
                   />
@@ -151,50 +151,48 @@ export default function WhyFocusedPlanningSection() {
           </div>
 
           {/* Card 4 */}
-          <div
-            className="group bg-white dark:bg-gray-800 rounded-2xl p-6 border border-gray-200 dark:border-gray-700 bg-grid-pattern-light dark:bg-grid-pattern bg-[length:20px_20px] relative overflow-hidden transition-all duration-300 hover:shadow-lg"
-          >
-            <div className="absolute inset-0 bg-gradient-to-br from-white/95 via-white/70 to-white/30 dark:from-gray-900/95 dark:via-gray-900/70 dark:to-gray-900/30"></div>
-            <div className="relative z-10">
-              <h3 className="text-lg font-medium text-gray-900 dark:text-white flex items-center mb-3 group-hover:-translate-y-1 transition-transform duration-300">
-                <span className="flex items-center justify-center w-8 h-8 text-xs font-bold rounded-full bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white mr-3 border border-gray-200 dark:border-gray-600 group-hover:shadow group-hover:border-gray-300 dark:group-hover:border-gray-500 transition-all duration-300">
-                  4
-                </span>
-                <span className="group-hover:text-black dark:group-hover:text-white transition-colors duration-300">
-                  {t("common.navigation.login") === "Giriş" ? "Üretkenliği Artırın" : "Enhance Productivity"}
-                </span>
-              </h3>
-              <p className="text-xs text-gray-600 dark:text-gray-300 pl-11 leading-relaxed group-hover:text-gray-700 dark:group-hover:text-gray-200 transition-colors duration-300">
-                {t("common.navigation.login") === "Giriş" ? 
-                  "Daha kısa bir zaman diliminde odaklanarak, daha anlamlı görevleri tamamlayacaksınız. Araştırmalar, odağınızı daraltmanın daha kaliteli iş ve genel üretkenlikte artış sağladığını gösteriyor." : 
-                  "By concentrating on a shorter timeframe, you'll complete more meaningful tasks. Studies show that narrowing your focus leads to higher quality work and greater overall productivity."}
-              </p>
-            </div>
-            <GridMouseTracker />
-          </div>
+<div
+  className="group bg-white dark:bg-gray-800 rounded-2xl p-6 border border-gray-200 dark:border-gray-700 bg-grid-pattern-light dark:bg-grid-pattern bg-[length:20px_20px] relative overflow-hidden transition-all duration-300 hover:shadow-lg"
+>
+  <div className="absolute inset-0 bg-gradient-to-br from-white/95 via-white/70 to-white/30 dark:from-gray-900/95 dark:via-gray-900/70 dark:to-gray-900/30"></div>
+  <div className="relative z-10">
+    <h3 className="text-lg font-medium text-gray-900 dark:text-white flex items-center mb-3 group-hover:-translate-y-1 transition-transform duration-300">
+      <span className="flex items-center justify-center w-8 h-8 text-xs font-bold rounded-full bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white mr-3 border border-gray-200 dark:border-gray-600 group-hover:shadow group-hover:border-gray-300 dark:group-hover:border-gray-500 transition-all duration-300">
+        4
+      </span>
+      <span className="group-hover:text-black dark:group-hover:text-white transition-colors duration-300">
+        {t("landing.newLanding.whyFocused.reasons.productivity.title")}
+      </span>
+    </h3>
+    <p className="text-xs text-gray-600 dark:text-gray-300 pl-11 leading-relaxed group-hover:text-gray-700 dark:group-hover:text-gray-200 transition-colors duration-300">
+      {t("landing.newLanding.whyFocused.reasons.productivity.description")}
+    </p>
+  </div>
+  <GridMouseTracker />
+</div>
+
 
           {/* Card 5 */}
-          <div
-            className="md:col-span-2 group bg-white dark:bg-gray-800 rounded-2xl p-6 border border-gray-200 dark:border-gray-700 bg-grid-pattern-light dark:bg-grid-pattern bg-[length:20px_20px] relative overflow-hidden transition-all duration-300 hover:shadow-lg"
-          >
-            <div className="absolute inset-0 bg-gradient-to-br from-white/95 via-white/70 to-white/30 dark:from-gray-900/95 dark:via-gray-900/70 dark:to-gray-900/30"></div>
-            <div className="relative z-10">
-              <h3 className="text-lg font-medium text-gray-900 dark:text-white flex items-center mb-3 group-hover:-translate-y-1 transition-transform duration-300">
-                <span className="flex items-center justify-center w-8 h-8 text-xs font-bold rounded-full bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white mr-3 border border-gray-200 dark:border-gray-600 group-hover:shadow group-hover:border-gray-300 dark:group-hover:border-gray-500 transition-all duration-300">
-                  5
-                </span>
-                <span className="group-hover:text-black dark:group-hover:text-white transition-colors duration-300">
-                  {t("common.navigation.login") === "Giriş" ? "Kaygı ve Stresi Azaltın" : "Reduce Anxiety & Stress"}
-                </span>
-              </h3>
-              <p className="text-xs text-gray-600 dark:text-gray-300 pl-11 leading-relaxed group-hover:text-gray-700 dark:group-hover:text-gray-200 transition-colors duration-300">
-                {t("common.navigation.login") === "Giriş" ? 
-                  "Uzun vadeli planlama genellikle değişebilecek gelecekteki olaylarla ilgili gereksiz stres yaratır. Sadece bugüne ve yarına odaklandığınızda, anlık öncelikleriniz üzerindeki kontrolü kaybetmeden kaygıyı azaltırsınız. Bu dengeli yaklaşım, üretkenliğinizi korurken daha iyi bir ruh sağlığını destekler." : 
-                  "Long-term planning often creates unnecessary stress about future events that may change. When you focus just on today and tomorrow, you reduce anxiety while still maintaining control over your immediate priorities. This balanced approach promotes better mental health while keeping you productive."}
-              </p>
-            </div>
-            <GridMouseTracker />
-          </div>
+<div
+  className="md:col-span-2 group bg-white dark:bg-gray-800 rounded-2xl p-6 border border-gray-200 dark:border-gray-700 bg-grid-pattern-light dark:bg-grid-pattern bg-[length:20px_20px] relative overflow-hidden transition-all duration-300 hover:shadow-lg"
+>
+  <div className="absolute inset-0 bg-gradient-to-br from-white/95 via-white/70 to-white/30 dark:from-gray-900/95 dark:via-gray-900/70 dark:to-gray-900/30"></div>
+  <div className="relative z-10">
+    <h3 className="text-lg font-medium text-gray-900 dark:text-white flex items-center mb-3 group-hover:-translate-y-1 transition-transform duration-300">
+      <span className="flex items-center justify-center w-8 h-8 text-xs font-bold rounded-full bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white mr-3 border border-gray-200 dark:border-gray-600 group-hover:shadow group-hover:border-gray-300 dark:group-hover:border-gray-500 transition-all duration-300">
+        5
+      </span>
+      <span className="group-hover:text-black dark:group-hover:text-white transition-colors duration-300">
+        {t("landing.newLanding.whyFocused.reasons.stress.title")}
+      </span>
+    </h3>
+    <p className="text-xs text-gray-600 dark:text-gray-300 pl-11 leading-relaxed group-hover:text-gray-700 dark:group-hover:text-gray-200 transition-colors duration-300">
+      {t("landing.newLanding.whyFocused.reasons.stress.description")}
+    </p>
+  </div>
+  <GridMouseTracker />
+</div>
+
         </motion.div>
       </div>
     </section>

@@ -356,24 +356,31 @@ Proje dizini: `/users/ahmetdogan/linkedin-content-planner/linkedin-planner`
    - Temel Pomodoro işlevselliği, görev ve proje yönetimi, istatistikler
    - İlerleyen süreçte Plan sayfası ile daha sıkı entegrasyon yapılacak
 
-3. Yeni landing ve auth sayfalarının canlıya alınması
-   - Mevcut auth sayfalarını güvenli şekilde değiştirme
-   - Landing sayfasının güncellenmesi
+3. ~~Yeni landing ve auth sayfalarının canlıya alınması~~ ✅ Tamamlandı
+   - ~~Mevcut auth sayfalarını güvenli şekilde değiştirme~~ ✅
+   - ~~Landing sayfasının güncellenmesi~~ ✅
+   
+4. Blog sistemi genişletme ve yeni blog yazıları ekleme
+   - Yeni içeriklerle blog kısmını zenginleştirme
+   - SEO için kaliteli içerik üretimi
 
-### Canlıya Almadan Önce Tamamlanması Gereken İşler - Güncel (25 Mart 2025)
+### Tamamlanan İşler - Güncel (5 Nisan 2025)
 
-### 1. Focus Sayfası
+### 1. Focus Sayfası (CANLI)
 - [x] ~~TaskItem'daki tamamlama butonunun mobilde dairesel görünmesi~~ ✅
 - [x] ~~ProjectItem'daki renk noktasının mobilde dairesel görünmesi~~ ✅
 - [x] ~~Butonlar arası boşlukların düzenlenmesi~~ ✅
-- [ ] Görevler ve projeler bölümünün header kısmına küçük tooltip yardımları eklenebilir
-- [ ] İstatistik bölümünün detaylı kontrolleri
-- [ ] Pomodoro timer tamamlanma durumunda bildirim ve ses eklenmesi
+- [x] ~~Görevler ve projeler bölümünün header kısmına küçük tooltip yardımları eklenebilir~~ ✅
+- [x] ~~İstatistik bölümünün detaylı kontrolleri~~ ✅
+- [x] ~~Pomodoro timer tamamlanma durumunda bildirim ve ses eklenmesi~~ ✅
+- [x] ~~Üyeliği sona eren kullanıcılar için paywall uygulaması~~ ✅
 
-### 2. Auth ve Landing Sayfaları
+### 2. Auth ve Landing Sayfaları (TAMAMLANMAK ÜZERE)
 - [x] ~~Çevirilerin tamamlanması (next-intl ile sarmalanması)~~ ✅
-- [ ] Dark/Light mode son kontroller
-- [ ] Responsive görünüm için tüm ekran boyutlarında testler
+- [x] ~~Landing sayfasının güncellenmesi~~ ✅
+- [x] ~~Auth sayfalarının güncellenmesi~~ ✅
+- [x] ~~Responsive görünüm için tüm ekran boyutlarında testler~~ ✅
+- [ ] Dark/Light mode son kontroller ve arka plan renk uyum ayarlamaları
 - [x] ~~Mevcut auth sayfalarından yenilerine geçiş için yönlendirme kontrolü~~ ✅
 
 ### 3. İçerik Sayfası Yeniden Konumlandırılması
@@ -390,7 +397,74 @@ Proje dizini: `/users/ahmetdogan/linkedin-content-planner/linkedin-planner`
 - [ ] Karanlık/aydınlık mod geçişlerinde görsel sorunların kontrolü
 - [ ] Farklı ekran boyutlarında (özellikle mobil) görünüm testleri
 
-> **Not:** Şu ana kadar Focus sayfası ve özellikleri geliştirilmiş durumda, ancak henüz canlıya alınmadı. Öncelikle Focus sayfasının eksiklerinin tamamlanması, ardından diğer konuların (auth/landing sayfaları ve içerik sayfası konumlandırması) ele alınması planlanmaktadır.
+> **Not:** Focus sayfası ve özellikleri geliştirilmiş, test edilmiş ve başarıyla canlıya alınmıştır. Ek olarak, üyeliği biten kullanıcılar için Focus sayfasında paywall uygulaması da hayata geçirilmiştir. Şu an önceliğimiz auth/landing sayfalarının güncellenmesi ve içerik sayfasının konumlandırılması üzerinedir.
+
+## Blog Sistemi
+
+### Yeni Blog Yazısı Ekleme Süreci
+
+1. **Blog Yazılarının Hazırlanması:**
+   - Her blog yazısı hem Türkçe hem İngilizce dillerinde hazırlanmalıdır
+   - Yazılar `.mdx` formatında olmalıdır
+   - Dosyalar `blog-content/en` ve `blog-content/tr` klasörlerine eklenmelidir
+   - Yazıların dosya isimleri anlamlı URL yapısına uygun olmalıdır (örn: `effective-daily-planning.mdx` ve `etkili-gunluk-planlama.mdx`)
+
+2. **Çeviri Eşleştirmesi:**
+   - İki dildeki blog yazılarını eşleştirmek için `src/lib/blog.ts` dosyasındaki `translationPairs` dizisine yeni çeviri çifti eklenmelidir
+   - Örnek format: `{ en: 'effective-daily-planning', tr: 'etkili-gunluk-planlama' }`
+
+3. **Kategori Eklemesi:**
+   - Blog yazıları için yeni bir kategori oluşturulacaksa, bu kategorinin çevirileri çeviri dosyalarına eklenmelidir
+   - **İngilizce çeviri için:** `/src/messages/en.json` dosyasındaki `blog.categories` altına yeni kategori eklenmelidir
+   - **Türkçe çeviri için:** `/src/messages/tr.json` dosyasındaki `blog.categories` altına yeni kategori eklenmelidir
+   - Örnek: Yeni bir "İş Stratejileri" kategorisi eklemek için:
+     ```json
+     "blog": {
+       "categories": {
+         "businessStrategies": "İş Stratejileri"
+       }
+     }
+     ```
+     İngilizce versiyonu için:
+     ```json
+     "blog": {
+       "categories": {
+         "businessStrategies": "Business Strategies"
+       }
+     }
+     ```
+
+4. **Meta Bilgileri:**
+   - Her blog yazısı, başında meta bilgilerini içermelidir
+   - Örnek meta bilgileri:
+     ```mdx
+     ---
+     title: "Etkili Günlük Planlama Rutinleri"
+     excerpt: "İş-yaşam dengesini korurken üretkenliği en üst düzeye çıkaran günlük rutinler nasıl oluşturulur?"
+     date: "2025-04-01"
+     author: "Ahmet Doğan"
+     category: "timeManagement"
+     image: "/images/blog/effective-daily-planning.jpg"
+     ---
+     ```
+
+5. **İçerik Hazırlama:**
+   - Blog içeriği Markdown formatında yazılmalıdır
+   - Başlıklar, listeler, vurgular vb. için standart Markdown sözdizimi kullanılmalıdır
+   - Gerekirse özel MDX bileşenleri eklenebilir (örn: CalloutBox, Blockquote, etc.)
+
+6. **Görseller:**
+   - Blog ile ilgili görseller `/public/images/blog/` klasörüne eklenmelidir
+   - Görseller optimize edilmiş (uygun boyut ve sıkıştırma) olmalıdır
+   - Her blog yazısı için en az bir öne çıkan görsel (featured image) hazırlanmalıdır
+
+7. **Test Etme:**
+   - Yeni blog yazısını ekledikten sonra, lokal geliştirme ortamında test edilmelidir
+   - Hem Türkçe hem İngilizce versiyonların doğru görüntülendiğinden emin olunmalıdır
+   - Kategori filtreleme, dil değiştirme ve bağlantıların doğru çalıştığı kontrol edilmelidir
+
+8. **Yayınlama:**
+   - Testler tamamlandıktan sonra değişiklikler ana branch'e merge edilmeli ve canlı ortama deploy edilmelidir
 
 ### Orta Vadeli Planlar:
 1. ShadCN tasarım sisteminin tüm uygulamaya entegrasyonu

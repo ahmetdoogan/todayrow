@@ -10,7 +10,7 @@ export default function AuthLayout({
   const { theme } = useTheme();
   
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900 px-4">
+    <div className="min-h-screen flex items-center justify-center bg-white dark:bg-[#111111]">
       <div className="w-full">
         {children}
       </div>

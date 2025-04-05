@@ -1,4 +1,52 @@
 {
+  "blog": {
+    "page": {
+      "title": "Todayrow Blog",
+      "subtitle": "Insights, strategies, and tips to help you maximize your productivity and plan effectively."
+    },
+    "postNotFound": {
+      "title": "Blog post not found",
+      "message": "The blog post you're looking for doesn't exist or has been moved.",
+      "returnLink": "Return to blog"
+    },
+    "common": {
+      "readFullArticle": "Read Full Article",
+      "featuredImage": "Featured Image Placeholder",
+      "todayrowBlog": "Todayrow Blog"
+    },
+    "sidebar": {
+      "categories": "Categories",
+      "newsletter": {
+        "title": "Newsletter",
+        "description": "Subscribe to our newsletter to get the latest productivity tips and tricks.",
+        "placeholder": "Your email address",
+        "button": "Subscribe"
+      }
+    },
+    "detail": {
+      "breadcrumbs": {
+        "home": "Home",
+        "blog": "Blog"
+      },
+      "backToArticles": "Back to all articles",
+      "relatedArticles": "Related Articles",
+      "authorTitle": "Productivity Expert"
+    },
+    "categories": {
+      "category": "{category} Articles",
+      "description": "Browse all our articles about {category} to improve your skills and knowledge.",
+      "noArticles": "No articles found in this category yet. Check back later for new content.",
+      "productivity": "Productivity",
+      "planning": "Planning",
+      "focus": "Focus",
+      "workLifeBalance": "Work-Life Balance",
+      "noteTaking": "Note Taking",
+      "minimalism": "Minimalism",
+      "digitalTools": "Digital Tools",
+      "mindfulness": "Mindfulness",
+      "timeManagement": "Time Management"
+    }
+  },
   "common": {
     "todayrow": "Todayrow",
     "today": "Today",  
@@ -226,6 +274,7 @@
     },
     "navigation": {
       "login": "Login",
+      "blog": "Blog",
       "start": "Get Started",
       "privacyPolicy": "Privacy Policy",
       "termsOfService": "Terms of Service",
@@ -1240,19 +1289,27 @@
       "whyFocused": {
         "badge": "The Science of Productivity",
         "title": "Why Focused Planning?",
-        "description": "Focus on today and tomorrow, not your entire month, to prioritize what's important",
+        "description": "The only planner that focuses on today and tomorrow",
         "reasons": {
           "overload": {
-            "title": "Simplify planning",
-            "description": "Increase productivity without overwhelming yourself"
+            "title": "Only plan for today and tomorrow",
+            "description": "Forget long to-do lists and overwhelming calendars. With Todayrow, you only plan for today and tomorrow — that’s it. This minimalist approach keeps you focused and prevents burnout from overplanning."
           },
           "clarity": {
-            "title": "Gain mental clarity",
-            "description": "Reduce stress by focusing on immediate tasks"
+            "title": "Built for doers, not dreamers",
+            "description": "Created for founders, freelancers, and disciplined minds who want to work efficiently. Todayrow is a tool for those who take action, not just dream."
           },
           "success": {
-            "title": "Increase chance of success",
-            "description": "Set realistic and achievable goals"
+            "title": "Lightweight planning, deep focus",
+            "description": "A clean layout, quick drag-and-drop plans, and a built-in Pomodoro timer. Everything you need to stay focused without the clutter."
+          },
+          "productivity": {
+            "title": "Clear mind, calm workflow",
+            "description": "By limiting scope, you reduce stress and gain clarity. Todayrow helps you focus on the essential, one day at a time."
+          },
+          "stress": {
+            "title": "From idea to action - fast",
+            "description": "Got a note, thought, or content idea? Turn it into a task, plan, or Pomodoro focus in one click. Todayrow helps you capture and act on ideas the moment they appear."
           }
         }
       },
@@ -1325,6 +1382,66 @@
           "name": "Daniel Angel G.",
           "position": "Senior Account Executive",
           "quote": "Todayrow has everything you need in just one single place. They thought about everything and I'm really in love with the tool."
+        }
+      },
+      "blog": {
+        "badge": "From Our Blog",
+        "titleParts": {
+          "insights": "Insights",
+          "and": "and",
+          "tips": "Tips"
+        },
+        "subtitle": "Discover resources to help you maximize your productivity",
+        "readMore": "Read More",
+        "viewAllButton": "View All Articles",
+        "posts": {
+          "post1": {
+            "title": "Effective Daily Planning Routines",
+            "excerpt": "Discover how to create daily routines that maximize productivity while maintaining work-life balance."
+          },
+          "post2": {
+            "title": "5 Focus Techniques for Deep Work",
+            "excerpt": "Learn time-tested methods to achieve deep focus and accomplish your most challenging tasks efficiently."
+          },
+          "post3": {
+            "title": "Note-Taking Strategies for Success",
+            "excerpt": "Explore effective note-taking approaches that help retain information and generate better ideas."
+          },
+          "post4": {
+            "title": "Minimalist Planning Approach",
+            "excerpt": "How focusing on just today and tomorrow can reduce stress and increase accomplishment."
+          }
+        }
+      },
+      "faq": {
+        "badge": "Common Questions",
+        "titleParts": {
+          "frequently": "Frequently",
+          "asked": "Asked",
+          "questions": "Questions"
+        },
+        "subtitle": "Find answers to the most common questions about Todayrow",
+        "questions": {
+          "q1": {
+            "question": "How is Todayrow different from other planning tools?",
+            "answer": "Todayrow focuses specifically on today and tomorrow rather than overwhelming you with months of planning ahead. This approach is backed by productivity research showing that short-term focus leads to better results and less procrastination."
+          },
+          "q2": {
+            "question": "Do you offer a free trial?",
+            "answer": "Yes! Todayrow offers a 14-day free trial with full access to all features. No credit card is required to start your trial."
+          },
+          "q3": {
+            "question": "Can I sync Todayrow with my calendar?",
+            "answer": "Currently, Todayrow works as a standalone planning tool, but we're actively working on integrations with popular calendar services to be released soon."
+          },
+          "q4": {
+            "question": "Is there a mobile app available?",
+            "answer": "Yes, Todayrow is available as a responsive web app that works on all devices. Native mobile apps for iOS and Android are currently in development."
+          },
+          "q5": {
+            "question": "How secure is my data?",
+            "answer": "Your data security is our priority. Todayrow uses industry-standard encryption and secure database systems to protect your information. We never share your data with third parties."
+          }
         }
       },
       "cta": {
