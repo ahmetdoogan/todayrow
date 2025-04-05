@@ -31,6 +31,14 @@ const translationPairs: TranslationPair[] = [
   {
     en: 'note-taking-strategies-for-success',
     tr: 'basari-icin-not-alma-stratejileri'
+  },
+  {
+    en: 'time-blocking-productivity-technique',
+    tr: 'zaman-bloklama-uretkenlik-teknigi'
+  },
+  {
+    en: 'productivity-enhancing-morning-routines',
+    tr: 'uretkenliginizi-arttiracak-sabah-rutinleri'
   }
   // Yeni blog yazıları eklendikçe bu listeyi güncelleyin
 ];

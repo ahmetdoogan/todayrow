@@ -25,10 +25,9 @@ const BlogSidebar: React.FC<BlogSidebarProps> = ({ categories, selectedCategory,
   }, []);
 
   return (
-    <div className="lg:w-1/4 mt-8 lg:mt-0">
+    <div className="mt-8 lg:mt-0 w-full" ref={sidebarRef}>
       <div 
-        ref={sidebarRef}
-        className="bg-gray-50 dark:bg-gray-900 rounded-xl p-6 border border-gray-100 dark:border-gray-800 h-fit"
+        className="bg-gray-50 dark:bg-[#191919] rounded-xl p-6 border border-gray-100 dark:border-gray-800 h-fit"
       >
         <CategoryAccordion 
           categories={categories} 

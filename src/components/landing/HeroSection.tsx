@@ -102,8 +102,8 @@ export default function HeroSection({
               {(() => {
                 const desc = t("landing.newLanding.hero.description");
                 const isTurkish = desc.includes("yarını");
-                const breakWord = isTurkish ? "yarını" : "tomorrow";
-                const parts = desc.split(breakWord);
+                const breakWord = isTurkish ? "planla." : "tomorrow";
+                const parts = isTurkish ? desc.split(breakWord) : desc.split(breakWord);
                 return (
                   <>
                     {parts[0]}

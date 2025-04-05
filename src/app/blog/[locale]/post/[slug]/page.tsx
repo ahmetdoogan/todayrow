@@ -8,6 +8,8 @@ import NavBar from "@/components/landing/NavBar";
 import FooterSection from "@/components/landing/FooterSection";
 import { Inter } from "next/font/google";
 import { useParams } from "next/navigation";
+import Image from "next/image";
+import { useTheme } from "@/components/providers/ThemeProvider";
 
 // Font imports
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
@@ -17,6 +19,7 @@ export default function BlogPostPage() {
   const params = useParams();
   const locale = params?.locale as string || "en";
   const slug = params?.slug as string;
+  const { theme } = useTheme();
   
   const [post, setPost] = React.useState<any>(null);
   const [loading, setLoading] = React.useState(true);
@@ -103,16 +106,13 @@ export default function BlogPostPage() {
   }
 
   return (
-    <div className={`min-h-screen bg-white dark:bg-gray-950 ${inter.variable} font-sans`}>
-      {/* Grain effect overlay */}
-      <div className="absolute top-0 left-0 w-full h-full opacity-10 pointer-events-none z-10" style={{
-        backgroundImage: "url('data:image/svg+xml,%3Csvg viewBox=\\'0 0 400 400\\' xmlns=\\'http://www.w3.org/2000/svg\\'%3E%3Cfilter id=\\'noiseFilter\\'%3E%3CfeTurbulence type=\\'fractalNoise\\' baseFrequency=\\'0.65\\' numOctaves=\\'3\\' stitchTiles=\\'stitch\\'/%3E%3C/filter%3E%3Crect width=\\'100%25\\' height=\\'100%25\\' filter=\\'url(%23noiseFilter)\\'/%3E%3C/svg%3E')"
-      }}></div>
+    <div className={`min-h-screen bg-white dark:bg-[#111111] ${inter.variable} font-sans`}>
+      {/* Background elements - clean look without grain */}
 
       <NavBar />
 
       {/* Breadcrumbs */}
-      <div className="bg-gray-50 dark:bg-gray-900 py-4 border-b border-gray-100 dark:border-gray-800">
+      <div className="bg-gray-50 dark:bg-[#191919] py-4 border-b border-gray-100 dark:border-gray-800">
         <div className="max-w-4xl mx-auto px-4">
           <div className="flex items-center text-sm text-gray-600 dark:text-gray-400">
             <Link href="/" className="hover:text-gray-900 dark:hover:text-white transition-colors">
@@ -131,13 +131,25 @@ export default function BlogPostPage() {
       {/* Blog Post Content */}
       <article className="py-12 px-4">
         <div className="max-w-4xl mx-auto">
-          <Link
-            href={`/blog/${locale}`}
-            className="inline-flex items-center text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white text-sm mb-6 transition-colors"
-          >
-            <ArrowLeft size={16} className="mr-2" />
-            {t("blog.detail.backToArticles")}
-          </Link>
+          <div className="flex items-center justify-between mb-6">
+            <Link
+              href={`/blog/${locale}`}
+              className="inline-flex items-center text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white text-sm transition-colors"
+            >
+              <ArrowLeft size={16} className="mr-2" />
+              {t("blog.detail.backToArticles")}
+            </Link>
+            
+            {/* Dil değiştirme bağlantısı */}
+            {translatedSlug && (
+              <Link
+                href={`/blog/${locale === "en" ? "tr" : "en"}/post/${translatedSlug}`}
+                className="inline-flex items-center text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white text-sm px-3 py-1 rounded-md bg-gray-50 dark:bg-[#191919] border border-gray-200 dark:border-gray-700 transition-colors"
+              >
+                {locale === "en" ? "Türkçe sürüme geç" : "Switch to English version"}
+              </Link>
+            )}
+          </div>
 
           <h1 className="text-3xl md:text-5xl font-bold text-gray-900 dark:text-white mb-4">
             {post.title}
@@ -149,20 +161,19 @@ export default function BlogPostPage() {
             <span>{post.author}</span>
           </div>
           
-          {/* Dil değiştirme bağlantısı */}
-          {translatedSlug && (
-            <div className="mb-8 p-4 bg-gray-50 dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-700">
-              <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">
-                {locale === "en" ? "Bu yazıyı Türkçe okumak ister misiniz?" : "Would you like to read this article in English?"}
-              </p>
-              <Link
-                href={`/blog/${locale === "en" ? "tr" : "en"}/post/${translatedSlug}`}
-                className="inline-flex items-center text-blue-600 dark:text-blue-400 text-sm font-medium hover:underline"
-              >
-                {locale === "en" ? "Türkçe sürüme geç" : "Switch to English version"}
-              </Link>
+          {/* Kapak görseli */}
+          {post.coverImage && (
+            <div className="w-full h-64 md:h-96 relative mb-8 rounded-lg overflow-hidden">
+              <Image 
+                src={theme === 'dark' && post.coverImageDark ? post.coverImageDark : post.coverImage}
+                alt={post.title}
+                fill
+                className="object-cover"
+              />
             </div>
           )}
+          
+          {/* Dil değiştirme bağlantısı - Eski konum kaldırıldı */}
 
           <div className="prose prose-lg dark:prose-invert max-w-none">
             <div 

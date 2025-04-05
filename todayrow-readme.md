@@ -413,6 +413,19 @@ Proje dizini: `/users/ahmetdogan/linkedin-content-planner/linkedin-planner`
    - İki dildeki blog yazılarını eşleştirmek için `src/lib/blog.ts` dosyasındaki `translationPairs` dizisine yeni çeviri çifti eklenmelidir
    - Örnek format: `{ en: 'effective-daily-planning', tr: 'etkili-gunluk-planlama' }`
 
+2(a). **Görsel haritalamasını güncelleme:**
+
+Blog ana sayfası (src/app/blog/[locale]/page.tsx):
+
+slugTranslations nesnesine yeni slug eşleştirmesini ekleme
+imageMap nesnesine yeni blog için görsel yollarını ekleme
+
+
+Kategori sayfası (src/app/blog/[locale]/category/[category]/page.tsx):
+
+slugTranslations nesnesine yeni slug eşleştirmesini ekleme
+imageMap nesnesine yeni blog için görsel yollarını ekleme
+
 3. **Kategori Eklemesi:**
    - Blog yazıları için yeni bir kategori oluşturulacaksa, bu kategorinin çevirileri çeviri dosyalarına eklenmelidir
    - **İngilizce çeviri için:** `/src/messages/en.json` dosyasındaki `blog.categories` altına yeni kategori eklenmelidir
