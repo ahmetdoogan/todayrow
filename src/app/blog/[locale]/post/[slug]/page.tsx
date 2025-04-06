@@ -10,6 +10,7 @@ import { Inter } from "next/font/google";
 import { useParams } from "next/navigation";
 import Image from "next/image";
 import { useTheme } from "@/components/providers/ThemeProvider";
+import BlogPostSkeleton from "@/components/ui/skeletons/BlogPostSkeleton";
 
 // Font imports
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
@@ -75,11 +76,32 @@ export default function BlogPostPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-gray-900 dark:border-white mx-auto"></div>
-          <p className="mt-4 text-gray-600 dark:text-gray-400">{t("common.loading")}</p>
+      <div className={`min-h-screen bg-white dark:bg-[#111111] ${inter.variable} font-sans`}>
+        <NavBar />
+
+        {/* Breadcrumbs */}
+        <div className="bg-gray-50 dark:bg-[#191919] py-4 border-b border-gray-100 dark:border-gray-800">
+          <div className="max-w-4xl mx-auto px-4">
+            <div className="flex items-center text-sm text-gray-600 dark:text-gray-400">
+              <div className="animate-pulse flex items-center w-full">
+                <div className="h-3 w-16 bg-gray-200 dark:bg-[#222222] rounded"></div>
+                <ChevronRight size={14} className="mx-2 text-gray-300 dark:text-gray-600" />
+                <div className="h-3 w-16 bg-gray-200 dark:bg-[#222222] rounded"></div>
+                <ChevronRight size={14} className="mx-2 text-gray-300 dark:text-gray-600" />
+                <div className="h-3 w-40 bg-gray-200 dark:bg-[#222222] rounded"></div>
+              </div>
+            </div>
+          </div>
         </div>
+
+        {/* Blog Post Content Skeleton */}
+        <article className="py-12 px-4">
+          <div className="max-w-4xl mx-auto">
+            <BlogPostSkeleton />
+          </div>
+        </article>
+
+        <FooterSection />
       </div>
     );
   }

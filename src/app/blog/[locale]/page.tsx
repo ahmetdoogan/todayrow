@@ -13,6 +13,8 @@ import Image from "next/image";
 import { useTheme } from "@/components/providers/ThemeProvider";
 import { motion } from "framer-motion";
 import { BlurFade } from "@/components/ui/blur-fade";
+import BlogCardSkeleton from "@/components/ui/skeletons/BlogCardSkeleton";
+import BlogSidebarSkeleton from "@/components/ui/skeletons/BlogSidebarSkeleton";
 
 // En başta fontları yüklüyoruz
 import "@/styles/globals.css";
@@ -113,7 +115,7 @@ export default function BlogLocalePage({ params }: { params: { locale: string } 
         // Set'i array'e çevirelim
         const catArray = Array.from(catSet);
 
-        // Kategori çevirilerini "blog.categories.xyz" key’leri ile yap
+        // Kategori çevirilerini "blog.categories.xyz" key'leri ile yap
         const mappedCategories = catArray.map((key: string) => {
           // blog.categories.XXX
           return {
@@ -147,18 +149,45 @@ export default function BlogLocalePage({ params }: { params: { locale: string } 
   // Yüklenme aşaması
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-white dark:bg-[#111111]">
-        <motion.div 
-          className="text-center"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.3 }}
-        >
-          <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-gray-900 dark:border-white mx-auto"></div>
-          <p className="mt-4 text-gray-600 dark:text-gray-400">
-            {t("common.loading")}
-          </p>
-        </motion.div>
+      <div className={`min-h-screen bg-white dark:bg-[#111111] ${inter.variable} font-sans`}>
+        <NavBar />
+
+        {/* Hero Section */}
+        <section className="pt-32 px-4 bg-white dark:bg-[#111111] relative z-10">
+          <div className="max-w-6xl mx-auto">
+            <div className="text-center mb-16">
+              {/* Skeleton başlık */}
+              <div className="inline-block">
+                <div className="h-12 w-64 md:w-80 bg-gray-200 dark:bg-[#222222] rounded mb-4 mx-auto"></div>
+              </div>
+              {/* Skeleton alt açıklama */}
+              <div className="h-4 bg-gray-200 dark:bg-[#222222] rounded mb-2 max-w-2xl mx-auto"></div>
+              <div className="h-4 bg-gray-200 dark:bg-[#222222] rounded max-w-xl mx-auto"></div>
+            </div>
+          </div>
+        </section>
+
+        {/* Blog Content */}
+        <section className="py-16 px-4 bg-white dark:bg-[#111111] relative z-10">
+          <div className="max-w-6xl mx-auto flex flex-col lg:flex-row gap-8 relative">
+            {/* Main Content */}
+            <div className="lg:w-3/4">
+              <div className="grid md:grid-cols-2 gap-8">
+                {Array(6).fill(0).map((_, index) => (
+                  <div key={index}>
+                    <BlogCardSkeleton />
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="lg:w-1/4">
+              <BlogSidebarSkeleton />
+            </div>
+          </div>
+        </section>
+
+        <FooterSection />
       </div>
     );
   }
