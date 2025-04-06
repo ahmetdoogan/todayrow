@@ -12,6 +12,8 @@ import Image from "next/image";
 import { useTheme } from "@/components/providers/ThemeProvider";
 import { motion } from "framer-motion";
 import { BlurFade } from "@/components/ui/blur-fade";
+import BlogCardSkeleton from "@/components/ui/skeletons/BlogCardSkeleton";
+import BlogSidebarSkeleton from "@/components/ui/skeletons/BlogSidebarSkeleton";
 
 // Globals.css dosyası ile Instrument Serif font yükleniyor, ancak
 // client tarafında garantilemek için ekstra import ekliyoruz
@@ -130,18 +132,62 @@ export default function CategoryPage({
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-white dark:bg-[#111111]">
-        <motion.div 
-          className="text-center"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.3 }}
-        >
-          <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-gray-900 dark:border-white mx-auto"></div>
-          <p className="mt-4 text-gray-600 dark:text-gray-400">
-            {t("common.loading")}
-          </p>
-        </motion.div>
+      <div className={`min-h-screen bg-white dark:bg-[#111111] ${inter.variable} font-sans`}>
+        <NavBar />
+
+        {/* Breadcrumbs Skeleton */}
+        <div className="bg-gray-50 dark:bg-[#191919] py-4 border-b border-gray-100 dark:border-gray-800">
+          <div className="max-w-6xl mx-auto px-4">
+            <div className="flex items-center">
+              <div className="h-3 w-16 bg-gray-200 dark:bg-[#222222] rounded"></div>
+              <div className="mx-2 h-3 w-3 bg-gray-200 dark:bg-[#222222] rounded"></div>
+              <div className="h-3 w-16 bg-gray-200 dark:bg-[#222222] rounded"></div>
+              <div className="mx-2 h-3 w-3 bg-gray-200 dark:bg-[#222222] rounded"></div>
+              <div className="h-3 w-24 bg-gray-200 dark:bg-[#222222] rounded"></div>
+            </div>
+          </div>
+        </div>
+
+        {/* Hero Section Skeleton */}
+        <section className="pt-20 pb-12 px-4 bg-white dark:bg-[#111111] relative z-10">
+          <div className="max-w-6xl mx-auto">
+            <div className="text-center mb-12">
+              <div className="inline-flex items-center mb-6">
+                <div className="h-4 w-4 bg-gray-200 dark:bg-[#222222] rounded-full mr-2"></div>
+                <div className="h-3 w-32 bg-gray-200 dark:bg-[#222222] rounded"></div>
+              </div>
+              
+              {/* Skeleton başlık */}
+              <div className="h-10 w-64 md:w-80 bg-gray-200 dark:bg-[#222222] rounded mb-4 mx-auto"></div>
+              
+              {/* Skeleton alt açıklama */}
+              <div className="h-4 bg-gray-200 dark:bg-[#222222] rounded mb-2 max-w-2xl mx-auto"></div>
+              <div className="h-4 bg-gray-200 dark:bg-[#222222] rounded max-w-xl mx-auto"></div>
+            </div>
+          </div>
+        </section>
+
+        {/* Blog Content Skeleton */}
+        <section className="py-12 px-4 bg-white dark:bg-[#111111] relative z-10">
+          <div className="max-w-6xl mx-auto flex flex-col lg:flex-row gap-8 relative">
+            {/* Main Content */}
+            <div className="lg:w-3/4">
+              <div className="grid md:grid-cols-2 gap-8">
+                {Array(4).fill(0).map((_, index) => (
+                  <div key={index}>
+                    <BlogCardSkeleton />
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="lg:w-1/4">
+              <BlogSidebarSkeleton />
+            </div>
+          </div>
+        </section>
+
+        <FooterSection />
       </div>
     );
   }
