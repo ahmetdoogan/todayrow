@@ -19,7 +19,7 @@ export function RootProviders({ children }: { children: React.ReactNode }) {
 
   return (
     <SessionContextProvider supabaseClient={supabase}>
-      <NextIntlClientProvider locale={language} messages={messages}>
+      <NextIntlClientProvider locale={language} messages={messages as any}>
         <ThemeProvider>
           <ContentProvider>
             <ToastProvider>
