@@ -23,7 +23,7 @@ export default function NavBar() {
   }, []);
 
   // Çapa linkleri için özel işlev
-  const handleAnchorClick = (e, anchor) => {
+  const handleAnchorClick = (e: React.MouseEvent<HTMLAnchorElement>, anchor: string) => {
     e.preventDefault();
     
     // Eğer ana sayfada değilsek, önce ana sayfaya gidelim
