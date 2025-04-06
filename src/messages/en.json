@@ -2,11 +2,54 @@
   "pages": {
     "about": {
       "title": "About Us",
-      "description": "Content will be updated soon."
+      "description": "The story of Todayrow and the team behind it",
+      "story": {
+        "title": "Our Story",
+        "part1": "Todayrow is a project designed to simplify and focus daily planning. Born from the challenges I faced trying to manage dozens of tasks simultaneously, this idea led me to develop a minimal tool that only plans for today and tomorrow.",
+        "part2": "Traditional planning tools are often complex and filled with excessive features. Todayrow, on the contrary, aims to reduce your mental load by helping you focus only on what's important right now."
+      },
+      "team": {
+        "title": "Our Team",
+        "description": "The power behind Todayrow",
+        "founder": {
+          "name": "Ahmet",
+          "role": "Founder & Developer",
+          "bio": "A software developer who loves minimalist approaches and aims to reduce complexity. He believes that focusing on today and tomorrow is more effective than long-term planning."
+        },
+        "ai1": {
+          "name": "Claude",
+          "role": "AI Strategy Specialist",
+          "bio": "Expert in detailed analysis and long-term strategies. Always tries to enrich Todayrow's minimal philosophical approach with complex suggestions, but in the end, we always simplify them."
+        },
+        "ai2": {
+          "name": "O1",
+          "role": "Digital Content Assistant",
+          "bio": "Specialized in quick solutions and practical advice. Supports all digital content processes from content planning to visual design, sometimes getting too excited and going off-topic."
+        }
+      },
+      "philosophy": {
+        "title": "Our Philosophy",
+        "description": "At Todayrow, we believe that:",
+        "points": [
+          "Simplicity is more powerful than complexity",
+          "Today and tomorrow are the most productive time frames you can plan for",
+          "Mental clarity means higher productivity",
+          "Technology should simplify life, not complicate it"
+        ]
+      }
     },
     "contact": {
       "title": "Contact",
-      "description": "Content will be updated soon."
+      "description": "Have questions about Todayrow? Reach out to us.",
+      "email": {
+        "title": "Contact us via email",
+        "address": "hello@todayrow.app",
+        "button": "Send email"
+      },
+      "followUs": {
+        "title": "Follow us",
+        "description": "Follow our social media accounts for the latest developments and updates."
+      }
     }
   },
   "blog": {

@@ -2,11 +2,54 @@
   "pages": {
     "about": {
       "title": "Hakkımızda",
-      "description": "İçerik yakında güncellenecek."
+      "description": "Todayrow'un hikayesi ve arkasındaki ekip",
+      "story": {
+        "title": "Hikayemiz",
+        "part1": "Todayrow, günlük planlamayı basitleştirme ve odaklama için tasarlanmış bir projedir. Aynı anda onlarca görevi yönetmeye çalışırken yaşadığım zorluklardan doğan bu fikir, beni sadece bugün ve yarını planlayan minimal bir araç geliştirmeye yönlendirdi.",
+        "part2": "Geleneksel planlama araçları genellikle karmaşık ve aşırı özelliklerle dolu. Todayrow, bunun aksine sadece şu an önemli olan şeylere odaklanmanızı sağlayarak zihinsel yükünüzü azaltmayı amaçlıyor."
+      },
+      "team": {
+        "title": "Ekibimiz",
+        "description": "Todayrow'un arkasındaki güç",
+        "founder": {
+          "name": "Ahmet",
+          "role": "Kurucu & Geliştirici",
+          "bio": "Minimalist yaklaşımları seven ve karmaşıklığı azaltmayı hedefleyen bir yazılım geliştiricisi. Bugüne ve yarına odaklanmanın, uzun vadeli planlamadan daha etkili olduğuna inanıyor."
+        },
+        "ai1": {
+          "name": "Claude",
+          "role": "AI Strateji Uzmanı",
+          "bio": "Detaylı analizler ve uzun vadeli stratejiler konusunda uzman. Todayrow'un minimal felsefi yaklaşımını her zaman karmaşık önerilerle zenginleştirmeye çalışır, ama sonunda her zaman biz onu basitleştiririz."
+        },
+        "ai2": {
+          "name": "O1",
+          "role": "Dijital İçerik Asistanı",
+          "bio": "Hızlı çözümler ve pratik tavsiyeler sunmakta uzmanlaşmış. İçerik planlamadan, görsel tasarıma kadar tüm dijital içerik süreçlerine destek veriyor, bazen fazla heyecanlanarak konudan sapabiliyor."
+        }
+      },
+      "philosophy": {
+        "title": "Felsefemiz",
+        "description": "Todayrow'da inanıyoruz ki:",
+        "points": [
+          "Basitlik, karmaşıklıktan daha güçlüdür",
+          "Bugün ve yarın, planlayabileceğiniz en verimli zaman dilimleridir",
+          "Zihinsel netlik, daha yüksek üretkenlik demektir",
+          "Teknoloji hayatı kolaylaştırmalı, karmaşıklaştırmamalıdır"
+        ]
+      }
     },
     "contact": {
       "title": "İletişim",
-      "description": "İçerik yakında güncellenecek."
+      "description": "Todayrow hakkında sorularınız mı var? Bize ulaşın.",
+      "email": {
+        "title": "E-posta ile iletişim",
+        "address": "hello@todayrow.app",
+        "button": "E-posta gönder"
+      },
+      "followUs": {
+        "title": "Bizi takip edin",
+        "description": "En son gelişmeler ve güncellemeler için sosyal medya hesaplarımızı takip edin."
+      }
     }
   },
   "blog": {
