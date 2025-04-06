@@ -191,14 +191,14 @@ export default function BlogLocalePage({ params }: { params: { locale: string } 
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-16">
             <BlurFade delay={0.1}>
-              <h1 className="text-4xl md:text-5xl font-medium text-gray-900 dark:text-white mb-4">
-                <span>Todayrow</span>{" "}
+              <h1 className="font-medium text-gray-900 dark:text-white mb-4">
+                <span className="text-4xl md:text-5xl" style={{ fontSize: 'clamp(36px, 5vw, 48px)' }}>Todayrow</span>{" "}
                 <span 
                   className="italic" 
                   style={{ 
                     fontFamily: "'Instrument Serif', serif", 
                     fontWeight: 400,
-                    fontSize: '48px'
+                    fontSize: 'clamp(36px, 5vw, 48px)'
                   }}
                 >
                   Blog

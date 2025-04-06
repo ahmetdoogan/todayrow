@@ -1,7 +1,8 @@
 "use client";
 
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import CategoryAccordion from "./CategoryAccordion";
+import { motion } from "framer-motion";
 
 interface BlogSidebarProps {
   categories: {
@@ -14,8 +15,12 @@ interface BlogSidebarProps {
 
 const BlogSidebar: React.FC<BlogSidebarProps> = ({ categories, selectedCategory, t }) => {
   const sidebarRef = useRef<HTMLDivElement>(null);
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
+    // Component mount edildiğinde animasyon için state'i güncelle
+    setMounted(true);
+    
     // Bu, sticky davranışının düzgün çalışmasını sağlayacak
     if (sidebarRef.current) {
       sidebarRef.current.style.position = 'sticky';
@@ -26,8 +31,11 @@ const BlogSidebar: React.FC<BlogSidebarProps> = ({ categories, selectedCategory,
 
   return (
     <div className="mt-8 lg:mt-0 w-full" ref={sidebarRef}>
-      <div 
+      <motion.div 
         className="bg-gray-50 dark:bg-[#191919] rounded-xl p-6 border border-gray-100 dark:border-gray-800 h-fit"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: mounted ? 1 : 0, y: mounted ? 0 : 20 }}
+        transition={{ duration: 0.6, ease: "easeOut" }}
       >
         <CategoryAccordion 
           categories={categories} 
@@ -53,7 +61,7 @@ const BlogSidebar: React.FC<BlogSidebarProps> = ({ categories, selectedCategory,
             </button>
           </div>
         </div>
-      </div>
+      </motion.div>
     </div>
   );
 };

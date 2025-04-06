@@ -1,7 +1,8 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { Sun, Moon, Menu, X } from "lucide-react";
 import { useTheme } from "@/components/providers/ThemeProvider";
 import { useTranslations } from "next-intl";
@@ -13,6 +14,29 @@ export default function NavBar() {
   const { theme, toggleTheme } = useTheme();
   const t = useTranslations();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const router = useRouter();
+  const [currentPath, setCurrentPath] = useState("");
+
+  useEffect(() => {
+    // Mevcut yolu al (client tarafında çalışır)
+    setCurrentPath(window.location.pathname);
+  }, []);
+
+  // Çapa linkleri için özel işlev
+  const handleAnchorClick = (e, anchor) => {
+    e.preventDefault();
+    
+    // Eğer ana sayfada değilsek, önce ana sayfaya gidelim
+    if (currentPath !== "/") {
+      router.push(`/${anchor}`);
+    } else {
+      // Ana sayfadaysak, smooth scroll yapalım
+      const element = document.getElementById(anchor.replace("#", ""));
+      if (element) {
+        element.scrollIntoView({ behavior: "smooth" });
+      }
+    }
+  };
 
   return (
     <nav className="fixed w-full py-3 md:py-4 px-4 md:px-8 z-50 bg-white/95 dark:bg-[#0a0a0a]/95 backdrop-blur-sm border-b border-gray-100 dark:border-gray-800/50">
@@ -24,22 +48,24 @@ export default function NavBar() {
 
         <div className="hidden md:flex items-center gap-8 absolute left-1/2 transform -translate-x-1/2">
           <Link
-          href="#features"
-          className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors font-medium"
+            href="#features"
+            className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors font-medium"
+            onClick={(e) => handleAnchorClick(e, '#features')}
           >
-          {t("landing.newLanding.navbar.features")}
+            {t("landing.newLanding.navbar.features")}
           </Link>
           <Link
-          href="/blog"
-          className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors font-medium"
+            href="/blog"
+            className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors font-medium"
           >
-          {t("common.navigation.blog")}
+            {t("common.navigation.blog")}
           </Link>
           <Link
-          href="#faq"
-          className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors font-medium"
+            href="#faq"
+            className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors font-medium"
+            onClick={(e) => handleAnchorClick(e, '#faq')}
           >
-          FAQ
+            FAQ
           </Link>
         </div>
 
@@ -107,7 +133,10 @@ export default function NavBar() {
               <Link
                 href="#features"
                 className="py-2 text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors font-medium flex items-center gap-2"
-                onClick={() => setMobileMenuOpen(false)}
+                onClick={(e) => {
+                  setMobileMenuOpen(false);
+                  handleAnchorClick(e, '#features');
+                }}
               >
                 {t("landing.newLanding.navbar.features")}
               </Link>
@@ -121,7 +150,10 @@ export default function NavBar() {
               <Link
                 href="#faq"
                 className="py-2 text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors font-medium flex items-center gap-2"
-                onClick={() => setMobileMenuOpen(false)}
+                onClick={(e) => {
+                  setMobileMenuOpen(false);
+                  handleAnchorClick(e, '#faq');
+                }}
               >
                 FAQ
               </Link>
