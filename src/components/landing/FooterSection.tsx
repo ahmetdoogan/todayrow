@@ -5,9 +5,29 @@ import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { Logo } from "@/components/ui/logo";
 import LanguageSwitcher from "@/components/providers/LanguageSwitcher";
+import { useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 
 export default function FooterSection() {
   const t = useTranslations();
+  const router = useRouter();
+  const pathname = usePathname();
+
+  // Özel işlev - anasayfadaki belirli bölümlere scroll için
+  const handleAnchorClick = (e: React.MouseEvent<HTMLAnchorElement>, anchor: string) => {
+    e.preventDefault();
+    
+    // Eğer ana sayfada değilsek, önce ana sayfaya gidelim
+    if (pathname !== "/") {
+      router.push(`/${anchor}`);
+    } else {
+      // Ana sayfadaysak, smooth scroll yapalım
+      const element = document.getElementById(anchor.replace("#", ""));
+      if (element) {
+        element.scrollIntoView({ behavior: "smooth" });
+      }
+    }
+  };
 
   return (
     <footer className="py-16 px-4 bg-black text-white relative z-10">
@@ -27,14 +47,22 @@ export default function FooterSection() {
               <h3 className="font-medium text-white text-sm mb-3">{t("landing.newLanding.footer.product")}</h3>
               <ul className="space-y-3">
                 <li>
-                  <Link href="#features" className="text-gray-400 text-xs hover:text-white transition-colors">
+                  <a 
+                    href="#features" 
+                    className="text-gray-400 text-xs hover:text-white transition-colors"
+                    onClick={(e) => handleAnchorClick(e, '#features')}
+                  >
                     {t("landing.newLanding.footer.links.features")}
-                  </Link>
+                  </a>
                 </li>
                 <li>
-                  <Link href="#how-it-works" className="text-gray-400 text-xs hover:text-white transition-colors">
+                  <a 
+                    href="#faq" 
+                    className="text-gray-400 text-xs hover:text-white transition-colors"
+                    onClick={(e) => handleAnchorClick(e, '#faq')}
+                  >
                     {t("landing.newLanding.footer.links.howItWorks")}
-                  </Link>
+                  </a>
                 </li>
               </ul>
             </div>

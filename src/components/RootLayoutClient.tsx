@@ -15,7 +15,7 @@ const AuthGuard = ({ children }: { children: React.ReactNode }) => {
     if (!pathname) return;
     
     // Public routes
-    const publicRoutes = ['/', '/auth/login', '/auth/signup', '/auth/verify', '/auth/forgot-password', '/auth/reset-password', '/legal/privacy', '/legal/terms', '/new-landing', '/auth-new/login', '/auth-new/login-alt', '/auth-new/signup', '/auth-new/verify', '/auth-new/forgot-password', '/auth-new/reset-password', '/blog'];
+    const publicRoutes = ['/', '/auth/login', '/auth/signup', '/auth/verify', '/auth/forgot-password', '/auth/reset-password', '/legal/privacy', '/legal/terms', '/new-landing', '/auth-new/login', '/auth-new/login-alt', '/auth-new/signup', '/auth-new/verify', '/auth-new/forgot-password', '/auth-new/reset-password', '/blog', '/about', '/contact'];
     const isPublicRoute = publicRoutes.includes(pathname) || pathname.startsWith('/blog/');
     const isAuthRoute = pathname.startsWith('/auth/') || pathname.startsWith('/auth-new/');
     const isRootRoute = pathname === '/';

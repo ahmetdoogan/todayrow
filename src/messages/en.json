@@ -1,4 +1,14 @@
 {
+  "pages": {
+    "about": {
+      "title": "About Us",
+      "description": "Content will be updated soon."
+    },
+    "contact": {
+      "title": "Contact",
+      "description": "Content will be updated soon."
+    }
+  },
   "blog": {
     "page": {
       "title": "Todayrow Blog",
@@ -1340,7 +1350,7 @@
       },
       "footer": {
         "product": "Product",
-        "company": "Company",
+        "company": "Todayrow",
         "legal": "Legal",
         "description": "Todayrow helps you focus on what really matters by planning only today and tomorrow.",
         "links": {
@@ -1351,7 +1361,7 @@
           "blog": "Blog",
           "privacy": "Privacy Policy",
           "terms": "Terms of Service",
-          "howItWorks": "How It Works"
+          "howItWorks": "FAQ"
         },
         "copyright": "© 2025 Todayrow. All rights reserved."
       },

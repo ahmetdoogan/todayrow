@@ -1,4 +1,14 @@
 {
+  "pages": {
+    "about": {
+      "title": "Hakkımızda",
+      "description": "İçerik yakında güncellenecek."
+    },
+    "contact": {
+      "title": "İletişim",
+      "description": "İçerik yakında güncellenecek."
+    }
+  },
   "blog": {
     "page": {
       "title": "Todayrow Blog",
@@ -1342,7 +1352,7 @@
       },
       "footer": {
         "product": "Ürün",
-        "company": "Şirket",
+        "company": "Todayrow",
         "legal": "Yasal",
         "description": "Todayrow, sadece bugün ve yarını planlayarak gerçekten önemli olana odaklanmanıza yardımcı olur.",
         "links": {
@@ -1353,7 +1363,7 @@
           "blog": "Blog",
           "privacy": "Gizlilik Politikası",
           "terms": "Kullanım Şartları",
-          "howItWorks": "Nasıl Çalışır"
+          "howItWorks": "SSS"
         },
         "copyright": "© 2025 Todayrow. Tüm hakları saklıdır."
       },
