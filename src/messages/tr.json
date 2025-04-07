@@ -1217,9 +1217,9 @@
         "description": "Bugüne odaklan, yarını planla. Geleneksel planlama araçlarının karmaşıklığı olmadan.",
         "ctaMain": "14 gün ücretsiz deneyin",
         "ctaSecondary": "Kredi kartı gerekmez",
-        "reminderBadge": "Müşteri görüşmesi için hatırlatıcı ayarlandı",
+        "reminderBadge": "Görüşme hatırlatıcısı ayarlandı",
         "planBadge": "Plan hatırlatıcısı eklendi",
-        "tasksBadge": "Görevler tamamlandı",
+        "tasksBadge": "Yarının planlaması tamam",
         "meetingBadge": "Yeni toplantı eklendi",
         "titleParts": {
           "today": "Bugün",

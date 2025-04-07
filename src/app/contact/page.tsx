@@ -102,9 +102,9 @@ export default function ContactPage() {
                       </p>
                       <a 
                         href={`mailto:${t("pages.contact.email.address")}`}
-                        className="inline-flex items-center justify-center px-3 md:px-5 py-1.5 md:py-2 bg-gray-900 hover:bg-gray-800 dark:bg-white dark:hover:bg-gray-200 text-white dark:text-black border border-transparent dark:border-gray-300 rounded-xl font-medium transition-colors text-sm md:text-base group"
+                        className="inline-flex items-center justify-center px-3 md:px-5 py-1.5 md:py-2 bg-gray-900 hover:bg-gray-800 dark:bg-white dark:hover:bg-gray-200 text-white dark:text-black border border-transparent dark:border-gray-300 rounded-xl font-medium transition-colors text-sm md:text-base"
                       >
-                        <Mail className="mr-2 h-4 w-4 group-hover:-translate-y-0.5 transition-transform duration-300" />
+                        <Mail className="mr-2 h-4 w-4" />
                         {t("pages.contact.email.button")}
                       </a>
                     </div>
@@ -200,7 +200,7 @@ export default function ContactPage() {
                         <button
                           type="submit"
                           disabled={formStatus === "submitting"}
-                          className="px-6 py-2 bg-gray-900 hover:bg-gray-800 dark:bg-white dark:hover:bg-gray-200 text-white dark:text-black rounded-lg font-medium transition-colors flex items-center justify-center disabled:opacity-70 disabled:cursor-not-allowed"
+                          className="inline-flex items-center justify-center px-3 md:px-5 py-1.5 md:py-2 bg-gray-900 hover:bg-gray-800 dark:bg-white dark:hover:bg-gray-200 text-white dark:text-black border border-transparent dark:border-gray-300 rounded-xl font-medium transition-colors text-sm md:text-base"
                         >
                           {formStatus === "submitting" ? (
                             <>

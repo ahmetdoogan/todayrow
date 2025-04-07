@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useRef } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import Link from "next/link";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { useTranslations } from "next-intl";
@@ -49,7 +49,24 @@ export default function HeroSection({
   });
 
   const t = useTranslations();
+  const [isMobile, setIsMobile] = useState(false);
 
+  useEffect(() => {
+    // Check if it's a mobile device
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    
+    // Initial check
+    checkMobile();
+    
+    // Add event listener for window resize
+    window.addEventListener('resize', checkMobile);
+    
+    // Cleanup
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+  
   return (
     <section
       className="pt-24 md:pt-32 pb-40 md:pb-48 px-4 relative z-10 overflow-hidden bg-white dark:bg-[#111111]"
@@ -57,13 +74,53 @@ export default function HeroSection({
     >
       <div className="max-w-6xl mx-auto">
         <div className="flex flex-col items-center mb-10 mt-8 md:mt-12">
-          <BlurFade delay={0.1}>
+          {!isMobile ? (
+            <BlurFade delay={0.1}>
+              <div className="inline-block px-3 py-1.5 mb-4 rounded-lg bg-gradient-to-r from-orange-100 to-orange-50 dark:from-gray-800/80 dark:to-gray-800/60 text-orange-600 dark:text-gray-200 text-xs font-medium shadow-sm hover:shadow transition-shadow duration-300 border border-orange-200/50 dark:border-gray-700/70">
+                {t("landing.newLanding.hero.badge")}
+              </div>
+            </BlurFade>
+          ) : (
             <div className="inline-block px-3 py-1.5 mb-4 rounded-lg bg-gradient-to-r from-orange-100 to-orange-50 dark:from-gray-800/80 dark:to-gray-800/60 text-orange-600 dark:text-gray-200 text-xs font-medium shadow-sm hover:shadow transition-shadow duration-300 border border-orange-200/50 dark:border-gray-700/70">
               {t("landing.newLanding.hero.badge")}
             </div>
-          </BlurFade>
+          )}
 
-          <BlurFade delay={0.3}>
+          {!isMobile ? (
+            <BlurFade delay={0.3}>
+              <h1 className="text-5xl md:text-7xl lg:text-8xl font-medium text-gray-900 dark:text-white text-center mb-5">
+                <span className="text-gray-900 dark:text-gray-100 flex flex-col">
+                  <span className="inline-block">
+                    <span
+                      style={{
+                        fontFamily: '"Instrument Serif", serif',
+                        fontStyle: "italic",
+                        fontWeight: 300,
+                        color: "inherit",
+                      }}
+                    >
+                      {t("landing.newLanding.hero.titleParts.today")}
+                    </span>{" "}
+                    {t("landing.newLanding.hero.titleParts.isYours")}
+                  </span>
+                  <span className="inline-block">
+                    {t("landing.newLanding.hero.titleParts.prepare")}{" "}
+                    <span
+                      style={{
+                        fontFamily: '"Instrument Serif", serif',
+                        fontStyle: "italic",
+                        fontWeight: 300,
+                        color: "inherit",
+                      }}
+                    >
+                      {t("landing.newLanding.hero.titleParts.tomorrow")}
+                    </span>
+                    {t("landing.newLanding.hero.titleParts.period")}
+                  </span>
+                </span>
+              </h1>
+            </BlurFade>
+          ) : (
             <h1 className="text-5xl md:text-7xl lg:text-8xl font-medium text-gray-900 dark:text-white text-center mb-5">
               <span className="text-gray-900 dark:text-gray-100 flex flex-col">
                 <span className="inline-block">
@@ -95,9 +152,28 @@ export default function HeroSection({
                 </span>
               </span>
             </h1>
-          </BlurFade>
+          )}
 
-          <BlurFade delay={0.5}>
+          {!isMobile ? (
+            <BlurFade delay={0.5}>
+              <p className="text-sm md:text-lg text-gray-600 dark:text-gray-300 mb-10 max-w-2xl text-center">
+                {(() => {
+                  const desc = t("landing.newLanding.hero.description");
+                  const isTurkish = desc.includes("yarını");
+                  const breakWord = isTurkish ? "planla." : "tomorrow";
+                  const parts = isTurkish ? desc.split(breakWord) : desc.split(breakWord);
+                  return (
+                    <>
+                      {parts[0]}
+                      {breakWord}
+                      <br className="hidden md:block" />
+                      {parts[1]}
+                    </>
+                  );
+                })()}
+              </p>
+            </BlurFade>
+          ) : (
             <p className="text-sm md:text-lg text-gray-600 dark:text-gray-300 mb-10 max-w-2xl text-center">
               {(() => {
                 const desc = t("landing.newLanding.hero.description");
@@ -114,9 +190,28 @@ export default function HeroSection({
                 );
               })()}
             </p>
-          </BlurFade>
+          )}
 
-          <BlurFade delay={0.6}>
+          {!isMobile ? (
+            <BlurFade delay={0.6}>
+              <div className="flex flex-col items-center gap-4 mb-4">
+                <Link href="/auth/signup" className="block">
+                  <RainbowButton>
+                    <span className="relative z-10 flex items-center gap-2">
+                      {t("landing.newLanding.hero.ctaMain")}{" "}
+                      <ArrowRight
+                        size={18}
+                        className="group-hover:translate-x-1 transition-transform"
+                      />
+                    </span>
+                  </RainbowButton>
+                </Link>
+                <p className="text-gray-500 dark:text-gray-400 text-sm text-center mt-3">
+                  {t("landing.newLanding.hero.ctaSecondary")}
+                </p>
+              </div>
+            </BlurFade>
+          ) : (
             <div className="flex flex-col items-center gap-4 mb-4">
               <Link href="/auth/signup" className="block">
                 <RainbowButton>
@@ -133,73 +228,133 @@ export default function HeroSection({
                 {t("landing.newLanding.hero.ctaSecondary")}
               </p>
             </div>
-          </BlurFade>
+          )}
 
           {/* Characters illustration */}
           <div className="flex flex-col items-center relative z-10">
             <div className="flex justify-center items-start mb-2 gap-8 relative">
               {/* 1. Görsel (kadın) */}
               <div>
-                <BlurFade delay={0.5}>
-                  <img
-                    src="/images/woman2white.png"
-                    alt="Woman illustration"
-                    className="h-28 w-auto object-contain dark:hidden"
-                  />
-                  <img
-                    src="/images/woman2black.png"
-                    alt="Woman illustration dark"
-                    className="h-28 w-auto object-contain hidden dark:block"
-                  />
-                </BlurFade>
+                {!isMobile ? (
+                  <BlurFade delay={0.5}>
+                    <img
+                      src="/images/woman2white.png"
+                      alt="Woman illustration"
+                      className="h-28 w-auto object-contain dark:hidden"
+                    />
+                    <img
+                      src="/images/woman2black.png"
+                      alt="Woman illustration dark"
+                      className="h-28 w-auto object-contain hidden dark:block"
+                    />
+                  </BlurFade>
+                ) : (
+                  <>
+                    <img
+                      src="/images/woman2white.png"
+                      alt="Woman illustration"
+                      className="h-28 w-auto object-contain dark:hidden"
+                    />
+                    <img
+                      src="/images/woman2black.png"
+                      alt="Woman illustration dark"
+                      className="h-28 w-auto object-contain hidden dark:block"
+                    />
+                  </>
+                )}
               </div>
 
               {/* 2. Görsel (erkek) */}
               <div className="mt-12">
-                <BlurFade delay={0.7}>
-                  <img
-                    src="/images/man3white.png"
-                    alt="Man illustration"
-                    className="h-28 w-auto object-contain dark:hidden"
-                  />
-                  <img
-                    src="/images/man3black.png"
-                    alt="Man illustration dark"
-                    className="h-28 w-auto object-contain hidden dark:block"
-                  />
-                </BlurFade>
+                {!isMobile ? (
+                  <BlurFade delay={0.7}>
+                    <img
+                      src="/images/man3white.png"
+                      alt="Man illustration"
+                      className="h-28 w-auto object-contain dark:hidden"
+                    />
+                    <img
+                      src="/images/man3black.png"
+                      alt="Man illustration dark"
+                      className="h-28 w-auto object-contain hidden dark:block"
+                    />
+                  </BlurFade>
+                ) : (
+                  <>
+                    <img
+                      src="/images/man3white.png"
+                      alt="Man illustration"
+                      className="h-28 w-auto object-contain dark:hidden"
+                    />
+                    <img
+                      src="/images/man3black.png"
+                      alt="Man illustration dark"
+                      className="h-28 w-auto object-contain hidden dark:block"
+                    />
+                  </>
+                )}
               </div>
 
               {/* 3. Görsel (kadın) */}
               <div className="mt-12">
-                <BlurFade delay={0.8}>
-                  <img
-                    src="/images/woman6white.png"
-                    alt="Woman illustration"
-                    className="h-28 w-auto object-contain dark:hidden"
-                  />
-                  <img
-                    src="/images/woman6black.png"
-                    alt="Woman illustration dark"
-                    className="h-28 w-auto object-contain hidden dark:block"
-                  />
-                </BlurFade>
+                {!isMobile ? (
+                  <BlurFade delay={0.8}>
+                    <img
+                      src="/images/woman6white.png"
+                      alt="Woman illustration"
+                      className="h-28 w-auto object-contain dark:hidden"
+                    />
+                    <img
+                      src="/images/woman6black.png"
+                      alt="Woman illustration dark"
+                      className="h-28 w-auto object-contain hidden dark:block"
+                    />
+                  </BlurFade>
+                ) : (
+                  <>
+                    <img
+                      src="/images/woman6white.png"
+                      alt="Woman illustration"
+                      className="h-28 w-auto object-contain dark:hidden"
+                    />
+                    <img
+                      src="/images/woman6black.png"
+                      alt="Woman illustration dark"
+                      className="h-28 w-auto object-contain hidden dark:block"
+                    />
+                  </>
+                )}
               </div>
 
               {/* 4. Görsel (erkek) */}
               <div>
-                <BlurFade delay={0.9}>
-                  <img
-                    src="/images/man5white.png"
-                    alt="Man illustration"
-                    className="h-28 w-auto object-contain dark:hidden"
-                  />
-                  <img
-                    src="/images/man5black.png"
-                    alt="Man illustration dark"
-                    className="h-28 w-auto object-contain hidden dark:block"
-                  />
-                </BlurFade>
+                {!isMobile ? (
+                  <BlurFade delay={0.9}>
+                    <img
+                      src="/images/man5white.png"
+                      alt="Man illustration"
+                      className="h-28 w-auto object-contain dark:hidden"
+                    />
+                    <img
+                      src="/images/man5black.png"
+                      alt="Man illustration dark"
+                      className="h-28 w-auto object-contain hidden dark:block"
+                    />
+                  </BlurFade>
+                ) : (
+                  <>
+                    <img
+                      src="/images/man5white.png"
+                      alt="Man illustration"
+                      className="h-28 w-auto object-contain dark:hidden"
+                    />
+                    <img
+                      src="/images/man5black.png"
+                      alt="Man illustration dark"
+                      className="h-28 w-auto object-contain hidden dark:block"
+                    />
+                  </>
+                )}
               </div>
             </div>
           </div>

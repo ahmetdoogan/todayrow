@@ -1217,7 +1217,7 @@
         "ctaSecondary": "No credit card required",
         "reminderBadge": "Reminder set for Client Call",
         "planBadge": "Plan reminder added",
-        "tasksBadge": "Tasks completed",
+        "tasksBadge": "Tomorrow planned",
         "meetingBadge": "New meeting added",
         "titleParts": {
           "today": "Today",
