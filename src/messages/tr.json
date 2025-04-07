@@ -1263,7 +1263,7 @@
         },
         "smartReminders": {
           "title": "Akıllı Hatırlatıcılar",
-          "description": "E-posta ve tarayıcı bildirimleriyle hiçbir görevi kaçırmayın"
+          "description": "E-posta bildirimleriyle hiçbir planı kaçırmayın"
         },
         "quickNotes": {
           "title": "Hızlı Notlar",
@@ -1472,66 +1472,6 @@
         }
       },
       "blog": {
-        "badge": "Bloğumuzdan",
-        "titleParts": {
-          "insights": "İpuçları",
-          "and": "ve",
-          "tips": "Öneriler"
-        },
-        "subtitle": "Üretkenliğinizi maksimize etmenize yardımcı olacak kaynakları keşfedin",
-        "readMore": "Devamını Oku",
-        "viewAllButton": "Tüm Yazıları Görüntüle",
-        "posts": {
-          "post1": {
-            "title": "Etkili Günlük Planlama Rutinleri",
-            "excerpt": "İş-yaşam dengesini korurken üretkenliği en üst düzeye çıkaran günlük rutinler nasıl oluşturulur?"
-          },
-          "post2": {
-            "title": "Derin Çalışma için 5 Odaklanma Tekniği",
-            "excerpt": "En zorlu görevlerinizi verimli bir şekilde tamamlamanızı sağlayan denenmiş odaklanma yöntemlerini öğrenin."
-          },
-          "post3": {
-            "title": "Başarı için Not Alma Stratejileri",
-            "excerpt": "Bilgileri akılda tutmaya ve daha iyi fikirler üretmeye yardımcı olan etkili not alma yaklaşımlarını keşfedin."
-          },
-          "post4": {
-            "title": "Minimalist Planlama Yaklaşımı",
-            "excerpt": "Sadece bugüne ve yarına odaklanmak, stresi nasıl azaltır ve başarıyı artırır?"
-          }
-        }
-      },
-      "faq": {
-        "badge": "Sık Sorulan Sorular",
-        "titleParts": {
-          "frequently": "Sık",
-          "asked": "Sorulan",
-          "questions": "Sorular"
-        },
-        "subtitle": "Todayrow hakkında en sık sorulan sorulara yanıt bulun",
-        "questions": {
-          "q1": {
-            "question": "Todayrow diğer planlama araçlarından nasıl farklı?",
-            "answer": "Todayrow, sizi aylarca ilerisini planlamanın karmaşıklığıyla bunaltmak yerine, özellikle bugüne ve yarına odaklanır. Bu yaklaşım, kısa vadeli odaklanmanın daha iyi sonuçlar verdiğini ve ertelemeyi azalttığını gösteren üretkenlik araştırmalarıyla desteklenmektedir."
-          },
-          "q2": {
-            "question": "Ücretsiz deneme sürümü sunuyor musunuz?",
-            "answer": "Evet! Todayrow, tüm özelliklere tam erişimle 14 günlük ücretsiz deneme sürümü sunuyor. Denemenizi başlatmak için kredi kartı gerekmez."
-          },
-          "q3": {
-            "question": "Todayrow'u takvimiyle senkronize edebilir miyim?",
-            "answer": "Şu anda Todayrow bağımsız bir planlama aracı olarak çalışıyor, ancak yakında yayınlanacak popüler takvim hizmetleriyle entegrasyonlar üzerinde aktif olarak çalışıyoruz."
-          },
-          "q4": {
-            "question": "Mobil uygulama mevcut mu?",
-            "answer": "Evet, Todayrow tüm cihazlarda çalışan duyarlı bir web uygulaması olarak kullanılabilir. iOS ve Android için yerel mobil uygulamalar şu anda geliştirme aşamasındadır."
-          },
-          "q5": {
-            "question": "Verilerim ne kadar güvende?",
-            "answer": "Veri güvenliğiniz bizim önceliğimizdir. Todayrow, bilgilerinizi korumak için endüstri standardı şifreleme ve güvenli veritabanı sistemleri kullanır. Verilerinizi asla üçüncü taraflarla paylaşmayız."
-          }
-        }
-      },
-      "blog": {
         "badge": "Blogumuzdan",
         "titleParts": {
           "insights": "İçgörüler",
@@ -1561,7 +1501,7 @@
         }
       },
       "faq": {
-        "badge": "Sık Sorulan Sorular",
+        "badge": "Akla Takılanlar",
         "titleParts": {
           "frequently": "Sık",
           "asked": "Sorulan",
