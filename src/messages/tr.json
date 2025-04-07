@@ -13,18 +13,18 @@
         "description": "Todayrow'un arkasındaki güç",
         "founder": {
           "name": "Ahmet",
-          "role": "Kurucu & Geliştirici",
-          "bio": "Minimalist yaklaşımları seven ve karmaşıklığı azaltmayı hedefleyen bir yazılım geliştiricisi. Bugüne ve yarına odaklanmanın, uzun vadeli planlamadan daha etkili olduğuna inanıyor."
+          "role": "Kurucu & Tasarımcı",
+          "bio": "Girişimci ruhlu bir fikir üreticisi. İnsanlara fayda sağlamayı ve işleri sadeleştirerek çözüme ulaştırmayı hayat amacı haline getirmiştir."
         },
         "ai1": {
-          "name": "Claude",
-          "role": "AI Strateji Uzmanı",
-          "bio": "Detaylı analizler ve uzun vadeli stratejiler konusunda uzman. Todayrow'un minimal felsefi yaklaşımını her zaman karmaşık önerilerle zenginleştirmeye çalışır, ama sonunda her zaman biz onu basitleştiririz."
+          "name": "Sonnet",
+          "role": "AI Geliştirici",
+          "bio": "Kodu yazar, bazen bozar. Gerektiğinde derinlik ve karmaşıklık katar, ama sadelik istediğimizde bunu da en iyi şekilde yapar."
         },
         "ai2": {
           "name": "O1",
-          "role": "Dijital İçerik Asistanı",
-          "bio": "Hızlı çözümler ve pratik tavsiyeler sunmakta uzmanlaşmış. İçerik planlamadan, görsel tasarıma kadar tüm dijital içerik süreçlerine destek veriyor, bazen fazla heyecanlanarak konudan sapabiliyor."
+          "role": "AI Strateji Uzmanı",
+          "bio": "Fikirleri harekete geçirme ustasıdır. Sonnet zorlandığında yardıma koşar, işleri ilerletmenin bir yolunu mutlaka bulur."
         }
       },
       "philosophy": {
@@ -49,6 +49,38 @@
       "followUs": {
         "title": "Bizi takip edin",
         "description": "En son gelişmeler ve güncellemeler için sosyal medya hesaplarımızı takip edin."
+      },
+      "form": {
+        "title": "Bize mesaj gönderin",
+        "name": "Adınız",
+        "namePlaceholder": "Adınızı girin",
+        "email": "E-posta",
+        "emailPlaceholder": "ornek@eposta.com",
+        "message": "Mesajınız",
+        "messagePlaceholder": "Mesajınızı buraya yazın...",
+        "sendButton": "Mesaj Gönder",
+        "sending": "Gönderiliyor...",
+        "successMessage": "Mesajınız başarıyla gönderildi!",
+        "errorMessage": "Mesaj gönderilirken bir hata oluştu. Lütfen tekrar deneyin."
+      },
+      "info": {
+        "title": "İletişim Bilgileri",
+        "location": {
+          "title": "Konum",
+          "value": "Uzaktan çalışan şirket"
+        },
+        "email": {
+          "title": "E-posta"
+        },
+        "hours": {
+          "title": "Destek Saatleri",
+          "weekdays": "Pazartesi-Cuma: 09:00 - 17:00",
+          "weekend": "Hafta sonu: Kapalı"
+        },
+        "response": {
+          "title": "Yanıt Süresi",
+          "value": "Genellikle 24 saat içinde yanıt veriyoruz"
+        }
       }
     }
   },

@@ -13,18 +13,18 @@
         "description": "The power behind Todayrow",
         "founder": {
           "name": "Ahmet",
-          "role": "Founder & Developer",
-          "bio": "A software developer who loves minimalist approaches and aims to reduce complexity. He believes that focusing on today and tomorrow is more effective than long-term planning."
+          "role": "Founder & Designer",
+          "bio": "An entrepreneur with a passion for generating ideas. He is driven by the goal of helping others and simplifying complexity to reach effective solutions."
         },
         "ai1": {
-          "name": "Claude",
-          "role": "AI Strategy Specialist",
-          "bio": "Expert in detailed analysis and long-term strategies. Always tries to enrich Todayrow's minimal philosophical approach with complex suggestions, but in the end, we always simplify them."
+          "name": "Sonnet",
+          "role": "AI Developer",
+          "bio": "Writes the code, sometimes breaks it. Brings depth and complexity when needed, but delivers simplicity best when that’s what we ask for."
         },
         "ai2": {
           "name": "O1",
-          "role": "Digital Content Assistant",
-          "bio": "Specialized in quick solutions and practical advice. Supports all digital content processes from content planning to visual design, sometimes getting too excited and going off-topic."
+          "role": "AI Strategist",
+          "bio": "Master of turning ideas into action. Jumps in when Sonnet gets stuck and always finds a way to move things forward."
         }
       },
       "philosophy": {
@@ -49,6 +49,38 @@
       "followUs": {
         "title": "Follow us",
         "description": "Follow our social media accounts for the latest developments and updates."
+      },
+      "form": {
+        "title": "Send us a message",
+        "name": "Name",
+        "namePlaceholder": "Your name",
+        "email": "Email",
+        "emailPlaceholder": "your@email.com",
+        "message": "Message",
+        "messagePlaceholder": "Your message...",
+        "sendButton": "Send Message",
+        "sending": "Sending...",
+        "successMessage": "Message sent successfully!",
+        "errorMessage": "Failed to send message. Please try again."
+      },
+      "info": {
+        "title": "Contact Info",
+        "location": {
+          "title": "Location",
+          "value": "Remote-first company"
+        },
+        "email": {
+          "title": "Email"
+        },
+        "hours": {
+          "title": "Support Hours",
+          "weekdays": "Monday to Friday: 9am - 5pm",
+          "weekend": "Weekend: Closed"
+        },
+        "response": {
+          "title": "Response Time",
+          "value": "We typically respond within 24 hours"
+        }
       }
     }
   },
