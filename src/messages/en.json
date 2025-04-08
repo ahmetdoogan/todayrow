@@ -1194,6 +1194,11 @@
     }
   },
   "landing": {
+    "firstTestimonial": {
+      "titleHighlight": "Users",
+      "title": "share their experience",
+      "description": "Our users tell us how TodayRow has helped them achieve a more organized and focused life."
+    },
     "title": "The future",
     "subtitle": "can wait.",
     "features": {
@@ -1206,7 +1211,9 @@
     "newLanding": {
       "navbar": {
         "features": "Features",
+        "pricing": "Pricing",
         "howItWorks": "How It Works",
+        "faq": "FAQ",
         "getStarted": "Get Started"
       },
       "hero": {
@@ -1446,27 +1453,27 @@
         "title": "Stories",
         "subtitle": "See how Todayrow helps professionals stay focused and productive",
         "testimonial1": {
-          "name": "Garrett Wolfe",
-          "position": "Growth at Unify",
-          "badge": "2x productivity boost",
-          "quote": "Todayrow helps me do my job 10x better. I wouldn't be able to book so many meetings and sync everything without it. The focus on today and tomorrow is exactly what I needed."
+          "name": "Ahmet K.",
+          "position": "Grafon Creative Agency",
+          "badge": "Worth a try",
+          "quote": "The focus on today and tomorrow is exactly what I needed. The clean and practical interface is a game changer—it’s rare to find something so simple yet powerful."
         },
         "testimonial2": {
-          "name": "Sarah L.",
-          "position": "Marketing Manager",
-          "badge": "40% less overwhelm",
-          "quote": "I've tried countless productivity apps, but they were always too complex. Todayrow's focused approach helped me reduce my stress levels while actually getting more done."
+          "name": "sengpt",
+          "position": "Technology Enthusiast",
+          "badge": "Design that speaks",
+          "quote": "I’ve seen many interfaces, but Todayrow’s UI stood out immediately. It’s thoughtfully designed, visually refined, and a real inspiration for anyone who cares about user experience."
         },
         "testimonial3": {
-          "name": "Michael R.",
-          "position": "Software Developer",
-          "badge": "3 sprints ahead of schedule",
-          "quote": "As a developer, I was constantly jumping between different tasks. Focusing on today and tomorrow has transformed my workflow and helped me ship features faster."
+          "name": "Yunus E.",
+          "position": "Freelancer",
+          "badge": "User-Driven Updates",
+          "quote": "Practical and solution-oriented. Having both planning and note-taking in one interface lets me manage everything from a single place."
         },
         "testimonial4": {
-          "name": "Daniel Angel G.",
-          "position": "Senior Account Executive",
-          "quote": "Todayrow has everything you need in just one single place. They thought about everything and I'm really in love with the tool."
+          "name": "Ömer E.",
+          "position": "Entrepreneur & Investor",
+          "quote": "I love how Todayrow was built by a team of one human and two AIs—it’s clever, efficient, and symbolic of where work is heading."
         }
       },
       "blog": {
@@ -1742,6 +1749,8 @@
   },
   "pricing": {
     "title": "Productive you!",
+    "landingTitle": "Boost your productivity",
+    "landingSubtitle": "Unlimited access, focused planning, and more productivity",
     "subscriptionEndedMessage": "Your subscription has expired.",
     "description": "Continue enjoying unlimited access",
     "monthly": "Monthly",

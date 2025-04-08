@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import { useTranslations } from "next-intl";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { ChevronDown } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -54,11 +54,13 @@ export default function FAQSection() {
             {t("landing.newLanding.faq.badge")}
           </div>
           <h2 className="text-4xl md:text-5xl font-medium text-gray-900 dark:text-white mb-4">
-            {t("landing.newLanding.faq.titleParts.frequently")}{" "}
-            <span className="instrument-serif italic text-gray-900 dark:text-white">
+            <span className="text-gray-900 dark:text-white">
+              {t("landing.newLanding.faq.titleParts.frequently")}{" "}
               {t("landing.newLanding.faq.titleParts.asked")}{" "}
             </span>
-            {t("landing.newLanding.faq.titleParts.questions")}
+            <span className="instrument-serif italic text-gray-900 dark:text-white">
+              {t("landing.newLanding.faq.titleParts.questions")}
+            </span>
           </h2>
           <p className="text-sm md:text-lg text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
             {t("landing.newLanding.faq.subtitle")}
@@ -83,24 +85,29 @@ export default function FAQSection() {
                 <h3 className="text-base md:text-lg font-medium text-gray-900 dark:text-white">
                   {faq.question}
                 </h3>
-                <ChevronDown 
-                  size={20} 
-                  className={cn(
-                    "text-gray-500 dark:text-gray-400 transition-transform duration-300 ease-in-out",
-                    activeId === faq.id && "transform rotate-180"
-                  )} 
-                />
+                <motion.div
+                  animate={{ rotate: activeId === faq.id ? 180 : 0 }}
+                  transition={{ duration: 0.4, ease: "easeInOut" }}
+                  className="text-gray-500 dark:text-gray-400"
+                >
+                  <ChevronDown size={20} />
+                </motion.div>
               </button>
-              <div 
-                className={cn(
-                  "max-h-0 overflow-hidden transition-all duration-300 ease-in-out bg-white dark:bg-gray-800",
-                  activeId === faq.id && "max-h-96"
+              <AnimatePresence initial={false}>
+                {activeId === faq.id && (
+                  <motion.div 
+                    initial={{ height: 0, opacity: 0 }}
+                    animate={{ height: "auto", opacity: 1 }}
+                    exit={{ height: 0, opacity: 0 }}
+                    transition={{ duration: 0.4, ease: "easeInOut" }}
+                    className="overflow-hidden bg-white dark:bg-gray-800"
+                  >
+                    <div className="px-6 py-4 text-sm md:text-base text-gray-600 dark:text-gray-300 border-t border-gray-100 dark:border-gray-700">
+                      {faq.answer}
+                    </div>
+                  </motion.div>
                 )}
-              >
-                <div className="px-6 py-4 text-sm md:text-base text-gray-600 dark:text-gray-300 border-t border-gray-100 dark:border-gray-700">
-                  {faq.answer}
-                </div>
-              </div>
+              </AnimatePresence>
             </motion.div>
           ))}
         </div>

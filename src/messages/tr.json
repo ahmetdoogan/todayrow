@@ -1196,6 +1196,11 @@
     }
   },
   "landing": {
+    "firstTestimonial": {
+      "titleHighlight": "Kullanıcılar",
+      "title": "TodayRow hakkında ne diyor?",
+      "description": "TodayRow'u deneyen kullanıcılarımız, daha organize ve odaklanmış bir hayata adım attıklarını söylüyor."
+    },
     "title": "Gelecek",
     "subtitle": "bekleyebilir.",
     "features": {
@@ -1208,7 +1213,9 @@
     "newLanding": {
       "navbar": {
         "features": "Özellikler",
+        "pricing": "Fiyatlandırma",
         "howItWorks": "Nasıl Çalışır",
+        "faq": "SSS",
         "getStarted": "Şimdi Başla"
       },
       "hero": {
@@ -1448,27 +1455,27 @@
         "title": "Hikayeleri",
         "subtitle": "Todayrow'un profesyonellerin odaklanmış ve üretken kalmasına nasıl yardımcı olduğunu görün",
         "testimonial1": {
-          "name": "Murat G.",
-          "position": "Unify'da Büyüme Uzmanı",
-          "badge": "2x üretkenlik artışı",
+          "name": "Ahmet K.",
+          "position": "Grafon Creative Ajans",
+          "badge": "Denemeye değer",
           "quote": "Todayrow, işimi 10 kat daha iyi yapmama yardımcı oluyor. Bu kadar çok toplantı ayarlamak ve her şeyi senkronize etmek mümkün olmazdı. Bugüne ve yarına odaklanmak tam da ihtiyacım olan şeydi."
         },
         "testimonial2": {
-          "name": "Leyla A.",
-          "position": "Pazarlama Müdürü",
-          "badge": "Yüzde 40 daha az bunalma",
-          "quote": "Sayısız üretkenlik uygulaması denedim, ancak her zaman çok karmaşıktı. Todayrow'un odaklanmış yaklaşımı stres seviyelerimi azaltmama yardımcı olurken daha fazlasını başarmamı sağladı."
+          "name": "sengpt",
+          "position": "Teknoloji Tutkunu",
+          "badge": "Konuşan tasarım",
+          "quote": "Çok sayıda arayüz gördüm ama Todayrow’un tasarımı ilk bakışta farkını ortaya koyuyor. İnce düşünülmüş, görsel olarak çok şık ve kullanıcı deneyimine önem veren herkes için ilham verici."
         },
         "testimonial3": {
-          "name": "Ali Y.",
-          "position": "Yazılım Geliştirici",
-          "badge": "3 sprint önce tamamlandı",
-          "quote": "Bir geliştirici olarak, sürekli farklı görevler arasında geçiş yapıyordum. Bugüne ve yarına odaklanmak, iş akışımı değiştirdi ve özellikleri daha hızlı yayınlamamı sağladı."
+          "name": "Yunus B.",
+          "position": "Freelancer",
+          "badge": "Kullanıcı Odaklı",
+          "quote": "Kullanımı pratik ve çözüm odaklı. Planlama ve not tutma sisteminin tek arayüzde birleşmesi, tüm işlerimi tek yerden halletmemi sağlıyor."
         },
         "testimonial4": {
-          "name": "Deniz U.",
-          "position": "Kıdemli Müşteri Temsilcisi",
-          "quote": "Todayrow, tek bir yerde ihtiyacınız olan her şeye sahip. Her şeyi düşünmüşler ve bu araca gerçekten aşık oldum."
+          "name": "Ömer E.",
+          "position": "Girişimci & Yatırımcı",
+          "quote": "Todayrow’un bir insan ve iki yapay zeka ile geliştirilmiş olması harika—akıllıca, verimli ve geleceğin iş yapma şeklini yansıtıyor."
         }
       },
       "blog": {
@@ -1745,6 +1752,8 @@
   },
   "pricing": {
     "title": "Daha planlı bir sen.",
+    "landingTitle": "Üretkenliğini artır",
+    "landingSubtitle": "Sınırsız erişim, odaklanmış planlama ve daha fazla üretkenlik",
     "subscriptionEndedMessage": "Üyeliğiniz sona erdi.",
     "description": "Sınırsız erişimin keyfini çıkarmaya devam edin",
     "monthly": "Aylık",

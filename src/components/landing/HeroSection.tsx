@@ -160,35 +160,16 @@ export default function HeroSection({
                 {(() => {
                   const desc = t("landing.newLanding.hero.description");
                   const isTurkish = desc.includes("yarını");
-                  // For desktop view
-                  if (!isMobile) {
-                    if (isTurkish) {
-                      // For Turkish desktop
-                      return (
-                        <>
-                          Bugüne odaklan, yarını planla.<br />
-                          Karmaşa olmadan.
-                        </>
-                      );
-                    } else {
-                      // For English desktop
-                      return (
-                        <>
-                          Focus on today, plan for tomorrow.<br />
-                          No complexity.
-                        </>
-                      );
-                    }
-                  } else {
-                    // For mobile view
-                    if (isTurkish) {
-                      // For Turkish mobile
-                      return "Bugüne odaklan, yarını planla. Karmaşa olmadan.";
-                    } else {
-                      // For English mobile
-                      return "Focus on today, plan for tomorrow. No complexity.";
-                    }
-                  }
+                  const breakWord = isTurkish ? "planla." : "tomorrow";
+                  const parts = isTurkish ? desc.split(breakWord) : desc.split(breakWord);
+                  return (
+                    <>
+                      {parts[0]}
+                      {breakWord}
+                      <br className="hidden md:block" />
+                      {parts[1]}
+                    </>
+                  );
                 })()}
               </p>
             </BlurFade>
@@ -197,14 +178,16 @@ export default function HeroSection({
               {(() => {
                 const desc = t("landing.newLanding.hero.description");
                 const isTurkish = desc.includes("yarını");
-                // For mobile view (this is already in the mobile section)
-                if (isTurkish) {
-                  // For Turkish mobile
-                  return "Bugüne odaklan, yarını planla. Karmaşa olmadan.";
-                } else {
-                  // For English mobile
-                  return "Focus on today, plan for tomorrow. No complexity.";
-                }
+                const breakWord = isTurkish ? "planla." : "tomorrow";
+                const parts = isTurkish ? desc.split(breakWord) : desc.split(breakWord);
+                return (
+                  <>
+                    {parts[0]}
+                    {breakWord}
+                    <br className="hidden md:block" />
+                    {parts[1]}
+                  </>
+                );
               })()}
             </p>
           )}

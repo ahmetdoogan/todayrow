@@ -48,8 +48,17 @@ export default function TestimonialsSection() {
               <GridPatternCardBody className="p-6 md:p-8 flex flex-col h-full">
                 <div className="flex items-start mb-6">
                   <div className="group-hover:-translate-y-1 transition-transform duration-300 flex mr-3">
-                    <div className="w-8 h-8 md:w-12 md:h-12 rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center text-gray-600 dark:text-gray-400 font-bold text-base md:text-lg border border-gray-200 dark:border-gray-700 group-hover:shadow group-hover:border-gray-300 dark:group-hover:border-gray-500 transition-all duration-300">
-                      G
+                    <div className="w-8 h-8 md:w-12 md:h-12 rounded-full border border-gray-200 dark:border-gray-700 group-hover:shadow group-hover:border-gray-300 dark:group-hover:border-gray-500 transition-all duration-300 overflow-hidden">
+                      <img
+                        src="/images/ahmetk_light.png"
+                        alt="Ahmet K."
+                        className="w-full h-full object-cover dark:hidden"
+                      />
+                      <img
+                        src="/images/ahmetk_dark.png"
+                        alt="Ahmet K."
+                        className="w-full h-full object-cover hidden dark:block"
+                      />
                     </div>
                   </div>
                   <div className="group-hover:-translate-y-1 transition-transform duration-300">
@@ -104,8 +113,17 @@ export default function TestimonialsSection() {
               <div className="p-4 md:p-6">
                 <div className="flex items-center mb-3">
                   <div className="group-hover:-translate-y-1 transition-transform duration-300 flex mr-3">
-                    <div className="w-8 h-8 md:w-10 md:h-10 rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center text-gray-600 dark:text-gray-400 font-bold text-sm md:text-lg border border-gray-200 dark:border-gray-700 group-hover:shadow group-hover:border-gray-300 dark:group-hover:border-gray-500 transition-all duration-300">
-                      S
+                    <div className="w-8 h-8 md:w-10 md:h-10 rounded-full border border-gray-200 dark:border-gray-700 group-hover:shadow group-hover:border-gray-300 dark:group-hover:border-gray-500 transition-all duration-300 overflow-hidden">
+                      <img
+                        src="/images/sengpt_light.png"
+                        alt="SenGPT"
+                        className="w-full h-full object-cover dark:hidden"
+                      />
+                      <img
+                        src="/images/sengpt_dark.png"
+                        alt="SenGPT"
+                        className="w-full h-full object-cover hidden dark:block"
+                      />
                     </div>
                   </div>
                   <div className="group-hover:-translate-y-1 transition-transform duration-300">
@@ -145,8 +163,17 @@ export default function TestimonialsSection() {
               <div className="p-4 md:p-6">
                 <div className="flex items-center mb-3">
                   <div className="group-hover:-translate-y-1 transition-transform duration-300 flex mr-3">
-                    <div className="w-8 h-8 md:w-10 md:h-10 rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center text-gray-600 dark:text-gray-400 font-bold text-sm md:text-lg border border-gray-200 dark:border-gray-700 group-hover:shadow group-hover:border-gray-300 dark:group-hover:border-gray-500 transition-all duration-300">
-                      M
+                    <div className="w-8 h-8 md:w-10 md:h-10 rounded-full border border-gray-200 dark:border-gray-700 group-hover:shadow group-hover:border-gray-300 dark:group-hover:border-gray-500 transition-all duration-300 overflow-hidden">
+                      <img
+                        src="/images/yunusb_light.png"
+                        alt="Yunus B."
+                        className="w-full h-full object-cover dark:hidden"
+                      />
+                      <img
+                        src="/images/yunusb_dark.png"
+                        alt="Yunus B."
+                        className="w-full h-full object-cover hidden dark:block"
+                      />
                     </div>
                   </div>
                   <div className="group-hover:-translate-y-1 transition-transform duration-300">
@@ -187,8 +214,17 @@ export default function TestimonialsSection() {
                     </blockquote>
                     <div className="flex items-center">
                       <div className="flex-shrink-0 mr-4 group-hover:-translate-y-1 transition-transform duration-300">
-                        <div className="w-8 h-8 md:w-12 md:h-12 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden flex items-center justify-center text-gray-600 dark:text-gray-300 font-bold text-sm md:text-base group-hover:shadow group-hover:bg-gray-300 dark:group-hover:bg-gray-600 transition-all duration-300">
-                          D
+                        <div className="w-8 h-8 md:w-12 md:h-12 rounded-full border border-gray-200 dark:border-gray-700 group-hover:shadow group-hover:border-gray-300 dark:group-hover:border-gray-500 transition-all duration-300 overflow-hidden">
+                          <img
+                            src="/images/omere_light.png"
+                            alt="Ömer E."
+                            className="w-full h-full object-cover dark:hidden"
+                          />
+                          <img
+                            src="/images/omere_dark.png"
+                            alt="Ömer E."
+                            className="w-full h-full object-cover hidden dark:block"
+                          />
                         </div>
                       </div>
                       <div className="group-hover:-translate-y-1 transition-transform duration-300">

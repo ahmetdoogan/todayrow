@@ -55,17 +55,24 @@ export default function NavBar() {
             {t("landing.newLanding.navbar.features")}
           </Link>
           <Link
-            href="/blog"
+            href="#pricing"
             className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors font-medium"
+            onClick={(e) => handleAnchorClick(e, '#pricing')}
           >
-            {t("common.navigation.blog")}
+            {t("landing.newLanding.navbar.pricing")}
           </Link>
           <Link
-            href="#faq"
-            className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors font-medium"
-            onClick={(e) => handleAnchorClick(e, '#faq')}
+          href="/blog"
+          className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors font-medium"
           >
-            FAQ
+          {t("common.navigation.blog")}
+          </Link>
+          <Link
+          href="#faq"
+          className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors font-medium"
+          onClick={(e) => handleAnchorClick(e, '#faq')}
+          >
+          {t("landing.newLanding.navbar.faq")}
           </Link>
         </div>
 
@@ -141,6 +148,16 @@ export default function NavBar() {
                 {t("landing.newLanding.navbar.features")}
               </Link>
               <Link
+                href="#pricing"
+                className="py-2 text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors font-medium flex items-center gap-2"
+                onClick={(e) => {
+                  setMobileMenuOpen(false);
+                  handleAnchorClick(e, '#pricing');
+                }}
+              >
+                {t("landing.newLanding.navbar.pricing")}
+              </Link>
+              <Link
                 href="/blog"
                 className="py-2 text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors font-medium flex items-center gap-2"
                 onClick={() => setMobileMenuOpen(false)}
@@ -148,14 +165,14 @@ export default function NavBar() {
                 {t("common.navigation.blog")}
               </Link>
               <Link
-                href="#faq"
-                className="py-2 text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors font-medium flex items-center gap-2"
-                onClick={(e) => {
-                  setMobileMenuOpen(false);
-                  handleAnchorClick(e, '#faq');
-                }}
+              href="#faq"
+              className="py-2 text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors font-medium flex items-center gap-2"
+              onClick={(e) => {
+              setMobileMenuOpen(false);
+              handleAnchorClick(e, '#faq');
+              }}
               >
-                FAQ
+              {t("landing.newLanding.navbar.faq")}
               </Link>
               <Link
                 href="/auth/login"

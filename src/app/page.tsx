@@ -7,6 +7,7 @@ import { useTranslations } from "next-intl";
 import { Inter } from "next/font/google";
 import NavBar from "@/components/landing/NavBar";
 import HeroSection from "@/components/landing/HeroSection";
+import FirstTestimonialSection from "@/components/landing/FirstTestimonialSection";
 import FeaturesSection from "@/components/landing/FeaturesSection";
 import TabsSection from "@/components/landing/TabsSection";
 import WhyFocusedPlanningSection from "@/components/landing/WhyFocusedPlanningSection";
@@ -15,6 +16,7 @@ import FAQSection from "@/components/landing/FAQSection";
 import TestimonialsSection from "@/components/landing/TestimonialsSection";
 import CTASection from "@/components/landing/CTASection";
 import FooterSection from "@/components/landing/FooterSection";
+import PricingSection from "@/components/landing/PricingSection";
 
 // Font imports
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
@@ -153,6 +155,8 @@ export default function NewLandingPage() {
 
       <NavBar />
       <HeroSection sections={sections} badgeOpacity={badgeOpacity} hideBadge={hideBadge} />
+      
+      <FirstTestimonialSection />
 
       {/* Why Todayrow? Section */}
       <section
@@ -187,6 +191,7 @@ export default function NewLandingPage() {
 
       <WhyFocusedPlanningSection />
       <TestimonialsSection />
+      <PricingSection />
       <FAQSection />
       <BlogSection />
       <CTASection />
