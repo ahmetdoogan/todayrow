@@ -16,7 +16,6 @@ import ThirdTestimonialSection from "@/components/landing/ThirdTestimonialSectio
 import WhyFocusedPlanningSection from "@/components/landing/WhyFocusedPlanningSection";
 import BlogSection from "@/components/landing/BlogSection";
 import FAQSection from "@/components/landing/FAQSection";
-import TestimonialsSection from "@/components/landing/TestimonialsSection";
 import CTASection from "@/components/landing/CTASection";
 import FooterSection from "@/components/landing/FooterSection";
 import PricingSection from "@/components/landing/PricingSection";
@@ -171,7 +170,6 @@ export default function NewLandingPage() {
 
       <SecondTestimonialSection />
       <WhyFocusedPlanningSection />
-      <TestimonialsSection />
       <ThirdTestimonialSection />
       <PricingSection />
       <FAQSection />
