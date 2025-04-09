@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { useTranslations } from "next-intl";
-import { Calendar, Clock, FileText, Folder } from "lucide-react";
+import { Calendar, Clock, FileText, Folder, PointerIcon } from "lucide-react";
 
 export default function PagesSection() {
   const t = useTranslations();
@@ -289,15 +289,37 @@ export default function PagesSection() {
                     ${isTopCard ? "" : "bg-gray-50 dark:bg-gray-700"}`}
                   style={{ paddingTop: "12px", paddingBottom: "12px", paddingLeft: "1.5rem", paddingRight: "1.5rem" }}
                 >
-                  <div className="flex items-center pl-4 py-0.5">
+                  <div className="flex items-center justify-between pl-4 py-0.5">
                     <span className="font-medium text-gray-800 dark:text-gray-200">
                       {title}
                     </span>
+                    {!isTopCard && (
+                      <div className="flex items-center text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300 transition-colors duration-200">
+                        <svg 
+                          xmlns="http://www.w3.org/2000/svg" 
+                          width="18" 
+                          height="18" 
+                          viewBox="0 0 24 24" 
+                          fill="none" 
+                          stroke="currentColor" 
+                          strokeWidth="2" 
+                          strokeLinecap="round" 
+                          strokeLinejoin="round" 
+                          className="opacity-70 hover:opacity-100 transition-opacity"
+                        >
+                          <path d="m9 9 5 12 1.8-5.2L21 14Z"/>
+                          <path d="M7.2 2.2 8 5.1"/>
+                          <path d="m5.1 8-2.9-.8"/>
+                          <path d="M14 4.1 12 6.2"/>
+                          <path d="m6.2 12-2.1 2"/>
+                        </svg>
+                      </div>
+                    )}
                   </div>
                 </div>
 
                 {/* Tüm kartlar (arka/ön) içeriğini göstersin */}
-                <div className="p-8">
+                <div className="pt-8 pl-8">
                   <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-10 items-start">
                     {/* Sol: metin & features */}
                     <div className="flex flex-col space-y-6 pl-4">
@@ -392,14 +414,20 @@ export default function PagesSection() {
                       animate={{ opacity: isTopCard ? 1 : 0.8, x: 0 }}
                       transition={{ duration: 0.4, delay: isTopCard ? 0.3 : 0 }}
                     >
-                        <div
-                          className="rounded-lg shadow-md overflow-hidden
-                                   border border-gray-200 dark:border-gray-700
-                                   bg-white dark:bg-gray-800"
-                        >
+                      <div
+                        className="rounded-tl-lg overflow-hidden 
+                                  bg-white dark:bg-gray-800 
+                                  shadow-[-2px_-2px_8px_rgba(0,0,0,0.05)]
+                                  border-l border-t border-gray-200 dark:border-gray-700"
+                        style={{
+                          borderBottomRightRadius: 0,
+                          borderTopRightRadius: 0,
+                          borderBottomLeftRadius: 0
+                        }}
+                      >
                         {/* Tarayıcı Çubuğu */}
                         <div
-                          className="bg-gray-100 dark:bg-gray-700 px-4 py-2 flex items-center
+                          className="bg-stone-50 dark:bg-gray-700 px-4 py-2 flex items-center
                                  border-b border-gray-200 dark:border-gray-600"
                         >
                           <div className="flex space-x-1.5">
