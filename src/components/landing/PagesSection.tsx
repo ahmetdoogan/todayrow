@@ -303,7 +303,7 @@ export default function PagesSection() {
                     <div className="flex flex-col space-y-6 pl-4">
                       <div>
                         <motion.h3 
-                          className="text-2xl font-medium text-gray-900 dark:text-white mb-4"
+                          className="text-xl md:text-2xl font-medium text-gray-900 dark:text-white mb-3 md:mb-4"
                           initial={{ opacity: 0, x: -20 }}
                           animate={{ opacity: isTopCard ? 1 : 0.8, x: 0 }}
                           transition={{ duration: 0.4, delay: isTopCard ? 0.2 : 0 }}
@@ -311,7 +311,7 @@ export default function PagesSection() {
                           {t(`landing.newLanding.pages.${id}.innerTitle`)}
                         </motion.h3>
                         <motion.p 
-                          className="text-gray-600 dark:text-gray-300 text-base leading-relaxed mb-6"
+                          className="text-gray-600 dark:text-gray-300 text-sm md:text-base leading-relaxed mb-4 md:mb-6"
                           initial={{ opacity: 0, x: -20 }}
                           animate={{ opacity: isTopCard ? 1 : 0.8, x: 0 }}
                           transition={{ duration: 0.4, delay: isTopCard ? 0.3 : 0 }}
@@ -330,12 +330,12 @@ export default function PagesSection() {
                               <img 
                                 src="/images/boy_plans_light.png"
                                 alt="Plans illustration"
-                                className="w-2/3 h-auto object-contain mx-auto dark:hidden"
+                                className="w-1/2 md:w-2/3 h-auto object-contain mx-auto dark:hidden"
                               />
                               <img 
                                 src="/images/boy_plans_dark.png"
                                 alt="Plans illustration dark"
-                                className="w-2/3 h-auto object-contain mx-auto hidden dark:block"
+                                className="w-1/2 md:w-2/3 h-auto object-contain mx-auto hidden dark:block"
                               />
                             </>
                           )}
@@ -344,12 +344,12 @@ export default function PagesSection() {
                               <img 
                                 src="/images/boy_focus_light.png"
                                 alt="Focus illustration"
-                                className="w-2/3 h-auto object-contain mx-auto dark:hidden"
+                                className="w-1/2 md:w-2/3 h-auto object-contain mx-auto dark:hidden"
                               />
                               <img 
                                 src="/images/boy_focus_dark.png"
                                 alt="Focus illustration dark"
-                                className="w-2/3 h-auto object-contain mx-auto hidden dark:block"
+                                className="w-1/2 md:w-2/3 h-auto object-contain mx-auto hidden dark:block"
                               />
                             </>
                           )}
@@ -358,12 +358,12 @@ export default function PagesSection() {
                               <img 
                                 src="/images/boy_notes_light.png"
                                 alt="Notes illustration"
-                                className="w-2/3 h-auto object-contain mx-auto dark:hidden"
+                                className="w-1/2 md:w-2/3 h-auto object-contain mx-auto dark:hidden"
                               />
                               <img 
                                 src="/images/boy_notes_dark.png"
                                 alt="Notes illustration dark"
-                                className="w-2/3 h-auto object-contain mx-auto hidden dark:block"
+                                className="w-1/2 md:w-2/3 h-auto object-contain mx-auto hidden dark:block"
                               />
                             </>
                           )}
@@ -372,12 +372,12 @@ export default function PagesSection() {
                               <img 
                                 src="/images/boy_contents_light.png"
                                 alt="Contents illustration"
-                                className="w-2/3 h-auto object-contain mx-auto dark:hidden"
+                                className="w-1/2 md:w-2/3 h-auto object-contain mx-auto dark:hidden"
                               />
                               <img 
                                 src="/images/boy_contents_dark.png"
                                 alt="Contents illustration dark"
-                                className="w-2/3 h-auto object-contain mx-auto hidden dark:block"
+                                className="w-1/2 md:w-2/3 h-auto object-contain mx-auto hidden dark:block"
                               />
                             </>
                           )}
@@ -412,9 +412,9 @@ export default function PagesSection() {
                           </div>
                         </div>
                         
-                        {/* Görsel Alanı */}
+                        {/* Görsel Alanı - Mobil için kare şeklinde küçültüldü */}
                         <motion.div 
-                          className="h-[500px] bg-gray-50 dark:bg-gray-900 flex items-center justify-center overflow-hidden"
+                          className="h-[280px] w-full md:h-[400px] lg:h-[500px] bg-gray-50 dark:bg-gray-900 flex items-center justify-center overflow-hidden"
                           initial={{ opacity: 0 }}
                           animate={{ opacity: isTopCard ? 1 : 0.8 }}
                           transition={{ duration: 0.6, delay: isTopCard ? 0.4 : 0 }}
