@@ -330,12 +330,12 @@ export default function PagesSection() {
                               <img 
                                 src="/images/boy_plans_light.png"
                                 alt="Plans illustration"
-                                className="w-1/2 md:w-2/3 h-auto object-contain mx-auto dark:hidden"
+                                className="w-1/2 md:w-3/5 lg:w-3/5 h-auto object-contain mx-auto md:ml-0 md:-ml-2 dark:hidden"
                               />
                               <img 
                                 src="/images/boy_plans_dark.png"
                                 alt="Plans illustration dark"
-                                className="w-1/2 md:w-2/3 h-auto object-contain mx-auto hidden dark:block"
+                                className="w-1/2 md:w-3/5 lg:w-3/5 h-auto object-contain mx-auto md:ml-0 md:-ml-2 hidden dark:block"
                               />
                             </>
                           )}
@@ -344,12 +344,12 @@ export default function PagesSection() {
                               <img 
                                 src="/images/boy_focus_light.png"
                                 alt="Focus illustration"
-                                className="w-1/2 md:w-2/3 h-auto object-contain mx-auto dark:hidden"
+                                className="w-1/2 md:w-3/5 lg:w-3/5 h-auto object-contain mx-auto md:ml-0 md:-ml-2 dark:hidden"
                               />
                               <img 
                                 src="/images/boy_focus_dark.png"
                                 alt="Focus illustration dark"
-                                className="w-1/2 md:w-2/3 h-auto object-contain mx-auto hidden dark:block"
+                                className="w-1/2 md:w-3/5 lg:w-3/5 h-auto object-contain mx-auto md:ml-0 md:-ml-2 hidden dark:block"
                               />
                             </>
                           )}
@@ -358,12 +358,12 @@ export default function PagesSection() {
                               <img 
                                 src="/images/boy_notes_light.png"
                                 alt="Notes illustration"
-                                className="w-1/2 md:w-2/3 h-auto object-contain mx-auto dark:hidden"
+                                className="w-1/2 md:w-3/5 lg:w-3/5 h-auto object-contain mx-auto md:ml-0 md:-ml-2 dark:hidden"
                               />
                               <img 
                                 src="/images/boy_notes_dark.png"
                                 alt="Notes illustration dark"
-                                className="w-1/2 md:w-2/3 h-auto object-contain mx-auto hidden dark:block"
+                                className="w-1/2 md:w-3/5 lg:w-3/5 h-auto object-contain mx-auto md:ml-0 md:-ml-2 hidden dark:block"
                               />
                             </>
                           )}
@@ -372,12 +372,12 @@ export default function PagesSection() {
                               <img 
                                 src="/images/boy_contents_light.png"
                                 alt="Contents illustration"
-                                className="w-1/2 md:w-2/3 h-auto object-contain mx-auto dark:hidden"
+                                className="w-1/2 md:w-3/5 lg:w-3/5 h-auto object-contain mx-auto md:ml-0 md:-ml-2 dark:hidden"
                               />
                               <img 
                                 src="/images/boy_contents_dark.png"
                                 alt="Contents illustration dark"
-                                className="w-1/2 md:w-2/3 h-auto object-contain mx-auto hidden dark:block"
+                                className="w-1/2 md:w-3/5 lg:w-3/5 h-auto object-contain mx-auto md:ml-0 md:-ml-2 hidden dark:block"
                               />
                             </>
                           )}
