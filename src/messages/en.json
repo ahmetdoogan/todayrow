@@ -1209,6 +1209,109 @@
       "tomorrow": "tomorrow."
     },
     "newLanding": {
+      "pages": {
+        "badge": "Essential Features",
+        "titlePrefix": "Simple tools for",
+        "titleSuffix": "professionals",
+        "subtitle": "Stay productive with thoughtfully designed features that help you focus on what matters",
+        "domainName": "todayrow.app",
+        "planning": {
+          "title": "Plans",
+          "innerTitle": "Effortless daily planning",
+          "description": "Create, manage, and track your plans for today and tomorrow. All plan information is organized in one place.",
+          "featuresText": "Focus on today and tomorrow with quick plan creation, easy drag-and-drop organization, and smart priority settings. Plan efficiently and complete tasks on time.",
+          "features": {
+            "feature1": {
+              "title": "Quick plan creation",
+              "description": "Create new plans in seconds and organize your daily flow"
+            },
+            "feature2": {
+              "title": "Drag and drop",
+              "description": "Easily rearrange your plans by dragging and dropping"
+            },
+            "feature3": {
+              "title": "Priority setting",
+              "description": "Focus on the most important tasks by assigning priorities to your plans"
+            }
+          },
+          "placeholder": {
+            "title": "Complete your plans on time",
+            "description": "Plan your day efficiently and make effective use of your time"
+          }
+        },
+        "focus": {
+          "title": "Focus",
+          "innerTitle": "Deeper focus, better results",
+          "description": "Create deep work sessions using the Pomodoro technique. Stay away from distractions and increase your productivity.",
+          "featuresText": "Boost productivity with the Pomodoro technique, task assignments, and performance tracking. Maintain distraction-free focus periods to achieve more in less time.",
+          "features": {
+            "feature1": {
+              "title": "Pomodoro timer",
+              "description": "Increase your focus with tried and proven techniques"
+            },
+            "feature2": {
+              "title": "Task lists",
+              "description": "Make progress by assigning work sessions to specific tasks"
+            },
+            "feature3": {
+              "title": "Statistics and tracking",
+              "description": "Analyze your work habits and increase your efficiency"
+            }
+          },
+          "placeholder": {
+            "title": "Deeper focus, greater productivity",
+            "description": "Stay away from distractions and reach your goals faster"
+          }
+        },
+        "notes": {
+          "title": "Notes",
+          "innerTitle": "Smart idea capture",
+          "description": "Quickly take notes of your ideas, tasks, and plans. Tag each note, organize, and keep them always accessible.",
+          "featuresText": "Capture ideas instantly with rich Markdown support, organize with tags and folders, and find everything with lightning-fast search. Never lose track of important thoughts again.",
+          "features": {
+            "feature1": {
+              "title": "Markdown support",
+              "description": "Edit and structure your notes in rich text format"
+            },
+            "feature2": {
+              "title": "Tags and folders",
+              "description": "Categorize your notes and easily find them later"
+            },
+            "feature3": {
+              "title": "Quick search",
+              "description": "Instantly find and access the notes you need"
+            }
+          },
+          "placeholder": {
+            "title": "Capture your thoughts",
+            "description": "Don't lose your ideas, quickly take notes and organize them"
+          }
+        },
+        "contents": {
+          "title": "Contents",
+          "innerTitle": "Content that converts",
+          "description": "Plan, edit, and track your social media content. Manage your content strategy for all platforms from one place.",
+          "featuresText": "Strategically plan content, manage all social platforms from a central hub, and analyze performance metrics to optimize your strategy. Stay ahead with an organized content calendar.",
+          "features": {
+            "feature1": {
+              "title": "Content planning",
+              "description": "Plan and organize your posts in advance"
+            },
+            "feature2": {
+              "title": "Platform integration",
+              "description": "Manage all social media platforms from one place"
+            },
+            "feature3": {
+              "title": "Performance analysis",
+              "description": "Track your content performance and improve your strategy"
+            }
+          },
+          "placeholder": {
+            "title": "Strengthen your content strategy",
+            "description": "Plan your social media posts and increase your effectiveness"
+          }
+        }
+      },
       "navbar": {
         "features": "Features",
         "pricing": "Pricing",
@@ -1528,7 +1631,7 @@
           },
           "q4": {
             "question": "Is there a mobile app available?",
-            "answer": "Yes, Todayrow is available as a responsive web app that works on all devices. Native mobile apps for iOS and Android are currently in development."
+            "answer": "No, but Todayrow is available as a responsive web app that works on all devices. Native mobile app for iOS are currently in development."
           },
           "q5": {
             "question": "How secure is my data?",

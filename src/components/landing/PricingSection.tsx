@@ -13,7 +13,7 @@ export default function PricingSection() {
   return (
     <section
       id="pricing"
-      className="py-24 px-4 bg-gray-50 dark:bg-[#111111] relative z-10 overflow-hidden"
+      className="py-32 px-4 bg-gray-50 dark:bg-[#111111] relative z-10 overflow-hidden"
     >
       <div className="max-w-5xl mx-auto relative">
         <div className="text-center mb-16">
@@ -103,11 +103,11 @@ export default function PricingSection() {
             </div>
 
             {/* Alt kısım: Fiyat ve Özellikler */}
-            <div className="flex flex-col md:flex-row p-6 pb-10">
+            <div className="flex flex-col md:flex-row p-10 pb-16">
               {/* Price Side */}
               <div className="md:w-1/2 flex flex-col items-center md:items-center mb-6 md:mb-0 md:pr-8">
                 <div className="text-center">
-                  <div className="text-6xl font-bold text-gray-900 dark:text-white mb-1 relative h-[70px] flex items-center justify-center">
+                  <div className="text-6xl font-bold text-gray-900 dark:text-white mb-1 relative h-[80px] flex items-center justify-center">
                     <motion.div
                       key={billingCycle}
                       initial={{ opacity: 0, y: -20 }}
@@ -140,14 +140,14 @@ export default function PricingSection() {
                   </div>
                 </div>
 
-                <Link href="/auth/signup" className="w-full flex justify-center">
-                  <button className="w-full max-w-[260px] py-3 px-4 bg-black dark:bg-white text-white dark:text-black rounded-xl font-medium hover:bg-gray-800 dark:hover:bg-gray-200 transition-colors flex items-center justify-center gap-2">
+                <Link href="/auth/signup" className="w-full flex justify-center mt-4">
+                  <button className="w-full max-w-[260px] py-4 px-4 bg-black dark:bg-white text-white dark:text-black rounded-xl font-medium hover:bg-gray-800 dark:hover:bg-gray-200 transition-colors flex items-center justify-center gap-2">
                     {t("landing.newLanding.cta.button")}
                     <ArrowRight size={16} />
                   </button>
                 </Link>
 
-                <p className="text-gray-500 dark:text-gray-400 text-xs text-center mt-4">
+                <p className="text-gray-500 dark:text-gray-400 text-xs text-center mt-6">
                   {t("pricing.features.noCard")}
                 </p>
               </div>
@@ -158,7 +158,7 @@ export default function PricingSection() {
                   Pro
                 </h3>
 
-                <ul className="space-y-4 w-full max-w-sm mx-auto text-center">
+                <ul className="space-y-6 w-full max-w-sm mx-auto text-center my-6">
                   {[
                     "pricing.features.unlimited",
                     "pricing.features.planning",

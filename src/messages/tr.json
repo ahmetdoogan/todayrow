@@ -1211,6 +1211,109 @@
       "tomorrow": "hazırlan."
     },
     "newLanding": {
+      "pages": {
+        "badge": "Temel Özellikler",
+        "titlePrefix": "Profesyoneller için",
+        "titleSuffix": "basit araçlar",
+        "subtitle": "Özenle tasarlanmış özellikler ile önemli olana odaklanarak üretken kalın",
+        "domainName": "todayrow.app",
+        "planning": {
+          "title": "Planlar",
+          "innerTitle": "Zahmetsiz günlük planlama",
+          "description": "Bugün ve yarın için planlarınızı oluşturun, yönetin ve takip edin. Tüm plan bilgileri tek bir yerde organize edilir.",
+          "featuresText": "Bugün ve yarına odaklanın, hızlı plan oluşturma, sürükle-bırak düzenleme ve akıllı önceliklendirme ile verimli planlama yapın. Görevlerinizi zamanında tamamlayın.",
+          "features": {
+            "feature1": {
+              "title": "Hızlı plan oluşturma",
+              "description": "Saniyeler içinde yeni planlar oluşturun ve günlük akışınızı düzenleyin"
+            },
+            "feature2": {
+              "title": "Sürükle ve bırak",
+              "description": "Planlarınızı sürükleyip bırakarak kolayca yeniden düzenleyin"
+            },
+            "feature3": {
+              "title": "Öncelik belirleme",
+              "description": "Planlarınıza öncelik atayarak en önemli işlere odaklanın"
+            }
+          },
+          "placeholder": {
+            "title": "Planlarınızı zamanında tamamlayın",
+            "description": "Gününüzü verimli bir şekilde planlayın ve zamanınızı etkin kullanın"
+          }
+        },
+        "focus": {
+          "title": "Odaklan",
+          "innerTitle": "Daha derin odaklanma, daha iyi sonuçlar",
+          "description": "Pomodoro tekniğini kullanarak derin çalışma seansları oluşturun. Dikkat dağıtıcı unsurlardan uzak kalın ve üretkenliğinizi artırın.",
+          "featuresText": "Pomodoro tekniği, görev atamaları ve performans takibi ile üretkenliğinizi artırın. Dikkat dağıtıcılardan uzak, konsantre çalışma periyotlarıyla daha kısa sürede daha fazlasını başarın.",
+          "features": {
+            "feature1": {
+              "title": "Pomodoro zamanlayıcı",
+              "description": "Denenmiş ve kanıtlanmış tekniklerle odağınızı artırın"
+            },
+            "feature2": {
+              "title": "Görev listeleri",
+              "description": "Çalışma seanslarınızı belirli görevlere atayarak ilerleme kaydedin"
+            },
+            "feature3": {
+              "title": "İstatistikler ve takip",
+              "description": "Çalışma alışkanlıklarınızı analiz edin ve verimliliğinizi artırın"
+            }
+          },
+          "placeholder": {
+            "title": "Daha derin odaklanma, daha fazla üretkenlik",
+            "description": "Dikkat dağıtıcılardan uzak kalın ve hedeflerinize daha hızlı ulaşın"
+          }
+        },
+        "notes": {
+          "title": "Notlar",
+          "innerTitle": "Akıllı fikir yakalama",
+          "description": "Fikirlerinizi, görevlerinizi ve planlarınızı hızlıca not alın. Her notu etiketleyin, organize edin ve her zaman erişilebilir tutun.",
+          "featuresText": "Zengin Markdown desteğiyle anında fikirlerinizi yakalayın, etiket ve klasörlerle düzenleyin, şimşek hızında aramayla her şeyi bulun. Önemli düşüncelerinizi bir daha kaybetmeyin.",
+          "features": {
+            "feature1": {
+              "title": "Markdown desteği",
+              "description": "Notlarınızı zengin metin formatında düzenleyin ve yapılandırın"
+            },
+            "feature2": {
+              "title": "Etiketler ve klasörler",
+              "description": "Notlarınızı kategorize edin ve daha sonra kolayca bulun"
+            },
+            "feature3": {
+              "title": "Hızlı arama",
+              "description": "İhtiyacınız olan notları anında bulun ve erişin"
+            }
+          },
+          "placeholder": {
+            "title": "Düşüncelerinizi yakalayın",
+            "description": "Fikirlerinizi kaybetmeyin, hızlıca not alın ve organize edin"
+          }
+        },
+        "contents": {
+          "title": "İçerikler",
+          "innerTitle": "Sonuç odaklı içerikler",
+          "description": "Sosyal medya içeriklerinizi planlayın, düzenleyin ve takip edin. Tüm platformlar için içerik stratejinizi tek bir yerden yönetin.",
+          "featuresText": "İçeriğinizi stratejik olarak planlayın, tüm sosyal platformları merkezi bir yerden yönetin ve performans metriklerini analiz ederek stratejinizi optimize edin. Düzenli bir içerik takvimi ile her zaman bir adım önde olun.",
+          "features": {
+            "feature1": {
+              "title": "İçerik planlama",
+              "description": "Paylaşımlarınızı önceden planlayın ve organize edin"
+            },
+            "feature2": {
+              "title": "Platform entegrasyonu",
+              "description": "Tüm sosyal medya platformlarını tek yerden yönetin"
+            },
+            "feature3": {
+              "title": "Performans analizi",
+              "description": "İçeriklerinizin performansını takip edin ve stratejinizi geliştirin"
+            }
+          },
+          "placeholder": {
+            "title": "İçerik stratejinizi güçlendirin",
+            "description": "Sosyal medya paylaşımlarınızı planlayın ve etkinliğinizi artırın"
+          }
+        }
+      },
       "navbar": {
         "features": "Özellikler",
         "pricing": "Fiyatlandırma",
@@ -1470,7 +1573,7 @@
           "name": "Yunus B.",
           "position": "Freelancer",
           "badge": "Kullanıcı Odaklı",
-          "quote": "Kullanımı pratik ve çözüm odaklı. Planlama ve not tutma sisteminin tek arayüzde birleşmesi, tüm işlerimi tek yerden halletmemi sağlıyor."
+          "quote": "Kullanımı pratik ve çözüm odaklı. Planlama ve not tutma sisteminin tek arayüzde birleşmesi, tüm işlerimi tek yerden halletmemi sağladı."
         },
         "testimonial4": {
           "name": "Ömer E.",
@@ -1518,11 +1621,11 @@
         "questions": {
           "q1": {
             "question": "Todayrow diğer planlama araçlarından nasıl farklı?",
-            "answer": "Todayrow, sizi aylarca ileri planlama ile bunaltmak yerine özellikle bugüne ve yarına odaklanır. Bu yaklaşım, kısa vadeli odaklanmanın daha iyi sonuçlar ve daha az erteleme ile sonuçlandığını gösteren üretkenlik araştırmalarıyla desteklenmektedir."
+            "answer": "Todayrow, sizi aylarca ileri planlama ile bunaltmak yerine özellikle, sadece bugüne ve yarına odaklanır. Bu yaklaşım, kısa vadeli odaklanmanın daha iyi sonuçlar ve daha az erteleme ile sonuçlandığını gösteren üretkenlik araştırmalarıyla desteklenmektedir."
           },
           "q2": {
             "question": "Ücretsiz deneme sunuyor musunuz?",
-            "answer": "Evet! Todayrow, tüm özelliklere tam erişimle 14 günlük ücretsiz deneme sunuyor. Denemenizi başlatmak için kredi kartı gerekmez."
+            "answer": "Evet. Todayrow, tüm özelliklere tam erişimle 14 günlük ücretsiz deneme sunuyor. Denemenizi başlatmak için kredi kartı gerekmez."
           },
           "q3": {
             "question": "Todayrow'u takvimiyle senkronize edebilir miyim?",
@@ -1530,11 +1633,11 @@
           },
           "q4": {
             "question": "Mobil uygulama mevcut mu?",
-            "answer": "Evet, Todayrow tüm cihazlarda çalışan duyarlı bir web uygulaması olarak kullanılabilir. iOS ve Android için yerel mobil uygulamalar şu anda geliştirme aşamasındadır."
+            "answer": "Henüz değil, ancak Todayrow tüm cihazlarda çalışan duyarlı bir web uygulaması olarak tasarlandı. iOS için mobil uygulama şu anda geliştirme aşamasındadır."
           },
           "q5": {
             "question": "Verilerim ne kadar güvenli?",
-            "answer": "Veri güvenliğiniz önceliğimizdir. Todayrow, bilgilerinizi korumak için endüstri standardı şifreleme ve güvenli veritabanı sistemleri kullanır. Verilerinizi asla üçüncü taraflarla paylaşmayız."
+            "answer": "Veri güvenliğiniz önceliğimiz. Todayrow, bilgilerinizi korumak için endüstri standardı şifreleme ve güvenli veritabanı sistemleri kullanır. Verilerinizi asla üçüncü taraflarla paylaşmayız."
           }
         }
       },

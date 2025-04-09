@@ -10,6 +10,9 @@ import HeroSection from "@/components/landing/HeroSection";
 import FirstTestimonialSection from "@/components/landing/FirstTestimonialSection";
 import FeaturesSection from "@/components/landing/FeaturesSection";
 import TabsSection from "@/components/landing/TabsSection";
+import PagesSection from "@/components/landing/PagesSection";
+import SecondTestimonialSection from "@/components/landing/SecondTestimonialSection";
+import ThirdTestimonialSection from "@/components/landing/ThirdTestimonialSection";
 import WhyFocusedPlanningSection from "@/components/landing/WhyFocusedPlanningSection";
 import BlogSection from "@/components/landing/BlogSection";
 import FAQSection from "@/components/landing/FAQSection";
@@ -124,7 +127,6 @@ export default function NewLandingPage() {
         content: t("landing.newLanding.tabs.notes.content"),
       },
     ],
-
   };
 
   return (
@@ -138,8 +140,6 @@ export default function NewLandingPage() {
           font-weight: 400;
         }
       `}</style>
-
-
 
       {/* Background elements - Simple gradients */}
       <div className="absolute top-0 inset-x-0 h-screen pointer-events-none overflow-hidden z-0">
@@ -158,39 +158,21 @@ export default function NewLandingPage() {
       
       <FirstTestimonialSection />
 
-      {/* Why Todayrow? Section */}
+      {/* Features Section */}
       <section
         id="features"
         className="py-24 px-4 bg-gray-50 dark:bg-gray-900 relative z-10"
       >
         <div className="max-w-6xl mx-auto">
-          <div className="text-center mb-12">
-            <div className="inline-block px-3 py-1.5 mb-4 rounded-lg bg-gradient-to-r from-orange-100 to-orange-50 dark:from-gray-800/80 dark:to-gray-800/60 text-orange-600 dark:text-gray-200 text-xs font-medium shadow-sm hover:shadow transition-shadow duration-300 border border-orange-200/50 dark:border-gray-700/70">
-              {t("landing.newLanding.features.badge")}
-            </div>
-            <h2 className="text-4xl md:text-5xl font-medium text-gray-900 dark:text-white mb-4">
-              {t("landing.newLanding.features.titleParts.why")}{" "}
-              <span className="instrument-serif italic text-gray-900 dark:text-white">
-                {t("landing.newLanding.features.titleParts.todayrow")}
-              </span>
-            </h2>
-            <p className="text-sm md:text-lg text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
-              {t("landing.newLanding.features.subtitle")}
-            </p>
-          </div>
-
-          {/* FeaturesSection ve TabsSection tek bir kapsayıcıda */}
-          <FeaturesSection features={sections.features} />
-          <TabsSection
-            tabs={sections.tabs}
-            activeTab={activeTab}
-            setActiveTab={setActiveTab}
-          />
+          {/* PagesSection bileşeni */}
+          <PagesSection />
         </div>
       </section>
 
+      <SecondTestimonialSection />
       <WhyFocusedPlanningSection />
       <TestimonialsSection />
+      <ThirdTestimonialSection />
       <PricingSection />
       <FAQSection />
       <BlogSection />
