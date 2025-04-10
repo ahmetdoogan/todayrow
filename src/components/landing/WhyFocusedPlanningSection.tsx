@@ -82,35 +82,76 @@ export default function WhyFocusedPlanningSection() {
           viewport={{ once: true }}
           className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
           {/* Card 1 - Large with background image */}
-          <div
-            className="md:col-span-2 md:row-span-2 group relative rounded-2xl overflow-hidden min-h-[280px] border border-gray-200 dark:border-gray-700 bg-grid-pattern-light dark:bg-grid-pattern bg-[length:20px_20px] transition-all duration-300 hover:shadow-lg"
-          >
-            <div className="absolute inset-0 bg-gradient-to-br from-white/95 via-white/70 to-white/30 dark:from-gray-900/95 dark:via-gray-900/70 dark:to-gray-900/30 z-1"></div>
-            <div className="absolute inset-0 z-10 p-8 flex flex-col justify-end">
-              <h3 className="text-xl font-medium mb-4 text-gray-900 dark:text-white group-hover:text-black dark:group-hover:text-white group-hover:-translate-y-1 transition-all duration-300">{t("landing.newLanding.whyFocused.reasons.overload.title")}</h3>
-              <p className="text-gray-600 dark:text-gray-300 text-sm mb-6 max-w-md group-hover:text-gray-700 dark:group-hover:text-gray-200 transition-colors duration-300">
-                {t("landing.newLanding.whyFocused.reasons.overload.description")}
-              </p>
-              <div className="flex items-center justify-between mt-auto group-hover:-translate-y-1 transition-transform duration-300">
-                <div className="w-8 h-8 rounded-full bg-gray-100 dark:bg-gray-700 flex items-center justify-center text-gray-900 dark:text-white text-sm font-bold transition-all duration-300 border border-gray-200 dark:border-gray-600">
-                  1
-                </div>
-                <div className="relative">
-                  <img
-                    src="/images/woman1white.png"
-                    alt="Woman illustration"
-                    className="h-28 w-auto object-contain dark:hidden z-10 relative"
-                  />
-                  <img
-                    src="/images/woman1black.png"
-                    alt="Woman illustration dark"
-                    className="h-28 w-auto object-contain hidden dark:block z-10 relative"
-                  />
-                </div>
-              </div>
-            </div>
-            <GridMouseTracker />
-          </div>
+<div
+  className="md:col-span-2 md:row-span-2 group relative rounded-2xl overflow-hidden min-h-[360px] md:min-h-[280px] border border-gray-200 dark:border-gray-700 bg-grid-pattern-light dark:bg-grid-pattern bg-[length:20px_20px] transition-all duration-300 hover:shadow-lg"
+>
+  <div className="absolute inset-0 bg-gradient-to-br from-white/95 via-white/70 to-white/30 dark:from-gray-900/95 dark:via-gray-900/70 dark:to-gray-900/30 z-1"></div>
+
+<div className="absolute inset-0 z-10 p-8 flex flex-col md:justify-end">
+
+    {/* Mobilde başlık ve numara */}
+    <div className="flex md:hidden items-center mb-4">
+      <div className="w-8 h-8 mr-3 rounded-full bg-gray-100 dark:bg-gray-700 flex items-center justify-center text-gray-900 dark:text-white text-sm font-bold border border-gray-200 dark:border-gray-600">
+        1
+      </div>
+      <h3 className="text-lg font-medium text-gray-900 dark:text-white">
+        {t("landing.newLanding.whyFocused.reasons.overload.title")}
+      </h3>
+    </div>
+
+    {/* Mobil açıklama */}
+    <p className="text-gray-600 dark:text-gray-300 text-sm mb-4 max-w-md md:hidden">
+      {t("landing.newLanding.whyFocused.reasons.overload.description")}
+    </p>
+
+    {/* Mobil görsel */}
+    <div className="mb-4 md:hidden flex justify-end">
+      <img
+        src="/images/woman1white.png"
+        alt="Woman illustration"
+        className="h-28 w-auto object-contain dark:hidden"
+      />
+      <img
+        src="/images/woman1black.png"
+        alt="Woman illustration dark"
+        className="h-28 w-auto object-contain hidden dark:block"
+      />
+    </div>
+
+    {/* Masaüstü başlık + açıklama */}
+    <div className="hidden md:block">
+      <h3 className="text-xl font-medium mb-4 text-gray-900 dark:text-white group-hover:text-black dark:group-hover:text-white group-hover:-translate-y-1 transition-all duration-300">
+        {t("landing.newLanding.whyFocused.reasons.overload.title")}
+      </h3>
+      <p className="text-gray-600 dark:text-gray-300 text-sm mb-6 max-w-md group-hover:text-gray-700 dark:group-hover:text-gray-200 transition-colors duration-300">
+        {t("landing.newLanding.whyFocused.reasons.overload.description")}
+      </p>
+    </div>
+
+    {/* Masaüstü numara + görsel */}
+    <div className="hidden md:flex items-center justify-between mt-auto group-hover:-translate-y-1 transition-transform duration-300">
+      <div className="w-8 h-8 rounded-full bg-gray-100 dark:bg-gray-700 flex items-center justify-center text-gray-900 dark:text-white text-sm font-bold transition-all duration-300 border border-gray-200 dark:border-gray-600">
+        1
+      </div>
+      {/* Görsel - mobilde margin-top ile aşağı çekilir */}
+<div className="mt-6 md:mt-0 relative">
+  <img
+    src="/images/woman1white.png"
+    alt="Woman illustration"
+    className="h-28 w-auto object-contain dark:hidden z-10 relative"
+  />
+  <img
+    src="/images/woman1black.png"
+    alt="Woman illustration dark"
+    className="h-28 w-auto object-contain hidden dark:block z-10 relative"
+  />
+</div>
+    </div>
+
+  </div>
+  <GridMouseTracker />
+</div>
+
 
           {/* Card 2 */}
           <div

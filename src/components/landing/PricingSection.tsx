@@ -13,7 +13,7 @@ export default function PricingSection() {
   return (
     <section
       id="pricing"
-      className="py-32 px-4 bg-gray-50 dark:bg-[#111111] relative z-10 overflow-hidden"
+      className="pt-20 pb-16 px-4 bg-gray-50 dark:bg-[#111111] relative z-10 overflow-hidden"
     >
       <div className="max-w-5xl mx-auto relative">
         <div className="text-center mb-16">
@@ -54,46 +54,24 @@ export default function PricingSection() {
             {/* Pricing Toggle - Centered at top */}
             <div className="p-6 pb-4 border-b border-gray-200 dark:border-gray-700">
               <div className="flex justify-center items-center">
-                {/* Dış kapsayıcı */}
                 <div className="relative rounded-xl bg-gray-100 dark:bg-gray-700/50 p-1 w-[220px] shadow-inner">
-                  {/* İçeride grid ile 2 kolon oluşturuyoruz */}
                   <div className="grid grid-cols-2 gap-1 relative tracking-tight">
-                    {/* Highlight - absolute */}
                     <div
-                      className="absolute inset-y-0.5 rounded-xl bg-white dark:bg-gray-900 shadow-sm 
-                                 transition-all duration-200 ease-out"
+                      className="absolute inset-y-0.5 rounded-xl bg-white dark:bg-gray-900 shadow-sm transition-all duration-200 ease-out"
                       style={{
                         left: billingCycle === "monthly" ? "1%" : "51%",
                         width: "48%",
                       }}
                     />
-
-                    {/* Monthly Buton */}
                     <button
                       onClick={() => setBillingCycle("monthly")}
-                      className={`relative z-10 m-0.5 py-1.5 text-sm font-medium rounded-xl
-                                  flex items-center justify-center text-center 
-                                  transition-colors duration-200
-                        ${
-                          billingCycle === "monthly"
-                            ? "text-gray-900 dark:text-white"
-                            : "text-gray-600 dark:text-gray-400"
-                        }`}
+                      className={`relative z-10 m-0.5 py-1.5 text-sm font-medium rounded-xl flex items-center justify-center text-center transition-colors duration-200 ${billingCycle === "monthly" ? "text-gray-900 dark:text-white" : "text-gray-600 dark:text-gray-400"}`}
                     >
                       {t("pricing.monthly")}
                     </button>
-
-                    {/* Yearly Buton */}
                     <button
                       onClick={() => setBillingCycle("yearly")}
-                      className={`relative z-10 m-0.5 py-1.5 text-sm font-medium rounded-xl
-                                  flex items-center justify-center text-center
-                                  transition-colors duration-200
-                        ${
-                          billingCycle === "yearly"
-                            ? "text-gray-900 dark:text-white"
-                            : "text-gray-600 dark:text-gray-400"
-                        }`}
+                      className={`relative z-10 m-0.5 py-1.5 text-sm font-medium rounded-xl flex items-center justify-center text-center transition-colors duration-200 ${billingCycle === "yearly" ? "text-gray-900 dark:text-white" : "text-gray-600 dark:text-gray-400"}`}
                     >
                       {t("pricing.yearly")}
                     </button>
@@ -102,12 +80,12 @@ export default function PricingSection() {
               </div>
             </div>
 
-            {/* Alt kısım: Fiyat ve Özellikler */}
-            <div className="flex flex-col md:flex-row p-10 pb-16">
-              {/* Price Side */}
+            {/* Pricing Content */}
+            <div className="flex flex-col md:flex-row p-8 md:p-10 pb-12 md:pb-16">
+              {/* Left Side */}
               <div className="md:w-1/2 flex flex-col items-center md:items-center mb-6 md:mb-0 md:pr-8">
                 <div className="text-center">
-                  <div className="text-6xl font-bold text-gray-900 dark:text-white mb-1 relative h-[80px] flex items-center justify-center">
+                  <div className="text-5xl md:text-6xl font-bold text-gray-900 dark:text-white mb-1 relative h-[80px] flex items-center justify-center">
                     <motion.div
                       key={billingCycle}
                       initial={{ opacity: 0, y: -20 }}
@@ -141,34 +119,26 @@ export default function PricingSection() {
                 </div>
 
                 <Link href="/auth/signup" className="w-full flex justify-center mt-4">
-                  <button className="w-full max-w-[260px] py-4 px-4 bg-black dark:bg-white text-white dark:text-black rounded-xl font-medium hover:bg-gray-800 dark:hover:bg-gray-200 transition-colors flex items-center justify-center gap-2">
+                  <button className="w-full max-w-[220px] py-3 px-3 md:py-4 md:px-4 bg-black dark:bg-white text-white dark:text-black rounded-xl font-medium hover:bg-gray-800 dark:hover:bg-gray-200 transition-colors flex items-center justify-center gap-2">
                     {t("landing.newLanding.cta.button")}
                     <ArrowRight size={16} />
                   </button>
                 </Link>
 
-                <p className="text-gray-500 dark:text-gray-400 text-xs text-center mt-6">
+                <p className="text-gray-500 dark:text-gray-400 text-xs text-center mt-4 md:mt-6">
                   {t("pricing.features.noCard")}
                 </p>
               </div>
 
-              {/* Features Side */}
+              {/* Right Side */}
               <div className="md:w-1/2 md:pl-8 md:border-l border-gray-200 dark:border-gray-700 flex flex-col items-center md:items-center">
-                <h3 className="font-medium text-gray-900 dark:text-white mb-4 text-center">
+                <h3 className="font-medium text-gray-900 dark:text-white mb-2 md:mb-4 text-sm md:text-base text-center">
                   Pro
                 </h3>
 
-                <ul className="space-y-6 w-full max-w-sm mx-auto text-center my-6">
-                  {[
-                    "pricing.features.unlimited",
-                    "pricing.features.planning",
-                    "pricing.features.calendar",
-                    "pricing.features.support",
-                  ].map((feature, index) => (
-                    <li
-                      key={index}
-                      className="flex items-center justify-center"
-                    >
+                <ul className="space-y-6 w-full max-w-sm mx-auto text-center my-4 md:my-6 text-sm md:text-base">
+                  {["pricing.features.unlimited", "pricing.features.planning", "pricing.features.calendar", "pricing.features.support"].map((feature, index) => (
+                    <li key={index} className="flex items-center justify-center">
                       <div className="w-5 h-5 rounded-full bg-gray-100 dark:bg-gray-700 flex items-center justify-center mr-3">
                         <Check className="h-3 w-3 text-gray-900 dark:text-gray-100" />
                       </div>

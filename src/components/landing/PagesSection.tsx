@@ -162,11 +162,11 @@ export default function PagesSection() {
   };
 
   return (
-    <section className="relative z-10 py-10 px-4 bg-transparent">
+    <section className="relative z-10 py-6 pb-0 px-4 bg-transparent">
       <div className="max-w-6xl mx-auto">
         {/* Üst başlık */}
         <motion.div 
-          className="text-center mb-12"
+          className="text-center mb-8"
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
@@ -319,13 +319,13 @@ export default function PagesSection() {
                 </div>
 
                 {/* Tüm kartlar (arka/ön) içeriğini göstersin */}
-                <div className="pt-8 pl-8">
+                <div className="pt-8 pl-0 md:pl-8">
                   <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-10 items-start">
                     {/* Sol: metin & features */}
-                    <div className="flex flex-col space-y-6 pl-4">
+                    <div className="flex flex-col space-y-6 px-4 md:px-0">
                       <div>
                         <motion.h3 
-                          className="text-xl md:text-2xl font-medium text-gray-900 dark:text-white mb-3 md:mb-4"
+                          className="text-xl md:text-2xl font-medium text-gray-900 dark:text-white mb-3 md:mb-4 text-center md:text-left"
                           initial={{ opacity: 0, x: -20 }}
                           animate={{ opacity: isTopCard ? 1 : 0.8, x: 0 }}
                           transition={{ duration: 0.4, delay: isTopCard ? 0.2 : 0 }}
@@ -333,7 +333,7 @@ export default function PagesSection() {
                           {t(`landing.newLanding.pages.${id}.innerTitle`)}
                         </motion.h3>
                         <motion.p 
-                          className="text-gray-600 dark:text-gray-300 text-sm md:text-base leading-relaxed mb-4 md:mb-6"
+                          className="text-gray-600 dark:text-gray-300 text-sm md:text-base leading-relaxed mb-4 md:mb-6 text-center md:text-left"
                           initial={{ opacity: 0, x: -20 }}
                           animate={{ opacity: isTopCard ? 1 : 0.8, x: 0 }}
                           transition={{ duration: 0.4, delay: isTopCard ? 0.3 : 0 }}
@@ -352,7 +352,7 @@ export default function PagesSection() {
                               <img 
                                 src="/images/boy_plans_light.png"
                                 alt="Plans illustration"
-                                className="w-1/2 md:w-3/5 lg:w-3/5 h-auto object-contain mx-auto md:ml-0 md:-ml-2 dark:hidden"
+                                className="w-1/2 md:w-3/5 lg:w-3/5 h-auto object-contain mx-auto dark:hidden"
                               />
                               <img 
                                 src="/images/boy_plans_dark.png"
@@ -366,7 +366,7 @@ export default function PagesSection() {
                               <img 
                                 src="/images/boy_focus_light.png"
                                 alt="Focus illustration"
-                                className="w-1/2 md:w-3/5 lg:w-3/5 h-auto object-contain mx-auto md:ml-0 md:-ml-2 dark:hidden"
+                                className="w-1/2 md:w-3/5 lg:w-3/5 h-auto object-contain mx-auto dark:hidden"
                               />
                               <img 
                                 src="/images/boy_focus_dark.png"
@@ -380,7 +380,7 @@ export default function PagesSection() {
                               <img 
                                 src="/images/boy_notes_light.png"
                                 alt="Notes illustration"
-                                className="w-1/2 md:w-3/5 lg:w-3/5 h-auto object-contain mx-auto md:ml-0 md:-ml-2 dark:hidden"
+                                className="w-1/2 md:w-3/5 lg:w-3/5 h-auto object-contain mx-auto dark:hidden"
                               />
                               <img 
                                 src="/images/boy_notes_dark.png"
@@ -394,7 +394,7 @@ export default function PagesSection() {
                               <img 
                                 src="/images/boy_contents_light.png"
                                 alt="Contents illustration"
-                                className="w-1/2 md:w-3/5 lg:w-3/5 h-auto object-contain mx-auto md:ml-0 md:-ml-2 dark:hidden"
+                                className="w-1/2 md:w-3/5 lg:w-3/5 h-auto object-contain mx-auto dark:hidden"
                               />
                               <img 
                                 src="/images/boy_contents_dark.png"

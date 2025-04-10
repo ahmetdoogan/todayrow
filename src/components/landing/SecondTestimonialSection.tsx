@@ -31,7 +31,8 @@ export default function SecondTestimonialSection() {
   const t = useTranslations();
 
   return (
-    <section className="py-10 md:py-20 px-4 md:px-8 bg-gray-50 dark:bg-[#0a0a0a] overflow-hidden relative">
+    <section className="pt-8 md:pt-16 pb-12 md:pb-24 px-4 md:px-8 bg-gray-50 dark:bg-[#0a0a0a] overflow-hidden relative">
+
       <div className="max-w-6xl mx-auto">
         {/* Ana kapsayıcı (container) */}
         <motion.div
@@ -39,7 +40,7 @@ export default function SecondTestimonialSection() {
           initial="hidden"
           whileInView="show"
           viewport={{ once: true, amount: 0.3 }}
-          className="relative flex flex-col md:flex-row-reverse items-start gap-8 md:gap-12 p-6 md:p-10 border border-gray-200 dark:border-gray-800 rounded-2xl"
+          className="relative bg-white flex flex-col md:flex-row-reverse items-start gap-8 md:gap-12 p-6 md:p-10 border border-gray-200 dark:border-gray-800 rounded-2xl"
         >
           {/* Profil Fotoğrafı (Çocuk 1) */}
           <motion.div

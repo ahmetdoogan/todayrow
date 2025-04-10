@@ -60,101 +60,97 @@ export default function BlogSection() {
   ];
 
   return (
-    <section id="blog" className="py-24 px-4 bg-white dark:bg-black relative z-10 overflow-hidden">
-      <div className="max-w-6xl mx-auto">
-        <div className="text-center mb-12">
-          <div className="inline-block px-3 py-1.5 mb-4 rounded-lg bg-gradient-to-r from-gray-100 to-gray-50 dark:from-gray-800/80 dark:to-gray-800/60 text-gray-600 dark:text-gray-200 text-xs font-medium shadow-sm hover:shadow transition-shadow duration-300 border border-gray-200/50 dark:border-gray-700/70">
-            {t("landing.newLanding.blog.badge")}
-          </div>
-          <h2 className="text-4xl md:text-5xl font-medium text-gray-900 dark:text-white mb-4">
-            {t("landing.newLanding.blog.titleParts.insights")}{" "}
-            <span className="instrument-serif italic text-gray-900 dark:text-white">
-              {t("landing.newLanding.blog.titleParts.and")}{" "}
-            </span>
-            {t("landing.newLanding.blog.titleParts.tips")}
-          </h2>
-          <p className="text-sm md:text-lg text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
-            {t("landing.newLanding.blog.subtitle")}
-          </p>
-        </div>
-
-        {/* Blog Yazıları */}
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8 mb-10">
-          {blogPosts.map((post, index) => (
-            <motion.div
-              key={post.slug}
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: index * 0.1 }}
-              viewport={{ once: true }}
-              className="group"
-            >
-              <Link href={`/blog/${locale}/post/${post.slug}`}>
-                <div className="relative aspect-video w-full overflow-hidden rounded-lg mb-3 border border-gray-300 dark:border-gray-700">
-                  {/* Görsel gösterme koşulunu İngilizce slug bazında yapalım */}
-                  {(post.slug === 'effective-daily-planning-routines' || 
-                    getEnglishSlug(post.slug) === 'effective-daily-planning-routines') && (
-                    <Image 
-                      src={theme === 'dark' 
-                        ? "/images/Effective_Daily_Planning_Routines_dark.jpg" 
-                        : "/images/Effective_Daily_Planning_Routines.jpg"} 
-                      alt={post.title}
-                      fill
-                      className="object-cover"
-                    />
-                  )}
-                  {(post.slug === 'focus-techniques-for-productivity' || 
-                    getEnglishSlug(post.slug) === 'focus-techniques-for-productivity') && (
-                    <Image 
-                      src={theme === 'dark' 
-                        ? "/images/5_Focus_Techniques_for_Deep_Work_dark.jpg" 
-                        : "/images/5_Focus_Techniques_for_Deep_Work.jpg"} 
-                      alt={post.title}
-                      fill
-                      className="object-cover"
-                    />
-                  )}
-                  {(post.slug === 'note-taking-strategies-for-success' || 
-                    getEnglishSlug(post.slug) === 'note-taking-strategies-for-success') && (
-                    <Image 
-                      src={theme === 'dark' 
-                        ? "/images/Note_Taking_Strategies_dark.jpg" 
-                        : "/images/Note_Taking_Strategies.jpg"} 
-                      alt={post.title}
-                      fill
-                      className="object-cover"
-                    />
-                  )}
-                  {(post.slug === 'minimalist-planning-approach' || 
-                    getEnglishSlug(post.slug) === 'minimalist-planning-approach') && (
-                    <Image 
-                      src={theme === 'dark' 
-                        ? "/images/Minimalist_Planning_Approach_dark.jpg" 
-                        : "/images/Minimalist_Planning_Approach.jpg"} 
-                      alt={post.title}
-                      fill
-                      className="object-cover"
-                    />
-                  )}
-                </div>
-                <h3 className="text-base font-normal text-gray-900 dark:text-white group-hover:text-gray-700 dark:group-hover:text-gray-100 transition-colors duration-300">
-                  {post.title}
-                </h3>
-              </Link>
-            </motion.div>
-          ))}
-        </div>
-
-        <div className="text-center">
-          <Link
-            href={`/blog/${locale}`}
-            className="inline-flex items-center justify-center px-6 py-3 rounded-xl border border-gray-300 dark:border-gray-700 text-gray-900 dark:text-white text-sm font-medium hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors duration-300"
-          >
-            {t("landing.newLanding.blog.viewAllButton")}{" "}
-            <ArrowRight size={16} className="ml-1 group-hover:translate-x-1 transition-transform duration-300" />
-          </Link>
-        </div>
+    <section id="blog" className="pt-20 pb-16 px-4 bg-white dark:bg-black relative z-10 overflow-hidden">
+  <div className="max-w-6xl mx-auto">
+    <div className="text-center mb-12">
+      <div className="inline-block px-3 py-1.5 mb-4 rounded-lg bg-gradient-to-r from-gray-100 to-gray-50 dark:from-gray-800/80 dark:to-gray-800/60 text-gray-600 dark:text-gray-200 text-xs font-medium shadow-sm hover:shadow transition-shadow duration-300 border border-gray-200/50 dark:border-gray-700/70">
+        {t("landing.newLanding.blog.badge")}
       </div>
-    </section>
+      <h2 className="text-4xl md:text-5xl font-medium text-gray-900 dark:text-white mb-4">
+        {t("landing.newLanding.blog.titleParts.insights")}{" "}
+        <span className="instrument-serif italic text-gray-900 dark:text-white">
+          {t("landing.newLanding.blog.titleParts.and")}{" "}
+        </span>
+        {t("landing.newLanding.blog.titleParts.tips")}
+      </h2>
+      <p className="text-sm md:text-lg text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
+        {t("landing.newLanding.blog.subtitle")}
+      </p>
+    </div>
+
+    {/* Blog Yazıları */}
+    <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8 mb-10">
+      {blogPosts.map((post, index) => (
+        <motion.div
+          key={post.slug}
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: index * 0.1 }}
+          viewport={{ once: true }}
+          className="group w-full max-w-[90%] md:max-w-full mx-auto"
+        >
+          <Link href={`/blog/${locale}/post/${post.slug}`}>
+            <div className="relative aspect-video w-full overflow-hidden rounded-lg mb-3 border border-gray-300 dark:border-gray-700">
+              {/* Görsel */}
+              {getEnglishSlug(post.slug) === 'effective-daily-planning-routines' && (
+                <Image 
+                  src={theme === 'dark'
+                    ? "/images/Effective_Daily_Planning_Routines_dark.jpg"
+                    : "/images/Effective_Daily_Planning_Routines.jpg"} 
+                  alt={post.title}
+                  fill
+                  className="object-cover"
+                />
+              )}
+              {getEnglishSlug(post.slug) === 'focus-techniques-for-productivity' && (
+                <Image 
+                  src={theme === 'dark'
+                    ? "/images/5_Focus_Techniques_for_Deep_Work_dark.jpg"
+                    : "/images/5_Focus_Techniques_for_Deep_Work.jpg"} 
+                  alt={post.title}
+                  fill
+                  className="object-cover"
+                />
+              )}
+              {getEnglishSlug(post.slug) === 'note-taking-strategies-for-success' && (
+                <Image 
+                  src={theme === 'dark'
+                    ? "/images/Note_Taking_Strategies_dark.jpg"
+                    : "/images/Note_Taking_Strategies.jpg"} 
+                  alt={post.title}
+                  fill
+                  className="object-cover"
+                />
+              )}
+              {getEnglishSlug(post.slug) === 'minimalist-planning-approach' && (
+                <Image 
+                  src={theme === 'dark'
+                    ? "/images/Minimalist_Planning_Approach_dark.jpg"
+                    : "/images/Minimalist_Planning_Approach.jpg"} 
+                  alt={post.title}
+                  fill
+                  className="object-cover"
+                />
+              )}
+            </div>
+            <h3 className="text-[17px] md:text-base font-normal text-gray-900 dark:text-white group-hover:text-gray-700 dark:group-hover:text-gray-100 transition-colors duration-300">
+              {post.title}
+            </h3>
+          </Link>
+        </motion.div>
+      ))}
+    </div>
+
+    <div className="text-center">
+      <Link
+        href={`/blog/${locale}`}
+        className="inline-flex items-center justify-center px-6 py-3 rounded-xl border border-gray-300 dark:border-gray-700 text-gray-900 dark:text-white text-sm font-medium hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors duration-300"
+      >
+        {t("landing.newLanding.blog.viewAllButton")}{" "}
+        <ArrowRight size={16} className="ml-1 group-hover:translate-x-1 transition-transform duration-300" />
+      </Link>
+    </div>
+  </div>
+</section>
   );
 }

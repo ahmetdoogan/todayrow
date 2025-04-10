@@ -69,8 +69,8 @@ export default function HeroSection({
   
   return (
     <section
-      className="pt-24 md:pt-32 pb-40 md:pb-48 px-4 relative z-10 overflow-hidden bg-white dark:bg-[#111111]"
-      ref={scrollRef}
+      className="pt-24 md:pt-32 pb-20 md:pb-48 px-4 relative z-10 overflow-hidden bg-white dark:bg-[#111111]"
+  ref={scrollRef}
     >
       <div className="max-w-6xl mx-auto">
         <div className="flex flex-col items-center mb-10 mt-8 md:mt-12">

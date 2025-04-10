@@ -47,7 +47,7 @@ export default function FAQSection() {
   };
 
   return (
-    <section id="faq" className="py-24 px-4 bg-gray-50 dark:bg-gray-900 relative z-10 overflow-hidden">
+    <section id="faq" className="pt-16 md:pt-24 pb-24 px-4 bg-gray-50 dark:bg-gray-900 relative z-10 overflow-hidden">
       <div className="max-w-4xl mx-auto">
         <div className="text-center mb-16">
           <div className="inline-block px-3 py-1.5 mb-4 rounded-lg bg-gradient-to-r from-gray-100 to-gray-50 dark:from-gray-800/80 dark:to-gray-800/60 text-gray-600 dark:text-gray-200 text-xs font-medium shadow-sm hover:shadow transition-shadow duration-300 border border-gray-200/50 dark:border-gray-700/70">
