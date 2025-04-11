@@ -48,6 +48,8 @@
 - Çeviri sistemi (next-intl) her zaman doğru şekilde kullanılmalı
 - Yeni eklenen her UI metni için `messages` klasöründeki `tr.json` ve `en.json` dosyalarına çeviriler eklenmelidir
 - Çeviri anahtarları nested yapıda ve mantıklı bir hiyerarşi ile düzenlenmeli
+- Komponentlerde `useTranslations()` hook'u ile çeviri anahtarlarına erişim sağlanır
+- Örneğin: `const t = useTranslations('common');` ve ardından `t('save')` şeklinde kullanılır
 
 #### Tasarım Vizyonu
 - Uygulama, ShadCN UI bileşenleri kullanılarak daha modern bir tasarıma doğru evrilmektedir

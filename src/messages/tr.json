@@ -1000,6 +1000,13 @@
       }
     }
   },
+      "focus": {
+    "steps": {
+      "sidebar": "Görev ekle",
+      "timer": "Pomodoro zamanlayıcıyı başlat"
+    },
+    "success": "Pomodoro başlatıldı! ✨"
+  },
       "notes": {
     "steps": {
       "sidebar": "Hızlıca not oluştur",
@@ -1054,6 +1061,11 @@
         "title": "Plan Yapma",
         "description": "Günlük planlarınızı oluşturun ve yönetin",
         "content": "Bugün ve yarınınıza odaklanabilir, 'Plan Ekle' butonundan günün saatlerine göre plan girişi yapabilirsiniz. Hazır planları sürükleyip bırakarak ya da doğrudan takvim üzerinde tıklayarak yeni planlar oluşturabilirsiniz."
+      },
+      "focus": {
+        "title": "Odaklanma",
+        "description": "Pomodoro tekniği ile daha verimli çalışın",
+        "content": "Pomodoro tekniğini kullanarak zamanınızı yönetin. Zamanlayıcı ile derin çalışma seansları oluşturun, görevleri ve projeleri yönetin, detaylı istatistiklerle ilerlemenizi takip edin."
       },
       "content": {
         "title": "İçerik Yönetimi",

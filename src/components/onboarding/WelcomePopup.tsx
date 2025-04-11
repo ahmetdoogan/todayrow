@@ -5,11 +5,12 @@ import { AnimatePresence, motion } from "framer-motion";
 import Image from "next/image"; // Image bileşenini import ediyoruz
 import {
   LayoutDashboard,
-  PencilLine,
+  Layout,
   CalendarCheck,
   Settings,
-  BellRing,
-  User
+  Clock,
+  User,
+  FileText
 } from "lucide-react";
 import { supabase } from "@/utils/supabaseClient";
 import { useAuth } from "@/context/AuthContext";
@@ -18,6 +19,7 @@ import { useTranslations } from 'next-intl';
 import PlanTutorialAnimation from './animations/PlanTutorialAnimation';
 import ContentTutorialAnimation from './animations/ContentTutorialAnimation';
 import NoteTutorialAnimation from './animations/NoteTutorialAnimation';
+import FocusTutorialAnimation from './animations/FocusTutorialAnimation';
 import SettingsTutorialAnimation from './animations/SettingsTutorialAnimation';
 
 interface Tab {
@@ -56,25 +58,25 @@ export default function WelcomePopup({ onClose }: WelcomePopupProps) {
       content: t('tabs.plan.content')
     },
     {
-      id: "content",
-      icon: PencilLine,
-      title: t('tabs.content.title'),
-      description: t('tabs.content.description'),
-      content: t('tabs.content.content')
+      id: "focus",
+      icon: Clock,
+      title: t('tabs.focus.title', { fallback: 'Focus' }),
+      description: t('tabs.focus.description', { fallback: 'Stay focused with Pomodoro timer' }),
+      content: t('tabs.focus.content', { fallback: 'Use the Pomodoro technique to manage your time. Create deep work sessions with the built-in timer, manage tasks and projects, and track your progress with detailed statistics.' })
     },
     {
       id: "notes",
-      icon: CalendarCheck,
+      icon: FileText,
       title: t('tabs.notes.title'),
       description: t('tabs.notes.description'),
       content: t('tabs.notes.content')
     },
     {
-      id: "notifications",
-      icon: BellRing,
-      title: t('tabs.notifications.title'),
-      description: t('tabs.notifications.description'),
-      content: t('tabs.notifications.content')
+      id: "content",
+      icon: Layout,
+      title: t('tabs.content.title'),
+      description: t('tabs.content.description'),
+      content: t('tabs.content.content')
     },
     {
       id: "settings",
@@ -117,21 +119,21 @@ export default function WelcomePopup({ onClose }: WelcomePopupProps) {
         }}
       >
         <motion.div
-          className="w-full max-w-5xl bg-white dark:bg-gray-900 rounded-2xl shadow-xl overflow-hidden"
+          className="w-full max-w-5xl bg-white dark:bg-gray-900 rounded-2xl shadow-xl overflow-hidden max-h-[85vh] sm:max-h-none"
           initial={{ opacity: 0, scale: 0.95, y: 10 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.95, y: 10 }}
           transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
         >
           {/* Header */}
-          <div className="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-800">
-            <div className="flex items-center gap-8">
-              <Logo className="h-6 w-auto" />
+          <div className="flex items-center justify-between p-4 sm:p-6 border-b border-gray-200 dark:border-gray-800">
+            <div className="flex items-center gap-4 sm:gap-8 pr-4">
+              <Logo className="h-5 sm:h-6 w-auto" />
               <div>
-                <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100">
+                <h2 className="text-base sm:text-xl font-semibold text-gray-900 dark:text-gray-100">
                   {userName ? t('title', { name: userName }) : t('titleGeneric')}
                 </h2>
-                <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 mt-1 max-w-[200px] sm:max-w-none">
                   {t('subtitle')}
                 </p>
               </div>
@@ -142,13 +144,13 @@ export default function WelcomePopup({ onClose }: WelcomePopupProps) {
                 alt="Profile"
                 width={40}
                 height={40}
-                className="w-10 h-10 rounded-full"
+                className="w-8 h-8 sm:w-10 sm:h-10 rounded-full flex-shrink-0"
               />
             )}
           </div>
 
           {/* Content */}
-          <div className="flex flex-col sm:flex-row min-h-[400px]">
+          <div className="flex flex-col sm:flex-row min-h-[40vh] sm:min-h-[400px] overflow-auto">
             {/* Left sidebar - Tabs (Desktop) */}
             <div className="hidden sm:block w-full sm:w-64 border-r border-gray-200 dark:border-gray-800 sm:p-4">
               <div className="flex flex-col gap-1">
@@ -179,7 +181,7 @@ export default function WelcomePopup({ onClose }: WelcomePopupProps) {
 
             {/* Mobile Tabs */}
             <div className="sm:hidden w-full p-2 border-b border-gray-200 dark:border-gray-700">
-              <div className="flex justify-center gap-4">
+              <div className="flex justify-center gap-1">
                 {tabs.map((tab) => {
                   const Icon = tab.icon;
                   return (
@@ -192,7 +194,7 @@ export default function WelcomePopup({ onClose }: WelcomePopupProps) {
                           : 'text-gray-600 dark:text-gray-400'
                         }`}
                     >
-                      <Icon className="w-5 h-5" />
+                      <Icon className="w-4 h-4" />
                     </button>
                   );
                 })}
@@ -200,40 +202,43 @@ export default function WelcomePopup({ onClose }: WelcomePopupProps) {
             </div>
 
             {/* Right content */}
-            <div className="flex-1 p-6">
-              <div className="max-w-2xl">
-                <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2">
+            <div className="flex-1 p-3 sm:p-6 overflow-y-auto">
+              <div className="max-w-2xl mx-auto sm:mx-0">
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2 text-center sm:text-left">
                   {tabs.find(t => t.id === selectedTab)?.title}
                 </h3>
-                <p className="text-gray-600 dark:text-gray-400 text-sm leading-relaxed mb-8">
+                <p className="text-gray-600 dark:text-gray-400 text-xs sm:text-sm leading-relaxed mb-6 text-center sm:text-left px-2 sm:px-0">
                   {tabs.find(t => t.id === selectedTab)?.content}
                 </p>
 
-                {/* Tutorial Animation Area */}
-                {selectedTab === "plan" && <PlanTutorialAnimation />}
-                {selectedTab === "content" && <ContentTutorialAnimation />}
-                {selectedTab === "notes" && <NoteTutorialAnimation />}
-                {selectedTab === "settings" && <SettingsTutorialAnimation />}
-                {selectedTab !== "plan" && selectedTab !== "content" && selectedTab !== "notes" && selectedTab !== "settings" && (
-                  <div className="h-64 w-full bg-gray-100 dark:bg-gray-800 rounded-xl flex items-center justify-center text-gray-400 dark:text-gray-600">
-                    Çok yakında...
-                  </div>
-                )}
+                {/* Tutorial Animation Area - adjusting height for mobile */}
+                <div className="h-48 sm:h-64">
+                  {selectedTab === "plan" && <PlanTutorialAnimation />}
+                  {selectedTab === "focus" && <FocusTutorialAnimation />}
+                  {selectedTab === "content" && <ContentTutorialAnimation />}
+                  {selectedTab === "notes" && <NoteTutorialAnimation />}
+                  {selectedTab === "settings" && <SettingsTutorialAnimation />}
+                  {selectedTab !== "plan" && selectedTab !== "focus" && selectedTab !== "content" && selectedTab !== "notes" && selectedTab !== "settings" && (
+                    <div className="h-full w-full bg-gray-100 dark:bg-gray-800 rounded-xl flex items-center justify-center text-gray-400 dark:text-gray-600">
+                      Çok yakında...
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
           </div>
 
 
-<div className="flex justify-between items-center gap-4 p-6 border-t border-gray-200 dark:border-gray-800">
+<div className="flex justify-between items-center gap-4 p-3 sm:p-6 border-t border-gray-200 dark:border-gray-800">
   {/* Sol tarafa bilgilendirici not ekle */}
-  <p className="text-xs text-gray-500 dark:text-gray-400">
+  <p className="text-[9px] sm:text-xs text-gray-500 dark:text-gray-400 flex-shrink">
     {t('reopenHint')}
   </p>
 
   {/* Sağ tarafa "Başlayalım" butonunu ekle */}
   <button
     onClick={handleClose}
-    className="px-6 py-2 text-sm font-medium text-white bg-gray-900 dark:bg-gray-100 dark:text-gray-900 rounded-lg hover:bg-gray-800 dark:hover:bg-gray-200 transition-colors"
+    className="px-4 sm:px-6 py-1.5 sm:py-2 text-xs sm:text-sm font-medium text-white bg-gray-900 dark:bg-gray-100 dark:text-gray-900 rounded-lg hover:bg-gray-800 dark:hover:bg-gray-200 transition-colors whitespace-nowrap"
   >
     {t('buttons.start')}
   </button>

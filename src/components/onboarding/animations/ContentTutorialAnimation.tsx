@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { PencilLine, LineChart, Calendar } from "lucide-react";
+import { Layout, LineChart, Calendar } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useTranslations } from "next-intl";
 
@@ -50,15 +50,14 @@ interface InfoCardProps {
 
 const InfoCard = ({ icon: Icon, title, value, active }: InfoCardProps) => (
   <div
-    className={`p-3 ${
-      active ? "bg-blue-50 dark:bg-blue-900/20" : "bg-white dark:bg-gray-800"
-    } rounded-lg border border-gray-200 dark:border-gray-700 transition-all duration-300`}
+    className={`p-2 sm:p-3 ${active ? "bg-blue-50 dark:bg-blue-900/20" : "bg-white dark:bg-gray-800"
+      } rounded-lg border border-gray-200 dark:border-gray-700 transition-all duration-300`}
   >
-    <div className="flex gap-2 mb-2">
-      <Icon className="w-4 h-4 text-gray-500" />
-      <span className="text-xs text-gray-500">{title}</span>
+    <div className="flex gap-1 sm:gap-2 mb-1 sm:mb-2">
+      <Icon className="w-3 h-3 sm:w-4 sm:h-4 text-gray-500" />
+      <span className="text-[9px] sm:text-xs text-gray-500">{title}</span>
     </div>
-    <div className="text-sm font-medium text-gray-900 dark:text-gray-100">{value}</div>
+    <div className="text-xs sm:text-sm font-medium text-gray-900 dark:text-gray-100">{value}</div>
   </div>
 );
 
@@ -87,7 +86,7 @@ export default function ContentTutorialAnimation() {
     const steps = [
       // 1) İçerik oluştur butonu
       {
-        pos: { x: 60, y: 40 },
+        pos: { x: 34, y: 40 },
         wait: 800,
         click: true,
         success: true,
@@ -95,18 +94,18 @@ export default function ContentTutorialAnimation() {
       },
       // 2) Stats kartları
       {
-        pos: { x: 140, y: 60 },
+        pos: { x: 100, y: 60 },
         wait: 800,
         message: "stats",
         highlightCard: 0,
       },
       {
-        pos: { x: 320, y: 60 },
+        pos: { x: 280, y: 60 },
         wait: 800,
         highlightCard: 1,
       },
       {
-        pos: { x: 500, y: 60 },
+        pos: { x: 460, y: 60 },
         wait: 800,
         highlightCard: 2,
       },
@@ -146,7 +145,7 @@ export default function ContentTutorialAnimation() {
           }
         }
         // Döngü bittiğinde en başa dön: fare sol butona
-        setMousePos({ x: 60, y: 40 });
+        setMousePos({ x: 34, y: 40 });
         setActiveCard(null);
       }
     };
@@ -165,36 +164,24 @@ export default function ContentTutorialAnimation() {
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      className="relative w-full h-64 bg-gray-50 dark:bg-gray-800/50 rounded-xl overflow-hidden border border-gray-100 dark:border-gray-700"
+      className="relative w-full h-48 sm:h-64 bg-gray-50 dark:bg-gray-800/50 rounded-xl overflow-hidden border border-gray-100 dark:border-gray-700"
     >
-      {/* 4.1) Sol Sidebar */}
-      <div className="absolute left-2 top-2 w-24 h-60 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 overflow-hidden">
-        <motion.button
-          whileHover={{ scale: 1.02 }}
-          className="w-full px-3 py-2.5 mb-2 transition-all duration-300 bg-gray-900 dark:bg-gray-800 rounded-lg"
-        >
-          <div className="flex items-center justify-center gap-2">
-            <PencilLine className="w-4 h-4 text-white" />
-            <span className="text-xs font-medium text-white">
-              {t("sidebar.createContent")}
-            </span>
-          </div>
-        </motion.button>
-
-        <div className="px-2 space-y-1.5">
-          <div className="h-9 rounded-lg bg-gray-100 dark:bg-gray-700/50 flex items-center px-3">
-            <Calendar className="w-4 h-4 text-gray-400" />
-          </div>
-          <div className="h-9 rounded-lg bg-gray-100 dark:bg-gray-700/50 flex items-center px-3">
-            <LineChart className="w-4 h-4 text-gray-400" />
-          </div>
+      {/* 4.1) Sol Sidebar - Mobile Optimized Kare Butonlar */}
+      <div className="absolute left-0 top-0 h-full w-10 sm:w-16 bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-700 flex flex-col items-center py-3">
+        {/* Mobile ve desktop aynı görünüm */}
+        <div className="w-6 sm:w-8 h-6 sm:h-8 rounded-md bg-gray-100 dark:bg-gray-800 mb-3" />
+        <div className="w-6 sm:w-8 h-6 sm:h-8 rounded-md bg-gray-100 dark:bg-gray-800 mb-3" />
+        <div className="w-6 sm:w-8 h-6 sm:h-8 rounded-md bg-gray-100 dark:bg-gray-800 mb-3" />
+        <div className="w-6 sm:w-8 h-6 sm:h-8 rounded-md bg-gray-900 dark:bg-gray-700 text-white flex items-center justify-center mb-3 shadow-sm">
+          <Layout className="w-3 h-3 sm:w-4 sm:h-4 text-white" />
         </div>
+        <div className="w-6 sm:w-8 h-6 sm:h-8 rounded-md bg-gray-100 dark:bg-gray-800 mb-3" />
       </div>
 
       {/* 4.2) İçerik Alanı */}
-      <div className="absolute left-28 right-2 top-2 h-60">
+      <div className="absolute left-12 sm:left-20 right-2 sm:right-2 top-2 sm:top-2 h-44 sm:h-60">
         {/* Info Cards */}
-        <div className="grid grid-cols-3 gap-4 mb-4">
+        <div className="grid grid-cols-3 gap-2 sm:gap-4 mb-2 sm:mb-4">
           <InfoCard
             icon={Calendar}
             title={t("labels.monthlyTarget")}
@@ -216,8 +203,8 @@ export default function ContentTutorialAnimation() {
         </div>
 
         {/* Boş içerik alanı */}
-        <div className="flex items-center justify-center h-32 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700">
-          <div className="text-sm text-gray-500 dark:text-gray-400">
+        <div className="flex items-center justify-center h-20 sm:h-32 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700">
+          <div className="text-xs sm:text-sm text-gray-500 dark:text-gray-400">
             {t("labels.emptyState")}
           </div>
         </div>

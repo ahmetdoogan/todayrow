@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { PencilLine, FolderPlus, Tag, Settings, Calendar, Clock } from "lucide-react";
+import { FileText, FolderPlus, Tag, Settings, Calendar, Clock } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useTranslations } from 'next-intl';
 
@@ -31,11 +31,11 @@ interface CreateNoteAreaProps {
 }
 
 const CreateNoteArea = ({ active, t }: CreateNoteAreaProps) => (
-  <div className={`flex-1 py-20 ${active ? 'bg-blue-50 dark:bg-blue-900/20' : 'bg-white dark:bg-gray-800'} rounded-lg border-2 border-dashed border-gray-200 dark:border-gray-700 transition-colors duration-300`}>
-    <div className="flex flex-col items-center justify-center gap-2">
-      <PencilLine className="w-8 h-8 text-gray-400" />
-      <p className="text-sm font-medium text-gray-500">{t('labels.createFirst')}</p>
-      <p className="text-xs text-gray-400">{t('labels.clickToStart')}</p>
+  <div className={`flex-1 py-16 sm:py-20 ${active ? 'bg-blue-50 dark:bg-blue-900/20' : 'bg-white dark:bg-gray-800'} rounded-lg border-2 border-dashed border-gray-200 dark:border-gray-700 transition-colors duration-300`}>
+    <div className="flex flex-col items-center justify-center gap-1 sm:gap-2">
+      <FileText className="w-6 h-6 sm:w-8 sm:h-8 text-gray-400" />
+      <p className="text-xs sm:text-sm font-medium text-gray-500 text-center px-2">{t('labels.createFirst')}</p>
+      <p className="text-[10px] sm:text-xs text-gray-400 text-center px-2">{t('labels.clickToStart')}</p>
     </div>
   </div>
 );
@@ -55,7 +55,7 @@ export default function NoteTutorialAnimation() {
     const steps = [
       // 1) Sidebar butonu
       {
-        pos: { x: 60, y: 40 },
+        pos: { x: 34, y: 40 },
         wait: 800,
         click: true,
         success: true,
@@ -63,7 +63,7 @@ export default function NoteTutorialAnimation() {
       },
       // 2) Ana alan
       {
-        pos: { x: 280, y: 140 },
+        pos: { x: 240, y: 140 },
         wait: 800,
         click: true,
         success: true,
@@ -71,7 +71,7 @@ export default function NoteTutorialAnimation() {
       },
       // 3) Filtreler
       {
-        pos: { x: 100, y: 90 },
+        pos: { x: 34, y: 110 },
         wait: 800,
         click: true,
         activeArea: "filter" as const
@@ -111,53 +111,22 @@ export default function NoteTutorialAnimation() {
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      className="relative w-full h-64 bg-gray-50 dark:bg-gray-800/50 rounded-xl overflow-hidden border border-gray-100 dark:border-gray-700"
+      className="relative w-full h-48 sm:h-64 bg-gray-50 dark:bg-gray-800/50 rounded-xl overflow-hidden border border-gray-100 dark:border-gray-700"
     >
-      {/* Sidebar */}
-      <div className="absolute left-2 top-2 w-24 h-60 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700">
-        <motion.button 
-          whileHover={{ scale: 1.02 }}
-          className={`w-full px-3 py-2.5 bg-gray-900 dark:bg-gray-800 mb-2 transition-all duration-300 rounded-lg ${
-            activeArea === "sidebar" ? 'scale-[1.02]' : ''
-          }`}
-        >
-          <div className="flex items-center justify-center gap-2">
-            <PencilLine className="w-4 h-4 text-white" />
-            <span className="text-xs font-medium text-white">{t('labels.createNote')}</span>
-          </div>
-        </motion.button>
-
-        <div className="px-2 mb-2">
-          <div className={`p-2 rounded-lg transition-colors duration-300 ${
-            activeArea === "filter" ? 'bg-blue-50 dark:bg-blue-900/20' : 'bg-gray-100 dark:bg-gray-700/50'
-          }`}>
-            <div className="flex items-center gap-2 mb-2">
-              <FolderPlus className="w-4 h-4 text-gray-500" />
-              <Tag className="w-4 h-4 text-gray-500" />
-            </div>
-            <div className="flex gap-1">
-              <div className="h-2 w-2 rounded-full bg-red-400" />
-              <div className="h-2 w-2 rounded-full bg-yellow-400" />
-              <div className="h-2 w-2 rounded-full bg-green-400" />
-            </div>
-          </div>
+      {/* Sidebar - Mobile Optimized Kare Butonlar */}
+      <div className="absolute left-0 top-0 h-full w-10 sm:w-16 bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-700 flex flex-col items-center py-3">
+        {/* Mobile & Desktop - aynı görünüm */}
+        <div className="w-6 sm:w-8 h-6 sm:h-8 rounded-md bg-gray-100 dark:bg-gray-800 mb-3" />
+        <div className="w-6 sm:w-8 h-6 sm:h-8 rounded-md bg-gray-100 dark:bg-gray-800 mb-3" />
+        <div className="w-6 sm:w-8 h-6 sm:h-8 rounded-md bg-gray-900 dark:bg-gray-700 text-white flex items-center justify-center mb-3 shadow-sm">
+          <FileText className="w-3 h-3 sm:w-4 sm:h-4 text-white" />
         </div>
-
-        <div className="px-2 space-y-1.5">
-          <div className="h-9 rounded-lg bg-gray-100 dark:bg-gray-700/50 flex items-center px-3">
-            <Calendar className="w-4 h-4 text-gray-400" />
-          </div>
-          <div className="h-9 rounded-lg bg-gray-100 dark:bg-gray-700/50 flex items-center px-3">
-            <Clock className="w-4 h-4 text-gray-400" />
-          </div>
-          <div className="h-9 rounded-lg bg-gray-100 dark:bg-gray-700/50 flex items-center px-3">
-            <Settings className="w-4 h-4 text-gray-400" />
-          </div>
-        </div>
+        <div className="w-6 sm:w-8 h-6 sm:h-8 rounded-md bg-gray-100 dark:bg-gray-800 mb-3" />
+        <div className="w-6 sm:w-8 h-6 sm:h-8 rounded-md bg-gray-100 dark:bg-gray-800 mb-3" />
       </div>
 
       {/* Main Area */}
-      <div className="absolute left-28 right-2 top-2 h-60">
+      <div className="absolute left-12 sm:left-20 right-2 top-2 h-60">
         <CreateNoteArea active={activeArea === "main"} t={t} />
       </div>
 

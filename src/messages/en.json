@@ -998,6 +998,13 @@
       }
     }
   },
+      "focus": {
+    "steps": {
+      "sidebar": "Add task",
+      "timer": "Start pomodoro timer"
+    },
+    "success": "Pomodoro started! ✨"
+  },
       "notes": {
     "steps": {
       "sidebar": "Create note quickly",
@@ -1052,6 +1059,11 @@
         "title": "Planning",
         "description": "Create and manage your daily plans",
         "content": "Focus on today and tomorrow, create plans for specific hours using the 'Add Plan' button. Create new plans by dragging and dropping quick plans or clicking directly on the calendar."
+      },
+      "focus": {
+        "title": "Focus",
+        "description": "Work more efficiently with the Pomodoro technique",
+        "content": "Use the Pomodoro technique to manage your time. Create deep work sessions with the built-in timer, manage tasks and projects, and track your progress with detailed statistics."
       },
       "content": {
         "title": "Content Management",

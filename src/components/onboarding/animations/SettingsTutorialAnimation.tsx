@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { Moon, User, Globe, MessageCircle } from "lucide-react";
+import { Moon, User, Globe, MessageCircle, Settings } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useTranslations } from 'next-intl';
 
@@ -32,12 +32,12 @@ interface SettingsCardProps {
 }
 
 const SettingsCard = ({ icon: Icon, type, active, t }: SettingsCardProps) => (
-  <div className={`p-3 ${active ? 'bg-blue-50 dark:bg-blue-900/20' : 'bg-white dark:bg-gray-800'} rounded-lg border border-gray-200 dark:border-gray-700 transition-all duration-300`}>
-    <div className="flex gap-2.5">
-      <Icon className="w-4 h-4 text-gray-500 flex-shrink-0" />
+  <div className={`p-2 sm:p-3 ${active ? 'bg-blue-50 dark:bg-blue-900/20' : 'bg-white dark:bg-gray-800'} rounded-lg border border-gray-200 dark:border-gray-700 transition-all duration-300`}>
+    <div className="flex gap-1.5 sm:gap-2.5">
+      <Icon className="w-3.5 sm:w-4 h-3.5 sm:h-4 text-gray-500 flex-shrink-0 mt-0.5" />
       <div>
-        <h3 className="text-xs font-medium text-gray-900 dark:text-gray-100">{t(`cards.${type}.title`)}</h3>
-        <p className="text-[11px] text-gray-500 dark:text-gray-400 mt-0.5 leading-tight">{t(`cards.${type}.description`)}</p>
+        <h3 className="text-[10px] sm:text-xs font-medium text-gray-900 dark:text-gray-100">{t(`cards.${type}.title`)}</h3>
+        <p className="text-[9px] sm:text-[11px] text-gray-500 dark:text-gray-400 mt-0.5 leading-tight">{t(`cards.${type}.description`)}</p>
       </div>
     </div>
   </div>
@@ -48,7 +48,7 @@ export default function SettingsTutorialAnimation() {
   
   const [mousePos, setMousePos] = useState({ x: 60, y: 40 });
   const [stepMessage, setStepMessage] = useState("theme");
-  const [activeCard, setActiveCard] = useState(0);
+  const [activeCard, setActiveCard] = useState<number | null>(0);
 
   const settingsCards = [
     { icon: Moon, type: 'theme' },
@@ -61,14 +61,29 @@ export default function SettingsTutorialAnimation() {
     let cancel = false;
 
     const animateCards = async () => {
+      // First set mouse to sidebar button
+      setMousePos({ x: 34, y: 90 });
+      await new Promise(r => setTimeout(r, 800));
+      if (cancel) return;
+      
       while (!cancel) {
         for (let i = 0; i < settingsCards.length; i++) {
           if (cancel) break;
 
           setActiveCard(i);
-          setMousePos({ x: 280, y: 50 + i * 65 }); 
+          // Adjust mouse position based on screen size
+          const posX = window.innerWidth < 640 ? 150 : 240;
+          const offsetY = window.innerWidth < 640 ? 45 : 65;
+          setMousePos({ x: posX, y: 50 + i * offsetY }); 
           setStepMessage(settingsCards[i].type);
           await new Promise(r => setTimeout(r, 1500));
+        }
+        
+        // Return to sidebar button after cycling through all cards
+        if (!cancel) {
+          setMousePos({ x: 34, y: 90 });
+          setActiveCard(null);
+          await new Promise(r => setTimeout(r, 1000));
         }
       }
     };
@@ -81,13 +96,21 @@ export default function SettingsTutorialAnimation() {
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      className="relative w-full h-64 bg-gray-50 dark:bg-gray-800/50 rounded-xl overflow-hidden border border-gray-100 dark:border-gray-700"
+      className="relative w-full h-48 sm:h-64 bg-gray-50 dark:bg-gray-800/50 rounded-xl overflow-hidden border border-gray-100 dark:border-gray-700"
     >
-      {/* Sidebar */}
-      <div className="absolute left-2 top-2 w-24 h-60 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700" />
+      {/* Sidebar - Mobile Optimized with Navigation Buttons */}
+      <div className="absolute left-0 top-0 h-full w-10 sm:w-16 bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-700 flex flex-col items-center py-3">
+        <div className="w-6 sm:w-8 h-6 sm:h-8 rounded-md bg-gray-100 dark:bg-gray-800 mb-3" />
+        <div className="w-6 sm:w-8 h-6 sm:h-8 rounded-md bg-gray-100 dark:bg-gray-800 mb-3" />
+        <div className="w-6 sm:w-8 h-6 sm:h-8 rounded-md bg-gray-100 dark:bg-gray-800 mb-3" />
+        <div className="w-6 sm:w-8 h-6 sm:h-8 rounded-md bg-gray-100 dark:bg-gray-800 mb-3" />
+        <div className="w-6 sm:w-8 h-6 sm:h-8 rounded-md bg-gray-900 dark:bg-gray-700 text-white flex items-center justify-center mb-3 shadow-sm">
+          <Settings className="w-3 h-3 sm:w-4 sm:h-4" />
+        </div>
+      </div>
 
       {/* Settings Area */}
-      <div className="absolute left-28 right-2 top-2 h-60 space-y-1.5 overflow-hidden p-1">
+      <div className="absolute left-12 sm:left-20 right-2 sm:right-4 top-2 sm:top-4 bottom-2 sm:bottom-4 space-y-1.5 overflow-hidden p-1">
         {settingsCards.map((card, index) => (
           <SettingsCard
             key={index}
@@ -110,7 +133,7 @@ export default function SettingsTutorialAnimation() {
           animate={{ opacity: 1, y: 0 }}
           className="inline-block bg-gray-900/5 dark:bg-white/5 backdrop-blur-sm px-4 py-1.5 rounded-full"
         >
-          <span className="text-sm text-gray-600 dark:text-gray-300">{t(`steps.${stepMessage}`)}</span>
+          <span className="text-xs sm:text-sm text-gray-600 dark:text-gray-300">{t(`steps.${stepMessage}`)}</span>
         </motion.div>
       </div>
     </motion.div>

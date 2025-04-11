@@ -58,7 +58,7 @@ const PlanTutorialAnimation = () => {
 
     const steps = [
       {
-        x: 60,
+        x: 34,
         y: 40,
         wait: 800,
         click: true,
@@ -66,7 +66,7 @@ const PlanTutorialAnimation = () => {
         message: "sidebar"
       },
       {
-        x: 200,
+        x: 180,
         y: 120,
         wait: 800,
         click: true,
@@ -74,21 +74,21 @@ const PlanTutorialAnimation = () => {
         message: "timeline"
       },
       {
-        x: 320,
+        x: 300,
         y: 80,
         wait: 600,
         dragStart: true,
         message: "quickplans"
       },
       {
-        x: 200,
+        x: 180,
         y: 120,
         wait: 1000,
         dragEnd: true,
         success: true
       },
       {
-        x: 60,
+        x: 34,
         y: 40,
         wait: 1000
       }
@@ -130,38 +130,22 @@ const PlanTutorialAnimation = () => {
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      className="relative w-full h-64 bg-gray-50 dark:bg-gray-800/50 rounded-xl overflow-hidden border border-gray-100 dark:border-gray-700"
+      className="relative w-full h-48 sm:h-64 bg-gray-50 dark:bg-gray-800/50 rounded-xl overflow-hidden border border-gray-100 dark:border-gray-700"
     >
-      {/* Sidebar */}
-      <div className="absolute left-2 top-2 w-24 h-60 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700">
-        <motion.button 
-          whileHover={{ scale: 1.02 }}
-          className="w-full px-3 rounded-lg py-2.5 bg-gray-900 dark:bg-gray-800 mb-2 transition-all duration-300"
-        >
-          <div className="flex items-center justify-center gap-2">
-            <Calendar className="w-4 h-4 text-white" />
-            <span className="text-xs font-medium text-white">{t('labels.createPlan')}</span>
-          </div>
-        </motion.button>
-
-        <div className="px-2 space-y-1.5">
-          <div className="h-9 rounded-lg bg-gray-100 dark:bg-gray-700/50 flex items-center px-3">
-            <Search className="w-4 h-4 text-gray-400" />
-          </div>
-          <div className="h-9 rounded-lg bg-gray-100 dark:bg-gray-700/50 flex items-center px-3">
-            <Calendar className="w-4 h-4 text-gray-400" />
-          </div>
-          <div className="h-9 rounded-lg bg-gray-100 dark:bg-gray-700/50 flex items-center px-3">
-            <FileText className="w-4 h-4 text-gray-400" />
-          </div>
-          <div className="h-9 rounded-lg bg-gray-100 dark:bg-gray-700/50 flex items-center px-3">
-            <Settings className="w-4 h-4 text-gray-400" />
-          </div>
+      {/* Sidebar - Mobile Optimized Kare Butonlar */}
+      <div className="absolute left-0 top-0 h-full w-10 sm:w-16 bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-700 flex flex-col items-center py-3">
+        {/* Mobile & Desktop aynı görünüm - kare butonlar */}
+        <div className="w-6 sm:w-8 h-6 sm:h-8 rounded-md bg-gray-900 dark:bg-gray-700 text-white flex items-center justify-center mb-3 shadow-sm">
+          <Calendar className="w-3 h-3 sm:w-4 sm:h-4 text-white" />
         </div>
+        <div className="w-6 sm:w-8 h-6 sm:h-8 rounded-md bg-gray-100 dark:bg-gray-800 mb-3" />  
+        <div className="w-6 sm:w-8 h-6 sm:h-8 rounded-md bg-gray-100 dark:bg-gray-800 mb-3" />
+        <div className="w-6 sm:w-8 h-6 sm:h-8 rounded-md bg-gray-100 dark:bg-gray-800 mb-3" />
+        <div className="w-6 sm:w-8 h-6 sm:h-8 rounded-md bg-gray-100 dark:bg-gray-800 mb-3" />
       </div>
 
       {/* Timeline */}
-      <div className="absolute left-28 right-24 top-2 h-60 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-3">
+      <div className="absolute left-12 sm:left-20 right-16 sm:right-24 top-2 sm:top-2 h-60 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-2 sm:p-3">
         <div className="flex items-center justify-between mb-3">
           <span className="text-xs font-medium text-gray-900 dark:text-gray-100">{t('labels.today')}</span>
           <Clock className="w-4 h-4 text-gray-400" />
@@ -172,10 +156,10 @@ const PlanTutorialAnimation = () => {
             className="flex items-center mb-2.5 group"
             whileHover={{ scale: 1.01 }}
           >
-            <div className="w-14 text-xs text-gray-500 dark:text-gray-400">
+            <div className="w-10 sm:w-14 text-[10px] sm:text-xs text-gray-500 dark:text-gray-400">
               {`${(i + 8).toString().padStart(2, "0")}:00`}
             </div>
-            <div className={`relative flex-grow h-8 rounded-md transition-all duration-300
+            <div className={`relative flex-grow h-6 sm:h-8 rounded-md transition-all duration-300
               ${(step === 1 && i === 2)
                 ? 'bg-blue-50 dark:bg-blue-900/20'
                 : 'bg-gray-50 dark:bg-gray-700/50 group-hover:bg-gray-100 dark:group-hover:bg-gray-700'
@@ -186,15 +170,15 @@ const PlanTutorialAnimation = () => {
       </div>
 
       {/* Quick Plans */}
-      <div className="absolute right-2 top-2 w-20 h-60 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-2">
-        <div className="text-xs font-medium text-gray-500 dark:text-gray-400 mb-2 px-1">
+      <div className="absolute right-2 top-2 w-12 sm:w-20 h-60 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-1 sm:p-2">
+        <div className="text-[10px] sm:text-xs font-medium text-gray-500 dark:text-gray-400 mb-1 sm:mb-2 px-0.5 sm:px-1 text-center sm:text-left">
           {t('labels.quickPlans')}
         </div>
         {[...Array(4)].map((_, i) => (
           <motion.div
             key={i}
             whileHover={{ scale: 1.02 }}
-            className={`h-10 mb-2 rounded-md p-2 transition-all duration-300 
+            className={`h-8 sm:h-10 mb-1.5 sm:mb-2 rounded-md p-1 sm:p-2 transition-all duration-300 
               ${isDragging && i === 0 
                 ? 'bg-blue-500 dark:bg-blue-600 scale-105'
                 : 'bg-gray-100 dark:bg-gray-700'
